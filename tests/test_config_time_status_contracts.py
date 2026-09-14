@@ -14,7 +14,7 @@ class ConfigTimeStatusContractsTests(unittest.TestCase):
         normalized = config._normalize_database_url("sqlite:///instance/test.sqlite")
 
         self.assertTrue(normalized.startswith("sqlite:///"))
-        self.assertIn("Peredacha/instance/test.sqlite", normalized.replace("\\", "/"))
+        self.assertTrue(normalized.replace("\\", "/").endswith("/instance/test.sqlite"))
 
     def test_database_url_normalization_preserves_absolute_sqlite_and_non_sqlite_urls(self):
         self.assertEqual(config._normalize_database_url("sqlite:///C:/data/crm.sqlite"), "sqlite:///C:/data/crm.sqlite")
@@ -23,7 +23,7 @@ class ConfigTimeStatusContractsTests(unittest.TestCase):
     def test_filesystem_path_normalization_uses_base_dir_for_relative_values(self):
         normalized = config._normalize_fs_path("uploads/custom", "fallback")
 
-        self.assertTrue(normalized.replace("\\", "/").endswith("/Peredacha/uploads/custom"))
+        self.assertTrue(normalized.replace("\\", "/").endswith("/uploads/custom"))
 
     def test_bool_and_csv_env_parsing_accept_common_forms_and_normalize_case(self):
         with patch.dict("os.environ", {"FLAG": "YeS", "NAMES": " Admin, manager ,, ADMIN "}, clear=False):

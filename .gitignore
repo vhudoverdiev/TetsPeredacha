@@ -38,6 +38,9 @@ Thumbs.db
 .co?ex/
 outputs/
 outputs/**/node_modules/
+output/
+tmp/
+Старая история веток/
 
 # Visual regression generated artifacts
 tests/e2e_visual/current/

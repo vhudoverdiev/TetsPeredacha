@@ -4,8 +4,8 @@ Requires=gunicorn.socket
 After=network.target
 
 [Service]
-User=nginx
-Group=nginx
+User=www-data
+Group=www-data
 WorkingDirectory=/opt/peredacha
 Environment="PATH=/opt/peredacha/venv/bin"
 EnvironmentFile=/opt/peredacha/.env

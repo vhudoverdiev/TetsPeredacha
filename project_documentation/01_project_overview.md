@@ -36,3 +36,4 @@ Current test server configuration:
 - public IP shown in the Selectel panel: `135.106.176.36`.
 
 For the test stage, the expected access is approximately 10 users. This is enough to verify login under personal accounts, task assignment, remarks, statuses, Excel import/export, materials, measurements and reports.
+

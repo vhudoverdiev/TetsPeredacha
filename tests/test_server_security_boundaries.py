@@ -220,8 +220,8 @@ class ProductionConfigurationSecurityTests(unittest.TestCase):
     def test_gunicorn_runs_as_unprivileged_user_over_private_unix_socket(self):
         service = (ROOT / "deploy" / "gunicorn.service").read_text(encoding="utf-8")
         socket = (ROOT / "deploy" / "gunicorn.socket").read_text(encoding="utf-8")
-        self.assertIn("User=nginx", service)
-        self.assertIn("Group=nginx", service)
+        self.assertIn("User=www-data", service)
+        self.assertIn("Group=www-data", service)
         self.assertIn("EnvironmentFile=/opt/peredacha/.env", service)
         self.assertNotIn("User=root", service)
         self.assertNotIn("--reload", service)
@@ -285,7 +285,7 @@ class ProductionConfigurationSecurityTests(unittest.TestCase):
             headers={
                 "X-Forwarded-For": "203.0.113.77",
                 "X-Forwarded-Proto": "https",
-                "X-Forwarded-Host": "lk-crm.akvilon.tech",
+                "X-Forwarded-Host": "lk.akvilon-peredacha.ru",
             },
         )
         self.assertEqual(response.status_code, 200)

@@ -127,7 +127,7 @@ PY
 
 echo "=== Выставляю права ==="
 mkdir -p "$PROJECT_DIR/instance" "$PROJECT_DIR/uploads" "$PROJECT_DIR/exports"
-chown -R nginx:nginx "$PROJECT_DIR"
+chown -R www-data:www-data "$PROJECT_DIR"
 chmod -R 775 "$PROJECT_DIR/instance" "$PROJECT_DIR/uploads" "$PROJECT_DIR/exports"
 
 echo "=== Запускаю сайт ==="

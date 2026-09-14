@@ -3,8 +3,8 @@ Description=Gunicorn socket for crm_flask
 
 [Socket]
 ListenStream=/run/gunicorn-crm_flask.sock
-SocketUser=nginx
-SocketGroup=nginx
+SocketUser=www-data
+SocketGroup=www-data
 SocketMode=0660
 
 [Install]

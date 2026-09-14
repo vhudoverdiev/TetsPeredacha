@@ -47,3 +47,4 @@ Files and folders that must not be shared publicly:
 - generated exports;
 - private service account JSON files;
 - database backups.
+
