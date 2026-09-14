@@ -54,6 +54,18 @@ class SyncRollbackContractsTests(unittest.TestCase):
         self.assertIn("created_at_utc", payload)
         self.assertIsNone(datetime.fromisoformat(payload["created_at_utc"]).tzinfo)
 
+    def test_build_project_rollback_data_is_ascii_safe_for_mysql_text_columns(self):
+        self.apartment.owner_name = "Владимир Худовердиев"
+        self.task.description = "Русское замечание"
+        db.session.commit()
+
+        raw_payload = build_project_rollback_data(self.project.id)
+        payload = json.loads(raw_payload)
+
+        raw_payload.encode("ascii")
+        self.assertEqual(payload["apartments"][0]["owner_name"], "Владимир Худовердиев")
+        self.assertEqual(payload["tasks"][0]["description"], "Русское замечание")
+
     def test_deserialize_value_restores_dates_datetimes_and_handles_bad_values_safely(self):
         self.assertEqual(_deserialize_value("deadline_date", "2026-07-29"), datetime(2026, 7, 29).date())
         self.assertEqual(_deserialize_value("completed_date", "2026-07-29T12:30:00"), datetime(2026, 7, 29, 12, 30))

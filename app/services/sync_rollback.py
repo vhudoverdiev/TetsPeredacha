@@ -133,7 +133,7 @@ def build_project_rollback_data(project_id: int | None) -> str:
         "apartments": apartments,
         "tasks": tasks,
     }
-    return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    return json.dumps(payload, ensure_ascii=True, separators=(",", ":"))
 
 
 def _restore_fields(obj: Any, snapshot: dict[str, Any], fields: list[str]) -> None:
