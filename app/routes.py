@@ -3265,6 +3265,9 @@ def _contractor_form_response(contractor: Contractor | None = None):
     apartment_options = _contractor_apartment_options(project.id)
     if request.method == "POST":
         name = str(request.form.get("name") or "").strip()
+        legal_address = str(request.form.get("legal_address") or "").strip()
+        contract_number = str(request.form.get("contract_number") or "").strip()
+        email = str(request.form.get("email") or "").strip()
         selected_point_numbers = {
             str(value).strip()
             for value in request.form.getlist("work_points")
@@ -3277,6 +3280,9 @@ def _contractor_form_response(contractor: Contractor | None = None):
         }
     else:
         name = contractor.name if contractor else ""
+        legal_address = contractor.legal_address if contractor and contractor.legal_address else ""
+        contract_number = contractor.contract_number if contractor and contractor.contract_number else ""
+        email = contractor.email if contractor and contractor.email else ""
         selected_point_numbers = {
             str(point.point_number).strip()
             for point in (contractor.work_points if contractor else [])
@@ -3301,6 +3307,14 @@ def _contractor_form_response(contractor: Contractor | None = None):
             errors.append("Укажите наименование подрядчика.")
         elif len(name) > 180:
             errors.append("Наименование подрядчика не должно превышать 180 символов.")
+        contractor_detail_lengths = (
+            ("Юридический адрес", legal_address),
+            ("№ Договор подряда", contract_number),
+            ("Эл.почта", email),
+        )
+        for label, value in contractor_detail_lengths:
+            if len(value) > 255:
+                errors.append(f"{label} не должно превышать 255 символов.")
         duplicate_query = Contractor.query.filter(
             Contractor.project_id == project.id,
             func.lower(Contractor.name) == name.lower(),
@@ -3337,6 +3351,9 @@ def _contractor_form_response(contractor: Contractor | None = None):
                 contractor = Contractor(project=project)
                 db.session.add(contractor)
             contractor.name = name
+            contractor.legal_address = legal_address or None
+            contractor.contract_number = contract_number or None
+            contractor.email = email or None
             contractor.work_points = work_points
             contractor.apartments = apartments
             db.session.commit()
@@ -3355,6 +3372,9 @@ def _contractor_form_response(contractor: Contractor | None = None):
         point_options=point_options,
         apartment_options=apartment_options,
         contractor_name=name,
+        contractor_legal_address=legal_address,
+        contractor_contract_number=contract_number,
+        contractor_email=email,
         selected_point_numbers=selected_point_numbers,
         selected_apartment_group_ids=selected_apartment_group_ids,
         contractor=contractor,

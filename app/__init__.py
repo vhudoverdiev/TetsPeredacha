@@ -425,6 +425,16 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE sync_conflicts ADD COLUMN field_label VARCHAR(160)"))
                 db.session.commit()
 
+            if "contractors" in inspector.get_table_names():
+                contractor_columns = {column["name"] for column in inspector.get_columns("contractors")}
+                if "legal_address" not in contractor_columns:
+                    db.session.execute(text("ALTER TABLE contractors ADD COLUMN legal_address VARCHAR(255)"))
+                if "contract_number" not in contractor_columns:
+                    db.session.execute(text("ALTER TABLE contractors ADD COLUMN contract_number VARCHAR(255)"))
+                if "email" not in contractor_columns:
+                    db.session.execute(text("ALTER TABLE contractors ADD COLUMN email VARCHAR(255)"))
+                db.session.commit()
+
             if "sync_logs" in inspector.get_table_names():
                 sync_log_columns = {column["name"] for column in inspector.get_columns("sync_logs")}
                 if "project_id" not in sync_log_columns:

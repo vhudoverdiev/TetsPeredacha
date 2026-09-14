@@ -223,6 +223,9 @@ class Contractor(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False, index=True)
     name = db.Column(db.String(180), nullable=False, index=True)
+    legal_address = db.Column(db.String(255), nullable=True)
+    contract_number = db.Column(db.String(255), nullable=True)
+    email = db.Column(db.String(255), nullable=True)
 
     project = db.relationship("Project", back_populates="contractors")
     work_points = db.relationship("WorkPoint", secondary=contractor_work_points, back_populates="contractors")

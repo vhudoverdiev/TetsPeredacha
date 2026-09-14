@@ -36,6 +36,13 @@
             </span>
           </div>
           <p>{{ row.apartment_count }} {{ 'помещение' if row.apartment_count == 1 else 'помещений' }}</p>
+          {% if contractor.legal_address or contractor.contract_number or contractor.email %}
+          <div class="contractor-directory-details">
+            {% if contractor.legal_address %}<span><strong>Юр. адрес:</strong> {{ contractor.legal_address }}</span>{% endif %}
+            {% if contractor.contract_number %}<span><strong>№ договора:</strong> {{ contractor.contract_number }}</span>{% endif %}
+            {% if contractor.email %}<span><strong>Эл.почта:</strong> {{ contractor.email }}</span>{% endif %}
+          </div>
+          {% endif %}
         </div>
       </div>
       <div class="contractor-directory-points">
