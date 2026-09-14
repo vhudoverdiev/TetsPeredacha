@@ -39,6 +39,12 @@
       <div class="object-icon"><i class="bi bi-buildings"></i></div>
       <h2 class="object-title">{{ project.name }}</h2>
       <div class="object-address"><i class="bi bi-geo-alt"></i>{{ project.address or 'Адрес не указан' }}</div>
+      {% if project.technical_customer or project.developer_name %}
+      <div class="object-description">
+        {% if project.technical_customer %}<div><strong>Тех.заказчик:</strong> {{ project.technical_customer }}</div>{% endif %}
+        {% if project.developer_name %}<div><strong>СЗ:</strong> {{ project.developer_name }}</div>{% endif %}
+      </div>
+      {% endif %}
       <div class="object-description object-description-spacer" aria-hidden="true"></div>
       <div class="object-meta object-meta-stats">
         <div class="object-stat-row"><span>Всего помещений:</span><b class="stat-badge stat-badge-white">{{ stats.premises }}</b></div>

@@ -1870,6 +1870,8 @@ def object_new():
         project = Project(
             name=form.name.data.strip(),
             address=form.address.data.strip() if form.address.data else None,
+            technical_customer=form.technical_customer.data.strip() if form.technical_customer.data else None,
+            developer_name=form.developer_name.data.strip() if form.developer_name.data else None,
             has_apartments=bool(form.has_apartments.data),
             has_commercial=bool(form.has_commercial.data),
             has_storerooms=False,
@@ -1898,6 +1900,8 @@ def object_edit(project_id: int):
             return render_template("object_form.html", form=form, form_title="Редактировать объект", submit_label="Сохранить")
         project.name = form.name.data.strip()
         project.address = form.address.data.strip() if form.address.data else None
+        project.technical_customer = form.technical_customer.data.strip() if form.technical_customer.data else None
+        project.developer_name = form.developer_name.data.strip() if form.developer_name.data else None
         project.has_apartments = bool(form.has_apartments.data)
         project.has_commercial = bool(form.has_commercial.data)
         project.has_storerooms = False

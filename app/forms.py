@@ -30,6 +30,8 @@ class UploadExcelForm(FlaskForm):
 class ProjectForm(FlaskForm):
     name = StringField("Название объекта", validators=[DataRequired(), Length(max=180)])
     address = StringField("Адрес", validators=[Optional(), Length(max=255)])
+    technical_customer = StringField("Тех.заказчик", validators=[Optional(), Length(max=255)])
+    developer_name = StringField("СЗ", validators=[Optional(), Length(max=255)])
     description = TextAreaField("Описание", validators=[Optional(), Length(max=2000)])
     google_sheet_id = StringField("Google Sheet ID", validators=[Optional(), Length(max=255)])
     has_apartments = BooleanField("Квартиры", default=True)
