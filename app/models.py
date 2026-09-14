@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import json
 import re
 from flask_login import UserMixin
+from sqlalchemy.dialects import mysql
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from app.time_utils import utc_now
@@ -740,7 +741,7 @@ class SyncLog(db.Model):
     error_message = db.Column(db.Text, nullable=True)
     rolled_back_at = db.Column(db.DateTime, nullable=True)
     rollback_note = db.Column(db.Text, nullable=True)
-    rollback_data = db.Column(db.Text, nullable=True)
+    rollback_data = db.Column(db.Text().with_variant(mysql.LONGTEXT(), "mysql", "mariadb"), nullable=True)
 
     project = db.relationship("Project")
 

@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import json
 import unittest
 
+from sqlalchemy.dialects import mysql
+
 from config import Config
 from app import create_app, db
 from app.models import Apartment, ChangeLog, Project, SyncConflict, SyncLog, Task, WorkPoint
@@ -65,6 +67,11 @@ class SyncRollbackContractsTests(unittest.TestCase):
         raw_payload.encode("ascii")
         self.assertEqual(payload["apartments"][0]["owner_name"], "Владимир Худовердиев")
         self.assertEqual(payload["tasks"][0]["description"], "Русское замечание")
+
+    def test_sync_log_rollback_data_uses_longtext_on_mysql(self):
+        column_type = SyncLog.__table__.c.rollback_data.type.compile(dialect=mysql.dialect())
+
+        self.assertEqual(column_type.upper(), "LONGTEXT")
 
     def test_deserialize_value_restores_dates_datetimes_and_handles_bad_values_safely(self):
         self.assertEqual(_deserialize_value("deadline_date", "2026-07-29"), datetime(2026, 7, 29).date())

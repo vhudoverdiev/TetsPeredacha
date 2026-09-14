@@ -444,7 +444,10 @@ def create_app(config_class=Config):
                 if "rollback_note" not in sync_log_columns:
                     db.session.execute(text("ALTER TABLE sync_logs ADD COLUMN rollback_note TEXT"))
                 if "rollback_data" not in sync_log_columns:
-                    db.session.execute(text("ALTER TABLE sync_logs ADD COLUMN rollback_data TEXT"))
+                    rollback_data_type = "LONGTEXT" if _is_mysql_database_uri(uri) else "TEXT"
+                    db.session.execute(text(f"ALTER TABLE sync_logs ADD COLUMN rollback_data {rollback_data_type}"))
+                elif _is_mysql_database_uri(uri):
+                    db.session.execute(text("ALTER TABLE sync_logs MODIFY COLUMN rollback_data LONGTEXT"))
                 db.session.commit()
                 # Для старых баз: если объект один, привязываем прежние записи журнала к нему.
                 first_project_id = db.session.execute(text("SELECT id FROM projects ORDER BY id ASC LIMIT 1")).scalar()
