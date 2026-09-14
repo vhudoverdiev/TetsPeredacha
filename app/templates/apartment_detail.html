@@ -4,7 +4,7 @@
 <div class="apartment-detail-page" data-ajax-pagination-page="apartment-history">
 {% set status_labels = {'not_started': 'не выполнено', 'done': 'выполнено', 'finishers': 'чистовики', 'contractor': 'подрядчик', 'guarantee': 'гарантия', 'concession': 'отступные', 'problem': 'проблема'} %}
 {% set status_classes = {'not_started': 'status-pill-muted', 'done': 'status-pill-success', 'finishers': 'status-pill-info', 'contractor': 'status-pill-warning', 'guarantee': 'status-pill-primary', 'concession': 'status-pill-muted', 'problem': 'status-pill-danger'} %}
-{% set field_labels = {'status': 'Статус', 'comment': 'Комментарий', 'description': 'Текст замечания', 'responsible_id': 'Исполнитель', 'planned_date': 'Плановая дата', 'is_missing_in_latest_sync': 'Отсутствует в последней синхронизации'} %}
+{% set field_labels = {'status': 'Статус', 'comment': 'Комментарий', 'description': 'Текст замечания', 'responsible_id': 'Исполнитель', 'planned_date': 'Плановая дата', 'is_missing_in_latest_sync': 'Отсутствует в последней синхронизации', 'owner_name': 'ФИО собственника', 'phone': 'Номер телефона', 'finishing_type': 'Отделка', 'apartment_mode': 'Режим'} %}
 
 <div class="page-head apartment-detail-head">
   <div>
@@ -51,6 +51,39 @@
               {% else %}<span class="status-pill status-pill-warning">не принята</span>{% endif %}
             </b>
           </div>
+          {% if current_user.role != 'viewer' %}
+          <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="apartment-inspection-status-label" for="apartment-owner-{{ apartment.id }}">Редактировать данные</label>
+            <div class="apartment-details-edit-grid">
+              <label>
+                <span>ФИО собственника</span>
+                <input class="form-control form-control-sm" id="apartment-owner-{{ apartment.id }}" name="owner_name" type="text" value="{{ row.owner_names|join('\n') if row.owner_names else '' }}" maxlength="255" autocomplete="name">
+              </label>
+              <label>
+                <span>Номер телефона</span>
+                <input class="form-control form-control-sm" name="phone" type="text" value="{{ row.phones|join('\n') if row.phones else '' }}" maxlength="255" autocomplete="tel">
+              </label>
+              {% if apartment.premise_type != 'commercial' %}
+              <label>
+                <span>Отделка</span>
+                <input class="form-control form-control-sm" name="finishing_type" type="text" value="{{ apartment.finishing_type or '' }}" maxlength="255">
+              </label>
+              {% else %}
+              <input type="hidden" name="finishing_type" value="{{ apartment.finishing_type or '' }}">
+              {% endif %}
+              <label>
+                <span>Режим</span>
+                <select class="form-select form-select-sm" name="mode">
+                  <option value="not_accepted" {% if row.mode == 'не принята' %}selected{% endif %}>Не принята</option>
+                  <option value="app" {% if row.mode == 'АПП' %}selected{% endif %}>АПП</option>
+                  <option value="unsold" {% if row.mode == 'не продана' %}selected{% endif %}>Не продана</option>
+                </select>
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm" type="submit">Сохранить данные</button>
+          </form>
+          {% endif %}
           {% if row.inspection_date %}
           <div class="apartment-data-row">
             <span>Осмотр</span>

@@ -250,7 +250,7 @@ SECTION_LOCK_CHOICES = [
         "endpoints": {
             "main.apartments", "main.apartments_export", "main.apartment_detail", "main.update_apartment_po_status",
             "main.update_apartment_inspection_status", "main.update_apartment_inspection_date", "main.update_apartment_inspection_note",
-            "main.update_apartment_comment", "main.update_apartment_avr_status",
+            "main.update_apartment_comment", "main.update_apartment_avr_status", "main.update_apartment_details",
         },
     },
     {"key": "avr", "label": "АВР", "icon": "bi-file-earmark-check", "endpoints": {"main.avr"}},
@@ -2109,6 +2109,7 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
         "main.update_apartment_inspection_note",
         "main.update_apartment_comment",
         "main.update_apartment_avr_status",
+        "main.update_apartment_details",
     }
     if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
         allowed.update({
@@ -7937,6 +7938,13 @@ def _apartment_group_mode(apartments: list[Apartment]) -> str:
     return "не принята"
 
 
+APARTMENT_DETAIL_MODE_LABELS = {
+    "not_accepted": "не принята",
+    "app": "АПП",
+    "unsold": "не продана",
+}
+
+
 def _is_unsold_apartment(apartment: Apartment) -> bool:
     return is_apartment_unsold(apartment)
 
@@ -8925,6 +8933,62 @@ def update_apartment_po_status(apartment_id: int):
         })
     flash("Внутренний статус обновлён", "success")
     return redirect(request.referrer or url_for("main.apartments"))
+
+
+@bp.route("/apartments/<int:apartment_id>/details", methods=["POST"])
+@login_required
+def update_apartment_details(apartment_id: int):
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+    if current_user.role == "viewer":
+        abort(403)
+    apartment = db.session.get(Apartment, apartment_id) or abort(404)
+    if apartment.project_id != project.id:
+        abort(404)
+
+    group_key = _apartment_group_key(apartment)
+    group = [
+        item
+        for item in Apartment.query.filter(Apartment.project_id == project.id).all()
+        if _is_visible_apartment_row(item) and _apartment_group_key(item) == group_key
+    ]
+    target_group = group or [apartment]
+    old_overview = _build_apartment_overview(target_group, include_activity=False)
+    old_owner = "\n".join(old_overview.get("owner_names") or [])
+    old_phone = "\n".join(old_overview.get("phones") or [])
+    old_finish = str(_pick_apartment_representative(target_group).finishing_type or "").strip()
+    old_mode = old_overview.get("mode") or ""
+
+    owner_name = str(request.form.get("owner_name") or "").strip()
+    phone = str(request.form.get("phone") or "").strip()
+    finishing_type = str(request.form.get("finishing_type") or "").strip()
+    mode_value = str(request.form.get("mode") or "").strip()
+    if mode_value not in APARTMENT_DETAIL_MODE_LABELS:
+        abort(400)
+    if any(len(value) > 255 for value in (owner_name, phone, finishing_type)):
+        flash("ФИО, телефон и отделка не должны превышать 255 символов.", "warning")
+        return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+
+    for item in target_group:
+        item.owner_name = owner_name or None
+        item.phone = phone or None
+        item.finishing_type = finishing_type or None
+        item.is_unsold = mode_value == "unsold"
+        item.is_app_mode = mode_value == "app"
+
+    new_mode = APARTMENT_DETAIL_MODE_LABELS[mode_value]
+    history_changes = [
+        _log_apartment_field_change(target_group, "owner_name", old_owner, owner_name),
+        _log_apartment_field_change(target_group, "phone", old_phone, phone),
+        _log_apartment_field_change(target_group, "finishing_type", old_finish, finishing_type),
+        _log_apartment_field_change(target_group, "apartment_mode", old_mode, new_mode),
+    ]
+    db.session.commit()
+
+    changed_count = sum(1 for item in history_changes if item)
+    flash("Данные помещения обновлены." if changed_count else "Данные помещения не изменились.", "success")
+    return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
 
 @bp.route("/apartments/<int:apartment_id>/inspection-status", methods=["POST"])
