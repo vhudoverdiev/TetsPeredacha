@@ -39,6 +39,14 @@ from app.services.uid_service import (
 from app.time_utils import utc_now
 
 
+def _asc_nulls_last(column):
+    return column.is_(None).asc(), column.asc()
+
+
+def _desc_nulls_last(column):
+    return column.is_(None).asc(), column.desc()
+
+
 APARTMENT_HEADERS = {
     "apartment_number": ["квартира", "кв", "помещение", "номер квартиры"],
     "construction_number": ["строительный", "строит", "стр. №", "строительный номер"],
@@ -2149,19 +2157,19 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
     elif sort == "owner":
         query = query.order_by(*ordered(done_last, Apartment.owner_name.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
     elif sort == "finishing_type":
-        query = query.order_by(*ordered(done_last, Apartment.finishing_type.asc().nullslast(), Apartment.apartment_number.asc()))
+        query = query.order_by(*ordered(done_last, *_asc_nulls_last(Apartment.finishing_type), Apartment.apartment_number.asc()))
     elif sort == "point":
         query = query.order_by(*ordered(done_last, WorkPoint.point_number.asc(), Apartment.apartment_number.asc()))
     elif sort == "status":
-        query = query.order_by(*ordered(done_last, deadline_rank.asc(), Apartment.app_deadline_date.asc().nullslast(), Task.status.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
+        query = query.order_by(*ordered(done_last, deadline_rank.asc(), *_asc_nulls_last(Apartment.app_deadline_date), Task.status.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
     elif sort == "mode":
         query = query.order_by(*ordered(done_last, Apartment.is_app_mode.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
     elif sort == "priority":
         query = query.order_by(*ordered(done_last, Task.priority.desc(), Task.updated_at.desc()))
     elif sort == "planned_old":
-        query = query.order_by(*ordered(done_last, Task.planned_date.asc().nullslast(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
+        query = query.order_by(*ordered(done_last, *_asc_nulls_last(Task.planned_date), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
     elif sort == "planned_new":
-        query = query.order_by(*ordered(done_last, Task.planned_date.desc().nullslast(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
+        query = query.order_by(*ordered(done_last, *_desc_nulls_last(Task.planned_date), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()))
     elif sort == "done_first":
         query = query.order_by(*ordered(done_last, Task.updated_at.desc()))
     else:

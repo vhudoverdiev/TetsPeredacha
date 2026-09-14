@@ -155,6 +155,10 @@ from app.two_factor import generate_totp_secret, provisioning_uri, qr_svg_data_u
 bp = Blueprint("main", __name__)
 
 
+def _asc_nulls_last(column):
+    return column.is_(None).asc(), column.asc()
+
+
 @bp.route("/service-worker.js")
 def service_worker():
     response = current_app.send_static_file("service-worker.js")
@@ -3592,7 +3596,7 @@ def _active_users_for_project(project_id: int | None = None, roles=None) -> list
     query = User.query.filter(User.is_active.is_(True))
     if roles:
         query = query.filter(User.role.in_(roles))
-    users = query.order_by(User.full_name.asc().nullslast(), User.username.asc()).all()
+    users = query.order_by(*_asc_nulls_last(User.full_name), User.username.asc()).all()
     if project_id is None:
         return users
     return [user for user in users if user.can_access_project(project_id)]
@@ -4063,11 +4067,11 @@ def assignments():
     overdue_total = issued_query_builder.filter(*overdue_filter).count()
     if issued_filter == "overdue":
         issued_query_builder = issued_query_builder.filter(*overdue_filter)
-        issued_order = (Task.planned_date.asc().nullslast(), Task.responsible_id.asc(), Task.id.asc())
+        issued_order = (*_asc_nulls_last(Task.planned_date), Task.responsible_id.asc(), Task.id.asc())
     else:
         if issued_filter_date is not None:
             issued_query_builder = issued_query_builder.filter(Task.planned_date == issued_filter_date)
-        issued_order = (Task.responsible_id.asc(), Task.is_done.asc(), Task.planned_date.asc().nullslast(), Task.id.asc())
+        issued_order = (Task.responsible_id.asc(), Task.is_done.asc(), *_asc_nulls_last(Task.planned_date), Task.id.asc())
     issued_query = (
         issued_query_builder
         .order_by(*issued_order)
@@ -4316,11 +4320,11 @@ def assignment_issued_employee_export(user_id: int):
             Task.status != STATUS_DONE,
             Task.is_done.is_(False),
         )
-        order_by = (Task.planned_date.asc().nullslast(), Task.id.asc())
+        order_by = (*_asc_nulls_last(Task.planned_date), Task.id.asc())
     else:
         if issued_filter_date is not None:
             query = query.filter(Task.planned_date == issued_filter_date)
-        order_by = (Task.is_done.asc(), Task.planned_date.asc().nullslast(), Task.id.asc())
+        order_by = (Task.is_done.asc(), *_asc_nulls_last(Task.planned_date), Task.id.asc())
 
     tasks = (
         query.order_by(*order_by)

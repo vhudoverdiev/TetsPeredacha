@@ -93,6 +93,23 @@ def _configure_sqlite_connection_pragmas(app) -> None:
             cursor.close()
 
 
+def _is_mysql_database_uri(uri: str) -> bool:
+    return uri.startswith("mysql:") or uri.startswith("mysql+")
+
+
+def _ensure_mysql_utf8mb4() -> None:
+    bind = db.engine
+    if bind.dialect.name not in {"mysql", "mariadb"}:
+        return
+
+    inspector = inspect(bind)
+    db.session.execute(text("ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
+    for table_name in inspector.get_table_names():
+        quoted_table = bind.dialect.identifier_preparer.quote(table_name)
+        db.session.execute(text(f"ALTER TABLE {quoted_table} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"))
+    db.session.commit()
+
+
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
@@ -237,6 +254,11 @@ def create_app(config_class=Config):
             _configure_sqlite_connection_pragmas(app)
             # create_all is idempotent for SQLite and ensures new tables appear.
             db.create_all()
+        elif _is_mysql_database_uri(uri):
+            db.create_all()
+            _ensure_mysql_utf8mb4()
+
+        if uri.startswith("sqlite:") or _is_mysql_database_uri(uri):
             inspector = inspect(db.engine)
             if "projects" in inspector.get_table_names():
                 project_columns = {column["name"] for column in inspector.get_columns("projects")}
