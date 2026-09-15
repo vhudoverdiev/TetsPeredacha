@@ -55462,19 +55462,28 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-directory-details {
   display: grid;
-  gap: .25rem;
-  margin-top: .55rem;
-  color: var(--crm-muted);
-  font-size: .86rem;
-  line-height: 1.35;
+  gap: .45rem;
+  margin-top: .7rem;
 }
 
-.contractor-directory-details span {
+.contractor-directory-detail-row {
+  display: grid;
+  gap: .1rem;
+  min-width: 0;
+  color: var(--crm-text);
+  font-size: .9rem;
+  line-height: 1.4;
+}
+
+.contractor-directory-detail-row span {
   overflow-wrap: anywhere;
 }
 
-.contractor-directory-details strong {
+.contractor-directory-detail-row strong {
   color: var(--crm-title);
+  font-size: .78rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
 }
 
 .contractor-directory-points {

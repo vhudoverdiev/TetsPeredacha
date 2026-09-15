@@ -3494,6 +3494,7 @@ def contractors_excel_selection():
         export_args=export_args,
         back_url=back_url,
         premise_options=_premise_options_from_tasks(tasks),
+        can_export_contractor_claim=selected_contractor is not None,
         today=date.today(),
     )
 
@@ -3558,6 +3559,9 @@ def contractors_export():
     export_format = str(query_args.pop("format", "excel") or "excel").strip().lower()
     query_args["sort"] = "apartment"
     selected_contractor = _project_contractor(project.id, request.args.get("contractor_id", type=int))
+    if export_format == "docx" and selected_contractor is None:
+        flash("Выберите подрядчика для формирования претензии Word.", "warning")
+        return redirect(url_for("main.contractors_list", **query_args))
     tasks = _filter_tasks_for_contractor(_export_tasks_from_request(query_args, project.id), selected_contractor).all()
     contractor_label = selected_contractor.name if selected_contractor else "Все подрядчики"
     filename_prefix = f"{project.name}_Подрядчики"

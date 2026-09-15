@@ -39,14 +39,10 @@
       <div class="object-icon"><i class="bi bi-buildings"></i></div>
       <h2 class="object-title">{{ project.name }}</h2>
       <div class="object-address"><i class="bi bi-geo-alt"></i>{{ project.address or 'Адрес не указан' }}</div>
-      {% if project.technical_customer or project.developer_name or project.inn_kpp or project.ogrn or project.legal_address or project.developer_director or project.developer_representative or project.developer_representative_phone %}
+      {% if project.technical_customer or project.developer_name or project.developer_representative or project.developer_representative_phone %}
       <div class="object-description">
         {% if project.technical_customer %}<div><strong>Тех.заказчик:</strong> {{ project.technical_customer }}</div>{% endif %}
         {% if project.developer_name %}<div><strong>СЗ:</strong> {{ project.developer_name }}</div>{% endif %}
-        {% if project.inn_kpp %}<div><strong>ИНН/КПП:</strong> {{ project.inn_kpp }}</div>{% endif %}
-        {% if project.ogrn %}<div><strong>ОГРН:</strong> {{ project.ogrn }}</div>{% endif %}
-        {% if project.legal_address %}<div><strong>Юр. адрес:</strong> {{ project.legal_address }}</div>{% endif %}
-        {% if project.developer_director %}<div><strong>Директор СЗ:</strong> {{ project.developer_director }}</div>{% endif %}
         {% if project.developer_representative %}<div><strong>Представитель Застройщика:</strong> {{ project.developer_representative }}</div>{% endif %}
         {% if project.developer_representative_phone %}<div><strong>Телефон представителя:</strong> {{ project.developer_representative_phone }}</div>{% endif %}
       </div>
