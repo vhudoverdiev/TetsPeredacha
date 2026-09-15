@@ -268,6 +268,18 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN technical_customer VARCHAR(255)"))
                 if "developer_name" not in project_columns:
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN developer_name VARCHAR(255)"))
+                if "inn_kpp" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN inn_kpp VARCHAR(80)"))
+                if "ogrn" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN ogrn VARCHAR(80)"))
+                if "legal_address" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN legal_address VARCHAR(255)"))
+                if "developer_director" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN developer_director VARCHAR(255)"))
+                if "developer_representative" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN developer_representative VARCHAR(255)"))
+                if "developer_representative_phone" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN developer_representative_phone VARCHAR(80)"))
                 if "has_apartments" not in project_columns:
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN has_apartments BOOLEAN NOT NULL DEFAULT 1"))
                 if "has_commercial" not in project_columns:
@@ -280,6 +292,10 @@ def create_app(config_class=Config):
                 added_project_access_mode = False
                 if "password_plain" not in user_columns:
                     db.session.execute(text("ALTER TABLE users ADD COLUMN password_plain VARCHAR(255)"))
+                if "email" not in user_columns:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN email VARCHAR(180)"))
+                if "phone" not in user_columns:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN phone VARCHAR(80)"))
                 if "project_id" not in user_columns:
                     db.session.execute(text("ALTER TABLE users ADD COLUMN project_id INTEGER"))
                 if "all_projects_access" not in user_columns:

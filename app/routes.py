@@ -1872,6 +1872,12 @@ def object_new():
             address=form.address.data.strip() if form.address.data else None,
             technical_customer=form.technical_customer.data.strip() if form.technical_customer.data else None,
             developer_name=form.developer_name.data.strip() if form.developer_name.data else None,
+            inn_kpp=form.inn_kpp.data.strip() if form.inn_kpp.data else None,
+            ogrn=form.ogrn.data.strip() if form.ogrn.data else None,
+            legal_address=form.legal_address.data.strip() if form.legal_address.data else None,
+            developer_director=form.developer_director.data.strip() if form.developer_director.data else None,
+            developer_representative=form.developer_representative.data.strip() if form.developer_representative.data else None,
+            developer_representative_phone=form.developer_representative_phone.data.strip() if form.developer_representative_phone.data else None,
             has_apartments=bool(form.has_apartments.data),
             has_commercial=bool(form.has_commercial.data),
             has_storerooms=False,
@@ -1902,6 +1908,12 @@ def object_edit(project_id: int):
         project.address = form.address.data.strip() if form.address.data else None
         project.technical_customer = form.technical_customer.data.strip() if form.technical_customer.data else None
         project.developer_name = form.developer_name.data.strip() if form.developer_name.data else None
+        project.inn_kpp = form.inn_kpp.data.strip() if form.inn_kpp.data else None
+        project.ogrn = form.ogrn.data.strip() if form.ogrn.data else None
+        project.legal_address = form.legal_address.data.strip() if form.legal_address.data else None
+        project.developer_director = form.developer_director.data.strip() if form.developer_director.data else None
+        project.developer_representative = form.developer_representative.data.strip() if form.developer_representative.data else None
+        project.developer_representative_phone = form.developer_representative_phone.data.strip() if form.developer_representative_phone.data else None
         project.has_apartments = bool(form.has_apartments.data)
         project.has_commercial = bool(form.has_commercial.data)
         project.has_storerooms = False
@@ -10154,6 +10166,20 @@ def account():
                 session.pop("account_2fa_pending_secret", None)
                 pending_secret = None
                 flash("Двухэтапная аутентификация отключена.", "success")
+        elif action == "update_contacts":
+            email = str(request.form.get("email") or "").strip()
+            phone = str(request.form.get("phone") or "").strip()
+            if len(email) > 180:
+                flash("Email не должен превышать 180 символов.", "warning")
+            elif email and ("@" not in email or "." not in email.rsplit("@", 1)[-1]):
+                flash("Укажите корректный email.", "warning")
+            elif len(phone) > 80:
+                flash("Номер телефона не должен превышать 80 символов.", "warning")
+            else:
+                user.email = email or None
+                user.phone = phone or None
+                db.session.commit()
+                flash("Контакты сохранены.", "success")
         return redirect(url_for("main.account"))
 
     if pending_secret:
@@ -10192,6 +10218,8 @@ def users():
             user = User(
                 username=form.username.data.strip(),
                 full_name=form.full_name.data.strip() if form.full_name.data else None,
+                email=form.email.data.strip() if form.email.data else None,
+                phone=form.phone.data.strip() if form.phone.data else None,
                 role=form.role.data,
                 is_active=True,
             )
