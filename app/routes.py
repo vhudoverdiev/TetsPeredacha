@@ -125,6 +125,7 @@ from app.services.task_service import (
     detect_search_mode,
     get_setting,
     is_apartment_unsold,
+    is_unsold_owner_name,
     looks_like_apartment_identifier,
     parse_multi_premise_search,
     parse_date,
@@ -8354,6 +8355,8 @@ def _apartment_group_contact_values(apartments: list[Apartment], field_name: str
         raw_value = str(getattr(apartment, field_name, "") or "")
         for part in raw_value.splitlines():
             value = part.strip()
+            if field_name == "owner_name" and is_unsold_owner_name(value):
+                continue
             normalized = value.casefold()
             if value and normalized not in seen:
                 seen.add(normalized)
@@ -9002,8 +9005,11 @@ def update_apartment_details(apartment_id: int):
         flash("ФИО, телефон и отделка не должны превышать 255 символов.", "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
+    if mode_value != "unsold" and is_unsold_owner_name(owner_name):
+        owner_name = ""
+
     for item in target_group:
-        item.owner_name = owner_name or None
+        item.owner_name = None if mode_value == "unsold" else (owner_name or None)
         item.phone = phone or None
         item.finishing_type = finishing_type or None
         item.is_unsold = mode_value == "unsold"

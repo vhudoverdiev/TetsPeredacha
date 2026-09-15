@@ -25,6 +25,14 @@ class ApartmentCardContactsTests(unittest.TestCase):
             ["+7 900 000-00-01", "+7 900 000-00-02"],
         )
 
+    def test_unsold_marker_is_not_shown_as_owner_name(self):
+        apartments = [
+            SimpleNamespace(owner_name="не продано", phone=""),
+            SimpleNamespace(owner_name="Не продана", phone=""),
+        ]
+
+        self.assertEqual(_apartment_group_contact_values(apartments, "owner_name"), [])
+
     def test_card_renders_owner_and_phone_without_mobile_guard(self):
         self.assertIn("Собственник: {{ row.owner_names|join(', ') if row.owner_names else '—' }}", TEMPLATE)
         self.assertIn("Телефон: {{ row.phones|join(', ') if row.phones else '—' }}", TEMPLATE)

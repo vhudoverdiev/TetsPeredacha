@@ -203,6 +203,28 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
 
         self.assertEqual(_apartment_inspection_status([unsold]), "не продана")
 
+    def test_unsold_marker_is_cleared_when_mode_changes_to_not_accepted(self):
+        self.apartment.owner_name = "не продано"
+        self.apartment.is_unsold = True
+        db.session.commit()
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/details",
+            data={
+                "owner_name": "не продано",
+                "phone": "",
+                "finishing_type": self.apartment.finishing_type or "",
+                "mode": "not_accepted",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.apartment)
+        self.assertFalse(self.apartment.is_unsold)
+        self.assertFalse(self.apartment.is_app_mode)
+        self.assertIsNone(self.apartment.owner_name)
+
     def test_work_report_includes_all_terminal_workflow_statuses(self):
         response = self.client.get("/report")
 

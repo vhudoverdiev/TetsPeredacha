@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = (ROOT / "app" / "templates" / "apartment_detail.html").read_text(encoding="utf-8")
+STYLE = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
 
 
 class ApartmentDetailContactsTests(unittest.TestCase):
@@ -12,6 +13,18 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("Номер телефона", TEMPLATE)
         self.assertIn("row.owner_names|join(', ') if row.owner_names else '—'", TEMPLATE)
         self.assertIn("row.phones|join(', ') if row.phones else '—'", TEMPLATE)
+
+    def test_inspection_reset_hover_matches_save_button_green(self):
+        start = STYLE.index(".apartment-inspection-reset-btn:hover")
+        end = STYLE.index(".apartment-detail-page .apartment-task-item:hover", start)
+        rule = STYLE[start:end]
+
+        self.assertIn(
+            "background: linear-gradient(180deg, var(--peredacha-action-green) 0%, var(--peredacha-action-green-hover) 100%) !important;",
+            rule,
+        )
+        self.assertIn("border-color: var(--peredacha-action-green-hover) !important;", rule)
+        self.assertNotIn("var(--peredacha-action-green-dark)", rule)
 
 
 if __name__ == "__main__":

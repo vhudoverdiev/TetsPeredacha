@@ -29384,9 +29384,10 @@ body:has(.report-grid) .report-summary-actions .btn.btn-outline-success:focus * 
 
 .apartment-inspection-reset-btn:hover,
 .apartment-inspection-reset-btn:focus,
-.apartment-inspection-reset-btn:focus-visible {
-  background: linear-gradient(180deg, var(--peredacha-action-green-hover) 0%, var(--peredacha-action-green-dark) 100%) !important;
-  border-color: var(--peredacha-action-green-dark) !important;
+.apartment-inspection-reset-btn:focus-visible,
+.apartment-inspection-reset-btn:active {
+  background: linear-gradient(180deg, var(--peredacha-action-green) 0%, var(--peredacha-action-green-hover) 100%) !important;
+  border-color: var(--peredacha-action-green-hover) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   box-shadow: 0 10px 22px var(--peredacha-action-green-shadow) !important;
