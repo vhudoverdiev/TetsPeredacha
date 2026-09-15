@@ -21,6 +21,7 @@ from app.models import (
     WorkPoint,
 )
 from app.services.task_service import category_stats, dashboard_stats
+from app.routes import _apartment_inspection_status
 
 
 class TestConfig(Config):
@@ -147,6 +148,60 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
         self.assertIsNotNone(main_card)
         self.assertIn("<b>5</b>", main_card.group(0))
         self.assertIn("<b>2</b>", main_card.group(0))
+
+    def test_apartment_detail_mode_change_updates_dashboard_transfer_stats(self):
+        before = dashboard_stats(self.project.id)
+        self.assertEqual(before["accepted"], 0)
+        self.assertEqual(before["not_accepted"], 1)
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/details",
+            data={
+                "owner_name": self.apartment.owner_name or "",
+                "phone": self.apartment.phone or "",
+                "finishing_type": self.apartment.finishing_type or "",
+                "mode": "app",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.apartment)
+        self.assertTrue(self.apartment.is_app_mode)
+        self.assertFalse(self.apartment.is_unsold)
+
+        after = dashboard_stats(self.project.id)
+        self.assertEqual(after["accepted"], 1)
+        self.assertEqual(after["not_accepted"], 0)
+
+    def test_unsold_apartments_do_not_count_as_not_inspected_or_not_accepted(self):
+        unsold = Apartment(
+            project=self.project,
+            apartment_number="2",
+            owner_name="не продано",
+            is_unsold=True,
+            first_inspection_present=False,
+        )
+        db.session.add(unsold)
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+
+        self.assertEqual(stats["apartments"], 2)
+        self.assertEqual(stats["unsold"], 1)
+        self.assertEqual(stats["not_accepted"], 1)
+        self.assertEqual(stats["not_inspected"], 1)
+
+    def test_unsold_apartment_inspection_status_is_unsold_label(self):
+        unsold = Apartment(
+            project=self.project,
+            apartment_number="2",
+            owner_name="не продано",
+            is_unsold=True,
+            first_inspection_present=False,
+        )
+
+        self.assertEqual(_apartment_inspection_status([unsold]), "не продана")
 
     def test_work_report_includes_all_terminal_workflow_statuses(self):
         response = self.client.get("/report")

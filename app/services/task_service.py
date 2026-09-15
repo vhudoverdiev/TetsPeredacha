@@ -2334,8 +2334,9 @@ def dashboard_stats(
     unsold = unsold_apartment_count + unsold_commercial_count
     not_accepted = max(total_apartments - accepted - unsold, 0)
 
-    inspected = sum(1 for rows in grouped_rows.values() if _has_first_inspection(rows))
-    not_inspected = max(total_apartments - inspected, 0)
+    inspection_rows = [rows for rows in grouped_rows.values() if not _group_is_unsold(rows)]
+    inspected = sum(1 for rows in inspection_rows if _has_first_inspection(rows))
+    not_inspected = max(len(inspection_rows) - inspected, 0)
     white = 0
     clean = 0
     unknown_finishing = 0

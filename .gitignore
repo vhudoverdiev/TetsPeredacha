@@ -45,5 +45,3 @@ tmp/
 # Visual regression generated artifacts
 tests/e2e_visual/current/
 tests/e2e_visual/diff/
-
-temp_preview/

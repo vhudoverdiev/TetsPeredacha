@@ -15765,6 +15765,12 @@ body:has(.documents-standalone-layout)::-webkit-scrollbar,
   color: #8dd62c;
   margin-top: .08rem;
 }
+.apartment-inspection-static-note span {
+  min-width: 0;
+}
+.apartment-inspection-static-note b {
+  white-space: nowrap;
+}
 .apartment-inspection-status-label {
   display: block;
   margin-bottom: .45rem;
@@ -29334,28 +29340,56 @@ body:has(.report-grid) .report-summary-actions .btn.btn-outline-success:focus * 
 }
 
 .apartment-details-edit-form {
-  border: 1px solid rgba(121, 191, 37, .18);
-  border-radius: 1rem;
-  padding: .9rem;
-}
-
-.apartment-details-edit-grid {
   display: grid;
   gap: .65rem;
-  margin-bottom: .8rem;
+  margin: 0 0 1rem;
 }
 
-.apartment-details-edit-grid label {
-  display: grid;
-  gap: .25rem;
+.apartment-detail-page .apartment-data-row.apartment-data-edit-row {
+  background: #ffffff !important;
+  border-color: rgba(121, 191, 37, .2);
 }
 
-.apartment-details-edit-grid span {
+.apartment-data-edit-row label {
+  min-width: 0;
+  margin: 0;
   color: var(--crm-muted);
-  font-size: .76rem;
+  font-size: .78rem;
   font-weight: 850;
-  letter-spacing: .03em;
   text-transform: uppercase;
+}
+
+.apartment-data-edit-row .form-control,
+.apartment-data-edit-row .form-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.65rem;
+  border-color: rgba(121, 191, 37, .28);
+  border-radius: .75rem;
+  background-color: #ffffff;
+  color: var(--crm-title);
+  font-weight: 700;
+}
+
+.apartment-data-edit-row .form-control:focus,
+.apartment-data-edit-row .form-select:focus {
+  border-color: var(--peredacha-action-green);
+  box-shadow: 0 0 0 .18rem rgba(121, 191, 37, .16);
+}
+
+.apartment-details-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.apartment-inspection-reset-btn:hover,
+.apartment-inspection-reset-btn:focus,
+.apartment-inspection-reset-btn:focus-visible {
+  background: linear-gradient(180deg, var(--peredacha-action-green-hover) 0%, var(--peredacha-action-green-dark) 100%) !important;
+  border-color: var(--peredacha-action-green-dark) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 10px 22px var(--peredacha-action-green-shadow) !important;
 }
 
 .apartment-detail-page .apartment-task-item:hover {
@@ -45365,9 +45399,11 @@ body.auth-body .auth-shell .auth-footer .auth-footer-line-main {
   }
 
   html.mobile-viewport body.app-body .apartment-detail-page .apartment-data-row > span,
+  html.mobile-viewport body.app-body .apartment-detail-page .apartment-data-edit-row > label,
   html.mobile-viewport body.app-body .apartment-detail-page .apartment-data-note > span,
   html.mobile-viewport body.app-body .apartment-detail-page .apartment-data-po > span,
   html.adaptive-mobile-viewport body.app-body .apartment-detail-page .apartment-data-row > span,
+  html.adaptive-mobile-viewport body.app-body .apartment-detail-page .apartment-data-edit-row > label,
   html.adaptive-mobile-viewport body.app-body .apartment-detail-page .apartment-data-note > span,
   html.adaptive-mobile-viewport body.app-body .apartment-detail-page .apartment-data-po > span {
     color: #6d7669 !important;

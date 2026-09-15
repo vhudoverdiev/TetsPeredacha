@@ -29,6 +29,38 @@
             <span>Помещение</span>
             <b>{{ apartment.detail_label() }}</b>
           </div>
+          {% if current_user.role != 'viewer' %}
+          <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="apartment-data-row apartment-data-edit-row">
+              <label for="apartment-owner-{{ apartment.id }}">ФИО собственника</label>
+              <input class="form-control form-control-sm" id="apartment-owner-{{ apartment.id }}" name="owner_name" type="text" value="{{ row.owner_names|join('\n') if row.owner_names else '' }}" maxlength="255" autocomplete="name">
+            </div>
+            <div class="apartment-data-row apartment-data-edit-row">
+              <label for="apartment-phone-{{ apartment.id }}">Номер телефона</label>
+              <input class="form-control form-control-sm" id="apartment-phone-{{ apartment.id }}" name="phone" type="text" value="{{ row.phones|join('\n') if row.phones else '' }}" maxlength="255" autocomplete="tel">
+            </div>
+            {% if apartment.premise_type != 'commercial' %}
+            <div class="apartment-data-row apartment-data-edit-row">
+              <label for="apartment-finishing-{{ apartment.id }}">Отделка</label>
+              <input class="form-control form-control-sm" id="apartment-finishing-{{ apartment.id }}" name="finishing_type" type="text" value="{{ apartment.finishing_type or '' }}" maxlength="255">
+            </div>
+            {% else %}
+            <input type="hidden" name="finishing_type" value="{{ apartment.finishing_type or '' }}">
+            {% endif %}
+            <div class="apartment-data-row apartment-data-edit-row">
+              <label for="apartment-mode-{{ apartment.id }}">Режим</label>
+              <select class="form-select form-select-sm" id="apartment-mode-{{ apartment.id }}" name="mode">
+                <option value="not_accepted" {% if row.mode == 'не принята' %}selected{% endif %}>Не принята</option>
+                <option value="app" {% if row.mode == 'АПП' %}selected{% endif %}>АПП</option>
+                <option value="unsold" {% if row.mode == 'не продана' %}selected{% endif %}>Не продана</option>
+              </select>
+            </div>
+            <div class="apartment-details-edit-actions">
+              <button class="btn btn-primary btn-sm" type="submit">Сохранить данные</button>
+            </div>
+          </form>
+          {% else %}
           <div class="apartment-data-row">
             <span>ФИО собственника</span>
             <b>{{ row.owner_names|join(', ') if row.owner_names else '—' }}</b>
@@ -51,38 +83,6 @@
               {% else %}<span class="status-pill status-pill-warning">не принята</span>{% endif %}
             </b>
           </div>
-          {% if current_user.role != 'viewer' %}
-          <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="apartment-inspection-status-label" for="apartment-owner-{{ apartment.id }}">Редактировать данные</label>
-            <div class="apartment-details-edit-grid">
-              <label>
-                <span>ФИО собственника</span>
-                <input class="form-control form-control-sm" id="apartment-owner-{{ apartment.id }}" name="owner_name" type="text" value="{{ row.owner_names|join('\n') if row.owner_names else '' }}" maxlength="255" autocomplete="name">
-              </label>
-              <label>
-                <span>Номер телефона</span>
-                <input class="form-control form-control-sm" name="phone" type="text" value="{{ row.phones|join('\n') if row.phones else '' }}" maxlength="255" autocomplete="tel">
-              </label>
-              {% if apartment.premise_type != 'commercial' %}
-              <label>
-                <span>Отделка</span>
-                <input class="form-control form-control-sm" name="finishing_type" type="text" value="{{ apartment.finishing_type or '' }}" maxlength="255">
-              </label>
-              {% else %}
-              <input type="hidden" name="finishing_type" value="{{ apartment.finishing_type or '' }}">
-              {% endif %}
-              <label>
-                <span>Режим</span>
-                <select class="form-select form-select-sm" name="mode">
-                  <option value="not_accepted" {% if row.mode == 'не принята' %}selected{% endif %}>Не принята</option>
-                  <option value="app" {% if row.mode == 'АПП' %}selected{% endif %}>АПП</option>
-                  <option value="unsold" {% if row.mode == 'не продана' %}selected{% endif %}>Не продана</option>
-                </select>
-              </label>
-            </div>
-            <button class="btn btn-primary btn-sm" type="submit">Сохранить данные</button>
-          </form>
           {% endif %}
           {% if row.inspection_date %}
           <div class="apartment-data-row">
@@ -117,7 +117,7 @@
             <input type="hidden" name="inspection_status" value="not_was">
             <span class="apartment-inspection-status-label">Сбросить осмотр</span>
             <div class="apartment-inspection-date-actions">
-              <button class="btn btn-outline-success btn-sm" type="submit">Поставить «Не был»</button>
+              <button class="btn btn-outline-success btn-sm apartment-inspection-reset-btn" type="submit">Поставить «Не был»</button>
             </div>
           </form>
           {% elif can_reset_future_inspection_mobile %}
@@ -126,7 +126,7 @@
             <input type="hidden" name="inspection_status" value="not_was">
             <span class="apartment-inspection-status-label">Сбросить осмотр</span>
             <div class="apartment-inspection-date-actions">
-              <button class="btn btn-outline-success btn-sm" type="submit">Поставить «Не был»</button>
+              <button class="btn btn-outline-success btn-sm apartment-inspection-reset-btn" type="submit">Поставить «Не был»</button>
             </div>
           </form>
           {% endif %}
@@ -143,7 +143,7 @@
           </form>
           {% elif row.mode == 'не продана' %}
           <div class="apartment-inspection-static-note mb-3">
-            <i class="bi bi-info-circle"></i> Для непроданной квартиры осмотр фиксируется автоматически: <b>Был</b>.
+            <i class="bi bi-info-circle"></i><span>Для непроданной квартиры осмотр фиксируется автоматически: <b>не продана</b>.</span>
           </div>
           {% endif %}
 

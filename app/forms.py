@@ -62,7 +62,7 @@ class CommentForm(FlaskForm):
 
 class UserForm(FlaskForm):
     username = StringField("Логин", validators=[DataRequired(), Length(max=80)])
-    full_name = StringField("Имя", validators=[Optional(), Length(max=160)])
+    full_name = StringField("ФИО", validators=[Optional(), Length(max=160)])
     email = StringField("Email", validators=[Optional(), Length(max=180)])
     phone = StringField("Номер телефона", validators=[Optional(), Length(max=80)])
     password = PasswordField("Пароль", validators=[DataRequired(), Length(min=8)])

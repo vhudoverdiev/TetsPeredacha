@@ -107,6 +107,7 @@ from app.services.avr_document import (
     format_input_date,
     safe_avr_filename,
 )
+from app.services.contractor_claim_docx import build_contractor_claim_docx
 from app.services.excel_export import _excel_premise_label, _safe_filename_part, auto_adjust_row_heights, build_export_path, export_glass_measurements_excel, export_remark_tasks_excel, export_report_tasks_excel, export_simple_tasks_excel, export_source_excel_reconstructed, export_source_excel_with_strikes, export_tasks_to_excel, resolve_source_excel_with_strikes_path
 from app.services.pdf_export import export_assignment_worker_pdf, export_table_pdf, export_tasks_pdf
 from app.services.excel_import import inspect_remarks_workbook, mark_stale_running_sync_logs, preview_excel, save_upload, sync_excel_file
@@ -1026,7 +1027,17 @@ def inject_globals():
         "remark_text": remark_sentence_lines_html,
         "remark_plain_text": remark_plain_text_html,
         "glass_measurement_action_label": glass_measurement_action_label,
+        "short_user_display_name": short_user_display_name,
     }
+
+
+def short_user_display_name(user: User | None) -> str:
+    if not user:
+        return ""
+    full_name = str(user.full_name or "").strip()
+    if full_name:
+        return full_name.split()[0]
+    return str(user.username or "").strip()
 
 
 def selected_project() -> Project | None:
@@ -3543,6 +3554,7 @@ def contractors_export():
     if project is None:
         return redirect(url_for("main.objects"))
     query_args = request.args.copy()
+    export_format = str(query_args.pop("format", "excel") or "excel").strip().lower()
     query_args["sort"] = "apartment"
     selected_contractor = _project_contractor(project.id, request.args.get("contractor_id", type=int))
     tasks = _filter_tasks_for_contractor(_export_tasks_from_request(query_args, project.id), selected_contractor).all()
@@ -3550,6 +3562,14 @@ def contractors_export():
     filename_prefix = f"{project.name}_Подрядчики"
     if selected_contractor:
         filename_prefix = f"{filename_prefix}_{selected_contractor.name}"
+    if export_format == "docx":
+        path = build_contractor_claim_docx(
+            tasks,
+            project=project,
+            contractor=selected_contractor,
+            author=current_user,
+        )
+        return send_file(path, as_attachment=True, download_name=Path(path).name)
     title = f"Подрядчик: {contractor_label}" if selected_contractor else contractor_label
     path = export_remark_tasks_excel(tasks, filename_prefix, title=title)
     return send_file(path, as_attachment=True, download_name=Path(path).name)
@@ -8213,7 +8233,7 @@ def _group_app_deadline_status(apartments: list[Apartment]) -> str | None:
 
 def _apartment_inspection_status(apartments: list[Apartment]) -> str | None:
     if apartments and any(_is_unsold_apartment(apartment) for apartment in apartments):
-        return "Был"
+        return "не продана"
     values = [_apartment_inspection_value(apartment) for apartment in apartments]
     values = [value for value in values if value is not None]
     if values:
@@ -10167,15 +10187,19 @@ def account():
                 pending_secret = None
                 flash("Двухэтапная аутентификация отключена.", "success")
         elif action == "update_contacts":
+            full_name = str(request.form.get("full_name") or "").strip()
             email = str(request.form.get("email") or "").strip()
             phone = str(request.form.get("phone") or "").strip()
-            if len(email) > 180:
+            if len(full_name) > 160:
+                flash("ФИО не должно превышать 160 символов.", "warning")
+            elif len(email) > 180:
                 flash("Email не должен превышать 180 символов.", "warning")
             elif email and ("@" not in email or "." not in email.rsplit("@", 1)[-1]):
                 flash("Укажите корректный email.", "warning")
             elif len(phone) > 80:
                 flash("Номер телефона не должен превышать 80 символов.", "warning")
             else:
+                user.full_name = full_name or None
                 user.email = email or None
                 user.phone = phone or None
                 db.session.commit()
@@ -10296,14 +10320,14 @@ def user_update_name(user_id: int):
     full_name = str(request.form.get("full_name") or "").strip()
     if len(full_name) > 160:
         if wants_json:
-            return jsonify(ok=False, message="Имя не должно превышать 160 символов."), 400
-        flash("Имя не должно превышать 160 символов.", "danger")
+            return jsonify(ok=False, message="ФИО не должно превышать 160 символов."), 400
+        flash("ФИО не должно превышать 160 символов.", "danger")
         return redirect(url_for("main.users"))
     user.full_name = full_name or None
     db.session.commit()
     if wants_json:
-        return jsonify(ok=True, full_name=user.full_name or "", label=user.full_name or "—", message="Имя сохранено.")
-    flash("Имя пользователя обновлено.", "success")
+        return jsonify(ok=True, full_name=user.full_name or "", label=user.full_name or "—", message="ФИО сохранено.")
+    flash("ФИО пользователя обновлено.", "success")
     return redirect(url_for("main.users"))
 
 

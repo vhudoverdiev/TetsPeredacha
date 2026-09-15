@@ -20,7 +20,7 @@
         </div>
         <dl class="account-profile-list">
           <div><dt>Логин</dt><dd>{{ current_user.username }}</dd></div>
-          <div><dt>Имя</dt><dd>{{ current_user.full_name or '—' }}</dd></div>
+          <div><dt>ФИО</dt><dd>{{ current_user.full_name or '—' }}</dd></div>
           <div><dt>Email</dt><dd>{{ current_user.email or '—' }}</dd></div>
           <div><dt>Телефон</dt><dd>{{ current_user.phone or '—' }}</dd></div>
           <div><dt>Роль</dt><dd>{{ ROLE_LABELS.get(current_user.role, current_user.role) }}</dd></div>
@@ -29,6 +29,10 @@
         <form class="account-contact-form mb-4" method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="action" value="update_contacts">
+          <div class="mb-3">
+            <label class="form-label" for="accountFullName">ФИО</label>
+            <input class="form-control" id="accountFullName" name="full_name" type="text" value="{{ current_user.full_name or '' }}" maxlength="160" autocomplete="name">
+          </div>
           <div class="mb-3">
             <label class="form-label" for="accountEmail">Email</label>
             <input class="form-control" id="accountEmail" name="email" type="email" value="{{ current_user.email or '' }}" maxlength="180" autocomplete="email">

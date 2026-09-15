@@ -66,7 +66,7 @@
             <thead>
               <tr>
                 <th>Логин</th>
-                <th>Имя</th>
+                <th>ФИО</th>
                 <th>Роль</th>
                 <th>Объект</th>
                 <th>Пароль</th>
@@ -83,7 +83,7 @@
                   <form class="users-name-autosave" method="post" action="{{ url_for('main.user_update_name', user_id=user.id) }}" data-saved-value="{{ user.full_name or '' }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <span class="users-name-input-wrap">
-                      <input class="users-name-input" type="text" name="full_name" value="{{ user.full_name or '' }}" maxlength="160" placeholder="—" aria-label="Имя пользователя {{ user.username }}" {% if user.id in protected_user_ids %}readonly{% endif %}>
+                      <input class="users-name-input" type="text" name="full_name" value="{{ user.full_name or '' }}" maxlength="160" placeholder="—" aria-label="ФИО пользователя {{ user.username }}" {% if user.id in protected_user_ids %}readonly{% endif %}>
                       <i class="bi bi-pencil" aria-hidden="true"></i>
                     </span>
                   </form>
