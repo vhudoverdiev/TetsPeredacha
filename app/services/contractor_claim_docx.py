@@ -30,6 +30,11 @@ RUSSIAN_MONTHS = {
     11: "ноября",
     12: "декабря",
 }
+BODY_LEFT = 284
+BODY_RIGHT = -709
+BODY_FIRST_LINE = 424
+BODY_LINE = 360
+LINK_BLUE = "0000FF"
 
 
 def contractor_claim_filename(project: Project, contractor: Contractor | None) -> str:
@@ -100,36 +105,39 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph("Специализированный застройщик", bold=True, align="center", size=44, spacing_after=0),
         _paragraph(f"«{developer_name}»", bold=True, align="center", size=44, spacing_after=0),
         _paragraph(f"ИНН/КПП {project.inn_kpp or '—'}, ОГРН {project.ogrn or '—'}", align="center", size=20, spacing_after=0),
-        _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=120),
+        _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=0),
+        _border_line(),
         _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph("Претензия", bold=True, size=24, spacing_after=0),
+        _paragraph("", spacing_after=0, right=BODY_RIGHT),
+        _paragraph("Претензия", bold=True, align="center", size=22, spacing_after=0),
         _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", align="both", size=22, spacing_after=0, underline=True),
-        _paragraph(contractor_name, align="right", size=22, spacing_after=0),
-        _paragraph(contractor_address, align="right", size=22, spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph(_salutation(contractor), size=22, spacing_after=120),
-        _paragraph("", spacing_after=0),
-        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number), align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _paragraph(contractor_name, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph(contractor_address, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph("", align="left", right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph("", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph(_salutation(contractor), left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _deadline_paragraph(author_email),
-        _paragraph(_consequence_text(developer_name), align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _paragraph(_consequence_text(developer_name), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _email_notice_paragraph(contractor_email),
-        _paragraph("", spacing_after=0),
-        _paragraph("Приложение:", align="both", left=284, first_line=425, size=22, spacing_after=0),
-        _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=284, first_line=425, size=22, spacing_after=0),
-        _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=284, first_line=425, size=22, spacing_after=0),
-        _paragraph(representative or "—", align="both", left=284, first_line=425, size=22, spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0),
+        _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph("Приложение:", bold=True, align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph(representative or "—", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, spacing_after=0, line=BODY_LINE),
+        _paragraph("", align="both", right=BODY_RIGHT, spacing_after=0, line=BODY_LINE),
+        _paragraph("", align="both", spacing_after=0, line=BODY_LINE),
         _stamp_paragraph(),
-        _paragraph(director or _director_title(project), size=22, spacing_after=120),
-        _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0),
-        _paragraph(_executor_line(author), size=20, spacing_after=0),
-        _paragraph(author.email or "", size=20, spacing_after=120, color="0563C1", underline=True),
-        _paragraph("", spacing_after=120),
+        _paragraph(director or _director_title(project), bold=True, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph("", size=18, spacing_after=0, line=240),
+        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
+        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
+        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
+        _paragraph(_executor_line(author), align="center", left=4956, right=-992, first_line=708, size=18, spacing_after=0, line=240),
+        _paragraph(author.email or "", left=7788, right=-992, size=18, spacing_after=0, line=240, color=LINK_BLUE, underline=True),
+        _paragraph("", size=18, spacing_after=120),
     ]
     return parts
 
@@ -149,14 +157,16 @@ def _deadline_paragraph(author_email: str) -> str:
     return _paragraph_runs(
         [
             ("На основании изложенного, просим устранить проявившиеся недостатки в течение 3 рабочих дней с момента получения настоящей претензии и направить на электронный адрес: ", {}),
-            (email, {"color": "0563C1", "underline": True}),
+            (email, {"color": LINK_BLUE, "underline": True}),
             ("  информацию о результате выполненных Вами работ.", {}),
         ],
         align="both",
-        left=284,
-        first_line=425,
-        size=22,
+        left=BODY_LEFT,
+        right=BODY_RIGHT,
+        first_line=BODY_FIRST_LINE,
+        size=24,
         spacing_after=0,
+        line=BODY_LINE,
     )
 
 
@@ -165,13 +175,15 @@ def _email_notice_paragraph(contractor_email: str) -> str:
     return _paragraph_runs(
         [
             ("Направлено на адрес эл. почты: ", {}),
-            (email, {"color": "0563C1", "underline": True}),
+            (email, {"color": LINK_BLUE, "underline": True}),
         ],
         align="both",
-        left=284,
-        first_line=425,
-        size=22,
+        left=BODY_LEFT,
+        right=BODY_RIGHT,
+        first_line=BODY_FIRST_LINE,
+        size=24,
         spacing_after=0,
+        line=BODY_LINE,
     )
 
 
@@ -295,6 +307,7 @@ def _paragraph(
     in_cell: bool = False,
     underline: bool = False,
     color: str | None = None,
+    line: int = 240,
 ) -> str:
     return _paragraph_runs(
         [(text, {"bold": bold, "underline": underline, "color": color})],
@@ -305,6 +318,7 @@ def _paragraph(
         right=right,
         spacing_after=spacing_after,
         in_cell=in_cell,
+        line=line,
     )
 
 
@@ -318,6 +332,7 @@ def _paragraph_runs(
     right: int | None = None,
     spacing_after: int = 120,
     in_cell: bool = False,
+    line: int = 240,
 ) -> str:
     paragraph_props = []
     if align:
@@ -332,9 +347,9 @@ def _paragraph_runs(
     if ind_props:
         paragraph_props.append(f'<w:ind {" ".join(ind_props)}/>')
     if in_cell:
-        paragraph_props.append('<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>')
+        paragraph_props.append(f'<w:spacing w:before="0" w:after="0" w:line="{line}" w:lineRule="auto"/>')
     else:
-        paragraph_props.append(f'<w:spacing w:before="0" w:after="{spacing_after}" w:line="240" w:lineRule="auto"/>')
+        paragraph_props.append(f'<w:spacing w:before="0" w:after="{spacing_after}" w:line="{line}" w:lineRule="auto"/>')
     run_xml = "".join(
         _run_xml(
             text,
@@ -366,6 +381,16 @@ def _page_break() -> str:
         "<w:p><w:r><w:rPr><w:rFonts w:ascii=\"Times New Roman\" w:hAnsi=\"Times New Roman\" "
         "w:eastAsia=\"Times New Roman\" w:cs=\"Times New Roman\"/>"
         "<w:sz w:val=\"18\"/><w:szCs w:val=\"18\"/></w:rPr><w:br w:type=\"page\"/></w:r></w:p>"
+    )
+
+
+def _border_line() -> str:
+    return (
+        '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="auto"/></w:pBdr>'
+        '<w:tabs><w:tab w:val="left" w:pos="8505"/></w:tabs>'
+        '<w:spacing w:after="0" w:line="240" w:lineRule="auto"/><w:ind w:right="-708"/>'
+        '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:b/></w:rPr>'
+        '</w:pPr></w:p>'
     )
 
 
@@ -420,7 +445,7 @@ def _point_title(point: WorkPoint | None) -> str:
     title = str(point.display_name or "").strip()
     if not title:
         return f"Пункт {point.point_number}"
-    return title
+    return re.sub(r"^\s*\d+\s*[\.\-:)]\s*", "", title).strip() or title
 
 
 def _task_description(task: Task) -> str:

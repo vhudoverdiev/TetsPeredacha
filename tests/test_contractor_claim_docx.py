@@ -62,7 +62,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
             contract_number="07-04/2025",
             email="contractor@example.test",
         )
-        self.point = WorkPoint(point_number="12", short_name="Возведение коробки здания")
+        self.point = WorkPoint(point_number="12", short_name="12. Возведение коробки здания")
         self.contractor.work_points.append(self.point)
         self.apartment = Apartment(project=self.project, apartment_number="1", owner_name="Иванов И.И.")
         self.apartment.construction_number = "1-2-1"
@@ -167,8 +167,12 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn('Target="media/image1.png"', document_rels)
         self.assertIn('ContentType="image/png"', content_types)
         self.assertGreater(len(stamp_bytes), 0)
-        self.assertRegex(document_xml, r'<w:color w:val="0563C1"/>.*?<w:t>kostyleva@group-akvilon\.ru</w:t>')
-        self.assertRegex(document_xml, r'<w:color w:val="0563C1"/>.*?<w:t>contractor@example\.test</w:t>')
+        self.assertRegex(document_xml, r'<w:color w:val="0000FF"/>.*?<w:t>kostyleva@group-akvilon\.ru</w:t>')
+        self.assertRegex(document_xml, r'<w:color w:val="0000FF"/>.*?<w:t>contractor@example\.test</w:t>')
+        self.assertIn('<w:bottom w:val="single" w:sz="4" w:space="1" w:color="auto"/>', document_xml)
+        self.assertIn('<w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', document_xml)
+        self.assertIn('<w:ind w:left="284" w:right="-709" w:firstLine="424"/>', document_xml)
+        self.assertIn('<w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="auto"/>', document_xml)
 
         page_margins = root.find(f".//{W}sectPr/{W}pgMar")
         self.assertEqual(page_margins.attrib[f"{W}top"], "567")
