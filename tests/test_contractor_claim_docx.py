@@ -3,11 +3,16 @@ import tempfile
 import unittest
 from pathlib import Path
 from zipfile import ZipFile
+from xml.etree import ElementTree as ET
 
 from config import Config
 from app import create_app, db
 from app.models import Apartment, Contractor, Project, STATUS_DONE, STATUS_NOT_STARTED, Task, User, WorkPoint
 from app.services.contractor_claim_docx import build_contractor_claim_docx
+
+
+WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+W = f"{{{WORD_NS}}}"
 
 
 class TestConfig(Config):
@@ -23,6 +28,12 @@ def _docx_text(path: Path) -> str:
         xml = archive.read("word/document.xml").decode("utf-8")
     text = re.sub(r"<[^>]+>", " ", xml)
     return re.sub(r"\s+", " ", text)
+
+
+def _document_root(path: Path):
+    with ZipFile(path) as archive:
+        xml = archive.read("word/document.xml")
+    return ET.fromstring(xml)
 
 
 class ContractorClaimDocxTests(unittest.TestCase):
@@ -122,7 +133,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("№ кв", text)
         self.assertIn("№ строительный", text)
         self.assertIn("1-2-1", text)
-        self.assertIn("12. Возведение коробки здания", text)
+        self.assertIn("Возведение коробки здания", text)
+        self.assertNotIn("12. Возведение коробки здания", text)
         self.assertIn("Не выполнена заделка штробы.", text)
         self.assertIn("Сбить наплывы строительных смесей.", text)
         self.assertIn("Выполнена зачистка поверхности.", text)
@@ -130,6 +142,51 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("Исп.: Костылева Н.А.", text)
         self.assertIn("8(8184) 52-00-00 (доб.354)", text)
         self.assertIn("kostyleva@group-akvilon.ru", text)
+
+    def test_claim_docx_matches_reference_page_and_table_layout(self):
+        path = build_contractor_claim_docx(
+            [self.open_task, self.second_open_task, self.done_task],
+            project=self.project,
+            contractor=self.contractor,
+            author=self.author,
+        )
+        root = _document_root(path)
+        with ZipFile(path) as archive:
+            document_xml = archive.read("word/document.xml").decode("utf-8")
+            document_rels = archive.read("word/_rels/document.xml.rels").decode("utf-8")
+            stamp_bytes = archive.read("word/media/image1.png")
+            content_types = archive.read("[Content_Types].xml").decode("utf-8")
+
+        page_breaks = root.findall(f".//{W}br[@{W}type='page']")
+        self.assertEqual(len(page_breaks), 2)
+        self.assertIn("<wp:anchor", document_xml)
+        self.assertIn('r:embed="rIdStamp"', document_xml)
+        self.assertIn('cx="1590725"', document_xml)
+        self.assertIn('cy="1176020"', document_xml)
+        self.assertIn('Id="rIdStamp"', document_rels)
+        self.assertIn('Target="media/image1.png"', document_rels)
+        self.assertIn('ContentType="image/png"', content_types)
+        self.assertGreater(len(stamp_bytes), 0)
+        self.assertRegex(document_xml, r'<w:color w:val="0563C1"/>.*?<w:t>kostyleva@group-akvilon\.ru</w:t>')
+        self.assertRegex(document_xml, r'<w:color w:val="0563C1"/>.*?<w:t>contractor@example\.test</w:t>')
+
+        page_margins = root.find(f".//{W}sectPr/{W}pgMar")
+        self.assertEqual(page_margins.attrib[f"{W}top"], "567")
+        self.assertEqual(page_margins.attrib[f"{W}right"], "1133")
+        self.assertEqual(page_margins.attrib[f"{W}bottom"], "709")
+        self.assertEqual(page_margins.attrib[f"{W}left"], "1134")
+
+        tables = root.findall(f".//{W}tbl")
+        self.assertEqual(len(tables), 2)
+        first_grid = [column.attrib[f"{W}w"] for column in tables[0].findall(f"{W}tblGrid/{W}gridCol")]
+        completed_grid = [column.attrib[f"{W}w"] for column in tables[1].findall(f"{W}tblGrid/{W}gridCol")]
+        self.assertEqual(first_grid, ["701", "1985", "6653"])
+        self.assertEqual(completed_grid, ["846", "2126", "6367"])
+
+        first_title_size = tables[0].find(f".//{W}sz").attrib[f"{W}val"]
+        self.assertEqual(first_title_size, "28")
+        body_sizes = [node.attrib[f"{W}val"] for node in tables[0].findall(f".//{W}sz")]
+        self.assertIn("24", body_sizes)
 
 
 if __name__ == "__main__":

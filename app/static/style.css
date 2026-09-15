@@ -30677,6 +30677,31 @@ body:has(.users-page) textarea:-webkit-autofill:active {
   color: #111827;
   font-weight: 850;
 }
+
+.account-profile-edit-list {
+  margin-bottom: 1rem;
+}
+
+.account-profile-list dt label {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.account-profile-input.form-control {
+  width: 100%;
+  min-height: 2.45rem;
+  margin: -.35rem 0;
+  border-color: rgba(121,191,37,.22);
+  border-radius: .78rem;
+  background: #ffffff;
+  font-weight: 750;
+}
+
+.account-profile-input.form-control:focus {
+  border-color: rgba(121,191,37,.72);
+  box-shadow: 0 0 0 .18rem rgba(121,191,37,.16);
+}
 .account-security-status {
   display: inline-flex;
   align-items: center;

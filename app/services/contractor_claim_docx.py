@@ -14,6 +14,8 @@ from app.services.filename import safe_filename_part
 
 
 WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+STAMP_REL_ID = "rIdStamp"
+STAMP_IMAGE_PATH = Path(__file__).resolve().parents[1] / "static" / "img" / "claim_stamp.png"
 RUSSIAN_MONTHS = {
     1: "января",
     2: "февраля",
@@ -55,23 +57,32 @@ def _write_claim_docx(path: Path, tasks: list[Task], *, project: Project, contra
     current_date = date.today()
     body_parts: list[str] = []
     body_parts.extend(_letter_paragraphs(project, contractor, author, current_date))
+    body_parts.append(_page_break())
     body_parts.extend(_defect_statement_tables(project, [task for task in tasks if not task.is_done]))
-    body_parts.append(_paragraph("", spacing_after=120))
-    body_parts.append(_paragraph("", spacing_after=120))
+    body_parts.append(_page_break())
     body_parts.extend(_defect_statement_tables(project, [task for task in tasks if task.is_done], completed=True))
 
     document_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        f'<w:document xmlns:w="{WORD_NS}"><w:body>'
+        f'<w:document xmlns:w="{WORD_NS}" '
+        'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
+        'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" '
+        'xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" '
+        'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+        'xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" '
+        'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:body>'
         + "".join(body_parts)
         + '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>'
-        + '<w:pgMar w:top="1134" w:right="850" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/>'
+        + '<w:pgMar w:top="567" w:right="1133" w:bottom="709" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/>'
+        + '<w:cols w:space="708"/><w:docGrid w:linePitch="360"/>'
         + "</w:sectPr></w:body></w:document>"
     )
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("[Content_Types].xml", _content_types_xml())
         archive.writestr("_rels/.rels", _rels_xml())
+        archive.writestr("word/_rels/document.xml.rels", _document_rels_xml())
         archive.writestr("word/document.xml", document_xml)
+        archive.write(STAMP_IMAGE_PATH, "word/media/image1.png")
 
 
 def _letter_paragraphs(project: Project, contractor: Contractor | None, author: User, current_date: date) -> list[str]:
@@ -85,38 +96,39 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     representative = _join_non_empty([project.developer_representative, project.developer_representative_phone], " ")
     director = _join_non_empty([_director_title(project), project.developer_director], "                                                   ")
     parts = [
-        _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ", bold=True, align="center", size=28, spacing_after=0),
-        _paragraph("Специализированный застройщик", bold=True, align="center", size=28, spacing_after=0),
-        _paragraph(f"«{developer_name}»", bold=True, align="center", size=28, spacing_after=0),
+        _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ", bold=True, align="center", size=44, spacing_after=0),
+        _paragraph("Специализированный застройщик", bold=True, align="center", size=44, spacing_after=0),
+        _paragraph(f"«{developer_name}»", bold=True, align="center", size=44, spacing_after=0),
         _paragraph(f"ИНН/КПП {project.inn_kpp or '—'}, ОГРН {project.ogrn or '—'}", align="center", size=20, spacing_after=0),
         _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=120),
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph("Претензия", bold=True, size=24, spacing_after=0),
-        _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", size=22, spacing_after=0),
+        _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", align="both", size=22, spacing_after=0, underline=True),
         _paragraph(contractor_name, align="right", size=22, spacing_after=0),
         _paragraph(contractor_address, align="right", size=22, spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph(_salutation(contractor), size=22, spacing_after=120),
         _paragraph("", spacing_after=0),
-        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number), first_line=708, size=22),
-        _paragraph(_deadline_text(author_email), first_line=708, size=22),
-        _paragraph(_consequence_text(developer_name), first_line=708, size=22),
-        _paragraph(f"Направлено на адрес эл. почты: {contractor_email or '—'}", size=22),
+        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number), align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _deadline_paragraph(author_email),
+        _paragraph(_consequence_text(developer_name), align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _email_notice_paragraph(contractor_email),
         _paragraph("", spacing_after=0),
-        _paragraph("Приложение:", size=22, spacing_after=0),
-        _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", size=22, spacing_after=0),
-        _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", size=22, spacing_after=0),
-        _paragraph(representative or "—", size=22, spacing_after=160),
+        _paragraph("Приложение:", align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=284, first_line=425, size=22, spacing_after=0),
+        _paragraph(representative or "—", align="both", left=284, first_line=425, size=22, spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0),
+        _stamp_paragraph(),
         _paragraph(director or _director_title(project), size=22, spacing_after=120),
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0),
         _paragraph(_executor_line(author), size=20, spacing_after=0),
-        _paragraph(author.email or "", size=20, spacing_after=120),
+        _paragraph(author.email or "", size=20, spacing_after=120, color="0563C1", underline=True),
         _paragraph("", spacing_after=120),
     ]
     return parts
@@ -132,12 +144,34 @@ def _intro_text(project: Project, technical_customer: str, contractor_name: str,
     )
 
 
-def _deadline_text(author_email: str) -> str:
+def _deadline_paragraph(author_email: str) -> str:
     email = author_email or "—"
-    return (
-        "На основании изложенного, просим устранить проявившиеся недостатки в течение 3 рабочих дней с момента "
-        f"получения настоящей претензии и направить на электронный адрес: {email}  информацию о результате "
-        "выполненных Вами работ."
+    return _paragraph_runs(
+        [
+            ("На основании изложенного, просим устранить проявившиеся недостатки в течение 3 рабочих дней с момента получения настоящей претензии и направить на электронный адрес: ", {}),
+            (email, {"color": "0563C1", "underline": True}),
+            ("  информацию о результате выполненных Вами работ.", {}),
+        ],
+        align="both",
+        left=284,
+        first_line=425,
+        size=22,
+        spacing_after=0,
+    )
+
+
+def _email_notice_paragraph(contractor_email: str) -> str:
+    email = contractor_email or "—"
+    return _paragraph_runs(
+        [
+            ("Направлено на адрес эл. почты: ", {}),
+            (email, {"color": "0563C1", "underline": True}),
+        ],
+        align="both",
+        left=284,
+        first_line=425,
+        size=22,
+        spacing_after=0,
     )
 
 
@@ -153,11 +187,11 @@ def _defect_statement_tables(project: Project, tasks: list[Task], *, completed: 
     grouped = _group_tasks_by_point(tasks)
     if not grouped:
         title = "Выполненные замечания" if completed else "Замечания"
-        return [_statement_table(project.name, title, [])]
+        return [_statement_table(project.name, title, [], completed=completed)]
     tables = []
     for point, point_tasks in grouped:
         rows = _statement_rows(point_tasks)
-        tables.append(_statement_table(project.name, _point_title(point), rows))
+        tables.append(_statement_table(project.name, _point_title(point), rows, completed=completed))
         tables.append(_paragraph("", spacing_after=120))
     return tables
 
@@ -196,26 +230,32 @@ def _statement_rows(tasks: list[Task]) -> list[list[str]]:
     return rows
 
 
-def _statement_table(project_name: str, work_title: str, rows: list[list[str]]) -> str:
+def _statement_table(project_name: str, work_title: str, rows: list[list[str]], *, completed: bool = False) -> str:
+    widths = [846, 2126, 6367] if completed else [701, 1985, 6653]
+    table_width = sum(widths)
     table_rows = [
         _merged_row(f"Дефектная ведомость {project_name}", columns=3, bold=True, align="center"),
         _merged_row(work_title, columns=3, bold=True, align="center"),
-        _row(["№ кв", "№ строительный", "Замечания"], widths=[900, 1900, 8200], bold=True, align="center"),
+        _row(["№ кв", "№ строительный", "Замечания"], widths=widths, bold=True, align="center"),
     ]
     data_rows = rows or [["—", "—", "Нет замечаний"]]
     for row_values in data_rows:
-        table_rows.append(_row(row_values, widths=[900, 1900, 8200], bold=False, align=None))
+        table_rows.append(_row(row_values, widths=widths, bold=False, align="center"))
     return (
         "<w:tbl><w:tblPr>"
-        '<w:tblW w:w="0" w:type="auto"/>'
+        f'<w:tblW w:w="{table_width}" w:type="dxa"/>'
         '<w:tblBorders><w:top w:val="single" w:sz="4" w:color="000000"/>'
         '<w:left w:val="single" w:sz="4" w:color="000000"/>'
         '<w:bottom w:val="single" w:sz="4" w:color="000000"/>'
         '<w:right w:val="single" w:sz="4" w:color="000000"/>'
         '<w:insideH w:val="single" w:sz="4" w:color="000000"/>'
         '<w:insideV w:val="single" w:sz="4" w:color="000000"/></w:tblBorders>'
+        '<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>'
+        '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>'
         "</w:tblPr>"
-        '<w:tblGrid><w:gridCol w:w="900"/><w:gridCol w:w="1900"/><w:gridCol w:w="8200"/></w:tblGrid>'
+        + "<w:tblGrid>"
+        + "".join(f'<w:gridCol w:w="{width}"/>' for width in widths)
+        + "</w:tblGrid>"
         + "".join(table_rows)
         + "</w:tbl>"
     )
@@ -223,9 +263,9 @@ def _statement_table(project_name: str, work_title: str, rows: list[list[str]]) 
 
 def _merged_row(text: str, *, columns: int, bold: bool, align: str) -> str:
     return (
-        "<w:tr>"
+        '<w:tr><w:trPr><w:trHeight w:val="315"/></w:trPr>'
         f'<w:tc><w:tcPr><w:gridSpan w:val="{columns}"/><w:vAlign w:val="center"/></w:tcPr>'
-        f'{_paragraph(text, bold=bold, align=align, size=20, in_cell=True)}'
+        f'{_paragraph(text, bold=bold, align=align, size=28, in_cell=True)}'
         "</w:tc></w:tr>"
     )
 
@@ -235,11 +275,11 @@ def _row(values: list[str], *, widths: list[int], bold: bool, align: str | None)
     for index, value in enumerate(values):
         width = widths[index] if index < len(widths) else widths[-1]
         paragraphs = "".join(
-            _paragraph(line or " ", bold=bold, align=align, size=18, in_cell=True)
+            _paragraph(line or " ", bold=bold, align=align, size=24, in_cell=True)
             for line in str(value or "").splitlines() or [""]
         )
         cells.append(f'<w:tc><w:tcPr><w:tcW w:w="{width}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{paragraphs}</w:tc>')
-    return "<w:tr>" + "".join(cells) + "</w:tr>"
+    return '<w:tr><w:trPr><w:trHeight w:val="315"/></w:trPr>' + "".join(cells) + "</w:tr>"
 
 
 def _paragraph(
@@ -249,26 +289,113 @@ def _paragraph(
     align: str | None = None,
     size: int = 22,
     first_line: int | None = None,
+    left: int | None = None,
+    right: int | None = None,
+    spacing_after: int = 120,
+    in_cell: bool = False,
+    underline: bool = False,
+    color: str | None = None,
+) -> str:
+    return _paragraph_runs(
+        [(text, {"bold": bold, "underline": underline, "color": color})],
+        align=align,
+        size=size,
+        first_line=first_line,
+        left=left,
+        right=right,
+        spacing_after=spacing_after,
+        in_cell=in_cell,
+    )
+
+
+def _paragraph_runs(
+    runs: list[tuple[str, dict[str, object]]],
+    *,
+    align: str | None = None,
+    size: int = 22,
+    first_line: int | None = None,
+    left: int | None = None,
+    right: int | None = None,
     spacing_after: int = 120,
     in_cell: bool = False,
 ) -> str:
     paragraph_props = []
     if align:
         paragraph_props.append(f'<w:jc w:val="{align}"/>')
-    if first_line:
-        paragraph_props.append(f'<w:ind w:firstLine="{first_line}"/>')
+    ind_props = []
+    if left is not None:
+        ind_props.append(f'w:left="{left}"')
+    if right is not None:
+        ind_props.append(f'w:right="{right}"')
+    if first_line is not None:
+        ind_props.append(f'w:firstLine="{first_line}"')
+    if ind_props:
+        paragraph_props.append(f'<w:ind {" ".join(ind_props)}/>')
     if in_cell:
-        paragraph_props.append('<w:spacing w:before="0" w:after="0"/>')
+        paragraph_props.append('<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>')
     else:
-        paragraph_props.append(f'<w:spacing w:before="0" w:after="{spacing_after}"/>')
+        paragraph_props.append(f'<w:spacing w:before="0" w:after="{spacing_after}" w:line="240" w:lineRule="auto"/>')
+    run_xml = "".join(
+        _run_xml(
+            text,
+            size=size,
+            bold=bool(options.get("bold")),
+            underline=bool(options.get("underline")),
+            color=str(options.get("color")) if options.get("color") else None,
+        )
+        for text, options in runs
+    )
+    return f"<w:p><w:pPr>{''.join(paragraph_props)}</w:pPr>{run_xml}</w:p>"
+
+
+def _run_xml(text: str, *, size: int, bold: bool = False, underline: bool = False, color: str | None = None) -> str:
+    color_xml = f'<w:color w:val="{color}"/>' if color else ""
     run_props = (
         '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
         'w:eastAsia="Times New Roman" w:cs="Times New Roman"/>'
-        f'{"<w:b/>" if bold else ""}<w:sz w:val="{size}"/><w:szCs w:val="{size}"/></w:rPr>'
+        f'{"<w:b/><w:bCs/>" if bold else ""}{"<w:u w:val=\"single\"/>" if underline else ""}'
+        f'{color_xml}<w:sz w:val="{size}"/><w:szCs w:val="{size}"/></w:rPr>'
     )
     safe_text = escape(text)
     xml_space = ' xml:space="preserve"' if text.startswith(" ") or text.endswith(" ") or "  " in text else ""
-    return f"<w:p><w:pPr>{''.join(paragraph_props)}</w:pPr><w:r>{run_props}<w:t{xml_space}>{safe_text}</w:t></w:r></w:p>"
+    return f"<w:r>{run_props}<w:t{xml_space}>{safe_text}</w:t></w:r>"
+
+
+def _page_break() -> str:
+    return (
+        "<w:p><w:r><w:rPr><w:rFonts w:ascii=\"Times New Roman\" w:hAnsi=\"Times New Roman\" "
+        "w:eastAsia=\"Times New Roman\" w:cs=\"Times New Roman\"/>"
+        "<w:sz w:val=\"18\"/><w:szCs w:val=\"18\"/></w:rPr><w:br w:type=\"page\"/></w:r></w:p>"
+    )
+
+
+def _stamp_paragraph() -> str:
+    return (
+        '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>'
+        '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
+        'w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>'
+        '<w:drawing><wp:anchor distT="0" distB="0" distL="114300" distR="114300" '
+        'simplePos="0" relativeHeight="251658240" behindDoc="0" locked="0" layoutInCell="1" allowOverlap="1">'
+        '<wp:simplePos x="0" y="0"/>'
+        '<wp:positionH relativeFrom="column"><wp:posOffset>3394710</wp:posOffset></wp:positionH>'
+        '<wp:positionV relativeFrom="paragraph"><wp:posOffset>9525</wp:posOffset></wp:positionV>'
+        '<wp:extent cx="1590725" cy="1176020"/>'
+        '<wp:effectExtent l="0" t="0" r="0" b="0"/>'
+        '<wp:wrapNone/>'
+        '<wp:docPr id="1" name="Picture 1"/>'
+        '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
+        '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+        '<pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="claim_stamp.png"/>'
+        '<pic:cNvPicPr><a:picLocks noChangeAspect="1" noChangeArrowheads="1"/></pic:cNvPicPr>'
+        '</pic:nvPicPr><pic:blipFill>'
+        f'<a:blip r:embed="{STAMP_REL_ID}"><a:extLst><a:ext uri="{{28A0092B-C50C-407E-A947-70E740481C1C}}">'
+        '<a14:useLocalDpi val="0"/></a:ext></a:extLst></a:blip>'
+        '<a:srcRect/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
+        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1590725" cy="1176020"/></a:xfrm>'
+        '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></pic:spPr>'
+        '</pic:pic></a:graphicData></a:graphic>'
+        '</wp:anchor></w:drawing></w:r></w:p>'
+    )
 
 
 def _developer_name(project: Project) -> str:
@@ -293,9 +420,7 @@ def _point_title(point: WorkPoint | None) -> str:
     title = str(point.display_name or "").strip()
     if not title:
         return f"Пункт {point.point_number}"
-    if title.lower().startswith("работ"):
-        return title
-    return f"{point.point_number}. {title}" if point.point_number else title
+    return title
 
 
 def _task_description(task: Task) -> str:
@@ -351,6 +476,7 @@ def _content_types_xml() -> str:
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 </Types>"""
 
@@ -359,4 +485,11 @@ def _rels_xml() -> str:
     return """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>"""
+
+
+def _document_rels_xml() -> str:
+    return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="{STAMP_REL_ID}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/>
 </Relationships>"""
