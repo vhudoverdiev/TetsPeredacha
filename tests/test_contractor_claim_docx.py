@@ -183,7 +183,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("<w:t>Исп.: Костылева Н.А.</w:t>", first_page_xml)
         self.assertIn("<w:t>т. 8(8184) 52-00-00 (доб.354)</w:t>", first_page_xml)
         self.assertIn("<w:t>kostyleva@group-akvilon.ru</w:t>", first_page_xml)
-        self.assertRegex(first_page_xml, r'<w:spacing w:after="0" w:line="170" w:lineRule="auto"/>.*?</w:p><w:p><w:pPr><w:jc w:val="right"/>.*?<w:t>Исп\.:')
+        self.assertRegex(first_page_xml, r'<w:spacing w:after="0" w:line="200" w:lineRule="auto"/>.*?</w:p><w:p><w:pPr><w:jc w:val="right"/>.*?<w:t>Исп\.:')
         self.assertRegex(first_page_xml, r'<w:t>Исп\.: Костылева Н\.А\.</w:t>.*?</w:p><w:p><w:pPr><w:jc w:val="right"/>.*?<w:t>т\. 8\(8184\) 52-00-00 \(доб\.354\)</w:t>')
         self.assertRegex(first_page_xml, r'<w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t>Исп\.: Костылева Н\.А\.')
         self.assertIn("<w:t>Поплевин В.Е.</w:t>", first_page_xml)

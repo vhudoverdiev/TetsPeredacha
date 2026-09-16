@@ -332,7 +332,7 @@ def _executor_block(author: User) -> str:
     email = str(author.email or "").strip()
     indent_left = 5480
     return (
-        _reference_blank(size=16, line=170)
+        _reference_blank(size=16, line=200)
         + _paragraph(f"Исп.: {executor_name}".strip(), align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220)
         + (_paragraph(f"т. {executor_phone}", align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220) if executor_phone else "")
         + (_paragraph(email, align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220, color=LINK_BLUE, underline=True) if email else "")
