@@ -181,10 +181,15 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         block = self.desktop_css[block_start:block_start + 3600]
 
         self.assertIn('". finishing"', block)
-        self.assertIn('". actions"', block)
         self.assertIn('"search inspection inspection-sort app avr po finishing"', block)
-        self.assertIn('". . . . . . actions"', block)
+        self.assertIn(".apartments-filter-finishing-col > .apartments-filter-actions", block)
         self.assertIn("justify-content: flex-end !important", block)
+
+        template = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
+        finishing_start = template.index('class="col-12 col-lg-auto remarks-filter-finishing-col apartments-filter-finishing-col"')
+        actions_start = template.index('class="filter-actions apartments-filter-actions"', finishing_start)
+        finishing_end = template.index("</div>\n      </div>", actions_start)
+        self.assertLess(actions_start, finishing_end)
 
     def test_desktop_sidebar_has_home_and_all_web_tabs_with_fixed_shell_geometry(self):
         sidebar_start = self.base.index("<nav class=\"sidebar-nav\">")

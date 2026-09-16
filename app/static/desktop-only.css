@@ -1551,8 +1551,7 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
       "search inspection"
       "inspection-sort app"
       "avr po"
-      ". finishing"
-      ". actions" !important;
+      ". finishing" !important;
     align-items: end !important;
     gap: .75rem !important;
     width: 100% !important;
@@ -1596,12 +1595,13 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
     justify-self: stretch !important;
   }
 
-  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > .filter-actions {
-    grid-area: actions !important;
+  html.desktop-like-pointer body.app-body .apartments-page
+    .apartments-filter-finishing-col > .apartments-filter-actions {
     display: flex !important;
     flex-wrap: wrap !important;
     justify-content: flex-end !important;
     gap: .55rem !important;
+    margin-top: .65rem !important;
   }
 }
 
@@ -1616,8 +1616,7 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
       minmax(180px, 1fr)
       minmax(270px, 1.18fr) !important;
     grid-template-areas:
-      "search inspection inspection-sort app avr po finishing"
-      ". . . . . . actions" !important;
+      "search inspection inspection-sort app avr po finishing" !important;
   }
 }
 

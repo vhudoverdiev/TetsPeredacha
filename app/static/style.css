@@ -56698,8 +56698,7 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       "search inspection"
       "inspection-sort app"
       "avr po"
-      "finishing finishing"
-      "actions actions" !important;
+      "finishing finishing" !important;
     gap: .75rem !important;
     align-items: end !important;
     margin: 0 !important;
@@ -56758,13 +56757,15 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     overflow: visible !important;
   }
 
-  html.desktop-like-pointer body.app-body .apartments-filter-form > .filter-actions,
-  html body.app-body .apartments-filter-form > .filter-actions {
-    grid-area: actions !important;
+  html.desktop-like-pointer body.app-body .apartments-filter-form
+    .apartments-filter-finishing-col > .apartments-filter-actions,
+  html body.app-body .apartments-filter-form
+    .apartments-filter-finishing-col > .apartments-filter-actions {
     display: flex !important;
     flex-wrap: wrap !important;
     justify-content: flex-end !important;
     gap: .55rem !important;
+    margin-top: .65rem !important;
   }
 }
 
@@ -56780,8 +56781,7 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       minmax(180px, 1fr)
       minmax(270px, 1.18fr) !important;
     grid-template-areas:
-      "search inspection inspection-sort app avr po finishing"
-      ". . . . . . actions" !important;
+      "search inspection inspection-sort app avr po finishing" !important;
   }
 }
 

@@ -99,7 +99,7 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     contract_number = contractor.contract_number if contractor else ""
     contract_date = contractor.contract_date if contractor else ""
     author_email = author.email or ""
-    representative = _join_non_empty([project.developer_representative, project.developer_representative_phone], " ")
+    representative = _join_non_empty([project.developer_representative_phone, project.developer_representative], " ")
     contractor_address_lines = _address_lines(contractor_address)
     parts = [
         _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", bold=True, align="center", size=28, spacing_after=0, line=240),
@@ -332,7 +332,7 @@ def _executor_block(author: User) -> str:
     email = str(author.email or "").strip()
     indent_left = 5480
     return (
-        _reference_blank(size=16, line=260)
+        _reference_blank(size=16, line=379)
         + _paragraph(f"Исп.: {executor_name}".strip(), align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220)
         + (_paragraph(f"т. {executor_phone}", align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220) if executor_phone else "")
         + (_paragraph(email, align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220, color=LINK_BLUE, underline=True) if email else "")
