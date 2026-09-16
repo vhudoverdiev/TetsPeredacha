@@ -174,6 +174,30 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
         self.assertEqual(after["accepted"], 1)
         self.assertEqual(after["not_accepted"], 0)
 
+    def test_apartment_detail_autosave_returns_json_without_redirect(self):
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/details",
+            data={
+                "owner_name": "Иванов Иван",
+                "phone": "8 900 000-00-00",
+                "finishing_type": "Белая",
+                "mode": "not_accepted",
+            },
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["owner_name"], "Иванов Иван")
+        self.assertEqual(payload["phone"], "8 900 000-00-00")
+        self.assertEqual(payload["finishing_type"], "Белая")
+        db.session.refresh(self.apartment)
+        self.assertEqual(self.apartment.owner_name, "Иванов Иван")
+        self.assertEqual(self.apartment.phone, "8 900 000-00-00")
+        self.assertEqual(self.apartment.finishing_type, "Белая")
+
     def test_unsold_apartments_do_not_count_as_not_inspected_or_not_accepted(self):
         unsold = Apartment(
             project=self.project,

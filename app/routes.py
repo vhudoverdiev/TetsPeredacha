@@ -9034,6 +9034,11 @@ def update_apartment_details(apartment_id: int):
     if mode_value not in APARTMENT_DETAIL_MODE_LABELS:
         abort(400)
     if any(len(value) > 255 for value in (owner_name, phone, finishing_type)):
+        if _wants_json_response():
+            return jsonify({
+                "ok": False,
+                "message": "ФИО, телефон и отделка не должны превышать 255 символов.",
+            }), 400
         flash("ФИО, телефон и отделка не должны превышать 255 символов.", "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
@@ -9057,6 +9062,16 @@ def update_apartment_details(apartment_id: int):
     db.session.commit()
 
     changed_count = sum(1 for item in history_changes if item)
+    if _wants_json_response():
+        return jsonify({
+            "ok": True,
+            "message": "Данные помещения обновлены." if changed_count else "Данные помещения не изменились.",
+            "changed": changed_count,
+            "mode": new_mode,
+            "owner_name": owner_name,
+            "phone": phone,
+            "finishing_type": finishing_type,
+        })
     flash("Данные помещения обновлены." if changed_count else "Данные помещения не изменились.", "success")
     return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 

@@ -14,6 +14,12 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("row.owner_names|join(', ') if row.owner_names else '—'", TEMPLATE)
         self.assertIn("row.phones|join(', ') if row.phones else '—'", TEMPLATE)
 
+    def test_detail_fields_autosave_without_manual_save_button(self):
+        self.assertIn('data-apartment-details-autosave="1"', TEMPLATE)
+        self.assertIn("'X-Requested-With': 'XMLHttpRequest'", TEMPLATE)
+        self.assertIn("field.value === 'unsold'", TEMPLATE)
+        self.assertNotIn("Сохранить данные", TEMPLATE)
+
     def test_inspection_reset_hover_matches_save_button_green(self):
         start = STYLE.index(".apartment-inspection-reset-btn:hover")
         end = STYLE.index(".apartment-detail-page .apartment-task-item:hover", start)

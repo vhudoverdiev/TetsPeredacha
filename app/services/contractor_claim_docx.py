@@ -117,8 +117,7 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
             for line in contractor_address_lines
         ],
         _reference_blank(left=BODY_LEFT, right=BODY_RIGHT, size=22),
-        _reference_blank(left=BODY_LEFT, right=BODY_RIGHT, size=22),
-        _paragraph(_salutation(contractor), bold=True, align="center", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph(_salutation(contractor), bold=True, align="center", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=120),
         _intro_paragraph(project, technical_customer, contractor_name, contract_number, contract_date),
         _deadline_paragraph(author_email),
         _paragraph(_consequence_text(developer_name), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
@@ -305,9 +304,9 @@ def _signature_block(project: Project) -> str:
     director_name = str(project.developer_director or "").strip()
     widths = [5900, 1600, 1840]
     cells = [
-        _signature_cell(_paragraph(director_title, bold=True, size=20, in_cell=True, line=200), widths[0], v_align="bottom"),
-        _signature_cell(_stamp_inline_paragraph(), widths[1], v_align="bottom"),
-        _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=20, in_cell=True, line=200), widths[2], v_align="bottom"),
+        _signature_cell(_paragraph(director_title, bold=True, size=20, in_cell=True, line=200), widths[0], v_align="center"),
+        _signature_cell(_stamp_inline_paragraph(), widths[1], v_align="center"),
+        _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=20, in_cell=True, line=200), widths[2], v_align="center"),
     ]
     return (
         "<w:tbl><w:tblPr>"
@@ -331,8 +330,8 @@ def _executor_block(author: User) -> str:
     executor_line = _executor_line(author)
     email = str(author.email or "").strip()
     return (
-        _paragraph(executor_line, align="right", left=6100, right=0, size=14, spacing_after=0, line=170)
-        + (_paragraph(email, align="right", left=6100, right=0, size=14, spacing_after=0, line=170, color=LINK_BLUE, underline=True) if email else "")
+        _paragraph(executor_line, align="right", left=6100, right=0, size=16, spacing_after=0, line=190)
+        + (_paragraph(email, align="right", left=6100, right=0, size=16, spacing_after=0, line=190, color=LINK_BLUE, underline=True) if email else "")
     )
 
 

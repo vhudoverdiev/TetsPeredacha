@@ -182,6 +182,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
         first_page_xml = document_xml.split('<w:br w:type="page"/>', 1)[0]
         self.assertIn("<w:t>Исп.: Костылева Н.А. т. 8(8184) 52-00-00 (доб.354)</w:t>", first_page_xml)
         self.assertIn("<w:t>kostyleva@group-akvilon.ru</w:t>", first_page_xml)
+        self.assertRegex(first_page_xml, r'<w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t>Исп\.: Костылева Н\.А\.')
         self.assertIn("<w:t>Поплевин В.Е.</w:t>", first_page_xml)
         self.assertNotIn('w:right="-992"', first_page_xml)
         self.assertIn('<w:bottom w:val="single" w:sz="4" w:space="1" w:color="auto"/>', document_xml)
@@ -200,6 +201,14 @@ class ContractorClaimDocxTests(unittest.TestCase):
         _assert_bold_text(self, document_xml, "ул. Индустриальная, д.27, кв.7")
         _assert_bold_text(self, document_xml, "Уважаемая Елена Петровна!")
         self.assertRegex(document_xml, r'<w:jc w:val="center"/>.*?<w:t>Уважаемая Елена Петровна!</w:t>')
+        self.assertRegex(
+            document_xml,
+            r'<w:t>ул\. Индустриальная, д\.27, кв\.7</w:t></w:r></w:p>'
+            r'<w:p><w:pPr><w:ind w:left="284" w:right="-709"/>.*?</w:p>'
+            r'<w:p><w:pPr><w:jc w:val="center"/>'
+            r'<w:ind w:left="284" w:right="-709"/>'
+            r'<w:spacing w:before="0" w:after="120"',
+        )
 
         page_margins = root.find(f".//{W}sectPr/{W}pgMar")
         self.assertEqual(page_margins.attrib[f"{W}top"], "567")
@@ -213,6 +222,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         first_grid = [column.attrib[f"{W}w"] for column in tables[1].findall(f"{W}tblGrid/{W}gridCol")]
         completed_grid = [column.attrib[f"{W}w"] for column in tables[2].findall(f"{W}tblGrid/{W}gridCol")]
         self.assertEqual(signature_grid, ["5900", "1600", "1840"])
+        signature_vertical = [cell.attrib[f"{W}val"] for cell in tables[0].findall(f".//{W}vAlign")]
+        self.assertEqual(signature_vertical, ["center", "center", "center"])
         self.assertEqual(first_grid, ["701", "1985", "6653"])
         self.assertEqual(completed_grid, ["846", "2126", "6367"])
 

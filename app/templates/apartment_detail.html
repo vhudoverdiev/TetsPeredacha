@@ -30,7 +30,7 @@
             <b>{{ apartment.detail_label() }}</b>
           </div>
           {% if current_user.role != 'viewer' %}
-          <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3">
+          <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3" data-apartment-details-autosave="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="apartment-data-row apartment-data-edit-row">
               <label for="apartment-owner-{{ apartment.id }}">ФИО собственника</label>
@@ -55,9 +55,6 @@
                 <option value="app" {% if row.mode == 'АПП' %}selected{% endif %}>АПП</option>
                 <option value="unsold" {% if row.mode == 'не продана' %}selected{% endif %}>Не продана</option>
               </select>
-            </div>
-            <div class="apartment-details-edit-actions">
-              <button class="btn btn-primary btn-sm" type="submit">Сохранить данные</button>
             </div>
           </form>
           {% else %}
@@ -364,4 +361,67 @@
 </div>
 
 </div>
+
+<script>
+(() => {
+  const form = document.querySelector('[data-apartment-details-autosave]');
+  if (!form) {
+    return;
+  }
+
+  const ownerInput = form.querySelector('[name="owner_name"]');
+  const modeSelect = form.querySelector('[name="mode"]');
+  const fields = Array.from(form.querySelectorAll('[name="owner_name"], [name="phone"], [name="finishing_type"], [name="mode"]'));
+  let debounceTimer = null;
+  let abortController = null;
+  let lastPayload = new URLSearchParams(new FormData(form)).toString();
+
+  const save = () => {
+    const payload = new URLSearchParams(new FormData(form)).toString();
+    if (payload === lastPayload) {
+      return;
+    }
+    lastPayload = payload;
+    if (abortController) {
+      abortController.abort();
+    }
+    abortController = new AbortController();
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      signal: abortController.signal,
+    }).catch((error) => {
+      if (error.name !== 'AbortError') {
+        lastPayload = '';
+      }
+    });
+  };
+
+  const scheduleSave = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(save, 650);
+  };
+
+  fields.forEach((field) => {
+    field.addEventListener('input', scheduleSave);
+    field.addEventListener('blur', save);
+    field.addEventListener('change', () => {
+      if (field === modeSelect && field.value === 'unsold' && ownerInput) {
+        ownerInput.value = '';
+      }
+      save();
+    });
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    save();
+  });
+})();
+</script>
 {% endblock %}
