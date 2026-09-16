@@ -8,6 +8,7 @@ BASE_TEMPLATE = ROOT / "app" / "templates" / "base.html"
 STYLE_CSS = ROOT / "app" / "static" / "style.css"
 MOBILE_CSS = ROOT / "app" / "static" / "mobile-only.css"
 DESKTOP_CSS = ROOT / "app" / "static" / "desktop-only.css"
+SCRIPT_JS = ROOT / "app" / "static" / "script.js"
 
 
 PRIMARY_MOBILE_ENDPOINTS = {
@@ -58,6 +59,7 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         cls.style_css = STYLE_CSS.read_text(encoding="utf-8")
         cls.mobile_css = MOBILE_CSS.read_text(encoding="utf-8")
         cls.desktop_css = DESKTOP_CSS.read_text(encoding="utf-8")
+        cls.script_js = SCRIPT_JS.read_text(encoding="utf-8")
 
     def test_every_authenticated_layout_renders_mobile_topbar_and_bottom_dock(self):
         authenticated_layouts = (
@@ -160,6 +162,29 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         self.assertIn('"actions actions"', block)
         self.assertIn("justify-content: flex-end !important", block)
         self.assertIn("max-width: min(26rem, calc(100vw - 2rem)) !important", self.desktop_css)
+
+    def test_contractors_filter_portal_select_keeps_trigger_width(self):
+        place_menu_start = self.script_js.index("function placeMenu()")
+        place_menu = self.script_js[place_menu_start:place_menu_start + 2600]
+
+        self.assertIn("select.closest('.contractor-filter-form')", place_menu)
+        self.assertIn("isContractorFilterSelect", place_menu)
+        self.assertIn("? Math.max(1, rect.width)", place_menu)
+        self.assertIn("menu.style.width = `${menuWidth}px`", place_menu)
+        self.assertIn("window.innerWidth - menuWidth - viewportGap", place_menu)
+        self.assertIn("is-contractor-filter-menu", place_menu)
+
+    def test_apartments_filter_actions_stay_under_finishing_on_desktop(self):
+        marker = "/* Apartments filter: keep apply/reset directly under the finishing filter"
+        self.assertIn(marker, self.desktop_css)
+        block_start = self.desktop_css.index(marker)
+        block = self.desktop_css[block_start:block_start + 3600]
+
+        self.assertIn('". finishing"', block)
+        self.assertIn('". actions"', block)
+        self.assertIn('"search inspection inspection-sort app avr po finishing"', block)
+        self.assertIn('". . . . . . actions"', block)
+        self.assertIn("justify-content: flex-end !important", block)
 
     def test_desktop_sidebar_has_home_and_all_web_tabs_with_fixed_shell_geometry(self):
         sidebar_start = self.base.index("<nav class=\"sidebar-nav\">")

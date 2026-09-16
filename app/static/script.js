@@ -1185,13 +1185,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectShell.classList.contains('is-open')) return;
         const rect = button.getBoundingClientRect();
         const mobileLikeSelectUi = document.documentElement.matches('.mobile-viewport, .adaptive-mobile-viewport, .touch-app-device');
+        const isContractorFilterSelect = Boolean(select.closest('.contractor-filter-form'));
         const viewportGap = mobileLikeSelectUi ? 10 : 12;
         const mobileBottomNav = mobileLikeSelectUi ? document.querySelector('.mobile-bottom-nav') : null;
         const bottomNavRect = mobileBottomNav?.getBoundingClientRect?.();
         const bottomNavInset = bottomNavRect
           ? Math.max(0, window.innerHeight - Math.max(0, bottomNavRect.top))
           : 0;
-        const minWidth = Math.max(rect.width, mobileLikeSelectUi ? 220 : 180);
+        const menuWidth = isContractorFilterSelect
+          ? Math.max(1, rect.width)
+          : Math.max(rect.width, mobileLikeSelectUi ? 220 : 180);
         const availableBelow = Math.max(0, window.innerHeight - bottomNavInset - rect.bottom - viewportGap);
         const availableAbove = Math.max(0, rect.top - viewportGap);
         const estimatedHeight = Math.min(300, Math.max(46, options.length * 42 + 18));
@@ -1204,16 +1207,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const menuHeight = Math.min(measuredHeight, maxHeight);
         const left = Math.min(
           Math.max(viewportGap, rect.left),
-          Math.max(viewportGap, window.innerWidth - minWidth - viewportGap),
+          Math.max(viewportGap, window.innerWidth - menuWidth - viewportGap),
         );
         const top = openAbove
           ? Math.max(viewportGap, rect.top - menuHeight - 8)
           : Math.max(viewportGap, Math.min(window.innerHeight - bottomNavInset - viewportGap - menuHeight, rect.bottom + 8));
         menu.style.left = `${left}px`;
         menu.style.top = `${top}px`;
-        menu.style.width = `${minWidth}px`;
+        menu.style.width = `${menuWidth}px`;
         menu.style.maxHeight = `${maxHeight}px`;
         menu.style.setProperty('--developer-select-mobile-bottom-gap', `${bottomNavInset}px`);
+        menu.classList.toggle('is-contractor-filter-menu', isContractorFilterSelect);
         menu.classList.toggle('is-above', openAbove);
       }
 

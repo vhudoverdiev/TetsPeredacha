@@ -327,12 +327,15 @@ def _signature_block(project: Project) -> str:
 
 
 def _executor_block(author: User) -> str:
-    executor_line = _executor_line(author)
+    executor_name = _executor_name(author)
+    executor_phone = str(author.phone or "").strip()
     email = str(author.email or "").strip()
+    indent_left = 5480
     return (
-        _reference_blank(size=16, line=120)
-        + _paragraph(executor_line, align="right", left=6100, right=0, size=16, spacing_after=0, line=190)
-        + (_paragraph(email, align="right", left=6100, right=0, size=16, spacing_after=0, line=190, color=LINK_BLUE, underline=True) if email else "")
+        _reference_blank(size=16, line=170)
+        + _paragraph(f"Исп.: {executor_name}".strip(), align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220)
+        + (_paragraph(f"т. {executor_phone}", align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220) if executor_phone else "")
+        + (_paragraph(email, align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220, color=LINK_BLUE, underline=True) if email else "")
     )
 
 
@@ -607,10 +610,8 @@ def _construction_number(apartment: Apartment | None) -> str:
     return str(apartment.construction_number or "—").strip() or "—"
 
 
-def _executor_line(author: User) -> str:
-    name = author.full_name or author.username or ""
-    phone = author.phone or ""
-    return _join_non_empty([f"Исп.: {name}".strip(), f"т. {phone}" if phone else ""], " ")
+def _executor_name(author: User) -> str:
+    return str(author.full_name or author.username or "").strip()
 
 
 def _numeric_date(value: date) -> str:

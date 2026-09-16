@@ -1541,6 +1541,86 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
   }
 }
 
+/* Apartments filter: keep apply/reset directly under the finishing filter on
+   desktop and on narrowed desktop windows. */
+@media (min-width: 768px) {
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas:
+      "search inspection"
+      "inspection-sort app"
+      "avr po"
+      ". finishing"
+      ". actions" !important;
+    align-items: end !important;
+    gap: .75rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > [class*="col-"] {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    flex: none !important;
+    padding: 0 !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(input[name="q"]) {
+    grid-area: search !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(select[name="inspection_status"]) {
+    grid-area: inspection !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(select[name="inspection_order"]) {
+    grid-area: inspection-sort !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(select[name="app_status"]) {
+    grid-area: app !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(select[name="avr_status"]) {
+    grid-area: avr !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > div:has(select[name="po_status"]) {
+    grid-area: po !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > .apartments-filter-finishing-col {
+    grid-area: finishing !important;
+    justify-self: stretch !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > .filter-actions {
+    grid-area: actions !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: .55rem !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form {
+    grid-template-columns:
+      minmax(220px, 1.35fr)
+      minmax(150px, .88fr)
+      minmax(190px, 1.08fr)
+      minmax(150px, .82fr)
+      minmax(130px, .72fr)
+      minmax(180px, 1fr)
+      minmax(270px, 1.18fr) !important;
+    grid-template-areas:
+      "search inspection inspection-sort app avr po finishing"
+      ". . . . . . actions" !important;
+  }
+}
+
 /* Contractors: when a desktop browser window is dragged narrower, switch to a
    fixed intermediate layout instead of squeezing the full toolbar into one row. */
 @media (min-width: 768px) and (max-width: 1199.98px) {
