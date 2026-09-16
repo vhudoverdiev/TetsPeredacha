@@ -108,6 +108,7 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph(f"ИНН/КПП {project.inn_kpp or '—'}, ОГРН {project.ogrn or '—'}", align="center", size=20, spacing_after=0, line=240),
         _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=0, line=240),
         _border_line(),
+        _reference_blank(align="left", right=-708, size=22),
         _paragraph("Претензия", bold=True, align="center", size=22, spacing_after=0),
         _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", bold=True, align="both", size=22, spacing_after=0, underline=True),
         _paragraph(contractor_name, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
@@ -115,6 +116,8 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
             _paragraph(line, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
             for line in contractor_address_lines
         ],
+        _reference_blank(left=BODY_LEFT, right=BODY_RIGHT, size=22),
+        _reference_blank(left=BODY_LEFT, right=BODY_RIGHT, size=22),
         _paragraph(_salutation(contractor), bold=True, align="center", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
         _intro_paragraph(project, technical_customer, contractor_name, contract_number, contract_date),
         _deadline_paragraph(author_email),
@@ -125,6 +128,9 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph(representative or "—", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _reference_blank(size=24, line=360),
+        _reference_blank(size=24, line=360),
+        _reference_blank(size=24, line=360),
         _signature_block(project),
         _executor_block(author),
     ]
@@ -425,6 +431,36 @@ def _paragraph_runs(
         for text, options in runs
     )
     return f"<w:p><w:pPr>{''.join(paragraph_props)}</w:pPr>{run_xml}</w:p>"
+
+
+def _reference_blank(
+    *,
+    align: str | None = None,
+    left: int | None = None,
+    right: int | None = None,
+    first_line: int | None = None,
+    size: int = 22,
+    line: int | None = None,
+) -> str:
+    paragraph_props = []
+    if align:
+        paragraph_props.append(f'<w:jc w:val="{align}"/>')
+    ind_props = []
+    if left is not None:
+        ind_props.append(f'w:left="{left}"')
+    if right is not None:
+        ind_props.append(f'w:right="{right}"')
+    if first_line is not None:
+        ind_props.append(f'w:firstLine="{first_line}"')
+    if ind_props:
+        paragraph_props.append(f'<w:ind {" ".join(ind_props)}/>')
+    if line is not None:
+        paragraph_props.append(f'<w:spacing w:after="0" w:line="{line}" w:lineRule="auto"/>')
+    return (
+        f"<w:p><w:pPr>{''.join(paragraph_props)}"
+        f'<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/>'
+        f'<w:sz w:val="{size}"/><w:szCs w:val="{size}"/></w:rPr></w:pPr></w:p>'
+    )
 
 
 def _run_xml(text: str, *, size: int, bold: bool = False, underline: bool = False, color: str | None = None) -> str:

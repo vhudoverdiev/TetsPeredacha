@@ -10228,19 +10228,27 @@ def account():
             full_name = str(request.form.get("full_name") or "").strip()
             email = str(request.form.get("email") or "").strip()
             phone = str(request.form.get("phone") or "").strip()
+            wants_json = request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.accept_mimetypes.best == "application/json"
+            contact_error = ""
             if len(full_name) > 160:
-                flash("ФИО не должно превышать 160 символов.", "warning")
+                contact_error = "ФИО не должно превышать 160 символов."
             elif len(email) > 180:
-                flash("Email не должен превышать 180 символов.", "warning")
+                contact_error = "Email не должен превышать 180 символов."
             elif email and ("@" not in email or "." not in email.rsplit("@", 1)[-1]):
-                flash("Укажите корректный email.", "warning")
+                contact_error = "Укажите корректный email."
             elif len(phone) > 80:
-                flash("Номер телефона не должен превышать 80 символов.", "warning")
+                contact_error = "Номер телефона не должен превышать 80 символов."
+            if contact_error:
+                if wants_json:
+                    return jsonify(ok=False, message=contact_error), 400
+                flash(contact_error, "warning")
             else:
                 user.full_name = full_name or None
                 user.email = email or None
                 user.phone = phone or None
                 db.session.commit()
+                if wants_json:
+                    return jsonify(ok=True, message="Контакты сохранены.")
                 flash("Контакты сохранены.", "success")
         return redirect(url_for("main.account"))
 

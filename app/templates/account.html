@@ -18,7 +18,7 @@
             <h2>Профиль</h2>
           </div>
         </div>
-        <form class="account-contact-form mb-4" method="post">
+        <form class="account-contact-form mb-4" method="post" data-account-autosave="1">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="action" value="update_contacts">
           <dl class="account-profile-list account-profile-edit-list">
@@ -38,7 +38,6 @@
             <div><dt>Роль</dt><dd>{{ ROLE_LABELS.get(current_user.role, current_user.role) }}</dd></div>
             <div><dt>Капча</dt><dd>{{ 'отключена' if current_user.captcha_disabled else 'включена' }}</dd></div>
           </dl>
-          <button class="btn btn-primary account-contact-save-btn" type="submit">Сохранить контакты</button>
         </form>
         <form class="account-logout-form js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -106,4 +105,50 @@
 
   </div>
 </section>
+<script>
+(() => {
+  const form = document.querySelector('[data-account-autosave="1"]');
+  if (!form) return;
+  const fields = Array.from(form.querySelectorAll('input[name="full_name"], input[name="email"], input[name="phone"]'));
+  if (!fields.length) return;
+
+  let timer = 0;
+  let controller = null;
+  let lastPayload = new URLSearchParams(new FormData(form)).toString();
+
+  const save = () => {
+    const formData = new FormData(form);
+    const payload = new URLSearchParams(formData).toString();
+    if (payload === lastPayload) return;
+    lastPayload = payload;
+    if (controller) controller.abort();
+    controller = new AbortController();
+    fetch(form.action || window.location.href, {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      },
+      signal: controller.signal
+    }).catch((error) => {
+      if (error.name !== 'AbortError') {
+        lastPayload = '';
+      }
+    });
+  };
+
+  const scheduleSave = () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(save, 650);
+  };
+
+  fields.forEach((field) => {
+    field.addEventListener('input', scheduleSave);
+    field.addEventListener('change', save);
+    field.addEventListener('blur', save);
+  });
+})();
+</script>
 {% endblock %}
