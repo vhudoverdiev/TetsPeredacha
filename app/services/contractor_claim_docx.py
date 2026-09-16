@@ -332,7 +332,7 @@ def _executor_block(author: User) -> str:
     email = str(author.email or "").strip()
     indent_left = 5480
     return (
-        _reference_blank(size=16, line=200)
+        _reference_blank(size=16, line=260)
         + _paragraph(f"Исп.: {executor_name}".strip(), align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220)
         + (_paragraph(f"т. {executor_phone}", align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220) if executor_phone else "")
         + (_paragraph(email, align="right", left=indent_left, right=0, size=16, spacing_after=0, line=220, color=LINK_BLUE, underline=True) if email else "")
@@ -503,7 +503,7 @@ def _stamp_inline_paragraph() -> str:
         '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
         'w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>'
         '<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'
-        '<wp:extent cx="1410000" cy="1041000"/>'
+        '<wp:extent cx="950000" cy="701000"/>'
         '<wp:effectExtent l="0" t="0" r="0" b="0"/>'
         '<wp:docPr id="1" name="Picture 1"/>'
         '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
@@ -514,7 +514,7 @@ def _stamp_inline_paragraph() -> str:
         f'<a:blip r:embed="{STAMP_REL_ID}"><a:extLst><a:ext uri="{{28A0092B-C50C-407E-A947-70E740481C1C}}">'
         '<a14:useLocalDpi val="0"/></a:ext></a:extLst></a:blip>'
         '<a:srcRect/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
-        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1410000" cy="1041000"/></a:xfrm>'
+        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="950000" cy="701000"/></a:xfrm>'
         '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></pic:spPr>'
         '</pic:pic></a:graphicData></a:graphic>'
         '</wp:inline></w:drawing></w:r></w:p>'
