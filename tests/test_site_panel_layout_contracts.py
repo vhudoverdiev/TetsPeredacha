@@ -148,6 +148,19 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         self.assertIn("padding-top: var(--ref-mobile-topbar-height", self.style_css)
         self.assertIn("body.app-body:has(.dashboard-page.dashboard-redesign) .app-content", self.style_css)
 
+    def test_contractors_filter_has_intermediate_desktop_layout(self):
+        marker = "/* Contractors: when a desktop browser window is dragged narrower"
+        self.assertIn(marker, self.desktop_css)
+        block_start = self.desktop_css.index(marker)
+        block = self.desktop_css[block_start:block_start + 2200]
+        self.assertIn("@media (min-width: 768px) and (max-width: 1199.98px)", block)
+        self.assertIn('"search contractor"', block)
+        self.assertIn('"mode status"', block)
+        self.assertIn('"finishing finishing"', block)
+        self.assertIn('"actions actions"', block)
+        self.assertIn("justify-content: flex-end !important", block)
+        self.assertIn("max-width: min(26rem, calc(100vw - 2rem)) !important", self.desktop_css)
+
     def test_desktop_sidebar_has_home_and_all_web_tabs_with_fixed_shell_geometry(self):
         sidebar_start = self.base.index("<nav class=\"sidebar-nav\">")
         sidebar_end = self.base.index("</nav>", sidebar_start)

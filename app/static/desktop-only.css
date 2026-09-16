@@ -705,6 +705,17 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
     white-space: nowrap !important;
   }
 
+  html.desktop-like-pointer body.app-body .contractor-filter-form .developer-custom-select,
+  html.desktop-like-pointer body.app-body .contractor-filter-form .global-custom-select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  html.desktop-like-pointer body.app-body .contractor-filter-form .developer-select-menu {
+    min-width: 100% !important;
+    max-width: min(26rem, calc(100vw - 2rem)) !important;
+  }
+
   /* Contractor wizard: keep desktop step accents aligned with its green buttons. */
   html.desktop-like-pointer body.app-body
     .contractor-wizard-tab.active .contractor-wizard-tab-number {
@@ -1527,6 +1538,46 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
     > #avrDataModal .modal-footer .btn.btn-outline-secondary:focus {
     color: #111827 !important;
     -webkit-text-fill-color: #111827 !important;
+  }
+}
+
+/* Contractors: when a desktop browser window is dragged narrower, switch to a
+   fixed intermediate layout instead of squeezing the full toolbar into one row. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  html.desktop-like-pointer body.app-body .contractor-filter-form {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas:
+      "search contractor"
+      "mode status"
+      "finishing finishing"
+      "actions actions" !important;
+    gap: .75rem !important;
+    align-items: end !important;
+  }
+
+  html.desktop-like-pointer body.app-body .contractor-filter-form > .remarks-filter-finishing-col {
+    grid-area: finishing !important;
+    width: 100% !important;
+  }
+
+  html.desktop-like-pointer body.app-body .contractor-filter-form .remarks-filter-checks {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    min-height: 0 !important;
+    gap: .45rem .7rem !important;
+    white-space: normal !important;
+  }
+
+  html.desktop-like-pointer body.app-body .contractor-filter-form .remarks-filter-check {
+    white-space: normal !important;
+  }
+
+  html.desktop-like-pointer body.app-body .contractor-filter-form > .contractor-filter-actions {
+    grid-area: actions !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    white-space: normal !important;
   }
 }
 

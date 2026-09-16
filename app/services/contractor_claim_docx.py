@@ -330,7 +330,8 @@ def _executor_block(author: User) -> str:
     executor_line = _executor_line(author)
     email = str(author.email or "").strip()
     return (
-        _paragraph(executor_line, align="right", left=6100, right=0, size=16, spacing_after=0, line=190)
+        _reference_blank(size=16, line=120)
+        + _paragraph(executor_line, align="right", left=6100, right=0, size=16, spacing_after=0, line=190)
         + (_paragraph(email, align="right", left=6100, right=0, size=16, spacing_after=0, line=190, color=LINK_BLUE, underline=True) if email else "")
     )
 
