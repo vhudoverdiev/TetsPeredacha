@@ -102,14 +102,12 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     representative = _join_non_empty([project.developer_representative, project.developer_representative_phone], " ")
     contractor_address_lines = _address_lines(contractor_address)
     parts = [
-        _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ", bold=True, align="center", size=44, spacing_after=0),
-        _paragraph("Специализированный застройщик", bold=True, align="center", size=44, spacing_after=0),
-        _paragraph(f"«{developer_name}»", bold=True, align="center", size=44, spacing_after=0),
-        _paragraph(f"ИНН/КПП {project.inn_kpp or '—'}, ОГРН {project.ogrn or '—'}", align="center", size=20, spacing_after=0),
-        _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=0),
+        _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", bold=True, align="center", size=28, spacing_after=0, line=240),
+        _paragraph("Специализированный застройщик", bold=True, align="center", size=44, spacing_after=0, line=240),
+        _paragraph(f"«{developer_name}»", bold=True, align="center", size=44, spacing_after=0, line=240),
+        _paragraph(f"ИНН/КПП {project.inn_kpp or '—'}, ОГРН {project.ogrn or '—'}", align="center", size=20, spacing_after=0, line=240),
+        _paragraph(f"Юридический адрес: {project.legal_address or '—'}", align="center", size=20, spacing_after=0, line=240),
         _border_line(),
-        _paragraph("", spacing_after=0),
-        _paragraph("", spacing_after=0, right=BODY_RIGHT),
         _paragraph("Претензия", bold=True, align="center", size=22, spacing_after=0),
         _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", bold=True, align="both", size=22, spacing_after=0, underline=True),
         _paragraph(contractor_name, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
@@ -117,11 +115,8 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
             _paragraph(line, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
             for line in contractor_address_lines
         ],
-        _paragraph("", align="left", right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph("", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph(_salutation(contractor), left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number, contract_date), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph(_salutation(contractor), bold=True, align="center", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _intro_paragraph(project, technical_customer, contractor_name, contract_number, contract_date),
         _deadline_paragraph(author_email),
         _paragraph(_consequence_text(developer_name), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _email_notice_paragraph(contractor_email),
@@ -130,20 +125,39 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph(representative or "—", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
-        _paragraph("", align="both", spacing_after=0, line=BODY_LINE),
         _signature_block(project),
         _executor_block(author),
     ]
     return parts
 
 
-def _intro_text(project: Project, technical_customer: str, contractor_name: str, contract_number: str, contract_date: str) -> str:
-    contract_text = _contract_text(contract_number, contract_date)
-    return (
-        f"В рамках исполнения гарантийных обязательств п.1.7, {contract_text}, заключенным между "
-        f"{technical_customer} (далее-Техзаказчик) и {contractor_name} (далее-Подрядчик), направляем в Ваш адрес "
-        f"дефектные ведомости, с перечнем недостатков, выявленных участниками долевого строительства в процессе "
-        f"передачи квартир, расположенных по адресу: {project.address or '—'} ({project.name})."
+def _intro_paragraph(project: Project, technical_customer: str, contractor_name: str, contract_number: str, contract_date: str) -> str:
+    number = str(contract_number or "").strip()
+    date_text = str(contract_date or "").strip()
+    runs = [
+        ("В рамках исполнения гарантийных обязательств ________, договора подряда", {}),
+    ]
+    if number:
+        runs.extend([
+            (" ", {}),
+            (f"№ {number}", {"bold": True}),
+        ])
+    if date_text:
+        runs.append((f" от {date_text}", {}))
+    runs.extend([
+        (f", заключенным между {technical_customer} (далее-Техзаказчик) и {contractor_name} (далее-Подрядчик), направляем в Ваш адрес ", {}),
+        ("дефектные ведомости, с перечнем недостатков, выявленных участниками долевого строительства в процессе ", {}),
+        (f"передачи квартир, расположенных по адресу: {project.address or '—'} ({project.name}).", {}),
+    ])
+    return _paragraph_runs(
+        runs,
+        align="both",
+        left=BODY_LEFT,
+        right=BODY_RIGHT,
+        first_line=BODY_FIRST_LINE,
+        size=24,
+        spacing_after=0,
+        line=BODY_LINE,
     )
 
 
@@ -283,11 +297,11 @@ def _statement_table(project_name: str, work_title: str, rows: list[list[str]], 
 def _signature_block(project: Project) -> str:
     director_title = _director_title(project)
     director_name = str(project.developer_director or "").strip()
-    widths = [4380, 1460, 3500]
+    widths = [5900, 1600, 1840]
     cells = [
-        _signature_cell(_paragraph(director_title, bold=True, size=22, in_cell=True, line=220), widths[0], v_align="bottom"),
+        _signature_cell(_paragraph(director_title, bold=True, size=20, in_cell=True, line=200), widths[0], v_align="bottom"),
         _signature_cell(_stamp_inline_paragraph(), widths[1], v_align="bottom"),
-        _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=22, in_cell=True, line=220), widths[2], v_align="bottom"),
+        _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=20, in_cell=True, line=200), widths[2], v_align="bottom"),
     ]
     return (
         "<w:tbl><w:tblPr>"
@@ -301,7 +315,7 @@ def _signature_block(project: Project) -> str:
         + "<w:tblGrid>"
         + "".join(f'<w:gridCol w:w="{width}"/>' for width in widths)
         + "</w:tblGrid>"
-        + '<w:tr><w:trPr><w:trHeight w:val="650"/></w:trPr>'
+        + '<w:tr><w:trPr><w:trHeight w:val="820" w:hRule="exact"/></w:trPr>'
         + "".join(cells)
         + "</w:tr></w:tbl>"
     )
@@ -311,9 +325,8 @@ def _executor_block(author: User) -> str:
     executor_line = _executor_line(author)
     email = str(author.email or "").strip()
     return (
-        _paragraph(executor_line, align="right", left=5750, right=0, size=16, spacing_after=0, line=200)
-        + (_paragraph(email, align="right", left=5750, right=0, size=16, spacing_after=0, line=200, color=LINK_BLUE, underline=True) if email else "")
-        + _paragraph("", size=16, spacing_after=0, line=200)
+        _paragraph(executor_line, align="right", left=6100, right=0, size=14, spacing_after=0, line=170)
+        + (_paragraph(email, align="right", left=6100, right=0, size=14, spacing_after=0, line=170, color=LINK_BLUE, underline=True) if email else "")
     )
 
 
@@ -451,7 +464,7 @@ def _stamp_inline_paragraph() -> str:
         '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
         'w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>'
         '<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'
-        '<wp:extent cx="1219200" cy="900000"/>'
+        '<wp:extent cx="1410000" cy="1041000"/>'
         '<wp:effectExtent l="0" t="0" r="0" b="0"/>'
         '<wp:docPr id="1" name="Picture 1"/>'
         '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
@@ -462,7 +475,7 @@ def _stamp_inline_paragraph() -> str:
         f'<a:blip r:embed="{STAMP_REL_ID}"><a:extLst><a:ext uri="{{28A0092B-C50C-407E-A947-70E740481C1C}}">'
         '<a14:useLocalDpi val="0"/></a:ext></a:extLst></a:blip>'
         '<a:srcRect/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
-        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1219200" cy="900000"/></a:xfrm>'
+        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1410000" cy="1041000"/></a:xfrm>'
         '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></pic:spPr>'
         '</pic:pic></a:graphicData></a:graphic>'
         '</wp:inline></w:drawing></w:r></w:p>'
@@ -482,8 +495,24 @@ def _director_title(project: Project) -> str:
 def _salutation(contractor: Contractor | None) -> str:
     director_name = str(contractor.director_full_name or "").strip() if contractor else ""
     if director_name:
-        return f"Уважаемый(ая) {director_name}!"
-    return "Уважаемый(ая)!"
+        return f"{_respectful_address(director_name)} {director_name}!"
+    return "Уважаемые коллеги!"
+
+
+def _respectful_address(full_name: str) -> str:
+    parts = [part.strip(" .") for part in re.split(r"\s+", full_name.strip()) if part.strip()]
+    lowered = [part.casefold() for part in parts]
+    patronymic = lowered[1] if len(lowered) >= 2 else ""
+    if patronymic.endswith(("ична", "овна", "евна", "инична", "ызы", "кызы")):
+        return "Уважаемая"
+    if patronymic.endswith(("ич", "ович", "евич", "оглы", "улы")):
+        return "Уважаемый"
+    first_name = lowered[0] if lowered else ""
+    if first_name in {"илья", "никита", "кузьма", "фома", "лука", "савва"}:
+        return "Уважаемый"
+    if first_name.endswith(("а", "я")):
+        return "Уважаемая"
+    return "Уважаемый"
 
 
 def _point_title(point: WorkPoint | None) -> str:

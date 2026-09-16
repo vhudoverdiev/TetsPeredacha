@@ -56687,6 +56687,104 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
   }
 }
 
+/* Desktop Apartments filter: keep action buttons directly under the finishing
+   filter instead of wrapping to the left edge when finishing checkboxes are present. */
+@media (min-width: 768px) {
+  html.desktop-like-pointer body.app-body .apartments-filter-form,
+  html body.app-body .apartments-filter-form {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas:
+      "search inspection"
+      "inspection-sort app"
+      "avr po"
+      "finishing finishing"
+      "actions actions" !important;
+    gap: .75rem !important;
+    align-items: end !important;
+    margin: 0 !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > [class*="col-"],
+  html body.app-body .apartments-filter-form > [class*="col-"] {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    flex: none !important;
+    padding: 0 !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(input[name="q"]),
+  html body.app-body .apartments-filter-form > div:has(input[name="q"]) {
+    grid-area: search !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="inspection_status"]),
+  html body.app-body .apartments-filter-form > div:has(select[name="inspection_status"]) {
+    grid-area: inspection !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="inspection_order"]),
+  html body.app-body .apartments-filter-form > div:has(select[name="inspection_order"]) {
+    grid-area: inspection-sort !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="app_status"]),
+  html body.app-body .apartments-filter-form > div:has(select[name="app_status"]) {
+    grid-area: app !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="avr_status"]),
+  html body.app-body .apartments-filter-form > div:has(select[name="avr_status"]) {
+    grid-area: avr !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="po_status"]),
+  html body.app-body .apartments-filter-form > div:has(select[name="po_status"]) {
+    grid-area: po !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > .apartments-filter-finishing-col,
+  html body.app-body .apartments-filter-form > .apartments-filter-finishing-col {
+    grid-area: finishing !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > .apartments-filter-finishing-col .remarks-filter-checks,
+  html body.app-body .apartments-filter-form > .apartments-filter-finishing-col .remarks-filter-checks {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: .45rem .7rem !important;
+    align-items: center !important;
+    overflow: visible !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form > .filter-actions,
+  html body.app-body .apartments-filter-form > .filter-actions {
+    grid-area: actions !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: .55rem !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  html.desktop-like-pointer body.app-body .apartments-filter-form,
+  html body.app-body .apartments-filter-form {
+    grid-template-columns:
+      minmax(220px, 1.35fr)
+      minmax(150px, .88fr)
+      minmax(190px, 1.08fr)
+      minmax(150px, .82fr)
+      minmax(130px, .72fr)
+      minmax(180px, 1fr)
+      minmax(270px, 1.18fr) !important;
+    grid-template-areas:
+      "search inspection inspection-sort app avr po finishing"
+      ". . . . . . actions" !important;
+  }
+}
+
 /* Desktop only: stable multi-material rows and compact manual-writeoff controls. */
 @media (min-width: 768px) {
   html body.app-body .js-multi-material-form .material-lines-field {

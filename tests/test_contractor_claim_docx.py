@@ -8,7 +8,7 @@ from xml.etree import ElementTree as ET
 from config import Config
 from app import create_app, db
 from app.models import Apartment, Contractor, Project, STATUS_DONE, STATUS_NOT_STARTED, Task, User, WorkPoint
-from app.services.contractor_claim_docx import build_contractor_claim_docx
+from app.services.contractor_claim_docx import _salutation, build_contractor_claim_docx
 
 
 WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -135,8 +135,10 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("2901297953/290101001", text)
         self.assertIn("1192901006924", text)
         self.assertIn('ООО "Коробка"', text)
-        self.assertIn("Уважаемый(ая) Елена Петровна!", text)
+        self.assertIn("Уважаемая Елена Петровна!", text)
         self.assertIn("договора подряда № 07-04/2025 от 07.04.2025", text)
+        self.assertIn("гарантийных обязательств ________, договора подряда", text)
+        self.assertNotIn("п.1.7", text)
         self.assertIn("Направлено на адрес эл. почты: contractor@example.test", text)
         self.assertIn("№ кв", text)
         self.assertIn("№ строительный", text)
@@ -169,8 +171,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertEqual(len(page_breaks), 2)
         self.assertIn("<wp:inline", document_xml)
         self.assertIn('r:embed="rIdStamp"', document_xml)
-        self.assertIn('cx="1219200"', document_xml)
-        self.assertIn('cy="900000"', document_xml)
+        self.assertIn('cx="1410000"', document_xml)
+        self.assertIn('cy="1041000"', document_xml)
         self.assertIn('Id="rIdStamp"', document_rels)
         self.assertIn('Target="media/image1.png"', document_rels)
         self.assertIn('ContentType="image/png"', content_types)
@@ -184,14 +186,20 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertNotIn('w:right="-992"', first_page_xml)
         self.assertIn('<w:bottom w:val="single" w:sz="4" w:space="1" w:color="auto"/>', document_xml)
         self.assertIn('<w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', document_xml)
+        self.assertRegex(document_xml, r'<w:sz w:val="28"/>.*?<w:t>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ</w:t>')
+        self.assertRegex(document_xml, r'<w:sz w:val="44"/>.*?<w:t>Специализированный застройщик</w:t>')
+        self.assertRegex(document_xml, r'<w:sz w:val="20"/>.*?<w:t>ИНН/КПП 2901297953/290101001, ОГРН 1192901006924</w:t>')
         self.assertIn('<w:ind w:left="284" w:right="-709" w:firstLine="424"/>', document_xml)
         self.assertIn('<w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="auto"/>', document_xml)
         self.assertIn("<w:t>164520, Архангельская обл., г. Северодвинск</w:t>", document_xml)
         self.assertIn("<w:t>ул. Индустриальная, д.27, кв.7</w:t>", document_xml)
         _assert_bold_text(self, document_xml, "Исх. №____  от")
         _assert_bold_text(self, document_xml, 'ООО "Коробка"')
+        _assert_bold_text(self, document_xml, "№ 07-04/2025")
         _assert_bold_text(self, document_xml, "164520, Архангельская обл., г. Северодвинск")
         _assert_bold_text(self, document_xml, "ул. Индустриальная, д.27, кв.7")
+        _assert_bold_text(self, document_xml, "Уважаемая Елена Петровна!")
+        self.assertRegex(document_xml, r'<w:jc w:val="center"/>.*?<w:t>Уважаемая Елена Петровна!</w:t>')
 
         page_margins = root.find(f".//{W}sectPr/{W}pgMar")
         self.assertEqual(page_margins.attrib[f"{W}top"], "567")
@@ -204,7 +212,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
         signature_grid = [column.attrib[f"{W}w"] for column in tables[0].findall(f"{W}tblGrid/{W}gridCol")]
         first_grid = [column.attrib[f"{W}w"] for column in tables[1].findall(f"{W}tblGrid/{W}gridCol")]
         completed_grid = [column.attrib[f"{W}w"] for column in tables[2].findall(f"{W}tblGrid/{W}gridCol")]
-        self.assertEqual(signature_grid, ["4380", "1460", "3500"])
+        self.assertEqual(signature_grid, ["5900", "1600", "1840"])
         self.assertEqual(first_grid, ["701", "1985", "6653"])
         self.assertEqual(completed_grid, ["846", "2126", "6367"])
 
@@ -212,6 +220,14 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertEqual(first_title_size, "28")
         body_sizes = [node.attrib[f"{W}val"] for node in tables[1].findall(f".//{W}sz")]
         self.assertIn("24", body_sizes)
+
+    def test_salutation_detects_director_gender(self):
+        self.contractor.director_full_name = "Владимир Сергеевич"
+        self.assertEqual(_salutation(self.contractor), "Уважаемый Владимир Сергеевич!")
+        self.contractor.director_full_name = "Елена Петровна"
+        self.assertEqual(_salutation(self.contractor), "Уважаемая Елена Петровна!")
+        self.contractor.director_full_name = ""
+        self.assertEqual(_salutation(self.contractor), "Уважаемые коллеги!")
 
 
 if __name__ == "__main__":
