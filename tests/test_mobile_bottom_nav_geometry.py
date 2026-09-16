@@ -429,6 +429,32 @@ class MobileBottomNavGeometryTest(unittest.TestCase):
             )
             self.assertIn("bottom: auto !important;", dock_rule)
 
+    def test_objects_page_uses_the_same_physical_ios_dock_anchor(self):
+        body_selector = "body.app-body.app-body.app-body:has(.objects-page) {"
+        dock_selector = re.compile(
+            r"body\.app-body\.app-body\.app-body:has\(\.objects-page\)"
+            r"\s*>\s*nav\.mobile-bottom-nav\.mobile-bottom-nav-root"
+        )
+        for stylesheet in (self.base, self.mobile_css, self.style_css):
+            body_start = stylesheet.index(body_selector)
+            body_end = stylesheet.index("}", body_start)
+            body_rule = stylesheet[body_start:body_end]
+            self.assertIn(
+                "height: var(--mobile-physical-app-height, 100dvh) !important;",
+                body_rule,
+            )
+            self.assertIn("background: #f6f8fb !important;", body_rule)
+            dock_match = dock_selector.search(stylesheet)
+            self.assertIsNotNone(dock_match)
+            dock_end = stylesheet.index("}", dock_match.start())
+            dock_rule = stylesheet[dock_match.start():dock_end]
+            self.assertIn("position: absolute !important;", dock_rule)
+            self.assertIn(
+                "top: calc(var(--mobile-physical-app-height, 100dvh) - 72px) !important;",
+                dock_rule,
+            )
+            self.assertIn("bottom: auto !important;", dock_rule)
+
     def test_pwa_cache_uses_the_same_mobile_stylesheet_version(self):
         version_pattern = r"mobile-only\.css[^\n]*\?v=(v[\w-]+)"
         template_version = re.search(version_pattern, self.base)

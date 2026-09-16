@@ -36,6 +36,10 @@ def _document_root(path: Path):
     return ET.fromstring(xml)
 
 
+def _assert_bold_text(testcase: unittest.TestCase, document_xml: str, text: str) -> None:
+    testcase.assertRegex(document_xml, rf"<w:rPr>.*?<w:b/>.*?</w:rPr><w:t(?: [^>]*)?>{re.escape(text)}[^<]*</w:t>")
+
+
 class ContractorClaimDocxTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
@@ -52,6 +56,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
             inn_kpp="2901297953/290101001",
             ogrn="1192901006924",
             legal_address="164515, г. Северодвинск, ул. Ломоносова, д. 85, корпус 1, офис 2",
+            developer_director="Поплевин В.Е.",
             developer_representative="Худовердиев В.С.",
             developer_representative_phone="8 900 000-00-00",
         )
@@ -162,22 +167,31 @@ class ContractorClaimDocxTests(unittest.TestCase):
 
         page_breaks = root.findall(f".//{W}br[@{W}type='page']")
         self.assertEqual(len(page_breaks), 2)
-        self.assertIn("<wp:anchor", document_xml)
+        self.assertIn("<wp:inline", document_xml)
         self.assertIn('r:embed="rIdStamp"', document_xml)
-        self.assertIn('cx="1590725"', document_xml)
-        self.assertIn('cy="1176020"', document_xml)
+        self.assertIn('cx="1219200"', document_xml)
+        self.assertIn('cy="900000"', document_xml)
         self.assertIn('Id="rIdStamp"', document_rels)
         self.assertIn('Target="media/image1.png"', document_rels)
         self.assertIn('ContentType="image/png"', content_types)
         self.assertGreater(len(stamp_bytes), 0)
         self.assertRegex(document_xml, r'<w:color w:val="0000FF"/>.*?<w:t>kostyleva@group-akvilon\.ru</w:t>')
         self.assertRegex(document_xml, r'<w:color w:val="0000FF"/>.*?<w:t>contractor@example\.test</w:t>')
+        first_page_xml = document_xml.split('<w:br w:type="page"/>', 1)[0]
+        self.assertIn("<w:t>Исп.: Костылева Н.А. т. 8(8184) 52-00-00 (доб.354)</w:t>", first_page_xml)
+        self.assertIn("<w:t>kostyleva@group-akvilon.ru</w:t>", first_page_xml)
+        self.assertIn("<w:t>Поплевин В.Е.</w:t>", first_page_xml)
+        self.assertNotIn('w:right="-992"', first_page_xml)
         self.assertIn('<w:bottom w:val="single" w:sz="4" w:space="1" w:color="auto"/>', document_xml)
         self.assertIn('<w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', document_xml)
         self.assertIn('<w:ind w:left="284" w:right="-709" w:firstLine="424"/>', document_xml)
         self.assertIn('<w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="auto"/>', document_xml)
         self.assertIn("<w:t>164520, Архангельская обл., г. Северодвинск</w:t>", document_xml)
         self.assertIn("<w:t>ул. Индустриальная, д.27, кв.7</w:t>", document_xml)
+        _assert_bold_text(self, document_xml, "Исх. №____  от")
+        _assert_bold_text(self, document_xml, 'ООО "Коробка"')
+        _assert_bold_text(self, document_xml, "164520, Архангельская обл., г. Северодвинск")
+        _assert_bold_text(self, document_xml, "ул. Индустриальная, д.27, кв.7")
 
         page_margins = root.find(f".//{W}sectPr/{W}pgMar")
         self.assertEqual(page_margins.attrib[f"{W}top"], "567")
@@ -186,15 +200,17 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertEqual(page_margins.attrib[f"{W}left"], "1134")
 
         tables = root.findall(f".//{W}tbl")
-        self.assertEqual(len(tables), 2)
-        first_grid = [column.attrib[f"{W}w"] for column in tables[0].findall(f"{W}tblGrid/{W}gridCol")]
-        completed_grid = [column.attrib[f"{W}w"] for column in tables[1].findall(f"{W}tblGrid/{W}gridCol")]
+        self.assertEqual(len(tables), 3)
+        signature_grid = [column.attrib[f"{W}w"] for column in tables[0].findall(f"{W}tblGrid/{W}gridCol")]
+        first_grid = [column.attrib[f"{W}w"] for column in tables[1].findall(f"{W}tblGrid/{W}gridCol")]
+        completed_grid = [column.attrib[f"{W}w"] for column in tables[2].findall(f"{W}tblGrid/{W}gridCol")]
+        self.assertEqual(signature_grid, ["4380", "1460", "3500"])
         self.assertEqual(first_grid, ["701", "1985", "6653"])
         self.assertEqual(completed_grid, ["846", "2126", "6367"])
 
-        first_title_size = tables[0].find(f".//{W}sz").attrib[f"{W}val"]
+        first_title_size = tables[1].find(f".//{W}sz").attrib[f"{W}val"]
         self.assertEqual(first_title_size, "28")
-        body_sizes = [node.attrib[f"{W}val"] for node in tables[0].findall(f".//{W}sz")]
+        body_sizes = [node.attrib[f"{W}val"] for node in tables[1].findall(f".//{W}sz")]
         self.assertIn("24", body_sizes)
 
 

@@ -2222,6 +2222,31 @@
     inset: calc(var(--mobile-physical-app-height, 100dvh) - 72px) 0 auto 0 !important;
   }
 
+  /* Objects can be a short manager/admin standalone page too. Keep its light
+     canvas and 72px dock anchored to the same physical iOS height as Account. */
+  html.standalone-app
+    body.app-body.app-body.app-body:has(.objects-page) {
+    min-height: var(--mobile-physical-app-height, 100dvh) !important;
+    height: var(--mobile-physical-app-height, 100dvh) !important;
+    max-height: var(--mobile-physical-app-height, 100dvh) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    background: #f6f8fb !important;
+    background-color: #f6f8fb !important;
+  }
+
+  html.standalone-app
+    body.app-body.app-body.app-body:has(.objects-page)
+    > nav.mobile-bottom-nav.mobile-bottom-nav-root {
+    position: absolute !important;
+    top: calc(var(--mobile-physical-app-height, 100dvh) - 72px) !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    inset: calc(var(--mobile-physical-app-height, 100dvh) - 72px) 0 auto 0 !important;
+  }
+
   html.standalone-app body.app-body.app-body.app-body:has(.assignment-issued-layout-empty)
     main.app-content.app-content {
     padding-bottom: var(--mobile-empty-content-gap, .75rem) !important;

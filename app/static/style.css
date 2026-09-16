@@ -43264,11 +43264,32 @@ body.auth-body .auth-shell .auth-footer .auth-footer-line-main {
 
   html.mobile-viewport body.app-body .account-enable-2fa-btn,
   html.adaptive-mobile-viewport body.app-body .account-enable-2fa-btn,
+  html.mobile-viewport body.app-body .account-contact-save-btn,
+  html.adaptive-mobile-viewport body.app-body .account-contact-save-btn,
   html.mobile-viewport body.app-body .account-logout-btn,
   html.adaptive-mobile-viewport body.app-body .account-logout-btn {
     min-height: 3rem !important;
     border-radius: 1rem !important;
     font-weight: 900 !important;
+  }
+
+  html.mobile-viewport body.app-body .account-profile-card .account-contact-form,
+  html.adaptive-mobile-viewport body.app-body .account-profile-card .account-contact-form {
+    width: 100% !important;
+  }
+
+  html.mobile-viewport body.app-body .account-profile-card .account-profile-edit-list,
+  html.adaptive-mobile-viewport body.app-body .account-profile-card .account-profile-edit-list {
+    margin-bottom: 1.05rem !important;
+  }
+
+  html.mobile-viewport body.app-body .account-profile-card .account-contact-save-btn,
+  html.adaptive-mobile-viewport body.app-body .account-profile-card .account-contact-save-btn {
+    display: inline-flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
   }
 
   html.mobile-viewport body.app-body .account-logout-form,
@@ -54207,6 +54228,37 @@ body.app-body:has(.confirm-modal-page) .confirm-modal-backdrop {
   html:is(.mobile-viewport, .adaptive-mobile-viewport, .touch-app-device)
     body.app-body .crm-mobile-page-shell > :last-child:not(.crm-toast-stack) {
     margin-bottom: 0 !important;
+  }
+}
+
+/* v526: objects page uses the same fixed 72px mobile dock geometry as Account.
+   In iOS standalone mode a short Objects page can otherwise expose the dark
+   bottom chrome area as if it were part of the navigation panel. */
+@media (max-width: 767.98px) {
+  html.standalone-app:is(.mobile-viewport, .adaptive-mobile-viewport, .touch-app-device)
+    body.app-body.app-body.app-body:has(.objects-page) {
+    min-height: var(--mobile-physical-app-height, 100dvh) !important;
+    height: var(--mobile-physical-app-height, 100dvh) !important;
+    max-height: var(--mobile-physical-app-height, 100dvh) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    background: #f6f8fb !important;
+    background-color: #f6f8fb !important;
+  }
+
+  html.standalone-app:is(.mobile-viewport, .adaptive-mobile-viewport, .touch-app-device)
+    body.app-body.app-body.app-body:has(.objects-page)
+    > nav.mobile-bottom-nav.mobile-bottom-nav-root {
+    position: absolute !important;
+    top: calc(var(--mobile-physical-app-height, 100dvh) - 72px) !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    inset: calc(var(--mobile-physical-app-height, 100dvh) - 72px) 0 auto 0 !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
   }
 }
 

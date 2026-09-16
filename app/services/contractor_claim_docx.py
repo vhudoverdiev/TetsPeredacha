@@ -100,7 +100,6 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     contract_date = contractor.contract_date if contractor else ""
     author_email = author.email or ""
     representative = _join_non_empty([project.developer_representative, project.developer_representative_phone], " ")
-    director = _join_non_empty([_director_title(project), project.developer_director], "                                                   ")
     contractor_address_lines = _address_lines(contractor_address)
     parts = [
         _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ", bold=True, align="center", size=44, spacing_after=0),
@@ -112,10 +111,10 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph("", spacing_after=0),
         _paragraph("", spacing_after=0, right=BODY_RIGHT),
         _paragraph("Претензия", bold=True, align="center", size=22, spacing_after=0),
-        _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", align="both", size=22, spacing_after=0, underline=True),
-        _paragraph(contractor_name, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", bold=True, align="both", size=22, spacing_after=0, underline=True),
+        _paragraph(contractor_name, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
         *[
-            _paragraph(line, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
+            _paragraph(line, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
             for line in contractor_address_lines
         ],
         _paragraph("", align="left", right=BODY_RIGHT, size=22, spacing_after=0),
@@ -131,15 +130,9 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph(f"- Дефектные ведомости от {_numeric_date(current_date)} г.", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph("- Все работы по устранению замечаний сдавать данным представителям Застройщика: ", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph(representative or "—", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
-        _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, spacing_after=0, line=BODY_LINE),
-        _paragraph("", align="both", right=BODY_RIGHT, spacing_after=0, line=BODY_LINE),
         _paragraph("", align="both", spacing_after=0, line=BODY_LINE),
-        _stamp_paragraph(),
-        _paragraph(director or _director_title(project), bold=True, size=24, spacing_after=0, line=BODY_LINE),
-        _paragraph("", size=18, spacing_after=0, line=240),
-        _paragraph(_executor_line(author), align="center", left=4956, right=-992, first_line=708, size=18, spacing_after=0, line=240),
-        _paragraph(author.email or "", left=7788, right=-992, size=18, spacing_after=0, line=240, color=LINK_BLUE, underline=True),
-        _paragraph("", size=18, spacing_after=120),
+        _signature_block(project),
+        _executor_block(author),
     ]
     return parts
 
@@ -287,6 +280,50 @@ def _statement_table(project_name: str, work_title: str, rows: list[list[str]], 
     )
 
 
+def _signature_block(project: Project) -> str:
+    director_title = _director_title(project)
+    director_name = str(project.developer_director or "").strip()
+    widths = [4380, 1460, 3500]
+    cells = [
+        _signature_cell(_paragraph(director_title, bold=True, size=22, in_cell=True, line=220), widths[0], v_align="bottom"),
+        _signature_cell(_stamp_inline_paragraph(), widths[1], v_align="bottom"),
+        _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=22, in_cell=True, line=220), widths[2], v_align="bottom"),
+    ]
+    return (
+        "<w:tbl><w:tblPr>"
+        f'<w:tblW w:w="{sum(widths)}" w:type="dxa"/>'
+        '<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/>'
+        '<w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>'
+        '<w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/>'
+        '<w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>'
+        '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>'
+        "</w:tblPr>"
+        + "<w:tblGrid>"
+        + "".join(f'<w:gridCol w:w="{width}"/>' for width in widths)
+        + "</w:tblGrid>"
+        + '<w:tr><w:trPr><w:trHeight w:val="650"/></w:trPr>'
+        + "".join(cells)
+        + "</w:tr></w:tbl>"
+    )
+
+
+def _executor_block(author: User) -> str:
+    executor_line = _executor_line(author)
+    email = str(author.email or "").strip()
+    return (
+        _paragraph(executor_line, align="right", left=5750, right=0, size=16, spacing_after=0, line=200)
+        + (_paragraph(email, align="right", left=5750, right=0, size=16, spacing_after=0, line=200, color=LINK_BLUE, underline=True) if email else "")
+        + _paragraph("", size=16, spacing_after=0, line=200)
+    )
+
+
+def _signature_cell(content: str, width: int, *, v_align: str = "center") -> str:
+    return (
+        f'<w:tc><w:tcPr><w:tcW w:w="{width}" w:type="dxa"/>'
+        f'<w:vAlign w:val="{v_align}"/></w:tcPr>{content}</w:tc>'
+    )
+
+
 def _merged_row(text: str, *, columns: int, bold: bool, align: str) -> str:
     return (
         '<w:tr><w:trPr><w:trHeight w:val="315"/></w:trPr>'
@@ -408,19 +445,14 @@ def _border_line() -> str:
     )
 
 
-def _stamp_paragraph() -> str:
+def _stamp_inline_paragraph() -> str:
     return (
-        '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>'
+        '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="220" w:lineRule="auto"/></w:pPr>'
         '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
         'w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>'
-        '<w:drawing><wp:anchor distT="0" distB="0" distL="114300" distR="114300" '
-        'simplePos="0" relativeHeight="251658240" behindDoc="0" locked="0" layoutInCell="1" allowOverlap="1">'
-        '<wp:simplePos x="0" y="0"/>'
-        '<wp:positionH relativeFrom="column"><wp:posOffset>3394710</wp:posOffset></wp:positionH>'
-        '<wp:positionV relativeFrom="paragraph"><wp:posOffset>9525</wp:posOffset></wp:positionV>'
-        '<wp:extent cx="1590725" cy="1176020"/>'
+        '<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'
+        '<wp:extent cx="1219200" cy="900000"/>'
         '<wp:effectExtent l="0" t="0" r="0" b="0"/>'
-        '<wp:wrapNone/>'
         '<wp:docPr id="1" name="Picture 1"/>'
         '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
         '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'
@@ -430,10 +462,10 @@ def _stamp_paragraph() -> str:
         f'<a:blip r:embed="{STAMP_REL_ID}"><a:extLst><a:ext uri="{{28A0092B-C50C-407E-A947-70E740481C1C}}">'
         '<a14:useLocalDpi val="0"/></a:ext></a:extLst></a:blip>'
         '<a:srcRect/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
-        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1590725" cy="1176020"/></a:xfrm>'
+        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="1219200" cy="900000"/></a:xfrm>'
         '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></pic:spPr>'
         '</pic:pic></a:graphicData></a:graphic>'
-        '</wp:anchor></w:drawing></w:r></w:p>'
+        '</wp:inline></w:drawing></w:r></w:p>'
     )
 
 

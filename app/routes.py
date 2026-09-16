@@ -123,6 +123,7 @@ from app.services.task_service import (
     change_task_status,
     dashboard_stats,
     detect_search_mode,
+    get_multi_param_values,
     get_setting,
     is_apartment_unsold,
     is_unsold_owner_name,
@@ -8499,7 +8500,7 @@ def apartments():
     per_page = 10 if is_mobile_request else 20
     mobile_page = 1
     mobile_total_pages = 1
-    mobile_pagination_args = request.args.to_dict(flat=True)
+    mobile_pagination_args = request.args.to_dict(flat=False)
     mobile_pagination_args.pop("page", None)
     try:
         mobile_page = max(1, int(request.args.get("page", 1)))
@@ -8556,7 +8557,7 @@ def apartments():
         "apartments.html",
         rows=rows,
         args=request.args,
-        export_args=request.args.to_dict(flat=True),
+        export_args=request.args.to_dict(flat=False),
         finishing_types=finishing_types,
         total_count=total_count,
         mobile_page=mobile_page,
@@ -8624,6 +8625,7 @@ def _filtered_apartment_overview_rows(
     app_status_filter = (args.get("app_status") or "").strip()
     avr_status_filter = (args.get("avr_status") or "").strip()
     po_status_filter = (args.get("po_status") or "").strip()
+    finishing_groups = set(get_multi_param_values(args, "finishing_group"))
     rows = []
     overview_rows = source_rows
     if overview_rows is None:
@@ -8662,6 +8664,8 @@ def _filtered_apartment_overview_rows(
             continue
         if po_status_filter and row.get("po_status") != po_status_filter:
             continue
+        if finishing_groups and not _apartment_row_matches_finishing_groups(row, finishing_groups):
+            continue
         if inspection_filter == "was" and row.get("inspection_status") != "Был":
             continue
         if inspection_filter == "not_was" and row.get("inspection_status") not in {"Не был", "Будет"}:
@@ -8691,6 +8695,20 @@ def _filtered_apartment_overview_rows(
             )
         )
     return rows, premise_selectors, po_only
+
+
+def _apartment_row_matches_finishing_groups(row: dict, finishing_groups: set[str]) -> bool:
+    for apartment in row.get("apartments") or []:
+        finish = str(apartment.finishing_type or "").strip()
+        is_white = "бел" in finish.lower().replace("ё", "е")
+        is_none = not finish
+        if "white" in finishing_groups and is_white:
+            return True
+        if "none" in finishing_groups and is_none:
+            return True
+        if "clean" in finishing_groups and not is_white and not is_none:
+            return True
+    return False
 
 
 def _apartments_export_filename_stem(project_name: str | None) -> str:
