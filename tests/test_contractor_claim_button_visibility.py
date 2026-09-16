@@ -80,6 +80,28 @@ class ContractorClaimButtonVisibilityTests(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/contractors", response.headers["Location"])
 
+    def test_contractor_form_saves_director_and_contract_date(self):
+        response = self.client.post(
+            "/contractors/new",
+            data={
+                "name": 'ООО "Фасад"',
+                "legal_address": "164520, Архангельская обл.",
+                "director_full_name": "Елена Петровна",
+                "contract_number": "07-04/2025",
+                "contract_date": "07.04.2025",
+                "email": "facade@example.test",
+                "work_points": [self.point.point_number],
+                "apartment_groups": [str(self.apartment.id)],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        contractor = Contractor.query.filter_by(name='ООО "Фасад"').one()
+        self.assertEqual(contractor.director_full_name, "Елена Петровна")
+        self.assertEqual(contractor.contract_number, "07-04/2025")
+        self.assertEqual(contractor.contract_date, "07.04.2025")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -234,6 +234,8 @@ class Contractor(TimestampMixin, db.Model):
     name = db.Column(db.String(180), nullable=False, index=True)
     legal_address = db.Column(db.String(255), nullable=True)
     contract_number = db.Column(db.String(255), nullable=True)
+    contract_date = db.Column(db.String(50), nullable=True)
+    director_full_name = db.Column(db.String(255), nullable=True)
     email = db.Column(db.String(255), nullable=True)
 
     project = db.relationship("Project", back_populates="contractors")

@@ -447,6 +447,10 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE contractors ADD COLUMN legal_address VARCHAR(255)"))
                 if "contract_number" not in contractor_columns:
                     db.session.execute(text("ALTER TABLE contractors ADD COLUMN contract_number VARCHAR(255)"))
+                if "contract_date" not in contractor_columns:
+                    db.session.execute(text("ALTER TABLE contractors ADD COLUMN contract_date VARCHAR(50)"))
+                if "director_full_name" not in contractor_columns:
+                    db.session.execute(text("ALTER TABLE contractors ADD COLUMN director_full_name VARCHAR(255)"))
                 if "email" not in contractor_columns:
                     db.session.execute(text("ALTER TABLE contractors ADD COLUMN email VARCHAR(255)"))
                 db.session.commit()

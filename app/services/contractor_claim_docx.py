@@ -97,9 +97,11 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     contractor_address = contractor.legal_address if contractor else ""
     contractor_email = contractor.email if contractor else ""
     contract_number = contractor.contract_number if contractor else ""
+    contract_date = contractor.contract_date if contractor else ""
     author_email = author.email or ""
     representative = _join_non_empty([project.developer_representative, project.developer_representative_phone], " ")
     director = _join_non_empty([_director_title(project), project.developer_director], "                                                   ")
+    contractor_address_lines = _address_lines(contractor_address)
     parts = [
         _paragraph("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ", bold=True, align="center", size=44, spacing_after=0),
         _paragraph("Специализированный застройщик", bold=True, align="center", size=44, spacing_after=0),
@@ -112,12 +114,15 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph("Претензия", bold=True, align="center", size=22, spacing_after=0),
         _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", align="both", size=22, spacing_after=0, underline=True),
         _paragraph(contractor_name, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph(contractor_address, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
+        *[
+            _paragraph(line, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
+            for line in contractor_address_lines
+        ],
         _paragraph("", align="left", right=BODY_RIGHT, size=22, spacing_after=0),
         _paragraph("", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
         _paragraph(_salutation(contractor), left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
         _paragraph("", align="both", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
-        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
+        _paragraph(_intro_text(project, technical_customer, contractor_name, contract_number, contract_date), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _deadline_paragraph(author_email),
         _paragraph(_consequence_text(developer_name), align="both", left=BODY_LEFT, right=BODY_RIGHT, first_line=BODY_FIRST_LINE, size=24, spacing_after=0, line=BODY_LINE),
         _email_notice_paragraph(contractor_email),
@@ -132,9 +137,6 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _stamp_paragraph(),
         _paragraph(director or _director_title(project), bold=True, size=24, spacing_after=0, line=BODY_LINE),
         _paragraph("", size=18, spacing_after=0, line=240),
-        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
-        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
-        _paragraph("", right=-992, size=18, spacing_after=0, line=240),
         _paragraph(_executor_line(author), align="center", left=4956, right=-992, first_line=708, size=18, spacing_after=0, line=240),
         _paragraph(author.email or "", left=7788, right=-992, size=18, spacing_after=0, line=240, color=LINK_BLUE, underline=True),
         _paragraph("", size=18, spacing_after=120),
@@ -142,8 +144,8 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
     return parts
 
 
-def _intro_text(project: Project, technical_customer: str, contractor_name: str, contract_number: str) -> str:
-    contract_text = f"договора подряда № {contract_number}" if contract_number else "договора подряда"
+def _intro_text(project: Project, technical_customer: str, contractor_name: str, contract_number: str, contract_date: str) -> str:
+    contract_text = _contract_text(contract_number, contract_date)
     return (
         f"В рамках исполнения гарантийных обязательств п.1.7, {contract_text}, заключенным между "
         f"{technical_customer} (далее-Техзаказчик) и {contractor_name} (далее-Подрядчик), направляем в Ваш адрес "
@@ -193,6 +195,18 @@ def _consequence_text(developer_name: str) -> str:
         "специализированную организацию для устранения допущенных Вами недостатков работ с возложением затрат "
         "и ущербов на Вашу организацию, а также оставляет за собой право обратиться в суд."
     )
+
+
+def _contract_text(contract_number: str, contract_date: str) -> str:
+    number = str(contract_number or "").strip()
+    date_text = str(contract_date or "").strip()
+    if number and date_text:
+        return f"договора подряда № {number} от {date_text}"
+    if number:
+        return f"договора подряда № {number}"
+    if date_text:
+        return f"договора подряда от {date_text}"
+    return "договора подряда"
 
 
 def _defect_statement_tables(project: Project, tasks: list[Task], *, completed: bool = False) -> list[str]:
@@ -434,9 +448,10 @@ def _director_title(project: Project) -> str:
 
 
 def _salutation(contractor: Contractor | None) -> str:
-    if not contractor or not contractor.name:
-        return "Уважаемые коллеги!"
-    return "Уважаемые коллеги!"
+    director_name = str(contractor.director_full_name or "").strip() if contractor else ""
+    if director_name:
+        return f"Уважаемый(ая) {director_name}!"
+    return "Уважаемый(ая)!"
 
 
 def _point_title(point: WorkPoint | None) -> str:
@@ -446,6 +461,26 @@ def _point_title(point: WorkPoint | None) -> str:
     if not title:
         return f"Пункт {point.point_number}"
     return re.sub(r"^\s*\d+\s*[\.\-:)]\s*", "", title).strip() or title
+
+
+def _address_lines(address: str) -> list[str]:
+    text = " ".join(str(address or "").split())
+    if not text:
+        return [""]
+    parts = [part.strip() for part in text.split(",") if part.strip()]
+    if len(parts) <= 2:
+        return [text]
+    lines = []
+    current = parts[0]
+    for part in parts[1:]:
+        candidate = f"{current}, {part}"
+        if len(candidate) <= 58 or len(lines) >= 2:
+            current = candidate
+        else:
+            lines.append(current)
+            current = part
+    lines.append(current)
+    return lines[:3]
 
 
 def _task_description(task: Task) -> str:

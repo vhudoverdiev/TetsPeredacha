@@ -58,8 +58,10 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.contractor = Contractor(
             project=self.project,
             name='ООО "Коробка"',
-            legal_address="164520, Архангельская обл.",
+            legal_address="164520, Архангельская обл., г. Северодвинск, ул. Индустриальная, д.27, кв.7",
             contract_number="07-04/2025",
+            contract_date="07.04.2025",
+            director_full_name="Елена Петровна",
             email="contractor@example.test",
         )
         self.point = WorkPoint(point_number="12", short_name="12. Возведение коробки здания")
@@ -128,7 +130,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("2901297953/290101001", text)
         self.assertIn("1192901006924", text)
         self.assertIn('ООО "Коробка"', text)
-        self.assertIn("07-04/2025", text)
+        self.assertIn("Уважаемый(ая) Елена Петровна!", text)
+        self.assertIn("договора подряда № 07-04/2025 от 07.04.2025", text)
         self.assertIn("Направлено на адрес эл. почты: contractor@example.test", text)
         self.assertIn("№ кв", text)
         self.assertIn("№ строительный", text)
@@ -173,6 +176,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn('<w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', document_xml)
         self.assertIn('<w:ind w:left="284" w:right="-709" w:firstLine="424"/>', document_xml)
         self.assertIn('<w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="auto"/>', document_xml)
+        self.assertIn("<w:t>164520, Архангельская обл., г. Северодвинск</w:t>", document_xml)
+        self.assertIn("<w:t>ул. Индустриальная, д.27, кв.7</w:t>", document_xml)
 
         page_margins = root.find(f".//{W}sectPr/{W}pgMar")
         self.assertEqual(page_margins.attrib[f"{W}top"], "567")

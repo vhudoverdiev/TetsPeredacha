@@ -3292,6 +3292,8 @@ def _contractor_form_response(contractor: Contractor | None = None):
         name = str(request.form.get("name") or "").strip()
         legal_address = str(request.form.get("legal_address") or "").strip()
         contract_number = str(request.form.get("contract_number") or "").strip()
+        contract_date = str(request.form.get("contract_date") or "").strip()
+        director_full_name = str(request.form.get("director_full_name") or "").strip()
         email = str(request.form.get("email") or "").strip()
         selected_point_numbers = {
             str(value).strip()
@@ -3307,6 +3309,8 @@ def _contractor_form_response(contractor: Contractor | None = None):
         name = contractor.name if contractor else ""
         legal_address = contractor.legal_address if contractor and contractor.legal_address else ""
         contract_number = contractor.contract_number if contractor and contractor.contract_number else ""
+        contract_date = contractor.contract_date if contractor and contractor.contract_date else ""
+        director_full_name = contractor.director_full_name if contractor and contractor.director_full_name else ""
         email = contractor.email if contractor and contractor.email else ""
         selected_point_numbers = {
             str(point.point_number).strip()
@@ -3335,6 +3339,8 @@ def _contractor_form_response(contractor: Contractor | None = None):
         contractor_detail_lengths = (
             ("Юридический адрес", legal_address),
             ("№ Договор подряда", contract_number),
+            ("Дата договора", contract_date),
+            ("ФИО директора", director_full_name),
             ("Эл.почта", email),
         )
         for label, value in contractor_detail_lengths:
@@ -3378,6 +3384,8 @@ def _contractor_form_response(contractor: Contractor | None = None):
             contractor.name = name
             contractor.legal_address = legal_address or None
             contractor.contract_number = contract_number or None
+            contractor.contract_date = contract_date or None
+            contractor.director_full_name = director_full_name or None
             contractor.email = email or None
             contractor.work_points = work_points
             contractor.apartments = apartments
@@ -3399,6 +3407,8 @@ def _contractor_form_response(contractor: Contractor | None = None):
         contractor_name=name,
         contractor_legal_address=legal_address,
         contractor_contract_number=contract_number,
+        contractor_contract_date=contract_date,
+        contractor_director_full_name=director_full_name,
         contractor_email=email,
         selected_point_numbers=selected_point_numbers,
         selected_apartment_group_ids=selected_apartment_group_ids,
