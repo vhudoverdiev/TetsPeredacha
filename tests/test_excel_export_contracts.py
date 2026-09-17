@@ -114,6 +114,27 @@ class ExcelExportPureContractsTests(unittest.TestCase):
         self.assertEqual([sheet.cell(row=6, column=index).value for index in range(1, 6)], [21, 22, 23, 24, 25])
         self.assertEqual(sheet.cell(row=5, column=6).value, "Сертификат Стройбат")
 
+    def test_source_export_finds_old_split_header_without_numeric_point_row(self):
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Таблица"
+        sheet.cell(row=5, column=21, value="Работы по монтажу системы отопления, в/с, канализации")
+        sheet.cell(row=5, column=22, value="Работы по монтажу входных дверей")
+        sheet.cell(row=5, column=23, value="Электрика")
+        sheet.cell(row=5, column=24, value="Прочее")
+        sheet.cell(row=5, column=25, value="Сертификат Стройбат")
+
+        inserted = _normalize_source_work_point_headers(workbook)
+
+        self.assertEqual(inserted, {"Таблица": 22})
+        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления, в/с")
+        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=23).value, "Работы по монтажу входных дверей")
+        self.assertEqual(sheet.cell(row=5, column=24).value, "Электрика")
+        self.assertEqual(sheet.cell(row=5, column=25).value, "Прочее")
+        self.assertEqual(sheet.cell(row=5, column=26).value, "Сертификат Стройбат")
+        self.assertEqual([sheet.cell(row=6, column=index).value for index in range(21, 26)], [21, 22, 23, 24, 25])
+
 
 class ExcelExportDatabaseContractsTests(unittest.TestCase):
     def setUp(self):

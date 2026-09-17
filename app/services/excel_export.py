@@ -691,7 +691,18 @@ def _normalize_source_work_point_headers(wb) -> dict[str, int]:
     canonical_numbers = [21, 22, 23, 24, 25]
 
     for ws in wb.worksheets:
-        for number_row in range(1, min(ws.max_row, 8) + 1):
+        old_combined_header: tuple[int, int] | None = None
+        for row_index in range(1, min(ws.max_row, 8) + 1):
+            for column_index in range(1, ws.max_column + 1):
+                value = str(ws.cell(row=row_index, column=column_index).value or "").lower().replace("ё", "е")
+                if "отоплен" in value and "канализа" in value:
+                    old_combined_header = (row_index, column_index)
+                    break
+            if old_combined_header:
+                break
+
+        number_row_limit = min(max(ws.max_row, (old_combined_header[0] + 1) if old_combined_header else 0), 8)
+        for number_row in range(1, number_row_limit + 1):
             columns_by_number: dict[int, int] = {}
             for column_index in range(1, ws.max_column + 1):
                 value = ws.cell(row=number_row, column=column_index).value
@@ -703,10 +714,16 @@ def _normalize_source_work_point_headers(wb) -> dict[str, int]:
                     columns_by_number[number] = column_index
 
             column_21 = columns_by_number.get(21)
+            if not column_21 and old_combined_header:
+                label_candidate_row, label_candidate_column = old_combined_header
+                if number_row == label_candidate_row + 1:
+                    column_21 = label_candidate_column
             if not column_21:
                 continue
 
-            label_row = max(1, number_row - 1)
+            label_row = old_combined_header[0] if old_combined_header and old_combined_header[1] == column_21 else max(1, number_row - 1)
+            if old_combined_header and old_combined_header[1] == column_21 and number_row <= label_row:
+                number_row = label_row + 1
             column_22 = columns_by_number.get(22)
             column_22_label = str(ws.cell(row=label_row, column=column_22).value or "").lower() if column_22 else ""
             needs_canalization_column = "канализа" not in column_22_label

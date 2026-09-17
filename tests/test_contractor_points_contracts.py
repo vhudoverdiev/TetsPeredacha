@@ -66,6 +66,7 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
         self.assertIn('href="/contractors/points"', html)
+        self.assertIn("btn btn-success remarks-page-primary-btn contractor-points-link", html)
         self.assertIn("Пункты", html)
 
     def test_points_page_lists_remarks_and_inline_point_selects(self):
@@ -78,10 +79,16 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.assertIn("12", html)
         self.assertIn("44", html)
         self.assertIn('data-task-detail-point-autosave', html)
+        self.assertIn('data-no-custom-select', html)
         self.assertIn(f'action="/tasks/{self.task_1.id}/point"', html)
         self.assertIn("10. Вентиляция", html)
         self.assertIn("11. Стены. Потолки", html)
         self.assertIn("26. Доп соглашение", html)
+        self.assertIn('name="point"', html)
+        self.assertIn("Все пункты", html)
+        self.assertIn("btn btn-success remarks-page-primary-btn", html)
+        self.assertNotIn("Квартира, замечание, пункт, собственник", html)
+        self.assertNotIn("contractor-points-sort-btn", html)
 
     def test_points_page_smart_search_matches_remark_and_apartment(self):
         remark_response = self.client.get("/contractors/points", query_string={"q": "вентканал"})
@@ -94,12 +101,20 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.assertIn("Подшпаклевать стену", apartment_html)
         self.assertNotIn("Проверить вентканал", apartment_html)
 
-    def test_points_page_can_sort_by_point_desc(self):
+    def test_points_page_can_filter_by_point(self):
+        response = self.client.get("/contractors/points", query_string={"point": "11"})
+
+        html = response.get_data(as_text=True)
+        self.assertIn("Подшпаклевать стену", html)
+        self.assertNotIn("Проверить вентканал", html)
+        self.assertIn('<option value="11" selected>', html)
+
+    def test_points_page_keeps_route_sort_without_visible_sort_button(self):
         response = self.client.get("/contractors/points", query_string={"sort": "point_desc"})
 
         html = response.get_data(as_text=True)
         self.assertLess(html.index("Подшпаклевать стену"), html.index("Проверить вентканал"))
-        self.assertIn("sort=point_asc", html)
+        self.assertNotIn("contractor-points-sort-btn", html)
 
     def test_inline_point_update_reuses_task_point_endpoint(self):
         response = self.client.post(

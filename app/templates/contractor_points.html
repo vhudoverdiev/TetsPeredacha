@@ -11,7 +11,7 @@
       <p class="page-subtitle">Все замечания по объекту с быстрым изменением пункта.</p>
     </div>
     <div class="contractor-directory-actions">
-      <a class="btn btn-outline-success" href="{{ url_for('main.contractor_directory') }}">
+      <a class="btn btn-success remarks-page-primary-btn" href="{{ url_for('main.contractor_directory') }}">
         <i class="bi bi-person-gear me-2"></i>Подрядчики
       </a>
     </div>
@@ -20,16 +20,22 @@
   <form class="contractor-points-filter" method="get" action="{{ url_for('main.contractor_points') }}">
     <div class="contractor-points-search">
       <label for="contractor-points-search">Поиск</label>
-      <input id="contractor-points-search" class="form-control" type="search" name="q" value="{{ search_query }}" placeholder="Квартира, замечание, пункт, собственник">
+      <input id="contractor-points-search" class="form-control" type="search" name="q" value="{{ search_query }}">
+    </div>
+    <div class="contractor-points-point-filter">
+      <label for="contractor-points-point-filter">Пункт</label>
+      <select id="contractor-points-point-filter" class="form-select" name="point">
+        <option value="">Все пункты</option>
+        {% for point in points %}
+        <option value="{{ point.number }}" {% if point_filter == point.number %}selected{% endif %}>{{ point.number }}. {{ point.label }}</option>
+        {% endfor %}
+      </select>
     </div>
     <input type="hidden" name="sort" value="{{ sort }}">
     <button class="btn btn-success remarks-page-primary-btn" type="submit">
       <i class="bi bi-search me-2"></i>Найти
     </button>
-    <a class="btn btn-outline-success contractor-points-sort-btn" href="{{ url_for('main.contractor_points', q=search_query, sort='point_desc' if not sort_desc else 'point_asc') }}">
-      <i class="bi {{ 'bi-sort-numeric-down-alt' if sort_desc else 'bi-sort-numeric-down' }} me-2"></i>Пункты
-    </a>
-    {% if search_query %}
+    {% if search_query or point_filter %}
     <a class="btn btn-outline-secondary" href="{{ url_for('main.contractor_points') }}">
       <i class="bi bi-arrow-counterclockwise me-2"></i>Сброс
     </a>
@@ -68,7 +74,7 @@
             <form class="task-detail-point-form contractor-points-point-form" method="post" action="{{ url_for('main.update_task_point', task_id=task.id) }}" data-task-detail-point-autosave>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="next" value="{{ request.full_path }}">
-              <select class="form-select form-select-sm task-detail-point-select contractor-points-point-select" name="point_number" aria-label="Пункт замечания">
+              <select class="form-select form-select-sm task-detail-point-select contractor-points-point-select" name="point_number" aria-label="Пункт замечания" data-no-custom-select>
                 {% for point in points %}
                 <option value="{{ point.number }}" {% if point_number == point.number %}selected{% endif %}>{{ point.number }}. {{ point.label }}</option>
                 {% endfor %}

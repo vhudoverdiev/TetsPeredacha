@@ -55676,7 +55676,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-points-filter {
   display: grid;
-  grid-template-columns: minmax(18rem, 1fr) auto auto auto;
+  grid-template-columns: minmax(16rem, 1fr) minmax(14rem, 22rem) auto auto;
   gap: .75rem;
   align-items: end;
   margin-bottom: 1rem;
@@ -55687,13 +55687,15 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   box-shadow: var(--crm-shadow-soft);
 }
 
-.contractor-points-search {
+.contractor-points-search,
+.contractor-points-point-filter {
   display: grid;
   gap: .35rem;
   min-width: 0;
 }
 
-.contractor-points-search label {
+.contractor-points-search label,
+.contractor-points-point-filter label {
   margin: 0;
   color: var(--crm-title);
   font-size: .85rem;
@@ -55701,9 +55703,16 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 }
 
 .contractor-points-search .form-control,
+.contractor-points-point-filter .form-select,
 .contractor-points-point-select {
   border-color: #cfe6b8;
   border-radius: .8rem;
+}
+
+.contractor-points-filter .form-control,
+.contractor-points-filter .form-select,
+.contractor-points-filter .btn {
+  min-height: 3rem;
 }
 
 .contractor-points-summary {
@@ -55713,6 +55722,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-points-table-wrap {
   overflow: hidden;
+  min-height: 18rem;
   border: 1px solid var(--crm-border);
   border-radius: var(--crm-radius);
   background: var(--crm-surface);
@@ -55721,6 +55731,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-points-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -55756,7 +55767,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-points-premise-link {
   color: var(--crm-title);
-  font-weight: 850;
+  font-weight: 400;
   text-decoration: none;
 }
 
@@ -55775,6 +55786,11 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   margin: 0;
 }
 
+.contractor-points-point-select {
+  width: 100%;
+  min-height: 3rem;
+}
+
 .contractor-points-point-form.is-saving .contractor-points-point-select {
   opacity: .72;
 }
@@ -55791,10 +55807,6 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 @media (max-width: 900px) {
   .contractor-points-filter {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .contractor-points-search {
-    grid-column: 1 / -1;
   }
 }
 
@@ -56921,6 +56933,14 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     margin: 0 !important;
   }
 
+  html.desktop-like-pointer body.app-body .apartments-filter-form:not(:has(select[name="po_status"])),
+  html body.app-body .apartments-filter-form:not(:has(select[name="po_status"])) {
+    grid-template-areas:
+      "search inspection"
+      "app avr"
+      "finishing actions" !important;
+  }
+
   html.desktop-like-pointer body.app-body .apartments-filter-form > [class*="col-"],
   html body.app-body .apartments-filter-form > [class*="col-"] {
     width: auto !important;
@@ -56994,6 +57014,19 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       max-content !important;
     grid-template-areas:
       "search inspection app avr po finishing actions" !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form:not(:has(select[name="po_status"])),
+  html body.app-body .apartments-filter-form:not(:has(select[name="po_status"])) {
+    grid-template-columns:
+      minmax(220px, 1.35fr)
+      minmax(150px, .88fr)
+      minmax(150px, .82fr)
+      minmax(130px, .72fr)
+      minmax(310px, 1.3fr)
+      max-content !important;
+    grid-template-areas:
+      "search inspection app avr finishing actions" !important;
   }
 
   html.desktop-like-pointer body.app-body .apartments-filter-form
@@ -57382,16 +57415,16 @@ body:has(.developer-section-tabs) .site-errors-filter-form .developer-custom-sel
 /* v642: unsold apartment/commercial cards keep the translucent yellow fill
    after the later apartments-page and mobile card overrides. */
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold {
-  background: rgba(255, 214, 102, 0.24) !important;
-  background-color: rgba(255, 214, 102, 0.24) !important;
-  border-color: rgba(230, 176, 34, 0.48) !important;
+  background: rgba(255, 214, 102, 0.12) !important;
+  background-color: rgba(255, 214, 102, 0.12) !important;
+  border-color: rgba(230, 176, 34, 0.36) !important;
   box-shadow: 0 10px 30px rgba(145, 111, 18, 0.1) !important;
 }
 
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:hover,
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:focus-within {
-  background: rgba(255, 214, 102, 0.3) !important;
-  background-color: rgba(255, 214, 102, 0.3) !important;
-  border-color: rgba(230, 176, 34, 0.62) !important;
+  background: rgba(255, 214, 102, 0.15) !important;
+  background-color: rgba(255, 214, 102, 0.15) !important;
+  border-color: rgba(230, 176, 34, 0.5) !important;
   box-shadow: 0 18px 45px rgba(145, 111, 18, 0.14) !important;
 }

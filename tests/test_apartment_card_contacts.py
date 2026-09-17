@@ -46,7 +46,7 @@ class ApartmentCardContactsTests(unittest.TestCase):
         self.assertIn(".apartment-card.apartment-card-unsold", STYLE)
         self.assertIn("rgba(255, 214, 102, 0.18)", STYLE)
         self.assertIn("body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold", STYLE)
-        self.assertIn("rgba(255, 214, 102, 0.24) !important", STYLE)
+        self.assertIn("rgba(255, 214, 102, 0.12) !important", STYLE)
 
 
 if __name__ == "__main__":

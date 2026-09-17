@@ -232,7 +232,7 @@ class FirefoxFrameBufferedNavigationTests(unittest.TestCase):
         self.assertEqual(style_version, worker_style_version)
         self.assertEqual(script_version, "v675-point-autosave-dop")
         self.assertEqual(css_version, "v72-apartment-filter-single-row")
-        self.assertEqual(style_version, "v642-contractor-points")
+        self.assertEqual(style_version, "v645-unsold-card-opacity")
         self.assertEqual(mobile_css_version, "v88-remark-sentence-lines")
 
 

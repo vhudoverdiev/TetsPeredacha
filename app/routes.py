@@ -3250,6 +3250,8 @@ def contractor_points():
     search_query = str(request.args.get("q") or "").strip()
     sort = str(request.args.get("sort") or "point_asc").strip()
     sort_desc = sort == "point_desc"
+    point_options = _remark_point_options(min_number=10)
+    point_filter = str(request.args.get("point") or "").strip()
 
     tasks_query = (
         Task.query
@@ -3273,6 +3275,12 @@ def contractor_points():
                 WorkPoint.original_column_name.ilike(like_value),
             )
         )
+    if point_filter:
+        allowed_point_numbers = {option["number"] for option in point_options}
+        if point_filter in allowed_point_numbers:
+            tasks_query = tasks_query.filter(WorkPoint.point_number == point_filter)
+        else:
+            point_filter = ""
 
     point_order = cast(WorkPoint.point_number, Integer).desc() if sort_desc else cast(WorkPoint.point_number, Integer).asc()
     tasks = (
@@ -3290,8 +3298,9 @@ def contractor_points():
         "contractor_points.html",
         project=project,
         tasks=tasks,
-        points=_remark_point_options(min_number=10),
+        points=point_options,
         search_query=search_query,
+        point_filter=point_filter,
         sort=sort,
         sort_desc=sort_desc,
     )
