@@ -9713,6 +9713,8 @@ def _delete_task_with_relations(task: Task, project_id: int) -> None:
         Task.project_id == project_id,
         Task.glass_parent_task_id == task.id,
     ).all()
+    related_task_ids = [task.id, *(repeat_task.id for repeat_task in repeat_tasks if repeat_task.id)]
+    SyncConflict.query.filter(SyncConflict.task_id.in_(related_task_ids)).delete(synchronize_session=False)
     for repeat_task in repeat_tasks:
         for writeoff in list(repeat_task.material_writeoffs):
             writeoff.tasks.remove(repeat_task)

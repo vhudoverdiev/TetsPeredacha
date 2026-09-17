@@ -1,4 +1,5 @@
 from datetime import date
+import builtins
 import unittest
 from pathlib import Path
 
@@ -75,6 +76,31 @@ class PdfRecognitionContractsTests(unittest.TestCase):
             ("16", "sash does not close", True),
             ("21", "custom unmapped point", True),
         ])
+
+    def test_ocr_engine_import_system_dependency_error_is_reported_not_raised(self):
+        original_import = builtins.__import__
+        original_engine = recognition._OCR_ENGINE
+        original_error = recognition._OCR_ENGINE_ERROR
+
+        def fake_import(name, *args, **kwargs):
+            if name == "rapidocr_onnxruntime":
+                raise OSError("libxcb.so.1: cannot open shared object file: No such file or directory")
+            return original_import(name, *args, **kwargs)
+
+        try:
+            recognition._OCR_ENGINE = None
+            recognition._OCR_ENGINE_ERROR = None
+            builtins.__import__ = fake_import
+
+            engine, error = recognition._get_ocr_engine()
+        finally:
+            builtins.__import__ = original_import
+            recognition._OCR_ENGINE = original_engine
+            recognition._OCR_ENGINE_ERROR = original_error
+
+        self.assertIsNone(engine)
+        self.assertIn("OCR-распознавание сканов сейчас недоступно", error)
+        self.assertIn("libxcb.so.1", error)
 
 
 if __name__ == "__main__":

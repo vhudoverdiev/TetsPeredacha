@@ -270,6 +270,12 @@ def _get_ocr_engine():
             "Установите rapidocr-onnxruntime и pypdfium2 из requirements.txt."
         )
         return None, _OCR_ENGINE_ERROR
+    except (ImportError, OSError) as exc:
+        _OCR_ENGINE_ERROR = (
+            "OCR-распознавание сканов сейчас недоступно: не хватает системной библиотеки "
+            f"или бинарной зависимости ({exc}). Текстовые PDF можно распознавать без OCR."
+        )
+        return None, _OCR_ENGINE_ERROR
     try:
         _OCR_ENGINE = RapidOCR()
     except Exception as exc:
