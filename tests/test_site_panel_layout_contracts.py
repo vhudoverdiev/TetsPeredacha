@@ -180,12 +180,16 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         block_start = self.desktop_css.index(marker)
         block = self.desktop_css[block_start:block_start + 3600]
 
-        self.assertIn('". finishing"', block)
-        self.assertIn('"search inspection inspection-sort app avr po finishing"', block)
+        self.assertIn('"po finishing"', block)
+        self.assertIn('"search inspection app avr po finishing"', block)
+        self.assertNotIn("inspection-sort", block)
+        self.assertIn("flex-wrap: nowrap !important", block)
         self.assertIn(".apartments-filter-finishing-col > .apartments-filter-actions", block)
         self.assertIn("justify-content: flex-end !important", block)
 
         template = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
+        self.assertNotIn("Сортировка осмотра", template)
+        self.assertNotIn('name="inspection_order"', template)
         finishing_start = template.index('class="col-12 col-lg-auto remarks-filter-finishing-col apartments-filter-finishing-col"')
         actions_start = template.index('class="filter-actions apartments-filter-actions"', finishing_start)
         finishing_end = template.index("</div>\n      </div>", actions_start)

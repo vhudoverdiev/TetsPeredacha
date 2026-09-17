@@ -27,14 +27,6 @@
         </select>
       </div>
       <div class="col-12 col-sm-6 col-lg-2">
-        <label class="form-label">Сортировка осмотра</label>
-        <select class="form-select" name="inspection_order" data-force-custom-select>
-          <option value="">По номеру</option>
-          <option value="was_first" {% if args.get('inspection_order') == 'was_first' %}selected{% endif %}>Сначала был</option>
-          <option value="not_was_first" {% if args.get('inspection_order') == 'not_was_first' %}selected{% endif %}>Сначала не был</option>
-        </select>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-2">
         <label class="form-label">АПП</label>
         <select class="form-select" name="app_status" data-force-custom-select>
           <option value="">Все</option>

@@ -56696,9 +56696,8 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-areas:
       "search inspection"
-      "inspection-sort app"
-      "avr po"
-      "finishing finishing" !important;
+      "app avr"
+      "po finishing" !important;
     gap: .75rem !important;
     align-items: end !important;
     margin: 0 !important;
@@ -56721,11 +56720,6 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
   html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="inspection_status"]),
   html body.app-body .apartments-filter-form > div:has(select[name="inspection_status"]) {
     grid-area: inspection !important;
-  }
-
-  html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="inspection_order"]),
-  html body.app-body .apartments-filter-form > div:has(select[name="inspection_order"]) {
-    grid-area: inspection-sort !important;
   }
 
   html.desktop-like-pointer body.app-body .apartments-filter-form > div:has(select[name="app_status"]),
@@ -56775,13 +56769,20 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     grid-template-columns:
       minmax(220px, 1.35fr)
       minmax(150px, .88fr)
-      minmax(190px, 1.08fr)
       minmax(150px, .82fr)
       minmax(130px, .72fr)
       minmax(180px, 1fr)
-      minmax(270px, 1.18fr) !important;
+      minmax(340px, 1.45fr) !important;
     grid-template-areas:
-      "search inspection inspection-sort app avr po finishing" !important;
+      "search inspection app avr po finishing" !important;
+  }
+
+  html.desktop-like-pointer body.app-body .apartments-filter-form
+    .apartments-filter-finishing-col .remarks-filter-checks,
+  html body.app-body .apartments-filter-form
+    .apartments-filter-finishing-col .remarks-filter-checks {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
   }
 }
 
