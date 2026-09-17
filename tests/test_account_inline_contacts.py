@@ -31,6 +31,14 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertNotIn("Сохранить контакты", profile_form)
         self.assertIn("X-Requested-With", template)
         self.assertNotIn('class="mb-3"', profile_form)
+        self.assertIn("let saving = false", template)
+        self.assertIn("saveAgain = true", template)
+        self.assertIn("const saveUrl = form.getAttribute('action') || window.location.href", template)
+        self.assertIn("fetch(saveUrl", template)
+        self.assertNotIn("fetch(form.action", template)
+        self.assertIn("if (!response.ok || data.ok === false)", template)
+        self.assertIn("navigator.sendBeacon", template)
+        self.assertNotIn("AbortController", template)
 
 
 class AccountAutosaveContactsTests(unittest.TestCase):

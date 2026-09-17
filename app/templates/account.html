@@ -18,7 +18,7 @@
             <h2>Профиль</h2>
           </div>
         </div>
-        <form class="account-contact-form mb-4" method="post" data-account-autosave="1">
+        <form class="account-contact-form mb-4" method="post" action="{{ url_for('main.account') }}" data-account-autosave="1">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="action" value="update_contacts">
           <dl class="account-profile-list account-profile-edit-list">
@@ -111,32 +111,51 @@
   if (!form) return;
   const fields = Array.from(form.querySelectorAll('input[name="full_name"], input[name="email"], input[name="phone"]'));
   if (!fields.length) return;
+  const saveUrl = form.getAttribute('action') || window.location.href;
 
   let timer = 0;
-  let controller = null;
-  let lastPayload = new URLSearchParams(new FormData(form)).toString();
+  let saving = false;
+  let saveAgain = false;
+  let lastSavedPayload = new URLSearchParams(new FormData(form)).toString();
 
-  const save = () => {
+  const currentPayload = () => new URLSearchParams(new FormData(form)).toString();
+
+  const save = async () => {
+    window.clearTimeout(timer);
     const formData = new FormData(form);
     const payload = new URLSearchParams(formData).toString();
-    if (payload === lastPayload) return;
-    lastPayload = payload;
-    if (controller) controller.abort();
-    controller = new AbortController();
-    fetch(form.action || window.location.href, {
-      method: 'POST',
-      body: formData,
-      credentials: 'same-origin',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json'
-      },
-      signal: controller.signal
-    }).catch((error) => {
-      if (error.name !== 'AbortError') {
-        lastPayload = '';
+    if (payload === lastSavedPayload) return;
+    if (saving) {
+      saveAgain = true;
+      return;
+    }
+
+    saving = true;
+    try {
+      const response = await fetch(saveUrl, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) {
+        throw new Error(data.message || 'Не удалось сохранить контакты.');
       }
-    });
+      lastSavedPayload = payload;
+    } catch (error) {
+      console.error('Account contacts autosave failed:', error);
+    } finally {
+      saving = false;
+      const hasNewChanges = currentPayload() !== payload;
+      if (saveAgain || hasNewChanges) {
+        saveAgain = false;
+        window.setTimeout(save, 0);
+      }
+    }
   };
 
   const scheduleSave = () => {
@@ -148,6 +167,12 @@
     field.addEventListener('input', scheduleSave);
     field.addEventListener('change', save);
     field.addEventListener('blur', save);
+  });
+
+  window.addEventListener('pagehide', () => {
+    if (currentPayload() !== lastSavedPayload) {
+      navigator.sendBeacon(saveUrl, new FormData(form));
+    }
   });
 })();
 </script>
