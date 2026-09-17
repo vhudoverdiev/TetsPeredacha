@@ -80,6 +80,14 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertIn("select.setAttribute('aria-busy', 'true')", script)
         self.assertIn("if (select.value !== savedValue) saveRole();", script)
 
+    def test_users_table_does_not_render_password_column(self):
+        template = Path("app/templates/users.html").read_text(encoding="utf-8")
+
+        self.assertNotIn('class="users-col-password"', template)
+        self.assertNotIn("<th>Пароль</th>", template)
+        self.assertNotIn('class="users-password-cell"', template)
+        self.assertNotIn("password-preview", template)
+
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)
         user = self._user("worker-office", ROLE_MANAGER)

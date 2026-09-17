@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v170-filter-and-favicon';
+const STATIC_CACHE = 'peredacha-static-v171-user-role-autosave';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -16,7 +16,7 @@ const STATIC_ASSETS = [
   '/static/style.css?v=v641-apartment-filter-single-row',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
   '/static/desktop-only.css?v=v72-apartment-filter-single-row',
-  '/static/script.js?v=v673-material-tabs-replace-content',
+  '/static/script.js?v=v674-user-role-autosave',
 ];
 
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3000;

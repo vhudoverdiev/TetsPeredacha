@@ -53,6 +53,7 @@ from app.models import (
     SiteErrorReport,
     SiteVisit,
     DeletionActionLog,
+    SecurityEvent,
     ChangeLog,
     Task,
     TaskComment,
@@ -6878,8 +6879,13 @@ def _project_work_point_options() -> list[WorkPoint]:
     )
 
 
-def _remark_point_options() -> list[dict[str, str]]:
-    return [{"number": number, "label": label} for number, label in CONTRACTOR_POINT_LABELS.items()]
+def _remark_point_options(min_number: int = 1) -> list[dict[str, str]]:
+    options = []
+    for number, label in CONTRACTOR_POINT_LABELS.items():
+        if str(number).isdigit() and int(number) < min_number:
+            continue
+        options.append({"number": number, "label": label})
+    return options
 
 
 def _get_or_create_manual_work_point(point_number: str | None = None) -> WorkPoint:
@@ -9848,7 +9854,7 @@ def task_detail(task_id: int):
         task=task,
         edit_form=edit_form,
         comment_form=comment_form,
-        points=_remark_point_options(),
+        points=_remark_point_options(min_number=10),
         visible_changes=visible_changes,
         history_entries=history_entries,
         other_open_tasks=other_tasks,
@@ -9932,6 +9938,7 @@ def update_task(task_id: int):
 @bp.route("/tasks/<int:task_id>/point", methods=["POST"])
 @login_required
 def update_task_point(task_id: int):
+    wants_json = _wants_json_response()
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
@@ -9941,12 +9948,16 @@ def update_task_point(task_id: int):
     if not can_change_task(current_user, task):
         abort(403)
     point_number = (request.form.get("point_number") or "").strip()
-    if point_number not in CONTRACTOR_POINT_LABELS:
+    if point_number not in CONTRACTOR_POINT_LABELS or not point_number.isdigit() or int(point_number) < 10:
+        if wants_json:
+            return jsonify(ok=False, message="Выберите корректный пункт с 10-го и дальше."), 400
         flash("Выберите корректный пункт", "danger")
         return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
     old_point = task.work_point
     new_point = _get_or_create_manual_work_point(point_number)
     if old_point and old_point.id == new_point.id:
+        if wants_json:
+            return jsonify(ok=True, changed=False, point_number=point_number, label=new_point.display_name, message="Пункт не изменился.")
         flash("Пункт не изменился", "info")
         return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
     old_label = old_point.display_name if old_point else ""
@@ -9955,6 +9966,8 @@ def update_task_point(task_id: int):
     task.manually_edited = True
     log_change(task, "field_update", "work_point", old_label, new_label)
     db.session.commit()
+    if wants_json:
+        return jsonify(ok=True, changed=True, point_number=point_number, label=new_label, message="Пункт замечания обновлен.")
     flash("Пункт замечания обновлен", "success")
     return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
 
@@ -10686,6 +10699,17 @@ def user_delete(user_id: int):
         project_id=project.id if project else None,
         extra={"project_ids": sorted(user.project_access_ids), "all_projects": user.can_access_all_projects},
     )
+    Task.query.filter_by(responsible_id=user.id).update({"responsible_id": None}, synchronize_session=False)
+    MaterialRequest.query.filter_by(author_id=user.id).update({"author_id": None}, synchronize_session=False)
+    MaterialWriteOff.query.filter_by(author_id=user.id).update({"author_id": None}, synchronize_session=False)
+    SyncConflict.query.filter_by(resolved_by_user_id=user.id).update({"resolved_by_user_id": None}, synchronize_session=False)
+    ChangeLog.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    SiteErrorReport.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    SiteVisit.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    DeletionActionLog.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    DeletionActionLog.query.filter_by(undone_by_user_id=user.id).update({"undone_by_user_id": None}, synchronize_session=False)
+    SecurityEvent.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    TaskComment.query.filter_by(user_id=user.id).delete(synchronize_session=False)
     db.session.delete(user)
     db.session.commit()
     flash("Аккаунт удалён", "success")

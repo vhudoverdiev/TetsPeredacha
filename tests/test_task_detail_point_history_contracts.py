@@ -91,6 +91,48 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.assertIn("Стены", change.old_value)
         self.assertIn("Разнорабочие", change.new_value)
 
+    def test_task_point_change_supports_ajax_autosave(self):
+        self._login(self.admin)
+
+        response = self.client.post(
+            f"/tasks/{self.task.id}/point",
+            data={"point_number": "16"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["point_number"], "16")
+        db.session.refresh(self.task)
+        self.assertEqual(self.task.work_point.point_number, "16")
+
+    def test_task_point_change_rejects_service_points_before_ten(self):
+        self._login(self.admin)
+
+        response = self.client.post(
+            f"/tasks/{self.task.id}/point",
+            data={"point_number": "2"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.get_json()["ok"])
+        db.session.refresh(self.task)
+        self.assertEqual(self.task.work_point.point_number, "11")
+
+    def test_task_detail_point_select_autosaves_without_check_button_and_starts_from_ten(self):
+        self._login(self.admin)
+
+        response = self.client.get(f"/tasks/{self.task.id}")
+        html = response.get_data(as_text=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("data-task-detail-point-autosave", html)
+        self.assertIn('<option value="10"', html)
+        self.assertNotIn('<option value="1"', html)
+        self.assertNotIn("task-detail-point-save-btn", html)
+
     def test_non_admin_sees_only_own_history_entries(self):
         db.session.add_all([
             ChangeLog(task_id=self.task.id, user_id=self.manager.id, action="field_update", field_name="description", old_value="", new_value="Своя запись"),

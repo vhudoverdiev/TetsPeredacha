@@ -58,7 +58,6 @@
               <col class="users-col-name">
               <col class="users-col-role">
               <col class="users-col-project">
-              <col class="users-col-password">
               <col class="users-col-captcha">
               <col class="users-col-created">
               <col class="users-col-actions">
@@ -69,7 +68,6 @@
                 <th>ФИО</th>
                 <th>Роль</th>
                 <th>Объект</th>
-                <th>Пароль</th>
                 <th>Капча</th>
                 <th>Создан</th>
                 <th class="users-actions-heading">Действия</th>
@@ -129,12 +127,6 @@
                       </form>
                     </div>
                     {% endif %}
-                  </div>
-                </td>
-                <td class="users-password-cell">
-                  <div class="password-preview" data-hidden="••••••••" data-visible="{{ user.password_plain or 'Пароль не сохранён' }}" data-state="hidden">
-                    <span>••••••••</span>
-                    {% if user.id not in protected_user_ids %}<button class="password-preview-toggle" type="button" aria-label="Показать пароль"><i class="bi bi-eye"></i></button>{% endif %}
                   </div>
                 </td>
                 <td class="users-captcha-cell">

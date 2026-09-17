@@ -935,7 +935,7 @@
 
       if ('serviceWorker' in navigator && window.isSecureContext) {
         navigator.serviceWorker
-          .register('/service-worker.js?v=v170-filter-and-favicon', { scope: '/', updateViaCache: 'none' })
+          .register('/service-worker.js?v=v171-user-role-autosave', { scope: '/', updateViaCache: 'none' })
           .then(registration => registration.update().catch(() => {}))
           .catch(() => {});
       }

@@ -547,12 +547,11 @@ body.auth-body #iosInstallModal .ios-install-actions::before {
 
 @media (min-width: 992px) {
   body.app-body:has(.users-page) .users-table .users-col-login { width: 8%; }
-  body.app-body:has(.users-page) .users-table .users-col-name { width: 14%; }
-  body.app-body:has(.users-page) .users-table .users-col-role { width: 13%; }
-  body.app-body:has(.users-page) .users-table .users-col-project { width: 14%; }
-  body.app-body:has(.users-page) .users-table .users-col-password { width: 17%; }
-  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 9%; }
-  body.app-body:has(.users-page) .users-table .users-col-created { width: 12%; }
+  body.app-body:has(.users-page) .users-table .users-col-name { width: 18%; }
+  body.app-body:has(.users-page) .users-table .users-col-role { width: 15%; }
+  body.app-body:has(.users-page) .users-table .users-col-project { width: 18%; }
+  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 12%; }
+  body.app-body:has(.users-page) .users-table .users-col-created { width: 16%; }
   body.app-body:has(.users-page) .users-table .users-col-actions { width: 13%; }
 
   body.app-body:has(.users-page) .users-table .users-actions-heading,
@@ -54370,13 +54369,12 @@ body.app-body:has(.confirm-modal-page) .confirm-modal-backdrop {
   }
 
   body.app-body:has(.users-page) .users-table .users-col-login { width: 9%; }
-  body.app-body:has(.users-page) .users-table .users-col-name { width: 13%; }
-  body.app-body:has(.users-page) .users-table .users-col-role { width: 13%; }
-  body.app-body:has(.users-page) .users-table .users-col-project { width: 15%; }
-  body.app-body:has(.users-page) .users-table .users-col-password { width: 17%; }
-  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 10%; }
-  body.app-body:has(.users-page) .users-table .users-col-created { width: 13%; }
-  body.app-body:has(.users-page) .users-table .users-col-actions { width: 10%; }
+  body.app-body:has(.users-page) .users-table .users-col-name { width: 17%; }
+  body.app-body:has(.users-page) .users-table .users-col-role { width: 15%; }
+  body.app-body:has(.users-page) .users-table .users-col-project { width: 18%; }
+  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 12%; }
+  body.app-body:has(.users-page) .users-table .users-col-created { width: 16%; }
+  body.app-body:has(.users-page) .users-table .users-col-actions { width: 13%; }
 
   body.app-body:has(.users-page) .users-table :is(th, td) {
     word-break: normal !important;
@@ -54386,7 +54384,6 @@ body.app-body:has(.confirm-modal-page) .confirm-modal-backdrop {
 
   body.app-body:has(.users-page) .users-table :is(
     .users-login-cell,
-    .users-password-cell,
     .users-captcha-cell,
     .users-actions-cell
   ) {
@@ -54401,10 +54398,6 @@ body.app-body:has(.confirm-modal-page) .confirm-modal-backdrop {
   ) {
     white-space: normal !important;
     line-height: 1.35 !important;
-  }
-
-  body.app-body:has(.users-page) .users-table .password-preview {
-    min-width: 0 !important;
   }
 
   body.app-body:has(.users-page) .users-layout > .col-lg-8,
@@ -55382,13 +55375,12 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   }
 
   body.app-body:has(.users-page) .users-table .users-col-login { width: 12% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-name { width: 13% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-role { width: 12% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-project { width: 13% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-password { width: 12% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 7% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-created { width: 11% !important; }
-  body.app-body:has(.users-page) .users-table .users-col-actions { width: 10% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-name { width: 17% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-role { width: 13% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-project { width: 18% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-captcha { width: 9% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-created { width: 13% !important; }
+  body.app-body:has(.users-page) .users-table .users-col-actions { width: 18% !important; }
 
   body.app-body:has(.users-page) .users-table .users-login-cell {
     white-space: nowrap !important;
@@ -55401,11 +55393,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
     padding-right: .8rem !important;
   }
 
-  body.app-body:has(.users-page) .users-table :is(th:nth-child(5), td.users-password-cell) {
-    padding-right: .45rem !important;
-  }
-
-  body.app-body:has(.users-page) .users-table :is(th:nth-child(6), td.users-captcha-cell) {
+  body.app-body:has(.users-page) .users-table :is(th:nth-child(5), td.users-captcha-cell) {
     padding-left: .45rem !important;
   }
 
@@ -57203,4 +57191,21 @@ body:has(.developer-section-tabs) .site-errors-filter-form .developer-custom-sel
   visibility: hidden !important;
   pointer-events: none !important;
   z-index: -1 !important;
+}
+
+/* v642: unsold apartment/commercial cards keep the translucent yellow fill
+   after the later apartments-page and mobile card overrides. */
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold {
+  background: rgba(255, 214, 102, 0.24) !important;
+  background-color: rgba(255, 214, 102, 0.24) !important;
+  border-color: rgba(230, 176, 34, 0.48) !important;
+  box-shadow: 0 10px 30px rgba(145, 111, 18, 0.1) !important;
+}
+
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:hover,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:focus-within {
+  background: rgba(255, 214, 102, 0.3) !important;
+  background-color: rgba(255, 214, 102, 0.3) !important;
+  border-color: rgba(230, 176, 34, 0.62) !important;
+  box-shadow: 0 18px 45px rgba(145, 111, 18, 0.14) !important;
 }

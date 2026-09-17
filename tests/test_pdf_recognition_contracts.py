@@ -11,6 +11,8 @@ class PdfRecognitionContractsTests(unittest.TestCase):
         template = Path("app/templates/task_recognition.html").read_text(encoding="utf-8")
 
         self.assertIn("data-task-recognition-add-row", template)
+        self.assertIn("btn btn-sm btn-success task-recognition-add-row-btn", template)
+        self.assertNotIn("btn btn-sm btn-outline-success task-recognition-add-row-btn", template)
         self.assertIn("data-task-recognition-row-template", template)
         self.assertIn('name="po_mode"', template)
         self.assertIn("ПО", template)

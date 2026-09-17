@@ -18,6 +18,7 @@ from app.models import Apartment, SyncLog, Task, STATUS_DONE, STATUS_FINISHERS, 
 from app.services.excel_import import inspect_remarks_workbook
 from app.services.filename import safe_filename_part
 from app.services.task_service import get_setting
+from app.work_points import WORK_POINT_LABELS
 
 
 EXCEL_HEADER_FILL_COLOR = "FFE2F0D9"
@@ -685,6 +686,77 @@ def _is_tmc_column(ws, column_index: int) -> bool:
     return False
 
 
+def _normalize_source_work_point_headers(wb) -> dict[str, int]:
+    inserted_columns_by_sheet: dict[str, int] = {}
+    canonical_numbers = [21, 22, 23, 24, 25]
+
+    for ws in wb.worksheets:
+        for number_row in range(1, min(ws.max_row, 8) + 1):
+            columns_by_number: dict[int, int] = {}
+            for column_index in range(1, ws.max_column + 1):
+                value = ws.cell(row=number_row, column=column_index).value
+                try:
+                    number = int(str(value).strip())
+                except (TypeError, ValueError):
+                    continue
+                if number in canonical_numbers:
+                    columns_by_number[number] = column_index
+
+            column_21 = columns_by_number.get(21)
+            if not column_21:
+                continue
+
+            label_row = max(1, number_row - 1)
+            column_22 = columns_by_number.get(22)
+            column_22_label = str(ws.cell(row=label_row, column=column_22).value or "").lower() if column_22 else ""
+            needs_canalization_column = "канализа" not in column_22_label
+            if needs_canalization_column:
+                insert_at = column_21 + 1
+                ws.insert_cols(insert_at)
+                inserted_columns_by_sheet[ws.title] = insert_at
+                source_column = get_column_letter(column_21)
+                target_column = get_column_letter(insert_at)
+                ws.column_dimensions[target_column].width = ws.column_dimensions[source_column].width
+                for row_index in range(1, ws.max_row + 1):
+                    source_cell = ws.cell(row=row_index, column=column_21)
+                    target_cell = ws.cell(row=row_index, column=insert_at)
+                    if source_cell.has_style:
+                        target_cell._style = copy(source_cell._style)
+                    target_cell.font = copy(source_cell.font)
+                    target_cell.fill = copy(source_cell.fill)
+                    target_cell.border = copy(source_cell.border)
+                    target_cell.alignment = copy(source_cell.alignment)
+                    target_cell.number_format = source_cell.number_format
+                    target_cell.protection = copy(source_cell.protection)
+
+            for offset, point_number in enumerate(canonical_numbers):
+                column_index = column_21 + offset
+                label_cell = ws.cell(row=label_row, column=column_index)
+                number_cell = ws.cell(row=number_row, column=column_index)
+                label_cell.value = WORK_POINT_LABELS[str(point_number)]
+                number_cell.value = point_number
+                label_cell.alignment = copy(label_cell.alignment)
+                label_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+                number_cell.alignment = copy(number_cell.alignment)
+                number_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            break
+
+    return inserted_columns_by_sheet
+
+
+def _source_export_column_index(task: Task, inserted_columns_by_sheet: dict[str, int]) -> int | None:
+    column_index = task.source_column_index
+    if not task.source_sheet_name or column_index is None:
+        return column_index
+    inserted_at = inserted_columns_by_sheet.get(task.source_sheet_name)
+    if inserted_at is None or column_index < inserted_at:
+        return column_index
+    point_number = str(task.work_point.point_number if task.work_point else "").strip()
+    if point_number.isdigit() and int(point_number) >= 23:
+        return column_index + 1
+    return column_index
+
+
 def _safe_filename_part(value: str | None) -> str:
     return safe_filename_part(value, fallback="object")
 
@@ -767,6 +839,7 @@ def export_source_excel_with_strikes(source_path: str | None = None, project_nam
     target = folder / f"{_safe_filename_part(project_name)}_{today}.xlsx"
 
     wb = load_workbook(source_file)
+    inserted_columns_by_sheet = _normalize_source_work_point_headers(wb)
     tasks = (
         Task.query.filter(Task.is_done.is_(True))
         .filter(Task.source_sheet_name.isnot(None))
@@ -782,9 +855,12 @@ def export_source_excel_with_strikes(source_path: str | None = None, project_nam
         if task.source_sheet_name not in wb.sheetnames:
             continue
         ws = wb[task.source_sheet_name]
-        cell = ws.cell(row=task.source_row_index, column=task.source_column_index)
+        source_column_index = _source_export_column_index(task, inserted_columns_by_sheet)
+        if source_column_index is None:
+            continue
+        cell = ws.cell(row=task.source_row_index, column=source_column_index)
         cell.value = _task_export_value(task, cell.value)
-        if not _is_tmc_column(ws, task.source_column_index):
+        if not _is_tmc_column(ws, source_column_index):
             new_font = copy(cell.font)
             new_font.strike = True
             cell.font = new_font

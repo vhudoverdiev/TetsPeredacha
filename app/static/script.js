@@ -8570,6 +8570,54 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-task-detail-point-autosave]').forEach(form => {
+    const select = form.querySelector('.task-detail-point-select');
+    if (!select) return;
+    let savedValue = select.value;
+    let saving = false;
+
+    const savePoint = async () => {
+      const requestedValue = select.value;
+      if (saving || requestedValue === savedValue) return;
+      saving = true;
+      select.setAttribute('aria-busy', 'true');
+      form.classList.add('is-saving');
+      try {
+        const formData = new FormData(form);
+        formData.set('point_number', requestedValue);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.ok === false) throw new Error(data.message || 'Не удалось сохранить пункт');
+        savedValue = data.point_number || requestedValue;
+        select.value = savedValue;
+        form.classList.add('is-saved');
+        window.setTimeout(() => form.classList.remove('is-saved'), 900);
+        window.showCrmNotice?.(data.message || 'Пункт замечания обновлен.', 'success');
+      } catch (error) {
+        select.value = savedValue;
+        window.showCrmNotice?.(error.message || 'Не удалось сохранить пункт', 'danger');
+      } finally {
+        saving = false;
+        select.removeAttribute('aria-busy');
+        form.classList.remove('is-saving');
+      }
+    };
+
+    select.addEventListener('change', savePoint);
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      savePoint();
+    });
+  });
+
   const isDesktopWeb = window.matchMedia?.('(hover: hover) and (pointer: fine)').matches
     && !window.matchMedia?.('(display-mode: standalone)').matches
     && !window.navigator.standalone;
