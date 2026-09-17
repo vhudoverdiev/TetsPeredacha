@@ -42,18 +42,6 @@
     Найдено замечаний: <strong>{{ pagination.total if pagination else tasks|length }}</strong>
   </div>
 
-  {% if pagination and pagination.pages > 1 %}
-  <nav class="contractor-points-pagination" aria-label="Страницы замечаний">
-    <a class="btn btn-outline-secondary {% if not pagination.has_prev %}disabled{% endif %}" href="{% if pagination.has_prev %}{{ url_for('main.contractor_points', **prev_args) }}{% else %}#{% endif %}" {% if not pagination.has_prev %}aria-disabled="true"{% endif %}>
-      Назад
-    </a>
-    <span class="contractor-points-page-state">Стр. {{ pagination.page }} / {{ pagination.pages }}</span>
-    <a class="btn btn-outline-secondary {% if not pagination.has_next %}disabled{% endif %}" href="{% if pagination.has_next %}{{ url_for('main.contractor_points', **next_args) }}{% else %}#{% endif %}" {% if not pagination.has_next %}aria-disabled="true"{% endif %}>
-      Вперед
-    </a>
-  </nav>
-  {% endif %}
-
   <div class="contractor-points-table-wrap">
     <table class="contractor-points-table">
       <thead>
@@ -109,14 +97,16 @@
   </div>
 
   {% if pagination and pagination.pages > 1 %}
-  <nav class="contractor-points-pagination contractor-points-pagination-bottom" aria-label="Страницы замечаний">
-    <a class="btn btn-outline-secondary {% if not pagination.has_prev %}disabled{% endif %}" href="{% if pagination.has_prev %}{{ url_for('main.contractor_points', **prev_args) }}{% else %}#{% endif %}" {% if not pagination.has_prev %}aria-disabled="true"{% endif %}>
-      Назад
-    </a>
-    <span class="contractor-points-page-state">Стр. {{ pagination.page }} / {{ pagination.pages }}</span>
-    <a class="btn btn-outline-secondary {% if not pagination.has_next %}disabled{% endif %}" href="{% if pagination.has_next %}{{ url_for('main.contractor_points', **next_args) }}{% else %}#{% endif %}" {% if not pagination.has_next %}aria-disabled="true"{% endif %}>
-      Вперед
-    </a>
+  <nav class="mt-3" aria-label="Страницы замечаний">
+    <ul class="pagination justify-content-center mb-0">
+      <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{% if pagination.has_prev %}{{ url_for('main.contractor_points', **prev_args) }}{% else %}#{% endif %}">Назад</a>
+      </li>
+      <li class="page-item disabled"><span class="page-link">Стр. {{ pagination.page }} / {{ pagination.pages }}</span></li>
+      <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{% if pagination.has_next %}{{ url_for('main.contractor_points', **next_args) }}{% else %}#{% endif %}">Далее</a>
+      </li>
+    </ul>
   </nav>
   {% endif %}
 </div>

@@ -7038,14 +7038,16 @@ def _complete_previous_po_tasks_for_points(
     project: Project,
     apartment: Apartment,
     point_numbers: set[str],
+    exclude_task_ids: set[int] | None = None,
 ) -> int:
     normalized_points = {str(number or "").strip() for number in point_numbers if str(number or "").strip()}
     if not normalized_points:
         return 0
+    excluded_ids = {int(task_id) for task_id in (exclude_task_ids or set()) if task_id}
     apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
     if not apartment_ids:
         apartment_ids = [apartment.id]
-    tasks = (
+    tasks_query = (
         Task.query.join(WorkPoint)
         .filter(
             Task.project_id == project.id,
@@ -7054,11 +7056,28 @@ def _complete_previous_po_tasks_for_points(
             Task.status.notin_(list(DONE_STATUSES)),
             WorkPoint.point_number.in_(normalized_points),
         )
-        .all()
     )
+    if excluded_ids:
+        tasks_query = tasks_query.filter(Task.id.notin_(excluded_ids))
+    tasks = tasks_query.all()
     for task in tasks:
         change_task_status(task, STATUS_DONE, user_id=current_user.id, commit=False)
     return len(tasks)
+
+
+def _open_remark_count_for_apartment_group(*, project: Project, apartment: Apartment) -> int:
+    apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
+    if not apartment_ids:
+        apartment_ids = [apartment.id]
+    return (
+        Task.query.filter(
+            Task.project_id == project.id,
+            Task.apartment_id.in_(apartment_ids),
+            Task.is_archived.is_(False),
+            Task.status.notin_(list(DONE_STATUSES)),
+        )
+        .count()
+    )
 
 
 def _create_manual_remark_tasks(
@@ -7426,7 +7445,7 @@ def task_new():
         abort(403)
 
     apartments = _project_apartment_options(project.id)
-    points = _remark_point_options()
+    points = _remark_point_options(min_number=10)
     add_mode = (request.form.get("add_mode") or request.args.get("mode") or "").strip()
     manual_kind = (request.form.get("manual_kind") or request.args.get("kind") or "").strip()
 
@@ -7439,10 +7458,12 @@ def task_new():
         if not apartment or apartment.project_id != project.id:
             flash("Выберите квартиру / коммерцию", "warning")
         elif manual_kind == "act":
+            po_mode = request.form.get("po_mode") == "1"
             inspection_date = parse_date(request.form.get("inspection_date"))
             created_count = 0
             conflict_count = 0
             duplicate_count = 0
+            completed_previous_count = 0
             prepared_entries: list[tuple[str, str]] = []
             for point in points:
                 point_number = point["number"]
@@ -7453,6 +7474,9 @@ def task_new():
             if not prepared_entries:
                 db.session.rollback()
                 flash("Заполните хотя бы одно замечание по пункту", "warning")
+            elif not po_mode and len(prepared_entries) >= 3 and _open_remark_count_for_apartment_group(project=project, apartment=apartment) > 4:
+                db.session.rollback()
+                flash("Поставьте кнопку ПО. Вероятнее всего вы пытаетесь загрузить акт с повторного осмотра.", "warning")
             else:
                 apartment_label = apartment.full_label() if apartment.premise_type == "commercial" else apartment.label()
                 sync_log = _start_snapshot_sync_log(
@@ -7472,7 +7496,7 @@ def task_new():
                         if duplicate_task is None:
                             all_entries_are_duplicates = False
                             break
-                    if all_entries_are_duplicates:
+                    if all_entries_are_duplicates and not po_mode:
                         db.session.rollback()
                         _finish_snapshot_sync_log(sync_log)
                         flash("Точно такой же акт уже подгружен", "danger")
@@ -7487,26 +7511,58 @@ def task_new():
 
                     target_group = _apartment_group_for_project(apartment, project.id)
                     _apply_inspection_date_to_group(target_group, inspection_date)
-                    for point_number, text in prepared_entries:
-                        outcome = _save_remark_with_sync_fallback(
+                    if po_mode:
+                        duplicate_task_ids: set[int] = set()
+                        entries_to_create: list[tuple[str, str]] = []
+                        for point_number, text in prepared_entries:
+                            _, duplicate_task, _ = _find_existing_remark_duplicate_or_conflict(
+                                project=project,
+                                apartment=apartment,
+                                point_number=point_number,
+                                text=text,
+                            )
+                            if duplicate_task is not None:
+                                if duplicate_task.id:
+                                    duplicate_task_ids.add(duplicate_task.id)
+                                duplicate_count += 1
+                                continue
+                            entries_to_create.append((point_number, text))
+                        completed_previous_count += _complete_previous_po_tasks_for_points(
                             project=project,
                             apartment=apartment,
-                            point_number=point_number,
-                            text=text,
-                            created_source_sheet_name="manual_act",
-                            created_action="manual_act_created",
-                            conflict_source_type="manual_act",
-                            conflict_source_name="Ручной акт",
-                            conflict_sheet_name="Ручной акт",
+                            point_numbers={point_number for point_number, _ in prepared_entries},
+                            exclude_task_ids=duplicate_task_ids,
                         )
-                        if outcome == "created":
-                            created_count += 1
-                        elif outcome == "conflict":
-                            conflict_count += 1
-                        else:
-                            duplicate_count += 1
+                        for point_number, text in entries_to_create:
+                            created_count += len(_create_manual_remark_tasks(
+                                project=project,
+                                apartment=apartment,
+                                point_number=point_number,
+                                text=text,
+                                source_sheet_name="manual_act",
+                                action="manual_act_created",
+                            ))
+                    else:
+                        for point_number, text in prepared_entries:
+                            outcome = _save_remark_with_sync_fallback(
+                                project=project,
+                                apartment=apartment,
+                                point_number=point_number,
+                                text=text,
+                                created_source_sheet_name="manual_act",
+                                created_action="manual_act_created",
+                                conflict_source_type="manual_act",
+                                conflict_source_name="Ручной акт",
+                                conflict_sheet_name="Ручной акт",
+                            )
+                            if outcome == "created":
+                                created_count += 1
+                            elif outcome == "conflict":
+                                conflict_count += 1
+                            else:
+                                duplicate_count += 1
 
-                    if created_count or conflict_count:
+                    if created_count or conflict_count or completed_previous_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,
@@ -7521,9 +7577,11 @@ def task_new():
                                 message += f". Уже были в базе: {duplicate_count}"
                             flash(message, "warning")
                             return redirect(url_for("main.sync_conflicts"))
-                        message = f"Добавлено замечаний из акта: {created_count}"
+                        message = f"Добавлено замечаний из акта: {created_count}" if created_count else "Акт ПО обработан"
+                        if completed_previous_count:
+                            message += f". Переведено в выполнено: {completed_previous_count}"
                         if duplicate_count:
-                            message += f". Уже были в базе: {duplicate_count}"
+                            message += f". Идентичные оставлены невыполненными: {duplicate_count}"
                         flash(message, "success")
                         return redirect(url_for("main.task_list", status=STATUS_NOT_STARTED))
 
@@ -7606,7 +7664,8 @@ def task_recognition():
         abort(403)
 
     apartments = _project_apartment_options(project.id)
-    points = _remark_point_options()
+    points = _remark_point_options(min_number=10)
+    allowed_point_numbers = {point["number"] for point in points}
     previews: list[dict] = []
 
     if request.method == "POST":
@@ -7676,6 +7735,8 @@ def task_recognition():
                         inspection_date = parse_date(request.form.get(f"act_{act_idx}_inspection_date"))
                         row_count = request.form.get(f"act_{act_idx}_row_count", type=int) or 0
                         prepared_rows: list[tuple[str, str]] = []
+                        rows_to_create: list[tuple[str, str]] = []
+                        duplicate_task_ids: set[int] = set()
                         duplicate_row_count = 0
                         for row_idx in range(row_count):
                             if not po_mode and request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
@@ -7683,6 +7744,8 @@ def task_recognition():
                             text = (request.form.get(f"act_{act_idx}_row_{row_idx}_description") or "").strip()
                             point_number = (request.form.get(f"act_{act_idx}_row_{row_idx}_point") or "22").strip()
                             if not text or is_no_remark_text(text):
+                                continue
+                            if point_number not in allowed_point_numbers:
                                 continue
                             prepared_rows.append((point_number, text))
                             _, duplicate_task, _ = _find_existing_remark_duplicate_or_conflict(
@@ -7693,9 +7756,24 @@ def task_recognition():
                             )
                             if duplicate_task is not None:
                                 duplicate_row_count += 1
-                        if prepared_rows and duplicate_row_count == len(prepared_rows):
+                                if duplicate_task.id:
+                                    duplicate_task_ids.add(duplicate_task.id)
+                                continue
+                            rows_to_create.append((point_number, text))
+                        if prepared_rows and duplicate_row_count == len(prepared_rows) and not po_mode:
                             duplicate_act_names.append(act_filename)
                             continue
+                        if prepared_rows and not po_mode and _open_remark_count_for_apartment_group(project=project, apartment=apartment) > 4:
+                            db.session.rollback()
+                            _finish_snapshot_sync_log(sync_log)
+                            flash("Поставьте кнопку ПО. Вероятнее всего вы пытаетесь загрузить акт с повторного осмотра.", "warning")
+                            return render_template(
+                                "task_recognition.html",
+                                project=project,
+                                apartments=apartments,
+                                points=points,
+                                previews=previews,
+                            )
                         if prepared_rows:
                             _apply_inspection_date_to_group(_apartment_group_for_project(apartment, project.id), inspection_date)
                             if po_mode:
@@ -7703,8 +7781,9 @@ def task_recognition():
                                     project=project,
                                     apartment=apartment,
                                     point_numbers={point_number for point_number, _ in prepared_rows},
+                                    exclude_task_ids=duplicate_task_ids,
                                 )
-                        for point_number, text in prepared_rows:
+                        for point_number, text in (rows_to_create if po_mode else prepared_rows):
                             if po_mode:
                                 created_count += len(_create_manual_remark_tasks(
                                     project=project,

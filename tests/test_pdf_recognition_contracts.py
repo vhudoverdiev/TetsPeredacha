@@ -14,8 +14,19 @@ class PdfRecognitionContractsTests(unittest.TestCase):
         self.assertIn("btn btn-sm btn-success task-recognition-add-row-btn", template)
         self.assertNotIn("btn btn-sm btn-outline-success task-recognition-add-row-btn", template)
         self.assertIn("data-task-recognition-row-template", template)
+        self.assertIn("task-recognition-po-toggle", template)
+        self.assertIn(".btn-check:checked + .task-recognition-po-toggle", template)
+        self.assertIn("-webkit-text-fill-color: #ffffff", template)
         self.assertIn('name="po_mode"', template)
         self.assertIn("ПО", template)
+
+    def test_manual_act_page_has_po_mode_with_explanation(self):
+        template = Path("app/templates/task_form.html").read_text(encoding="utf-8")
+
+        self.assertIn('id="manualActPoMode"', template)
+        self.assertIn('name="po_mode"', template)
+        self.assertIn("task-manual-po-toggle", template)
+        self.assertIn("идентичные замечания остаются невыполненными", template)
 
     def test_no_remark_detection_requires_meaningful_marker(self):
         self.assertTrue(recognition.is_no_remark_text(recognition.NO_REMARK_MARKERS[0]))

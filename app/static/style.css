@@ -55717,23 +55717,6 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   color: var(--crm-text);
 }
 
-.contractor-points-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: .75rem;
-  margin: 0 0 1rem;
-}
-
-.contractor-points-pagination-bottom {
-  margin: 1rem 0 0;
-}
-
-.contractor-points-page-state {
-  color: var(--crm-muted);
-  font-weight: 800;
-}
-
 .contractor-points-table-wrap {
   overflow: hidden;
   min-height: 18rem;
@@ -55850,18 +55833,6 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
   .contractor-points-filter .btn {
     width: 100%;
-  }
-
-  .contractor-points-pagination {
-    justify-content: stretch;
-  }
-
-  .contractor-points-pagination .btn {
-    flex: 1 1 0;
-  }
-
-  .contractor-points-page-state {
-    flex: 0 0 auto;
   }
 
   .contractor-points-table-wrap {
@@ -57054,7 +57025,7 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       minmax(150px, .82fr)
       minmax(130px, .72fr)
       minmax(180px, 1fr)
-      minmax(310px, 1.3fr)
+      max-content
       max-content !important;
     grid-template-areas:
       "search inspection app avr po finishing actions" !important;
@@ -57067,7 +57038,7 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       minmax(150px, .88fr)
       minmax(150px, .82fr)
       minmax(130px, .72fr)
-      minmax(310px, 1.3fr)
+      max-content
       max-content !important;
     grid-template-areas:
       "search inspection app avr finishing actions" !important;

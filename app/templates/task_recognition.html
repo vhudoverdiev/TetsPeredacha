@@ -169,8 +169,8 @@
 
       <div class="task-recognition-po-mode mb-3">
         <input class="btn-check" type="checkbox" value="1" id="taskRecognitionPoMode" name="po_mode">
-        <label class="btn btn-outline-success" for="taskRecognitionPoMode">ПО</label>
-        <span class="text-muted small">При включении сохраняются все заполненные строки, а старые невыполненные замечания по этим пунктам переводятся в выполнено.</span>
+        <label class="btn btn-outline-success task-recognition-po-toggle" for="taskRecognitionPoMode">ПО</label>
+        <span class="text-muted small">При включении старые невыполненные замечания по выбранным пунктам переводятся в выполнено, новые строки добавляются, а идентичные замечания остаются невыполненными.</span>
       </div>
 
       <div class="form-check mb-3">
@@ -272,6 +272,16 @@
     align-items: center;
     gap: .75rem;
     flex-wrap: wrap;
+  }
+
+  .task-recognition-page .btn-check:checked + .task-recognition-po-toggle,
+  .task-recognition-page .btn-check:checked + .task-recognition-po-toggle:hover,
+  .task-recognition-page .btn-check:checked + .task-recognition-po-toggle:focus {
+    background: #5fb315 !important;
+    border-color: #5fb315 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(95, 179, 21, .22) !important;
   }
   </style>
 
