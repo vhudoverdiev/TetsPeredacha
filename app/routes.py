@@ -182,7 +182,7 @@ def service_worker_reset():
         window.location.replace('/?worker=v40');
       };
       navigator.serviceWorker?.addEventListener('controllerchange', openCrm, { once: true });
-      navigator.serviceWorker?.register('/service-worker.js?v=v40-stable-mobile-shell', { scope: '/', updateViaCache: 'none' })
+      navigator.serviceWorker?.register('/service-worker.js?v=v41-filter-and-favicon', { scope: '/', updateViaCache: 'none' })
         .then(registration => registration.update())
         .catch(() => {})
         .finally(() => window.setTimeout(openCrm, 1200));

@@ -10,7 +10,6 @@ MOBILE_CSS = ROOT / "app" / "static" / "mobile-only.css"
 DESKTOP_CSS = ROOT / "app" / "static" / "desktop-only.css"
 SCRIPT_JS = ROOT / "app" / "static" / "script.js"
 FAVICON_FILES = (
-    "favicon-16x16.png",
     "favicon-32x32.png",
     "favicon.ico",
 )
