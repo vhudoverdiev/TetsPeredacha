@@ -21,7 +21,24 @@
           <dt class="col-sm-3">Вид отделки</dt>
           <dd class="col-sm-9">{{ task.apartment.finishing_type or '—' }}</dd>
           <dt class="col-sm-3">Пункт</dt>
-          <dd class="col-sm-9"><span class="badge text-bg-primary">{{ point_name }}</span></dd>
+          <dd class="col-sm-9">
+            {% if current_user.role != 'viewer' %}
+            <form class="task-detail-point-form d-flex flex-wrap align-items-center gap-2" method="post" action="{{ url_for('main.update_task_point', task_id=task.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <select class="form-select form-select-sm task-detail-point-select" name="point_number" aria-label="Пункт замечания">
+                {% for point in points %}
+                <option value="{{ point.number }}" {% if task.work_point and task.work_point.point_number == point.number %}selected{% endif %}>{{ point.number }}. {{ point.label }}</option>
+                {% endfor %}
+              </select>
+              <button class="btn btn-sm btn-outline-success task-detail-point-save-btn" type="submit">
+                <i class="bi bi-check2" aria-hidden="true"></i>
+              </button>
+            </form>
+            {% else %}
+            <span class="badge text-bg-primary">{{ point_name }}</span>
+            {% endif %}
+          </dd>
           <dt class="col-sm-3">Раздел</dt>
           <dd class="col-sm-9">
             <div class="d-flex flex-wrap gap-2">

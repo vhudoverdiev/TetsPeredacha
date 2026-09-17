@@ -113,7 +113,7 @@ def _letter_paragraphs(project: Project, contractor: Contractor | None, author: 
         _paragraph(f"Исх. №____  от {_numeric_date(current_date)} г. ", bold=True, align="both", size=22, spacing_after=0, underline=True),
         _paragraph(contractor_name, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0),
         *[
-            _paragraph(line, bold=True, align="right", left=BODY_LEFT, right=BODY_RIGHT, size=22, spacing_after=0)
+            _paragraph(line, bold=True, align="right", left=0, right=BODY_RIGHT, size=22, spacing_after=0)
             for line in contractor_address_lines
         ],
         _reference_blank(left=BODY_LEFT, right=BODY_RIGHT, size=22),
@@ -270,8 +270,9 @@ def _statement_rows(tasks: list[Task]) -> list[list[str]]:
 def _statement_table(project_name: str, rows: list[list[str]], *, completed: bool = False) -> str:
     widths = [846, 2126, 6367] if completed else [701, 1985, 6653]
     table_width = sum(widths)
+    title = ("Выполненные работы " if completed else "Дефектная ведомость ") + project_name
     table_rows = [
-        _merged_row(f"Дефектная ведомость {project_name}", columns=3, bold=True, align="center"),
+        _merged_row(title, columns=3, bold=True, align="center"),
         _row(["№ кв", "№ строительный", "Замечания"], widths=widths, bold=True, align="center"),
     ]
     data_rows = rows or [["—", "—", "Нет замечаний"]]
@@ -568,11 +569,27 @@ def _address_lines(address: str) -> list[str]:
     parts = [part.strip() for part in text.split(",") if part.strip()]
     if len(parts) <= 2:
         return [text]
+    merged_parts: list[str] = []
+    index = 0
+    while index < len(parts):
+        part = parts[index]
+        next_part = parts[index + 1] if index + 1 < len(parts) else ""
+        if re.match(r"^(ул\.?|улица|пр-кт|проспект|пер\.?|переулок)\b", part, re.IGNORECASE) and re.match(r"^(кв\.?|пом\.?|офис)\b", next_part, re.IGNORECASE):
+            merged_parts.append(f"{part}, {next_part}")
+            index += 2
+            continue
+        merged_parts.append(part)
+        index += 1
+    parts = merged_parts
     lines = []
     current = parts[0]
     for part in parts[1:]:
+        if re.match(r"^(ул\.?|улица|пр-кт|проспект|пер\.?|переулок)\b", part, re.IGNORECASE) and current:
+            lines.append(current)
+            current = part
+            continue
         candidate = f"{current}, {part}"
-        if len(candidate) <= 58 or len(lines) >= 2:
+        if len(candidate) <= 68 or len(lines) >= 2:
             current = candidate
         else:
             lines.append(current)

@@ -4539,6 +4539,24 @@ code {
   box-shadow: 0 18px 45px rgba(145, 111, 18, 0.13);
 }
 
+.task-detail-point-form {
+  max-width: 34rem;
+}
+
+.task-detail-point-form .developer-custom-select,
+.task-detail-point-form .task-detail-point-select {
+  min-width: min(100%, 20rem);
+  max-width: 28rem;
+}
+
+.task-detail-point-save-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .apartment-card:hover {
   color: inherit;
   border-color: rgba(13, 110, 253, .32);

@@ -1,10 +1,19 @@
 from datetime import date
 import unittest
+from pathlib import Path
 
 from app.services import pdf_recognition as recognition
 
 
 class PdfRecognitionContractsTests(unittest.TestCase):
+    def test_recognition_review_page_allows_manual_rows_and_po_mode(self):
+        template = Path("app/templates/task_recognition.html").read_text(encoding="utf-8")
+
+        self.assertIn("data-task-recognition-add-row", template)
+        self.assertIn("data-task-recognition-row-template", template)
+        self.assertIn('name="po_mode"', template)
+        self.assertIn("ПО", template)
+
     def test_no_remark_detection_requires_meaningful_marker(self):
         self.assertTrue(recognition.is_no_remark_text(recognition.NO_REMARK_MARKERS[0]))
         self.assertTrue(recognition.is_no_remark_text(f"  {recognition.NO_REMARK_MARKERS[-1]}  "))

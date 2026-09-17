@@ -6939,6 +6939,34 @@ def _apply_inspection_date_to_group(apartments: list[Apartment], inspection_date
         item.first_inspection_present = True
 
 
+def _complete_previous_po_tasks_for_points(
+    *,
+    project: Project,
+    apartment: Apartment,
+    point_numbers: set[str],
+) -> int:
+    normalized_points = {str(number or "").strip() for number in point_numbers if str(number or "").strip()}
+    if not normalized_points:
+        return 0
+    apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
+    if not apartment_ids:
+        apartment_ids = [apartment.id]
+    tasks = (
+        Task.query.join(WorkPoint)
+        .filter(
+            Task.project_id == project.id,
+            Task.apartment_id.in_(apartment_ids),
+            Task.is_archived.is_(False),
+            Task.status.notin_(list(DONE_STATUSES)),
+            WorkPoint.point_number.in_(normalized_points),
+        )
+        .all()
+    )
+    for task in tasks:
+        change_task_status(task, STATUS_DONE, user_id=current_user.id, commit=False)
+    return len(tasks)
+
+
 def _create_manual_remark_tasks(
     *,
     project: Project,
@@ -7145,6 +7173,12 @@ def _work_point_conflict_label(work_point: WorkPoint | None) -> str:
     if point_number:
         return f"Пункт {point_number}"
     return display_name or "Замечание"
+
+
+def _history_change_visible_to_current_user(change: ChangeLog) -> bool:
+    if current_user.role == ROLE_ADMIN:
+        return True
+    return change.user_id == current_user.id
 
 
 def _save_remark_with_sync_fallback(
@@ -7515,9 +7549,11 @@ def task_recognition():
                 flash("Перед занесением нужно подтвердить сохранение распознанных замечаний", "warning")
             else:
                 act_count = request.form.get("act_count", type=int) or 0
+                po_mode = request.form.get("po_mode") == "1"
                 created_count = 0
                 conflict_count = 0
                 blocked_count = 0
+                completed_previous_count = 0
                 duplicate_act_names: list[str] = []
                 sync_log_source_names: list[str] = []
                 for act_idx in range(act_count):
@@ -7548,7 +7584,7 @@ def task_recognition():
                         prepared_rows: list[tuple[str, str]] = []
                         duplicate_row_count = 0
                         for row_idx in range(row_count):
-                            if request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
+                            if not po_mode and request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
                                 continue
                             text = (request.form.get(f"act_{act_idx}_row_{row_idx}_description") or "").strip()
                             point_number = (request.form.get(f"act_{act_idx}_row_{row_idx}_point") or "22").strip()
@@ -7568,22 +7604,38 @@ def task_recognition():
                             continue
                         if prepared_rows:
                             _apply_inspection_date_to_group(_apartment_group_for_project(apartment, project.id), inspection_date)
+                            if po_mode:
+                                completed_previous_count += _complete_previous_po_tasks_for_points(
+                                    project=project,
+                                    apartment=apartment,
+                                    point_numbers={point_number for point_number, _ in prepared_rows},
+                                )
                         for point_number, text in prepared_rows:
-                            outcome = _save_remark_with_sync_fallback(
-                                project=project,
-                                apartment=apartment,
-                                point_number=point_number,
-                                text=text,
-                                created_source_sheet_name="pdf_recognition",
-                                created_action="pdf_recognition_created",
-                                conflict_source_type="pdf_recognition",
-                                conflict_source_name=act_filename,
-                                conflict_sheet_name=act_filename,
-                            )
-                            if outcome == "created":
-                                created_count += 1
-                            elif outcome == "conflict":
-                                conflict_count += 1
+                            if po_mode:
+                                created_count += len(_create_manual_remark_tasks(
+                                    project=project,
+                                    apartment=apartment,
+                                    point_number=point_number,
+                                    text=text,
+                                    source_sheet_name="pdf_recognition",
+                                    action="pdf_recognition_created",
+                                ))
+                            else:
+                                outcome = _save_remark_with_sync_fallback(
+                                    project=project,
+                                    apartment=apartment,
+                                    point_number=point_number,
+                                    text=text,
+                                    created_source_sheet_name="pdf_recognition",
+                                    created_action="pdf_recognition_created",
+                                    conflict_source_type="pdf_recognition",
+                                    conflict_source_name=act_filename,
+                                    conflict_sheet_name=act_filename,
+                                )
+                                if outcome == "created":
+                                    created_count += 1
+                                elif outcome == "conflict":
+                                    conflict_count += 1
                     if conflict_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
@@ -7610,6 +7662,8 @@ def task_recognition():
                         if duplicate_act_names:
                             flash("Точно такой же акт уже подгружен", "danger")
                         message = f"Сохранено замечаний: {created_count}"
+                        if completed_previous_count:
+                            message += f". Переведено в выполнено: {completed_previous_count}"
                         if blocked_count:
                             message += f". Актов пропущено: {blocked_count}"
                         flash(message, "success")
@@ -9405,6 +9459,7 @@ def apartment_detail(apartment_id: int):
         _build_change_history_entry(item["change"], task=item["task"], users_cache=users_cache)
         for item in overview["changes"]
         if not _is_legacy_problem_comment_change(item["change"], item["task"])
+        and _history_change_visible_to_current_user(item["change"])
         and not (current_user.role == ROLE_OFFICE and item["change"].field_name == "po_status")
     ]
     history_page = max(request.args.get("history_page", 1, type=int), 1)
@@ -9761,7 +9816,12 @@ def task_detail(task_id: int):
     edit_form.responsible_id.data = str(task.responsible_id or "")
     edit_form.planned_date.data = task.planned_date.isoformat() if task.planned_date else ""
     comment_form = CommentForm()
-    visible_changes = [change for change in task.changes if not _is_legacy_problem_comment_change(change, task)]
+    visible_changes = [
+        change
+        for change in task.changes
+        if not _is_legacy_problem_comment_change(change, task)
+        and _history_change_visible_to_current_user(change)
+    ]
     users_cache: dict[int, str] = {}
     history_entries = [_build_change_history_entry(change, task=task, users_cache=users_cache) for change in visible_changes]
     other_tasks = (
@@ -9784,6 +9844,7 @@ def task_detail(task_id: int):
         task=task,
         edit_form=edit_form,
         comment_form=comment_form,
+        points=_remark_point_options(),
         visible_changes=visible_changes,
         history_entries=history_entries,
         other_open_tasks=other_tasks,
@@ -9862,6 +9923,36 @@ def update_task(task_id: int):
     else:
         flash("Проверьте поля формы", "danger")
     return redirect(url_for("main.task_detail", task_id=task.id))
+
+
+@bp.route("/tasks/<int:task_id>/point", methods=["POST"])
+@login_required
+def update_task_point(task_id: int):
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+    task = db.session.get(Task, task_id) or abort(404)
+    if task.project_id != project.id:
+        abort(404)
+    if not can_change_task(current_user, task):
+        abort(403)
+    point_number = (request.form.get("point_number") or "").strip()
+    if point_number not in CONTRACTOR_POINT_LABELS:
+        flash("Выберите корректный пункт", "danger")
+        return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
+    old_point = task.work_point
+    new_point = _get_or_create_manual_work_point(point_number)
+    if old_point and old_point.id == new_point.id:
+        flash("Пункт не изменился", "info")
+        return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
+    old_label = old_point.display_name if old_point else ""
+    new_label = new_point.display_name
+    task.work_point = new_point
+    task.manually_edited = True
+    log_change(task, "field_update", "work_point", old_label, new_label)
+    db.session.commit()
+    flash("Пункт замечания обновлен", "success")
+    return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
 
 
 @bp.route("/tasks/<int:task_id>/comment", methods=["POST"])

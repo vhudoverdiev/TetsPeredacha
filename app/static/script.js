@@ -8514,7 +8514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let savedValue = form.dataset.savedValue || select.value;
     let saving = false;
 
-    select.addEventListener('change', async () => {
+    const saveRole = async () => {
       const requestedValue = select.value;
       if (saving || requestedValue === savedValue) return;
       saving = true;
@@ -8548,6 +8548,14 @@ document.addEventListener('DOMContentLoaded', () => {
         select.disabled = false;
         form.classList.remove('is-saving');
       }
+    };
+
+    select.addEventListener('change', saveRole);
+    select.addEventListener('input', saveRole);
+    select.addEventListener('blur', saveRole);
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      saveRole();
     });
   });
 });

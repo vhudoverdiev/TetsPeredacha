@@ -158,6 +158,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("Не выполнена заделка штробы.", text)
         self.assertIn("Сбить наплывы строительных смесей.", text)
         self.assertIn("Выполнена зачистка поверхности.", text)
+        self.assertIn('Выполненные работы ЖК "Квартал 100" - 7 очередь', text)
         self.assertIn("Согласовано денежное возмещение. (отступные)", text)
         with ZipFile(path) as archive:
             document_xml = archive.read("word/document.xml").decode("utf-8")

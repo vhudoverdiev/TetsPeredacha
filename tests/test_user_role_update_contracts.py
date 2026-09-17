@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 from config import Config
 from app import create_app, db, login_manager
@@ -67,6 +68,14 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["role"], ROLE_PAINTER)
         self.assertEqual(db.session.get(User, user.id).role, ROLE_PAINTER)
+
+    def test_users_page_role_select_has_resilient_autosave_handlers(self):
+        script = Path("app/static/script.js").read_text(encoding="utf-8")
+
+        self.assertIn("const saveRole = async () =>", script)
+        self.assertIn("select.addEventListener('change', saveRole)", script)
+        self.assertIn("select.addEventListener('input', saveRole)", script)
+        self.assertIn("form.addEventListener('submit'", script)
 
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)
