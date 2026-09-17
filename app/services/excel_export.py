@@ -690,6 +690,15 @@ def _normalize_source_work_point_headers(wb) -> dict[str, int]:
     inserted_columns_by_sheet: dict[str, int] = {}
     canonical_numbers = [21, 22, 23, 24, 25]
 
+    def editable_cell(ws, row_index: int, column_index: int):
+        for merged_range in list(ws.merged_cells.ranges):
+            if (
+                merged_range.min_row <= row_index <= merged_range.max_row
+                and merged_range.min_col <= column_index <= merged_range.max_col
+            ):
+                ws.unmerge_cells(str(merged_range))
+        return ws.cell(row=row_index, column=column_index)
+
     for ws in wb.worksheets:
         old_combined_header: tuple[int, int] | None = None
         for row_index in range(1, min(ws.max_row, 8) + 1):
@@ -728,6 +737,12 @@ def _normalize_source_work_point_headers(wb) -> dict[str, int]:
             column_22_label = str(ws.cell(row=label_row, column=column_22).value or "").lower() if column_22 else ""
             needs_canalization_column = "канализа" not in column_22_label
             if needs_canalization_column:
+                for merged_range in list(ws.merged_cells.ranges):
+                    if (
+                        merged_range.min_row <= label_row <= merged_range.max_row
+                        and merged_range.min_col <= column_21 <= merged_range.max_col
+                    ):
+                        ws.unmerge_cells(str(merged_range))
                 insert_at = column_21 + 1
                 ws.insert_cols(insert_at)
                 inserted_columns_by_sheet[ws.title] = insert_at
@@ -748,8 +763,8 @@ def _normalize_source_work_point_headers(wb) -> dict[str, int]:
 
             for offset, point_number in enumerate(canonical_numbers):
                 column_index = column_21 + offset
-                label_cell = ws.cell(row=label_row, column=column_index)
-                number_cell = ws.cell(row=number_row, column=column_index)
+                label_cell = editable_cell(ws, label_row, column_index)
+                number_cell = editable_cell(ws, number_row, column_index)
                 label_cell.value = WORK_POINT_LABELS[str(point_number)]
                 number_cell.value = point_number
                 label_cell.alignment = copy(label_cell.alignment)

@@ -18,13 +18,9 @@
   </div>
 
   <form class="contractor-points-filter" method="get" action="{{ url_for('main.contractor_points') }}">
-    <div class="contractor-points-search">
-      <label for="contractor-points-search">Поиск</label>
-      <input id="contractor-points-search" class="form-control" type="search" name="q" value="{{ search_query }}">
-    </div>
     <div class="contractor-points-point-filter">
       <label for="contractor-points-point-filter">Пункт</label>
-      <select id="contractor-points-point-filter" class="form-select" name="point">
+      <select id="contractor-points-point-filter" class="form-select" name="point" data-force-custom-select>
         <option value="">Все пункты</option>
         {% for point in points %}
         <option value="{{ point.number }}" {% if point_filter == point.number %}selected{% endif %}>{{ point.number }}. {{ point.label }}</option>
@@ -35,7 +31,7 @@
     <button class="btn btn-success remarks-page-primary-btn" type="submit">
       <i class="bi bi-search me-2"></i>Найти
     </button>
-    {% if search_query or point_filter %}
+    {% if point_filter %}
     <a class="btn btn-outline-secondary" href="{{ url_for('main.contractor_points') }}">
       <i class="bi bi-arrow-counterclockwise me-2"></i>Сброс
     </a>
@@ -43,8 +39,20 @@
   </form>
 
   <div class="contractor-points-summary">
-    Найдено замечаний: <strong>{{ tasks|length }}</strong>
+    Найдено замечаний: <strong>{{ pagination.total if pagination else tasks|length }}</strong>
   </div>
+
+  {% if pagination and pagination.pages > 1 %}
+  <nav class="contractor-points-pagination" aria-label="Страницы замечаний">
+    <a class="btn btn-outline-secondary {% if not pagination.has_prev %}disabled{% endif %}" href="{% if pagination.has_prev %}{{ url_for('main.contractor_points', **prev_args) }}{% else %}#{% endif %}" {% if not pagination.has_prev %}aria-disabled="true"{% endif %}>
+      Назад
+    </a>
+    <span class="contractor-points-page-state">Стр. {{ pagination.page }} / {{ pagination.pages }}</span>
+    <a class="btn btn-outline-secondary {% if not pagination.has_next %}disabled{% endif %}" href="{% if pagination.has_next %}{{ url_for('main.contractor_points', **next_args) }}{% else %}#{% endif %}" {% if not pagination.has_next %}aria-disabled="true"{% endif %}>
+      Вперед
+    </a>
+  </nav>
+  {% endif %}
 
   <div class="contractor-points-table-wrap">
     <table class="contractor-points-table">
@@ -74,7 +82,7 @@
             <form class="task-detail-point-form contractor-points-point-form" method="post" action="{{ url_for('main.update_task_point', task_id=task.id) }}" data-task-detail-point-autosave>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="next" value="{{ request.full_path }}">
-              <select class="form-select form-select-sm task-detail-point-select contractor-points-point-select" name="point_number" aria-label="Пункт замечания" data-no-custom-select>
+              <select class="form-select form-select-sm task-detail-point-select contractor-points-point-select" name="point_number" aria-label="Пункт замечания" data-force-custom-select>
                 {% for point in points %}
                 <option value="{{ point.number }}" {% if point_number == point.number %}selected{% endif %}>{{ point.number }}. {{ point.label }}</option>
                 {% endfor %}
@@ -91,7 +99,7 @@
             <div class="contractor-directory-empty">
               <span><i class="bi bi-list-check"></i></span>
               <h2>Замечаний не найдено</h2>
-              <p>Измените поисковый запрос или вернитесь к списку подрядчиков.</p>
+              <p>Измените фильтр по пункту или вернитесь к списку подрядчиков.</p>
             </div>
           </td>
         </tr>
@@ -99,5 +107,17 @@
       </tbody>
     </table>
   </div>
+
+  {% if pagination and pagination.pages > 1 %}
+  <nav class="contractor-points-pagination contractor-points-pagination-bottom" aria-label="Страницы замечаний">
+    <a class="btn btn-outline-secondary {% if not pagination.has_prev %}disabled{% endif %}" href="{% if pagination.has_prev %}{{ url_for('main.contractor_points', **prev_args) }}{% else %}#{% endif %}" {% if not pagination.has_prev %}aria-disabled="true"{% endif %}>
+      Назад
+    </a>
+    <span class="contractor-points-page-state">Стр. {{ pagination.page }} / {{ pagination.pages }}</span>
+    <a class="btn btn-outline-secondary {% if not pagination.has_next %}disabled{% endif %}" href="{% if pagination.has_next %}{{ url_for('main.contractor_points', **next_args) }}{% else %}#{% endif %}" {% if not pagination.has_next %}aria-disabled="true"{% endif %}>
+      Вперед
+    </a>
+  </nav>
+  {% endif %}
 </div>
 {% endblock %}

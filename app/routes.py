@@ -3247,11 +3247,12 @@ def contractor_points():
     if project is None:
         return redirect(url_for("main.objects"))
 
-    search_query = str(request.args.get("q") or "").strip()
     sort = str(request.args.get("sort") or "point_asc").strip()
     sort_desc = sort == "point_desc"
     point_options = _remark_point_options(min_number=10)
     point_filter = str(request.args.get("point") or "").strip()
+    page = max(request.args.get("page", 1, type=int) or 1, 1)
+    per_page = 20
 
     tasks_query = (
         Task.query
@@ -3260,21 +3261,6 @@ def contractor_points():
         .options(selectinload(Task.apartment), selectinload(Task.work_point))
         .filter(Task.project_id == project.id, Task.is_archived.is_(False))
     )
-    if search_query:
-        like_value = f"%{search_query}%"
-        tasks_query = tasks_query.filter(
-            or_(
-                Apartment.apartment_number.ilike(like_value),
-                Apartment.construction_number.ilike(like_value),
-                Apartment.owner_name.ilike(like_value),
-                Apartment.phone.ilike(like_value),
-                Task.description.ilike(like_value),
-                Task.source_cell_value.ilike(like_value),
-                WorkPoint.point_number.ilike(like_value),
-                WorkPoint.short_name.ilike(like_value),
-                WorkPoint.original_column_name.ilike(like_value),
-            )
-        )
     if point_filter:
         allowed_point_numbers = {option["number"] for option in point_options}
         if point_filter in allowed_point_numbers:
@@ -3283,23 +3269,31 @@ def contractor_points():
             point_filter = ""
 
     point_order = cast(WorkPoint.point_number, Integer).desc() if sort_desc else cast(WorkPoint.point_number, Integer).asc()
-    tasks = (
+    pagination = (
         tasks_query
         .order_by(
+            Task.is_done.asc(),
             point_order,
             WorkPoint.point_number.desc() if sort_desc else WorkPoint.point_number.asc(),
             cast(Apartment.apartment_number, Integer).asc(),
             Apartment.apartment_number.asc(),
             Task.id.asc(),
         )
-        .all()
+        .paginate(page=page, per_page=per_page, error_out=False)
     )
+    page_args = request.args.to_dict(flat=True)
+    page_args.pop("page", None)
+    page_args.pop("q", None)
+    prev_args = {**page_args, "page": pagination.prev_num} if pagination.has_prev else page_args
+    next_args = {**page_args, "page": pagination.next_num} if pagination.has_next else page_args
     return render_template(
         "contractor_points.html",
         project=project,
-        tasks=tasks,
+        tasks=pagination.items,
+        pagination=pagination,
+        prev_args=prev_args,
+        next_args=next_args,
         points=point_options,
-        search_query=search_query,
         point_filter=point_filter,
         sort=sort,
         sort_desc=sort_desc,

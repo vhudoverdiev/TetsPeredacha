@@ -55676,7 +55676,7 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
 .contractor-points-filter {
   display: grid;
-  grid-template-columns: minmax(16rem, 1fr) minmax(14rem, 22rem) auto auto;
+  grid-template-columns: minmax(16rem, 1fr) auto auto;
   gap: .75rem;
   align-items: end;
   margin-bottom: 1rem;
@@ -55687,14 +55687,12 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   box-shadow: var(--crm-shadow-soft);
 }
 
-.contractor-points-search,
 .contractor-points-point-filter {
   display: grid;
   gap: .35rem;
   min-width: 0;
 }
 
-.contractor-points-search label,
 .contractor-points-point-filter label {
   margin: 0;
   color: var(--crm-title);
@@ -55702,7 +55700,6 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   font-weight: 800;
 }
 
-.contractor-points-search .form-control,
 .contractor-points-point-filter .form-select,
 .contractor-points-point-select {
   border-color: #cfe6b8;
@@ -55718,6 +55715,23 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 .contractor-points-summary {
   margin: .35rem 0 .85rem;
   color: var(--crm-text);
+}
+
+.contractor-points-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin: 0 0 1rem;
+}
+
+.contractor-points-pagination-bottom {
+  margin: 1rem 0 0;
+}
+
+.contractor-points-page-state {
+  color: var(--crm-muted);
+  font-weight: 800;
 }
 
 .contractor-points-table-wrap {
@@ -55791,11 +55805,29 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   min-height: 3rem;
 }
 
+.contractor-points-filter .developer-custom-select,
+.contractor-points-point-form .developer-custom-select {
+  width: 100% !important;
+}
+
+.contractor-points-filter .developer-select-button,
+.contractor-points-point-form .developer-select-button {
+  min-height: 3rem !important;
+  border-color: #cfe6b8 !important;
+  border-radius: .8rem !important;
+}
+
+.contractor-points-point-form .developer-select-button {
+  min-height: 2.75rem !important;
+  padding-block: .55rem !important;
+}
+
 .contractor-points-point-form.is-saving .contractor-points-point-select {
   opacity: .72;
 }
 
-.contractor-points-point-form.is-saved .contractor-points-point-select {
+.contractor-points-point-form.is-saved .contractor-points-point-select,
+.contractor-points-point-form.is-saved .developer-select-button {
   border-color: #68bf18;
   box-shadow: 0 0 0 .16rem rgba(104, 191, 24, .14);
 }
@@ -55818,6 +55850,18 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
 
   .contractor-points-filter .btn {
     width: 100%;
+  }
+
+  .contractor-points-pagination {
+    justify-content: stretch;
+  }
+
+  .contractor-points-pagination .btn {
+    flex: 1 1 0;
+  }
+
+  .contractor-points-page-state {
+    flex: 0 0 auto;
   }
 
   .contractor-points-table-wrap {

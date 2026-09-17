@@ -79,27 +79,26 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.assertIn("12", html)
         self.assertIn("44", html)
         self.assertIn('data-task-detail-point-autosave', html)
-        self.assertIn('data-no-custom-select', html)
+        self.assertIn('data-force-custom-select', html)
+        self.assertNotIn('data-no-custom-select', html)
         self.assertIn(f'action="/tasks/{self.task_1.id}/point"', html)
         self.assertIn("10. Вентиляция", html)
         self.assertIn("11. Стены. Потолки", html)
         self.assertIn("26. Доп соглашение", html)
         self.assertIn('name="point"', html)
+        self.assertNotIn('name="q"', html)
+        self.assertNotIn('for="contractor-points-search"', html)
         self.assertIn("Все пункты", html)
         self.assertIn("btn btn-success remarks-page-primary-btn", html)
         self.assertNotIn("Квартира, замечание, пункт, собственник", html)
         self.assertNotIn("contractor-points-sort-btn", html)
 
-    def test_points_page_smart_search_matches_remark_and_apartment(self):
-        remark_response = self.client.get("/contractors/points", query_string={"q": "вентканал"})
-        apartment_response = self.client.get("/contractors/points", query_string={"q": "44"})
+    def test_points_page_ignores_removed_search_parameter(self):
+        response = self.client.get("/contractors/points", query_string={"q": "вентканал"})
 
-        remark_html = remark_response.get_data(as_text=True)
-        apartment_html = apartment_response.get_data(as_text=True)
-        self.assertIn("Проверить вентканал", remark_html)
-        self.assertNotIn("Подшпаклевать стену", remark_html)
-        self.assertIn("Подшпаклевать стену", apartment_html)
-        self.assertNotIn("Проверить вентканал", apartment_html)
+        html = response.get_data(as_text=True)
+        self.assertIn("Проверить вентканал", html)
+        self.assertIn("Подшпаклевать стену", html)
 
     def test_points_page_can_filter_by_point(self):
         response = self.client.get("/contractors/points", query_string={"point": "11"})
@@ -115,6 +114,48 @@ class ContractorPointsContractsTests(unittest.TestCase):
         html = response.get_data(as_text=True)
         self.assertLess(html.index("Подшпаклевать стену"), html.index("Проверить вентканал"))
         self.assertNotIn("contractor-points-sort-btn", html)
+
+    def test_points_page_paginates_twenty_rows_and_preserves_filters(self):
+        extra_apartments = []
+        extra_tasks = []
+        for index in range(22):
+            apartment = Apartment(
+                project=self.project,
+                apartment_number=str(100 + index),
+                owner_name=f"Собственник {index}",
+            )
+            task = Task(
+                source_uid=f"contractor-points-page-{index}",
+                project=self.project,
+                apartment=apartment,
+                work_point=self.point_11,
+                description=f"Пагинация замечание {index}",
+            )
+            extra_apartments.append(apartment)
+            extra_tasks.append(task)
+        db.session.add_all(extra_apartments + extra_tasks)
+        db.session.commit()
+
+        response = self.client.get("/contractors/points", query_string={"point": "11"})
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Найдено замечаний: <strong>23</strong>", html)
+        self.assertIn("Стр. 1 / 2", html)
+        self.assertIn("point=11", html)
+        self.assertIn("page=2", html)
+        self.assertNotIn("q=", html)
+        self.assertEqual(html.count("data-task-detail-point-autosave"), 20)
+
+    def test_points_page_orders_open_remarks_before_done(self):
+        self.task_1.is_done = True
+        self.task_2.is_done = False
+        db.session.commit()
+
+        response = self.client.get("/contractors/points")
+
+        html = response.get_data(as_text=True)
+        self.assertLess(html.index("Подшпаклевать стену"), html.index("Проверить вентканал"))
 
     def test_inline_point_update_reuses_task_point_endpoint(self):
         response = self.client.post(

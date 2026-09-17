@@ -135,6 +135,26 @@ class ExcelExportPureContractsTests(unittest.TestCase):
         self.assertEqual(sheet.cell(row=5, column=26).value, "Сертификат Стройбат")
         self.assertEqual([sheet.cell(row=6, column=index).value for index in range(21, 26)], [21, 22, 23, 24, 25])
 
+    def test_source_export_normalizes_split_headers_inside_merged_cells(self):
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Таблица"
+        sheet.merge_cells(start_row=5, start_column=21, end_row=5, end_column=22)
+        sheet.cell(row=5, column=21, value="Работы по монтажу системы отопления, в/с, канализации")
+        sheet.cell(row=5, column=23, value="Работы по монтажу входных дверей")
+        sheet.cell(row=5, column=24, value="Электрика")
+        sheet.cell(row=5, column=25, value="Прочее")
+        sheet.cell(row=5, column=26, value="Сертификат Стройбат")
+        sheet.cell(row=6, column=21, value=21)
+
+        inserted = _normalize_source_work_point_headers(workbook)
+
+        self.assertEqual(inserted, {"Таблица": 22})
+        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления, в/с")
+        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=23).value, "Работы по монтажу входных дверей")
+        self.assertEqual([sheet.cell(row=6, column=index).value for index in range(21, 26)], [21, 22, 23, 24, 25])
+
 
 class ExcelExportDatabaseContractsTests(unittest.TestCase):
     def setUp(self):
