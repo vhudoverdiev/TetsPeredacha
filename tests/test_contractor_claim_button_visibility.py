@@ -102,6 +102,30 @@ class ContractorClaimButtonVisibilityTests(unittest.TestCase):
         self.assertEqual(contractor.contract_number, "07-04/2025")
         self.assertEqual(contractor.contract_date, "07.04.2025")
 
+    def test_directory_hides_claim_fields_but_edit_form_keeps_them(self):
+        self.contractor.legal_address = "164520, Архангельская обл."
+        self.contractor.director_full_name = "Елена Петровна"
+        self.contractor.contract_number = "07-04/2025"
+        self.contractor.contract_date = "07.04.2025"
+        self.contractor.email = "a-tarkov@bk.ru"
+        db.session.commit()
+
+        directory = self.client.get("/contractors/directory").get_data(as_text=True)
+        self.assertIn("164520, Архангельская обл.", directory)
+        self.assertNotIn("Елена Петровна", directory)
+        self.assertNotIn("07-04/2025", directory)
+        self.assertNotIn("a-tarkov@bk.ru", directory)
+
+        edit_form = self.client.get(f"/contractors/{self.contractor.id}/edit").get_data(as_text=True)
+        self.assertIn('name="director_full_name"', edit_form)
+        self.assertIn('value="Елена Петровна"', edit_form)
+        self.assertIn('name="contract_number"', edit_form)
+        self.assertIn('value="07-04/2025"', edit_form)
+        self.assertIn('name="contract_date"', edit_form)
+        self.assertIn('value="07.04.2025"', edit_form)
+        self.assertIn('name="email"', edit_form)
+        self.assertIn('value="a-tarkov@bk.ru"', edit_form)
+
 
 if __name__ == "__main__":
     unittest.main()

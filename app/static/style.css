@@ -56697,7 +56697,8 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     grid-template-areas:
       "search inspection"
       "app avr"
-      "po finishing" !important;
+      "po po"
+      "finishing actions" !important;
     gap: .75rem !important;
     align-items: end !important;
     margin: 0 !important;
@@ -56742,6 +56743,16 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     grid-area: finishing !important;
   }
 
+  html.desktop-like-pointer body.app-body .apartments-filter-form > .apartments-filter-actions,
+  html body.app-body .apartments-filter-form > .apartments-filter-actions {
+    grid-area: actions !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+    align-items: flex-end !important;
+    gap: .55rem !important;
+  }
+
   html.desktop-like-pointer body.app-body .apartments-filter-form > .apartments-filter-finishing-col .remarks-filter-checks,
   html body.app-body .apartments-filter-form > .apartments-filter-finishing-col .remarks-filter-checks {
     display: flex !important;
@@ -56751,16 +56762,6 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
     overflow: visible !important;
   }
 
-  html.desktop-like-pointer body.app-body .apartments-filter-form
-    .apartments-filter-finishing-col > .apartments-filter-actions,
-  html body.app-body .apartments-filter-form
-    .apartments-filter-finishing-col > .apartments-filter-actions {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-end !important;
-    gap: .55rem !important;
-    margin-top: .65rem !important;
-  }
 }
 
 @media (min-width: 1200px) {
@@ -56772,9 +56773,10 @@ html body.app-body .glass-page .js-glass-ordered-edit-form .glass-measure-item-c
       minmax(150px, .82fr)
       minmax(130px, .72fr)
       minmax(180px, 1fr)
-      minmax(340px, 1.45fr) !important;
+      minmax(310px, 1.3fr)
+      max-content !important;
     grid-template-areas:
-      "search inspection app avr po finishing" !important;
+      "search inspection app avr po finishing actions" !important;
   }
 
   html.desktop-like-pointer body.app-body .apartments-filter-form

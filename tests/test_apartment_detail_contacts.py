@@ -19,6 +19,13 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("'X-Requested-With': 'XMLHttpRequest'", TEMPLATE)
         self.assertIn("field.value === 'unsold'", TEMPLATE)
         self.assertNotIn("Сохранить данные", TEMPLATE)
+        self.assertIn("data-apartment-detail-sidebar", TEMPLATE)
+        self.assertIn("data-apartment-history-card", TEMPLATE)
+        self.assertIn("refreshRenderedSections(refreshSidebar)", TEMPLATE)
+        self.assertIn("currentHistory.replaceWith(nextHistory)", TEMPLATE)
+        self.assertIn("currentSidebar.replaceWith(nextSidebar)", TEMPLATE)
+        self.assertIn("initApartmentDetailsAutosave()", TEMPLATE)
+        self.assertNotIn("AbortController", TEMPLATE)
 
     def test_inspection_reset_hover_matches_save_button_green(self):
         start = STYLE.index(".apartment-inspection-reset-btn:hover")

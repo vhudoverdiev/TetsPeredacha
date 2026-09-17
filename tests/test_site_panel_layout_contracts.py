@@ -9,6 +9,11 @@ STYLE_CSS = ROOT / "app" / "static" / "style.css"
 MOBILE_CSS = ROOT / "app" / "static" / "mobile-only.css"
 DESKTOP_CSS = ROOT / "app" / "static" / "desktop-only.css"
 SCRIPT_JS = ROOT / "app" / "static" / "script.js"
+FAVICON_FILES = (
+    "favicon-16x16.png",
+    "favicon-32x32.png",
+    "favicon.ico",
+)
 
 
 PRIMARY_MOBILE_ENDPOINTS = {
@@ -60,6 +65,14 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         cls.mobile_css = MOBILE_CSS.read_text(encoding="utf-8")
         cls.desktop_css = DESKTOP_CSS.read_text(encoding="utf-8")
         cls.script_js = SCRIPT_JS.read_text(encoding="utf-8")
+
+    def test_favicon_links_point_to_existing_non_empty_assets(self):
+        for filename in FAVICON_FILES:
+            with self.subTest(filename=filename):
+                self.assertIn(f"filename='{filename}'", self.base)
+                path = ROOT / "app" / "static" / filename
+                self.assertTrue(path.is_file())
+                self.assertGreater(path.stat().st_size, 0)
 
     def test_every_authenticated_layout_renders_mobile_topbar_and_bottom_dock(self):
         authenticated_layouts = (
@@ -174,26 +187,26 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         self.assertIn("window.innerWidth - menuWidth - viewportGap", place_menu)
         self.assertIn("is-contractor-filter-menu", place_menu)
 
-    def test_apartments_filter_actions_stay_under_finishing_on_desktop(self):
-        marker = "/* Apartments filter: keep apply/reset directly under the finishing filter"
+    def test_apartments_filter_actions_share_finishing_row_on_desktop(self):
+        marker = "/* Apartments filter: keep finishing and apply/reset on one row on desktop. */"
         self.assertIn(marker, self.desktop_css)
         block_start = self.desktop_css.index(marker)
         block = self.desktop_css[block_start:block_start + 3600]
 
-        self.assertIn('"po finishing"', block)
-        self.assertIn('"search inspection app avr po finishing"', block)
+        self.assertIn('"finishing actions"', block)
+        self.assertIn('"search inspection app avr po finishing actions"', block)
         self.assertNotIn("inspection-sort", block)
         self.assertIn("flex-wrap: nowrap !important", block)
-        self.assertIn(".apartments-filter-finishing-col > .apartments-filter-actions", block)
+        self.assertIn("> .apartments-filter-actions", block)
         self.assertIn("justify-content: flex-end !important", block)
 
         template = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
         self.assertNotIn("Сортировка осмотра", template)
         self.assertNotIn('name="inspection_order"', template)
         finishing_start = template.index('class="col-12 col-lg-auto remarks-filter-finishing-col apartments-filter-finishing-col"')
-        actions_start = template.index('class="filter-actions apartments-filter-actions"', finishing_start)
-        finishing_end = template.index("</div>\n      </div>", actions_start)
-        self.assertLess(actions_start, finishing_end)
+        finishing_end = template.index('</div>\n      <div class="col-12 col-lg-auto filter-actions apartments-filter-actions">', finishing_start)
+        actions_start = template.index('class="col-12 col-lg-auto filter-actions apartments-filter-actions"', finishing_end)
+        self.assertGreater(actions_start, finishing_end)
 
     def test_desktop_sidebar_has_home_and_all_web_tabs_with_fixed_shell_geometry(self):
         sidebar_start = self.base.index("<nav class=\"sidebar-nav\">")

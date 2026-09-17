@@ -1541,8 +1541,7 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
   }
 }
 
-/* Apartments filter: keep apply/reset directly under the finishing filter on
-   desktop and on narrowed desktop windows. */
+/* Apartments filter: keep finishing and apply/reset on one row on desktop. */
 @media (min-width: 768px) {
   html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form {
     display: grid !important;
@@ -1550,7 +1549,8 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
     grid-template-areas:
       "search inspection"
       "app avr"
-      "po finishing" !important;
+      "po po"
+      "finishing actions" !important;
     align-items: end !important;
     gap: .75rem !important;
     width: 100% !important;
@@ -1590,13 +1590,13 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
     justify-self: stretch !important;
   }
 
-  html.desktop-like-pointer body.app-body .apartments-page
-    .apartments-filter-finishing-col > .apartments-filter-actions {
+  html.desktop-like-pointer body.app-body .apartments-page .apartments-filter-form > .apartments-filter-actions {
+    grid-area: actions !important;
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     justify-content: flex-end !important;
+    align-items: flex-end !important;
     gap: .55rem !important;
-    margin-top: .65rem !important;
   }
 }
 
@@ -1608,9 +1608,10 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
       minmax(150px, .82fr)
       minmax(130px, .72fr)
       minmax(180px, 1fr)
-      minmax(340px, 1.45fr) !important;
+      minmax(310px, 1.3fr)
+      max-content !important;
     grid-template-areas:
-      "search inspection app avr po finishing" !important;
+      "search inspection app avr po finishing actions" !important;
   }
 
   html.desktop-like-pointer body.app-body .apartments-page

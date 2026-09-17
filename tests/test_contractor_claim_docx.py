@@ -7,7 +7,7 @@ from xml.etree import ElementTree as ET
 
 from config import Config
 from app import create_app, db
-from app.models import Apartment, Contractor, Project, STATUS_DONE, STATUS_NOT_STARTED, Task, User, WorkPoint
+from app.models import Apartment, Contractor, Project, STATUS_CONCESSION, STATUS_DONE, STATUS_NOT_STARTED, Task, User, WorkPoint
 from app.services.contractor_claim_docx import _salutation, build_contractor_claim_docx
 
 
@@ -110,7 +110,17 @@ class ContractorClaimDocxTests(unittest.TestCase):
             is_done=True,
             responsible=self.author,
         )
-        db.session.add_all([self.project, self.contractor, self.point, self.apartment, self.author, self.open_task, self.second_open_task, self.done_task])
+        self.concession_task = Task(
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.point,
+            source_uid="claim-concession",
+            description="Согласовано денежное возмещение.",
+            source_row_index=13,
+            status=STATUS_CONCESSION,
+            is_done=False,
+        )
+        db.session.add_all([self.project, self.contractor, self.point, self.apartment, self.author, self.open_task, self.second_open_task, self.done_task, self.concession_task])
         db.session.commit()
 
     def tearDown(self):
@@ -121,7 +131,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
 
     def test_claim_docx_uses_project_contractor_and_author_data(self):
         path = build_contractor_claim_docx(
-            [self.open_task, self.second_open_task, self.done_task],
+            [self.open_task, self.second_open_task, self.done_task, self.concession_task],
             project=self.project,
             contractor=self.contractor,
             author=self.author,
@@ -137,17 +147,24 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn('ООО "Коробка"', text)
         self.assertIn("Уважаемая Елена Петровна!", text)
         self.assertIn("договора подряда № 07-04/2025 от 07.04.2025", text)
-        self.assertIn("гарантийных обязательств ________, договора подряда", text)
-        self.assertNotIn("п.1.7", text)
+        self.assertIn("гарантийных обязательств п.1.7, договора подряда", text)
+        self.assertNotIn("гарантийных обязательств ________", text)
         self.assertIn("Направлено на адрес эл. почты: contractor@example.test", text)
         self.assertIn("№ кв", text)
         self.assertIn("№ строительный", text)
         self.assertIn("1-2-1", text)
-        self.assertIn("Возведение коробки здания", text)
+        self.assertNotIn("Возведение коробки здания", text)
         self.assertNotIn("12. Возведение коробки здания", text)
         self.assertIn("Не выполнена заделка штробы.", text)
         self.assertIn("Сбить наплывы строительных смесей.", text)
         self.assertIn("Выполнена зачистка поверхности.", text)
+        self.assertIn("Согласовано денежное возмещение. (отступные)", text)
+        with ZipFile(path) as archive:
+            document_xml = archive.read("word/document.xml").decode("utf-8")
+        pages = document_xml.split('<w:br w:type="page"/>')
+        self.assertEqual(len(pages), 3)
+        self.assertNotIn("Согласовано денежное возмещение.", pages[1])
+        self.assertIn("Согласовано денежное возмещение. (отступные)", pages[2])
         self.assertIn("8 900 000-00-00 Худовердиев В.С.", text)
         self.assertNotIn("Худовердиев В.С. 8 900 000-00-00", text)
         self.assertIn("Исп.: Костылева Н.А.", text)
@@ -156,7 +173,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
 
     def test_claim_docx_matches_reference_page_and_table_layout(self):
         path = build_contractor_claim_docx(
-            [self.open_task, self.second_open_task, self.done_task],
+            [self.open_task, self.second_open_task, self.done_task, self.concession_task],
             project=self.project,
             contractor=self.contractor,
             author=self.author,

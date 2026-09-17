@@ -9,7 +9,7 @@ import zipfile
 
 from flask import current_app
 
-from app.models import Apartment, Contractor, Project, Task, User, WorkPoint
+from app.models import Apartment, Contractor, Project, STATUS_CONCESSION, Task, User, WorkPoint
 from app.services.filename import safe_filename_part
 
 
@@ -63,9 +63,9 @@ def _write_claim_docx(path: Path, tasks: list[Task], *, project: Project, contra
     body_parts: list[str] = []
     body_parts.extend(_letter_paragraphs(project, contractor, author, current_date))
     body_parts.append(_page_break())
-    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if not task.is_done]))
+    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if not _is_claim_completed(task)]))
     body_parts.append(_page_break())
-    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if task.is_done], completed=True))
+    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if _is_claim_completed(task)], completed=True))
 
     document_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -140,7 +140,7 @@ def _intro_paragraph(project: Project, technical_customer: str, contractor_name:
     number = str(contract_number or "").strip()
     date_text = str(contract_date or "").strip()
     runs = [
-        ("В рамках исполнения гарантийных обязательств ________, договора подряда", {}),
+        ("В рамках исполнения гарантийных обязательств п.1.7, договора подряда", {}),
     ]
     if number:
         runs.extend([
@@ -224,12 +224,11 @@ def _contract_text(contract_number: str, contract_date: str) -> str:
 def _defect_statement_tables(project: Project, tasks: list[Task], *, completed: bool = False) -> list[str]:
     grouped = _group_tasks_by_point(tasks)
     if not grouped:
-        title = "Выполненные замечания" if completed else "Замечания"
-        return [_statement_table(project.name, title, [], completed=completed)]
+        return [_statement_table(project.name, [], completed=completed)]
     tables = []
     for point, point_tasks in grouped:
         rows = _statement_rows(point_tasks)
-        tables.append(_statement_table(project.name, _point_title(point), rows, completed=completed))
+        tables.append(_statement_table(project.name, rows, completed=completed))
         tables.append(_paragraph("", spacing_after=120))
     return tables
 
@@ -268,12 +267,11 @@ def _statement_rows(tasks: list[Task]) -> list[list[str]]:
     return rows
 
 
-def _statement_table(project_name: str, work_title: str, rows: list[list[str]], *, completed: bool = False) -> str:
+def _statement_table(project_name: str, rows: list[list[str]], *, completed: bool = False) -> str:
     widths = [846, 2126, 6367] if completed else [701, 1985, 6653]
     table_width = sum(widths)
     table_rows = [
         _merged_row(f"Дефектная ведомость {project_name}", columns=3, bold=True, align="center"),
-        _merged_row(work_title, columns=3, bold=True, align="center"),
         _row(["№ кв", "№ строительный", "Замечания"], widths=widths, bold=True, align="center"),
     ]
     data_rows = rows or [["—", "—", "Нет замечаний"]]
@@ -584,7 +582,14 @@ def _address_lines(address: str) -> list[str]:
 
 
 def _task_description(task: Task) -> str:
-    return str(task.description or task.source_cell_value or "").strip()
+    description = str(task.description or task.source_cell_value or "").strip()
+    if task.status == STATUS_CONCESSION and description:
+        return f"{description} (отступные)"
+    return description
+
+
+def _is_claim_completed(task: Task) -> bool:
+    return bool(task.is_done or task.status == STATUS_CONCESSION)
 
 
 def _ordered_tasks(tasks: list[Task]) -> list[Task]:
