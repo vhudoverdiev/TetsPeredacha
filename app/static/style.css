@@ -487,14 +487,46 @@ body.auth-body #iosInstallModal .ios-install-actions::before {
 }
 
 .users-name-autosave.is-saving,
+.users-role-autosave.is-saving,
 .users-access-dropdown.is-saving {
   opacity: .65;
 }
 
 .users-name-autosave.is-saved .users-name-input,
+.users-role-autosave.is-saved .users-role-select,
 .users-access-dropdown.is-saved .users-access-summary {
   border-color: #79bf25;
   box-shadow: 0 0 0 .16rem rgba(121, 191, 37, .1);
+}
+
+.users-role-autosave {
+  margin: 0;
+}
+
+.users-role-select {
+  width: 100%;
+  min-height: 2.35rem;
+  padding: .42rem 2rem .42rem .62rem;
+  border: 1px solid rgba(141, 214, 44, .42);
+  border-radius: .72rem;
+  background-color: #fff;
+  color: #111827;
+  font-size: .9rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.users-role-select:hover,
+.users-role-select:focus {
+  border-color: rgba(121, 191, 37, .62);
+  background-color: #fafff4;
+  box-shadow: 0 0 0 .18rem rgba(121, 191, 37, .1);
+}
+
+.users-role-static {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
 }
 
 .users-access-menu .users-access-projects {
@@ -4496,6 +4528,17 @@ code {
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
+.apartment-card.apartment-card-unsold {
+  background: rgba(255, 214, 102, 0.18);
+  border-color: rgba(230, 176, 34, 0.42);
+  box-shadow: 0 10px 30px rgba(145, 111, 18, 0.08);
+}
+
+.apartment-card.apartment-card-unsold:hover {
+  border-color: rgba(230, 176, 34, 0.58);
+  box-shadow: 0 18px 45px rgba(145, 111, 18, 0.13);
+}
+
 .apartment-card:hover {
   color: inherit;
   border-color: rgba(13, 110, 253, .32);
@@ -6711,7 +6754,7 @@ code {
 }
 
 
-/* Hudoverdiev footer, bottom-left error button, error badges, verifier role */
+/* Hudoverdiev footer, bottom-left error button, and error badges */
 .crm-footer {
   width: 100%;
   margin: 2rem 0 0;
@@ -14303,17 +14346,6 @@ body:has(.documents-standalone-layout)::-webkit-scrollbar,
   }
 }
 
-.verifier-topbar-actions {
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
-  .verifier-topbar-actions .btn {
-    min-height: 38px;
-  }
-}
-
 /* v14 issued employee Excel export button. */
 .assignment-issued-head-actions {
   display: inline-flex;
@@ -14355,7 +14387,7 @@ body:has(.documents-standalone-layout)::-webkit-scrollbar,
 }
 
 /* ======================================================================
-   v15: worker panel polish, verifier layout cleanup, assignment actions.
+   v15: worker panel polish and assignment actions.
    ====================================================================== */
 .worker-topbar-title span,
 .worker-person-name {
@@ -14428,13 +14460,6 @@ body:has(.documents-standalone-layout)::-webkit-scrollbar,
   color: #21314f;
   border-color: #b9c9e1;
   background: #f6f9ff;
-}
-
-/* Verifier report should use the same geometry as the engineer panel. */
-.verifier-topbar-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
 }
 
 /* Make all issued employee tables visually identical regardless of rows count. */

@@ -14,17 +14,19 @@ from app.models import (
     ROLE_EXECUTOR,
     ROLE_GLAZIER,
     ROLE_HANDYMAN,
+    ROLE_LABELS,
     ROLE_MANAGER,
+    ROLE_OFFICE,
     ROLE_PAINTER,
-    ROLE_VERIFIER,
     ROLE_VIEWER,
+    ROLES,
     Task,
     User,
+    USER_ROLE_CHOICES,
     WORKER_ROLES,
 )
 from app.permissions import can_change_task, can_export, can_manage_mapping, can_manage_sync, readonly, role_required
 from app.routes import (
-    VERIFIER_ALLOWED_ENDPOINTS,
     VIEWER_ALLOWED_GET_ENDPOINTS,
     WORKER_ALLOWED_ENDPOINTS,
     _abort_if_project_forbidden,
@@ -95,8 +97,8 @@ class AccessRightsContractsTests(unittest.TestCase):
         cases = {
             ROLE_ADMIN: "main.dashboard",
             ROLE_MANAGER: "main.dashboard",
+            ROLE_OFFICE: "main.dashboard",
             ROLE_VIEWER: "main.dashboard",
-            ROLE_VERIFIER: "main.work_report",
             ROLE_EXECUTOR: "main.my_tasks",
             ROLE_PAINTER: "main.my_tasks",
             ROLE_HANDYMAN: "main.my_tasks",
@@ -119,19 +121,10 @@ class AccessRightsContractsTests(unittest.TestCase):
         })
         self.assertTrue(WORKER_ROLES.issuperset({ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER}))
 
-    def test_verifier_allowed_endpoint_set_is_report_and_document_focused(self):
-        self.assertEqual(VERIFIER_ALLOWED_ENDPOINTS, {
-            "main.dashboard_legacy",
-            "main.objects",
-            "main.object_open",
-            "main.work_report",
-            "main.work_report_export",
-            "main.documents",
-            "main.documents_addendum",
-            "main.documents_download",
-            "main.account",
-            "main.report_error",
-        })
+    def test_verifier_role_is_removed_from_project_roles(self):
+        self.assertNotIn("verifier", ROLES)
+        self.assertNotIn("verifier", ROLE_LABELS)
+        self.assertNotIn("verifier", dict(USER_ROLE_CHOICES))
 
     def test_viewer_readonly_get_allowlist_excludes_mutating_endpoints(self):
         self.assertIn("main.task_list", VIEWER_ALLOWED_GET_ENDPOINTS)
@@ -152,14 +145,14 @@ class AccessRightsContractsTests(unittest.TestCase):
     def test_permission_helpers_reserve_sync_and_mapping_for_admin(self):
         users = {
             role: self._user(role=role, username=f"perm-{role}")
-            for role in (ROLE_ADMIN, ROLE_MANAGER, ROLE_VIEWER, ROLE_VERIFIER, ROLE_GLAZIER)
+            for role in (ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_VIEWER, ROLE_GLAZIER)
         }
 
         for role, user in users.items():
             with self.subTest(role=role):
                 self.assertEqual(can_manage_sync(user), role == ROLE_ADMIN)
                 self.assertEqual(can_manage_mapping(user), role == ROLE_ADMIN)
-                self.assertEqual(can_export(user), role in {ROLE_ADMIN, ROLE_MANAGER})
+                self.assertEqual(can_export(user), role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE})
                 self.assertEqual(readonly(user), role == ROLE_VIEWER)
 
     def test_can_change_task_allows_managers_and_assigned_workers_only(self):
@@ -218,6 +211,46 @@ class AccessRightsContractsTests(unittest.TestCase):
         admin = self._user(role=ROLE_ADMIN, username="admin-service-access")
         self.assertIsNone(self._guard(admin, "main.mapping_settings", method="POST"))
 
+    def test_office_role_matches_manager_except_restricted_sections(self):
+        office = self._user(role=ROLE_OFFICE, username="office-access", project=self.project)
+
+        self.assertTrue(office.can(ROLE_MANAGER))
+        self.assertFalse(office.can(ROLE_ADMIN))
+
+        for endpoint in (
+            "main.dashboard",
+            "main.task_list",
+            "main.task_new",
+            "main.contractors_list",
+            "main.apartments",
+            "main.work_report",
+        ):
+            with self.subTest(endpoint=endpoint):
+                self.assertIsNone(self._guard(office, endpoint))
+
+        for endpoint in (
+            "main.assignments",
+            "main.assignment_manual_task_new",
+            "main.glass_measurements",
+            "main.glass_order",
+            "main.materials",
+            "main.material_request_detail",
+        ):
+            with self.subTest(endpoint=endpoint):
+                self.assertRedirectsTo(self._guard(office, endpoint), "/")
+
+        with self.assertRaises(Forbidden):
+            self._guard(office, "main.material_request_new", method="POST")
+        for endpoint in (
+            "main.add_task_comment",
+            "main.update_apartment_comment",
+            "main.update_apartment_inspection_note",
+            "main.update_apartment_po_status",
+        ):
+            with self.subTest(endpoint=endpoint):
+                with self.assertRaises(Forbidden):
+                    self._guard(office, endpoint, method="POST")
+
     def test_manager_cannot_open_service_tools(self):
         manager = self._user(role=ROLE_MANAGER, username="manager-service-access")
 
@@ -250,20 +283,6 @@ class AccessRightsContractsTests(unittest.TestCase):
 
         with self.assertRaises(Forbidden):
             self._guard(worker, "main.update_task", method="POST")
-
-    def test_verifier_can_open_reports_objects_documents_and_account_only(self):
-        verifier = self._user(role=ROLE_VERIFIER, username="verifier-access")
-
-        for endpoint in ("main.work_report", "main.objects", "main.object_open", "main.documents", "main.documents_addendum", "main.account"):
-            with self.subTest(endpoint=endpoint):
-                self.assertIsNone(self._guard(verifier, endpoint))
-        self.assertRedirectsTo(self._guard(verifier, "main.task_list"), "/report")
-
-    def test_verifier_post_to_forbidden_endpoint_is_403(self):
-        verifier = self._user(role=ROLE_VERIFIER, username="verifier-post")
-
-        with self.assertRaises(Forbidden):
-            self._guard(verifier, "main.update_task", method="POST")
 
     def test_viewer_can_read_allowed_pages_but_cannot_open_write_pages(self):
         viewer = self._user(role=ROLE_VIEWER, username="viewer-read")
@@ -299,16 +318,11 @@ class AccessRightsContractsTests(unittest.TestCase):
 
     def test_mobile_home_endpoint_respects_role_and_project_selection(self):
         worker = self._user(role=ROLE_PAINTER, username="mobile-worker", project=self.project)
-        verifier = self._user(role=ROLE_VERIFIER, username="mobile-verifier", project=self.project)
         manager = self._user(role=ROLE_MANAGER, username="mobile-manager", all_projects=True)
 
         with self.app.test_request_context("/", headers={"User-Agent": MOBILE_UA}):
             login_user(worker)
             self.assertEqual(_mobile_phone_home_endpoint(), "main.my_tasks")
-
-        with self.app.test_request_context("/", headers={"User-Agent": MOBILE_UA}):
-            login_user(verifier)
-            self.assertEqual(_mobile_phone_home_endpoint(), "main.work_report")
 
         with self.app.test_request_context("/", headers={"User-Agent": MOBILE_UA}):
             login_user(manager)
@@ -319,8 +333,8 @@ class AccessRightsContractsTests(unittest.TestCase):
     def test_mobile_allowed_endpoints_are_role_specific(self):
         cases = (
             (ROLE_GLAZIER, "main.my_tasks", "main.assignments"),
-            (ROLE_VERIFIER, "main.work_report", "main.task_list"),
             (ROLE_MANAGER, "main.assignments", "main.users"),
+            (ROLE_OFFICE, "main.task_list", "main.assignments"),
             (ROLE_VIEWER, "main.task_list", "main.assignments"),
         )
         for role, allowed_endpoint, forbidden_endpoint in cases:

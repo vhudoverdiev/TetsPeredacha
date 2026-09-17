@@ -991,7 +991,7 @@
     })();
   </script>
 </head>
-<body class="{% if current_user.is_authenticated %}app-body{% else %}auth-body{% endif %}{% if current_user.is_authenticated and current_user.role == 'verifier' %} verifier-layout{% endif %}{% if current_user.is_authenticated and (current_user.role in ['executor', 'painter', 'handyman', 'glazier'] or (current_user.role not in ['executor', 'painter', 'handyman', 'glazier'] and ((current_project and request.endpoint not in ['main.object_new', 'main.object_edit', 'main.object_delete', 'main.object_delete_confirm', 'main.site_settings']) or request.endpoint in ['main.account', 'main.objects']))) %} has-mobile-project-topbar{% endif %}" data-tab-visit-url="{{ url_for('main.analytics_tab_open') }}">
+<body class="{% if current_user.is_authenticated %}app-body{% else %}auth-body{% endif %}{% if current_user.is_authenticated and (current_user.role in ['executor', 'painter', 'handyman', 'glazier'] or (current_user.role not in ['executor', 'painter', 'handyman', 'glazier'] and ((current_project and request.endpoint not in ['main.object_new', 'main.object_edit', 'main.object_delete', 'main.object_delete_confirm', 'main.site_settings']) or request.endpoint in ['main.account', 'main.objects']))) %} has-mobile-project-topbar{% endif %}" data-tab-visit-url="{{ url_for('main.analytics_tab_open') }}">
 <div class="crm-offline-banner js-crm-offline-banner" hidden>Не удается обновить. Показана сохраненная версия.</div>
 <div class="mobile-standalone-boot-screen" aria-hidden="true">
   <div class="mobile-standalone-boot-screen__orbit" aria-hidden="true">
@@ -1065,7 +1065,6 @@
 {% endif %}
 {% set page_content %}{% block content %}{% endblock %}{% endset %}
 {% set worker_role = current_user.is_authenticated and current_user.role in ['executor', 'painter', 'handyman', 'glazier'] %}
-{% set report_only_role = current_user.is_authenticated and current_user.role == 'verifier' %}
 
 {% macro report_error_button(extra_class='') -%}
 <button type="button" class="btn btn-sm report-error-btn {{ extra_class }}" data-bs-toggle="modal" data-bs-target="#reportErrorModal" title="Сообщить об ошибке" aria-label="Сообщить об ошибке">
@@ -1152,7 +1151,7 @@
   </div>
   {% else %}
   <div class="mobile-app-topbar {% if worker_role %}mobile-app-topbar-worker{% endif %} mobile-shell-topbar" aria-label="Мобильная шапка">
-    <a class="mobile-top-avatar" href="{{ url_for('main.my_tasks') if worker_role else (url_for('main.dashboard') if current_user.is_authenticated and current_user.role == 'manager' else url_for('main.objects')) }}" aria-label="Главная"><img class="mobile-top-avatar-logo" src="{{ url_for('static', filename='brand-logo.png') }}" width="40" height="40" alt=""></a>
+    <a class="mobile-top-avatar" href="{{ url_for('main.my_tasks') if worker_role else (url_for('main.dashboard') if current_user.is_authenticated and current_user.role in ['manager', 'office'] else url_for('main.objects')) }}" aria-label="Главная"><img class="mobile-top-avatar-logo" src="{{ url_for('static', filename='brand-logo.png') }}" width="40" height="40" alt=""></a>
     {% if not worker_role %}
     <div class="mobile-top-title">{{ title }}</div>
     <a class="mobile-shell-account {% if request.endpoint == 'main.account' %}is-active{% endif %}" href="{{ url_for('main.account') }}" aria-label="Аккаунт">
@@ -1176,22 +1175,9 @@
   {% else %}
   {% set primary_mobile_shell = current_project and layout_mode.strip() == 'app' and request.endpoint not in ['main.account', 'main.site_settings'] %}
   {% set no_mobile_project = not primary_mobile_shell %}
-  {% set nav_count = 2 if report_only_role or no_mobile_project else (4 if current_user.role in ['admin', 'manager'] else 3) %}
-  <nav class="mobile-bottom-nav mobile-bottom-nav-root{% if report_only_role %} mobile-verifier-bottom-nav{% endif %}" aria-label="Основная навигация" data-mobile-dock="unified" style="--mobile-nav-count: {{ nav_count }}; --ref-mobile-nav-height: 72px !important; width: 100vw !important; min-width: 100vw !important; max-width: 100vw !important; height: 72px !important; min-height: 72px !important; max-height: 72px !important; margin: 0 !important; padding: 4px 5px 3px !important; box-sizing: border-box !important">
-    {% if report_only_role %}
-      {% if primary_mobile_shell %}
-    <a class="mobile-nav-item {% if active == 'report' %}active{% endif %}" href="{{ url_for('main.work_report') }}">
-      <i class="bi bi-file-earmark-bar-graph"></i><span>Отчет</span>
-    </a>
-      {% else %}
-    <a class="mobile-nav-item {% if active == 'objects' %}active{% endif %}" href="{{ url_for('main.objects') }}">
-      <i class="bi bi-diagram-3"></i><span>Объекты</span>
-    </a>
-      {% endif %}
-    <a class="mobile-nav-item {% if active == 'account' %}active{% endif %}" href="{{ url_for('main.account') }}">
-      <i class="bi bi-person-circle"></i><span>Аккаунт</span>
-    </a>
-    {% elif no_mobile_project %}
+  {% set nav_count = 2 if no_mobile_project else (4 if current_user.role in ['admin', 'manager'] else 3) %}
+  <nav class="mobile-bottom-nav mobile-bottom-nav-root" aria-label="Основная навигация" data-mobile-dock="unified" style="--mobile-nav-count: {{ nav_count }}; --ref-mobile-nav-height: 72px !important; width: 100vw !important; min-width: 100vw !important; max-width: 100vw !important; height: 72px !important; min-height: 72px !important; max-height: 72px !important; margin: 0 !important; padding: 4px 5px 3px !important; box-sizing: border-box !important">
+    {% if no_mobile_project %}
     <a class="mobile-nav-item {% if active == 'objects' %}active{% endif %}" href="{{ url_for('main.objects') }}">
       <i class="bi bi-diagram-3"></i><span>Объекты</span>
     </a>
@@ -1232,7 +1218,7 @@
 {% elif layout_mode.strip() == 'settings' %}
   {% set mobile_title = 'Настройки' %}
   {% set mobile_active = 'objects' %}
-{% elif report_only_role or request.endpoint in ['main.work_report', 'main.work_report_export', 'main.assignments_report', 'main.assignments_report_worker_pdf'] %}
+{% elif request.endpoint in ['main.work_report', 'main.work_report_export', 'main.assignments_report', 'main.assignments_report_worker_pdf'] %}
   {% set mobile_title = 'Отчет' %}
   {% set mobile_active = 'report' %}
 {% elif worker_role %}
@@ -1279,7 +1265,7 @@
       <span class="brand-text">Передача</span>
     </a>
     <div class="topbar-actions">
-      {% if current_user.role in ['admin', 'manager'] %}
+      {% if current_user.role in ['admin', 'manager', 'office'] %}
       <a class="btn btn-primary object-add-button" href="{{ url_for('main.object_new') }}"><i class="bi bi-plus-lg me-2"></i>Добавить объект</a>
       {% endif %}
       {% if not worker_role and not hide_documents_section %}
@@ -1364,18 +1350,14 @@
   <div class="mobile-sidebar-backdrop" aria-hidden="true"></div>
   <aside class="app-sidebar" id="appSidebar">
     <div class="sidebar-brand">
-      <a class="sidebar-brand-link" href="{{ url_for('main.work_report') if report_only_role else url_for('main.dashboard') }}">
+      <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}">
         <img class="brand-logo" src="{{ url_for('static', filename='brand-logo.png') }}" width="38" height="38" alt="">
         <span class="brand-text">Передача</span>
       </a>
     </div>
 
     <nav class="sidebar-nav">
-      {% if report_only_role %}
-      <a class="sidebar-link {% if request.endpoint in ['main.work_report', 'main.work_report_export', 'main.assignments_report', 'main.assignments_report_worker_pdf'] %}active{% endif %}" href="{{ url_for('main.work_report') }}" {% if request.endpoint in ['main.work_report', 'main.work_report_export', 'main.assignments_report', 'main.assignments_report_worker_pdf'] %}aria-current="page"{% endif %}>
-        <i class="bi bi-file-earmark-bar-graph"></i><span>Отчет</span>
-      </a>
-      {% elif worker_role %}
+      {% if worker_role %}
       <a class="sidebar-link {% if request.endpoint in ['main.my_tasks', 'main.my_task_done', 'main.my_task_return'] %}active{% endif %}" href="{{ url_for('main.my_tasks') }}">
         <i class="bi bi-check2-square"></i><span>Мои задачи</span>
       </a>
@@ -1396,12 +1378,14 @@
       <a class="sidebar-link {% if request.endpoint == 'main.avr' %}active{% endif %}" href="{{ url_for('main.avr') }}">
         <i class="bi bi-file-earmark-check"></i><span>АВР</span>
       </a>
+      {% if current_user.role != 'office' %}
       <a class="sidebar-link {% if request.endpoint in ['main.materials', 'main.material_request_new', 'main.material_writeoff_new', 'main.material_expense_export', 'main.material_manual_task_new', 'main.material_request_detail'] %}active{% endif %}" href="{{ url_for('main.materials') }}">
         <i class="bi bi-box-seam"></i><span>Расход материалов</span>
       </a>
       <a class="sidebar-link {% if request.endpoint in ['main.glass_measurements', 'main.glass_measurement_save', 'main.glass_order'] %}active{% endif %}" href="{{ url_for('main.glass_measurements') }}">
         <i class="bi bi-window"></i><span>Замеры</span>
       </a>
+      {% endif %}
       {% if current_user.role in ['admin', 'manager'] %}
       <a class="sidebar-link {% if request.endpoint in ['main.assignments', 'main.assignment_manual_task_new'] %}active{% endif %}" href="{{ url_for('main.assignments') }}">
         <i class="bi bi-person-check"></i><span>Выдача задач</span>
@@ -1424,12 +1408,7 @@
 
   <div class="app-main">
     <header class="app-topbar">
-      {% if report_only_role %}
-      <div class="topbar-project verifier-topbar-actions">
-        <span>Объект: {{ current_project.name if current_project else 'не выбран' }}</span>
-        <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.objects') }}">Сменить объект</a>
-      </div>
-      {% elif request.endpoint in ['main.documents', 'main.documents_addendum', 'main.documents_download'] %}
+      {% if request.endpoint in ['main.documents', 'main.documents_addendum', 'main.documents_download'] %}
       <div class="topbar-project worker-topbar-title">
         <span>Документы</span>
       </div>

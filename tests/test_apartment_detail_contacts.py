@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = (ROOT / "app" / "templates" / "apartment_detail.html").read_text(encoding="utf-8")
+APARTMENTS_TEMPLATE = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
 STYLE = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
 
 
@@ -26,6 +27,16 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("currentSidebar.replaceWith(nextSidebar)", TEMPLATE)
         self.assertIn("initApartmentDetailsAutosave()", TEMPLATE)
         self.assertNotIn("AbortController", TEMPLATE)
+
+    def test_office_role_cannot_edit_apartment_comments_or_see_internal_status(self):
+        self.assertIn("current_user.role not in ['viewer', 'office']", TEMPLATE)
+        self.assertIn("current_user.role not in ['viewer', 'office']", APARTMENTS_TEMPLATE)
+        self.assertIn("current_user.role != 'office'", TEMPLATE)
+        self.assertIn("current_user.role != 'office'", APARTMENTS_TEMPLATE)
+        self.assertIn("update_apartment_comment", TEMPLATE)
+        self.assertIn("update_apartment_inspection_note", TEMPLATE)
+        self.assertIn("update_apartment_po_status", TEMPLATE)
+        self.assertIn("update_apartment_po_status", APARTMENTS_TEMPLATE)
 
     def test_inspection_reset_hover_matches_save_button_green(self):
         start = STYLE.index(".apartment-inspection-reset-btn:hover")

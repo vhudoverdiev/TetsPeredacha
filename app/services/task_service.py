@@ -133,8 +133,8 @@ APARTMENT_IMPORT_CONFLICT_LABELS = {
     "inspection_note": "Комментарий осмотра",
 }
 
-# Основные рабочие замечания для вкладки "Все" и рабочих разделов: пункты 10-22.
-MAIN_WORK_POINT_NUMBERS = {str(number) for number in range(10, 23)}
+# Основные рабочие замечания для вкладки "Все" и рабочих разделов: пункты 10-24.
+MAIN_WORK_POINT_NUMBERS = {str(number) for number in range(10, 25)}
 # Колонка доп. соглашения сдвигается между объектами, поэтому определяем её по
 # названию заголовка, а не по фиксированному номеру пункта.
 DOP_AGREEMENT_POINT_NUMBERS = set()

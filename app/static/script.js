@@ -8507,6 +8507,49 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  document.querySelectorAll('.users-role-autosave').forEach(form => {
+    const select = form.querySelector('.users-role-select');
+    if (!select) return;
+    let savedValue = form.dataset.savedValue || select.value;
+    let saving = false;
+
+    select.addEventListener('change', async () => {
+      const requestedValue = select.value;
+      if (saving || requestedValue === savedValue) return;
+      saving = true;
+      select.disabled = true;
+      form.classList.add('is-saving');
+      try {
+        const formData = new FormData(form);
+        formData.set('role', requestedValue);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.ok === false) throw new Error(data.message || 'Не удалось сохранить роль');
+        savedValue = data.role || requestedValue;
+        form.dataset.savedValue = savedValue;
+        select.value = savedValue;
+        form.classList.add('is-saved');
+        window.setTimeout(() => form.classList.remove('is-saved'), 900);
+        window.showCrmNotice?.(data.message || 'Роль пользователя сохранена.', 'success');
+      } catch (error) {
+        select.value = savedValue;
+        window.showCrmNotice?.(error.message || 'Не удалось сохранить роль', 'danger');
+      } finally {
+        saving = false;
+        select.disabled = false;
+        form.classList.remove('is-saving');
+      }
+    });
+  });
 });
 
 document.addEventListener('DOMContentLoaded', () => {

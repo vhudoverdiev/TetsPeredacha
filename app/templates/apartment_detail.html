@@ -189,14 +189,14 @@
             <p data-apartment-inspection-note-display>{{ row.inspection_comment or '—' }}</p>
           </div>
           {% endif %}
-          {% if row.mode == 'АПП' and current_user.role != 'viewer' %}
+          {% if row.mode == 'АПП' and current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий</label>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
             <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
           </form>
-          {% elif row.mode == 'не принята' and current_user.role != 'viewer' %}
+          {% elif row.mode == 'не принята' and current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="inspection-note-{{ apartment.id }}">Комментарий</label>
@@ -204,13 +204,13 @@
             <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
           </form>
           {% endif %}
-          {% if row.po_status %}
+          {% if row.po_status and current_user.role != 'office' %}
           <div class="apartment-data-po">
             <span>Внутренний статус</span>
             <form method="post" action="{{ url_for('main.update_apartment_po_status', apartment_id=apartment.id) }}" class="apartment-po-form apartment-po-form-inline" data-apartment-async="1">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <div class="apartment-po-row apartment-po-options">
-              {% if current_user.role != 'viewer' %}
+              {% if current_user.role not in ['viewer', 'office'] %}
                 {% for value, label in po_status_labels.items() %}
                 {% if value != 'po' %}
                 <input class="btn-check" type="radio" name="po_status" id="po-detail-{{ apartment.id }}-{{ value }}" value="{{ value }}" {% if row.po_status == value %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">

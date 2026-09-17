@@ -7,6 +7,7 @@ from app.routes import _apartment_group_contact_values
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
+STYLE = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
 
 
 class ApartmentCardContactsTests(unittest.TestCase):
@@ -39,6 +40,11 @@ class ApartmentCardContactsTests(unittest.TestCase):
         contact_start = TEMPLATE.index('class="apartment-owner-line"')
         contact_end = TEMPLATE.index("{% if row.mode", contact_start)
         self.assertNotIn("is_mobile_phone_request", TEMPLATE[contact_start:contact_end])
+
+    def test_unsold_cards_have_translucent_yellow_state(self):
+        self.assertIn("apartment-card-unsold", TEMPLATE)
+        self.assertIn(".apartment-card.apartment-card-unsold", STYLE)
+        self.assertIn("rgba(255, 214, 102, 0.18)", STYLE)
 
 
 if __name__ == "__main__":

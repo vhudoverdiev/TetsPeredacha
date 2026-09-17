@@ -13,14 +13,14 @@ DEFAULT_CATEGORIES = [
 
 DEFAULT_POINT_MAPPING = {
     "Маляры": ["10", "11", "12"],
-    "Разнорабочие": ["13", "14", "15"],
-    "Витражники": ["18"],
+    "Разнорабочие": ["13", "14", "15", "16"],
+    "Витражники": ["17", "18", "20"],
     # В разных объектах столбец доп. соглашения сдвигается, поэтому определяем
     # его по названию заголовка, а не по фиксированному номеру пункта.
     "Доп.Соглашение": [],
 }
 
-MAIN_POINT_NUMBERS = {str(number) for number in range(10, 23)}
+MAIN_POINT_NUMBERS = {str(number) for number in range(10, 25)}
 DOP_AGREEMENT_POINT_NUMBERS = set()
 VISIBLE_POINT_NUMBERS = MAIN_POINT_NUMBERS | DOP_AGREEMENT_POINT_NUMBERS
 HIDDEN_POINT_NUMBERS = {str(number) for number in range(1, 101)} - VISIBLE_POINT_NUMBERS

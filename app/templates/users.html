@@ -88,7 +88,21 @@
                     </span>
                   </form>
                 </td>
-                <td class="users-role-cell">{{ ROLE_LABELS.get(user.role, user.role) }}</td>
+                <td class="users-role-cell">
+                  <form class="users-role-autosave" method="post" action="{{ url_for('main.user_update_role', user_id=user.id) }}" data-saved-value="{{ user.role }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% if user.role != 'admin' and user.id != current_user.id and user.id not in protected_user_ids %}
+                    <label class="visually-hidden" for="user-role-{{ user.id }}">Роль пользователя {{ user.username }}</label>
+                    <select class="form-select users-role-select" id="user-role-{{ user.id }}" name="role" aria-label="Роль пользователя {{ user.username }}">
+                      {% for role_value, role_label in form.role.choices %}
+                      <option value="{{ role_value }}" {% if user.role == role_value %}selected{% endif %}>{{ role_label }}</option>
+                      {% endfor %}
+                    </select>
+                    {% else %}
+                    <span class="users-role-static">{{ ROLE_LABELS.get(user.role, user.role) }}</span>
+                    {% endif %}
+                  </form>
+                </td>
                 <td class="users-project-cell">
                   {% set access_ids = user.project_access_ids %}
                   {% set access_count = all_projects|length if user.can_access_all_projects else access_ids|length %}

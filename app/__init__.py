@@ -322,7 +322,8 @@ def create_app(config_class=Config):
                 if "two_factor_confirmed_at" not in user_columns:
                     db.session.execute(text("ALTER TABLE users ADD COLUMN two_factor_confirmed_at DATETIME"))
                 if added_project_access_mode:
-                    db.session.execute(text("UPDATE users SET all_projects_access = 1 WHERE project_id IS NULL OR role IN ('admin', 'manager', 'verifier')"))
+                    db.session.execute(text("UPDATE users SET all_projects_access = 1 WHERE project_id IS NULL OR role IN ('admin', 'manager')"))
+                db.session.execute(text("UPDATE users SET role = 'viewer', all_projects_access = 0 WHERE role = 'verifier'"))
                 # Больше не держим пароли в открытом виде в БД.
                 db.session.execute(text("UPDATE users SET password_plain = NULL WHERE password_plain IS NOT NULL"))
                 db.session.commit()
@@ -370,6 +371,20 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN app_deadline_raw VARCHAR(255)"))
                 if "app_deadline_status" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN app_deadline_status VARCHAR(30) NOT NULL DEFAULT 'normal'"))
+                db.session.commit()
+
+            if "work_points" in inspector.get_table_names():
+                from app.work_points import WORK_POINT_LABELS
+
+                for number, label in WORK_POINT_LABELS.items():
+                    db.session.execute(
+                        text(
+                            "UPDATE work_points "
+                            "SET short_name = :label, original_column_name = :label "
+                            "WHERE point_number = :number"
+                        ),
+                        {"number": number, "label": label},
+                    )
                 db.session.commit()
 
             if "tasks" in inspector.get_table_names():

@@ -12,32 +12,32 @@ from app.time_utils import utc_now
 
 ROLE_ADMIN = "admin"
 ROLE_MANAGER = "manager"
+ROLE_OFFICE = "office"
 ROLE_EXECUTOR = "executor"
 ROLE_PAINTER = "painter"
 ROLE_HANDYMAN = "handyman"
 ROLE_GLAZIER = "glazier"
-ROLE_VERIFIER = "verifier"
 ROLE_VIEWER = "viewer"
 WORKER_ROLES = {ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER}
 ALL_PROJECTS_ROLES = {ROLE_ADMIN}
 ROLE_LABELS = {
     ROLE_ADMIN: "Разработчик",
     ROLE_MANAGER: "Инженер",
+    ROLE_OFFICE: "Передача(Офис)",
     ROLE_EXECUTOR: "Маляр",
     ROLE_PAINTER: "Маляр",
     ROLE_HANDYMAN: "Разнорабочий",
     ROLE_GLAZIER: "Витражник",
-    ROLE_VERIFIER: "Сверщик",
     ROLE_VIEWER: "Просмотр",
 }
 USER_ROLE_CHOICES = [
     (ROLE_MANAGER, "Инженер"),
+    (ROLE_OFFICE, "Передача(Офис)"),
     (ROLE_PAINTER, "Маляр"),
     (ROLE_HANDYMAN, "Разнорабочий"),
     (ROLE_GLAZIER, "Витражник"),
-    (ROLE_VERIFIER, "Сверщик"),
 ]
-ROLES = [ROLE_ADMIN, ROLE_MANAGER, ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER, ROLE_VERIFIER, ROLE_VIEWER]
+ROLES = [ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER, ROLE_VIEWER]
 
 STATUS_NOT_STARTED = "not_started"
 STATUS_IN_PROGRESS = "in_progress"
@@ -185,7 +185,7 @@ class User(UserMixin, TimestampMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def can(self, *roles: str) -> bool:
-        return self.role in roles or self.role == ROLE_ADMIN
+        return self.role in roles or self.role == ROLE_ADMIN or (ROLE_MANAGER in roles and self.role == ROLE_OFFICE)
 
     def __repr__(self):
         return f"<User {self.username}>"

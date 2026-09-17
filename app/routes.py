@@ -62,13 +62,14 @@ from app.models import (
     WorkPoint,
     ROLE_ADMIN,
     ROLE_MANAGER,
+    ROLE_OFFICE,
     ROLE_EXECUTOR,
     ROLE_PAINTER,
     ROLE_HANDYMAN,
     ROLE_GLAZIER,
-    ROLE_VERIFIER,
     ROLE_VIEWER,
     ROLE_LABELS,
+    USER_ROLE_CHOICES,
     WORKER_ROLES,
     STATUS_DONE,
     STATUS_NOT_STARTED,
@@ -79,7 +80,7 @@ from app.models import (
     DONE_STATUSES,
     task_guarantee_contractor_setting_key,
 )
-from app.permissions import can_change_task, can_export, can_manage_mapping, can_manage_sync, role_required
+from app.permissions import OFFICE_MANAGER_ROLES, can_change_task, can_export, can_manage_mapping, can_manage_sync, role_required
 from app.security import (
     client_ip,
     hit_rate_limit,
@@ -144,6 +145,7 @@ from app.services.task_service import (
 from app.services.status_rules import is_problem_details_required
 from app.services.sync_rollback import apply_sync_rollback, build_project_rollback_data
 from app.time_utils import to_moscow_datetime, utc_now
+from app.work_points import CONTRACTOR_POINT_LABELS
 from app.services.user_agent import (
     is_mobile_phone_user_agent,
     visit_browser_label,
@@ -689,36 +691,85 @@ def _build_change_history_entry(change: ChangeLog, task: Task | None = None, use
                 else f"{field_label} изменён: было «{old_value}», стало «{new_value}»."
             )
     elif change.action == "apartment_field_update":
-        if field_name == "apartment_inspection_note":
-            summary = (
-                f"Синхронизация изменила комментарий осмотра помещения: было «{old_value}», стало «{new_value}»."
-                if not change.user
-                else f"Комментарий осмотра помещения изменён: было «{old_value}», стало «{new_value}»."
-            )
-        elif field_name == "po_status":
-            summary = (
-                f"Синхронизация изменила внутренний статус помещения: было «{old_value}», стало «{new_value}»."
-                if not change.user
-                else f"Внутренний статус помещения изменён: было «{old_value}», стало «{new_value}»."
-            )
-        else:
-            summary = (
-                f"Синхронизация изменила комментарий помещения: было «{old_value}», стало «{new_value}»."
-                if not change.user
-                else f"Комментарий помещения изменён: было «{old_value}», стало «{new_value}»."
-            )
-        if field_name == "avr_status":
-            summary = (
-                f"Статус АВР помещения изменён: было «{old_value}», стало «{new_value}»."
-                if change.user
-                else f"Синхронизация изменила статус АВР помещения: было «{old_value}», стало «{new_value}»."
-            )
-        elif field_name == "avr_signed_date":
-            summary = (
-                f"Дата подписания АВР изменена: была «{old_value}», стала «{new_value}»."
-                if change.user
-                else f"Синхронизация изменила дату подписания АВР: была «{old_value}», стала «{new_value}»."
-            )
+        apartment_field_summaries = {
+            "owner_name": (
+                "Синхронизация изменила ФИО собственника",
+                "ФИО собственника изменено",
+                "было",
+                "стало",
+            ),
+            "phone": (
+                "Синхронизация изменила номер телефона",
+                "Номер телефона изменён",
+                "был",
+                "стал",
+            ),
+            "finishing_type": (
+                "Синхронизация изменила отделку",
+                "Отделка изменена",
+                "была",
+                "стала",
+            ),
+            "apartment_mode": (
+                "Синхронизация изменила режим помещения",
+                "Режим помещения изменён",
+                "был",
+                "стал",
+            ),
+            "apartment_inspection_status": (
+                "Синхронизация изменила статус осмотра помещения",
+                "Статус осмотра помещения изменён",
+                "был",
+                "стал",
+            ),
+            "apartment_inspection_date": (
+                "Синхронизация изменила дату осмотра помещения",
+                "Дата осмотра помещения изменена",
+                "была",
+                "стала",
+            ),
+            "apartment_inspection_note": (
+                "Синхронизация изменила комментарий осмотра помещения",
+                "Комментарий осмотра помещения изменён",
+                "было",
+                "стало",
+            ),
+            "apartment_comment": (
+                "Синхронизация изменила комментарий помещения",
+                "Комментарий помещения изменён",
+                "было",
+                "стало",
+            ),
+            "po_status": (
+                "Синхронизация изменила внутренний статус помещения",
+                "Внутренний статус помещения изменён",
+                "было",
+                "стало",
+            ),
+            "avr_status": (
+                "Синхронизация изменила статус АВР помещения",
+                "Статус АВР помещения изменён",
+                "было",
+                "стало",
+            ),
+            "avr_signed_date": (
+                "Синхронизация изменила дату подписания АВР",
+                "Дата подписания АВР изменена",
+                "была",
+                "стала",
+            ),
+        }
+        sync_prefix, user_prefix, old_word, new_word = apartment_field_summaries.get(
+            field_name,
+            (
+                f"Синхронизация изменила поле помещения «{field_name or 'Поле'}»",
+                f"Поле помещения «{field_name or 'Поле'}» изменено",
+                "было",
+                "стало",
+            ),
+        )
+        prefix = sync_prefix if not change.user else user_prefix
+        summary = f"{prefix}: {old_word} «{old_value}», {new_word} «{new_value}»."
         point_label = "Помещение"
     elif change.action == "manual_created":
         summary = f"Замечание добавлено вручную: «{str(change.new_value or '').strip() or 'без текста'}»."
@@ -969,23 +1020,6 @@ PO_STATUS_CLASSES = {
 }
 WALL_POINT_NUMBERS = {"11"}
 
-CONTRACTOR_POINT_LABELS = {
-    "10": "Вентиляция",
-    "11": "Стены. Потолки (штукатурка/шпаклёвка)",
-    "12": "Возведение коробки здания",
-    "13": "Работы по устройству подстилающего слоя",
-    "14": "Работы по возведению блочных перегородок",
-    "15": "Разнорабочие",
-    "16": "Работы по монтажу ПВХ блоков",
-    "17": "Работы по монтажу откосов и подоконников",
-    "18": "Работы по монтажу холодного витражного остекления балконов",
-    "19": "Работы по монтажу системы отопления, в/с, канализации",
-    "20": "Работы по монтажу входных дверей",
-    "21": "Электрика",
-    "22": "Прочее",
-}
-
-
 @bp.app_context_processor
 def inject_globals():
     has_all_projects = current_user.is_authenticated and current_user.can_access_all_projects
@@ -1125,8 +1159,6 @@ def _task_for_current_project(task_id: int, project: Project | None = None) -> T
 def _role_home_endpoint() -> str:
     if current_user.role in WORKER_ROLES:
         return "main.my_tasks"
-    if current_user.role == ROLE_VERIFIER:
-        return "main.work_report"
     if current_user.role == ROLE_VIEWER:
         return "main.dashboard"
     return "main.dashboard"
@@ -1143,19 +1175,6 @@ WORKER_ALLOWED_ENDPOINTS = {
     "main.my_tasks",
     "main.my_task_done",
     "main.my_task_return",
-    "main.account",
-    "main.report_error",
-}
-
-VERIFIER_ALLOWED_ENDPOINTS = {
-    "main.dashboard_legacy",
-    "main.objects",
-    "main.object_open",
-    "main.work_report",
-    "main.work_report_export",
-    "main.documents",
-    "main.documents_addendum",
-    "main.documents_download",
     "main.account",
     "main.report_error",
 }
@@ -1180,6 +1199,45 @@ VIEWER_ALLOWED_GET_ENDPOINTS = {
     "main.account",
 }
 
+OFFICE_FORBIDDEN_ENDPOINTS = {
+    "main.assignments",
+    "main.assignment_unassign",
+    "main.assignment_delete_from_employee",
+    "main.assignment_manual_task_new",
+    "main.assignment_issued_employee_export",
+    "main.add_task_comment",
+    "main.update_apartment_po_status",
+    "main.update_apartment_comment",
+    "main.update_apartment_inspection_note",
+    "main.glass_measurements",
+    "main.glass_need_measure",
+    "main.glass_measurement_add",
+    "main.glass_measurement_save",
+    "main.glass_measurement_return_to_all",
+    "main.glass_status_update",
+    "main.glass_order_export",
+    "main.glass_create_material_request",
+    "main.glass_measurements_delete",
+    "main.glass_order",
+    "main.glass_manual_task_new",
+    "main.materials",
+    "main.material_balance_delete",
+    "main.material_request_detail",
+    "main.material_request_rename",
+    "main.material_request_update",
+    "main.material_request_delete",
+    "main.material_requests_bulk_delete",
+    "main.material_request_export",
+    "main.material_writeoff_edit",
+    "main.material_writeoff_delete",
+    "main.material_writeoffs_bulk_delete",
+    "main.material_expense_export",
+    "main.material_request_new",
+    "main.material_writeoff_new",
+    "main.material_writeoff_submit",
+    "main.material_manual_task_new",
+}
+
 
 @bp.before_request
 def enforce_role_access():
@@ -1201,11 +1259,14 @@ def enforce_role_access():
     if locked_section and locked_section["key"] in _setting_csv("blocked_site_sections"):
         return _blocked_section_response(locked_section["label"])
 
-    if current_user.role == ROLE_MANAGER and locked_section and locked_section["key"] == "service":
+    if current_user.role in OFFICE_MANAGER_ROLES and locked_section and locked_section["key"] == "service":
         abort(403)
 
-    if _setting_bool("site_maintenance_mode") and current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if _setting_bool("site_maintenance_mode") and current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         return _maintenance_response()
+
+    if current_user.role == ROLE_OFFICE and endpoint in OFFICE_FORBIDDEN_ENDPOINTS:
+        return _deny_or_redirect()
 
     if _is_mobile_phone_request():
         if endpoint not in _mobile_phone_allowed_endpoints():
@@ -1213,16 +1274,11 @@ def enforce_role_access():
                 return redirect(url_for(_mobile_phone_home_endpoint()))
             abort(403)
 
-    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role == ROLE_ADMIN or current_user.role in OFFICE_MANAGER_ROLES:
         return None
 
     if current_user.role in WORKER_ROLES:
         if endpoint in WORKER_ALLOWED_ENDPOINTS:
-            return None
-        return _deny_or_redirect()
-
-    if current_user.role == ROLE_VERIFIER:
-        if endpoint in VERIFIER_ALLOWED_ENDPOINTS:
             return None
         return _deny_or_redirect()
 
@@ -1873,7 +1929,7 @@ def objects():
 @bp.route("/objects/new", methods=["GET", "POST"])
 @login_required
 def object_new():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     form = ProjectForm()
     if form.validate_on_submit():
@@ -1909,7 +1965,7 @@ def object_new():
 @bp.route("/objects/<int:project_id>/edit", methods=["GET", "POST"])
 @login_required
 def object_edit(project_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     form = ProjectForm(obj=project)
@@ -1942,7 +1998,7 @@ def object_edit(project_id: int):
 @bp.route("/objects/<int:project_id>/delete", methods=["POST"])
 @login_required
 def object_delete(project_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     _record_simple_deletion(
@@ -1971,7 +2027,7 @@ def object_delete(project_id: int):
 @bp.route("/objects/<int:project_id>/delete/confirm", methods=["GET"])
 @login_required
 def object_delete_confirm(project_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     return render_template("object_delete_confirm.html", project=project)
@@ -1982,10 +2038,7 @@ def object_delete_confirm(project_id: int):
 def object_open(project_id: int):
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     session["current_project_id"] = project.id
-    if current_user.role == ROLE_VERIFIER:
-        response = redirect(url_for("main.work_report"))
-    else:
-        response = redirect(url_for("main.dashboard"))
+    response = redirect(url_for("main.dashboard"))
     response.headers["Cache-Control"] = "no-store, max-age=0"
     return response
 
@@ -2017,8 +2070,6 @@ def dashboard():
 @login_required
 def dashboard_legacy():
     """Keep the legacy CRM entry URL usable for bookmarks and offline copies."""
-    if current_user.role == ROLE_VERIFIER:
-        return redirect(url_for("main.work_report"))
     return dashboard()
 
 
@@ -2083,8 +2134,6 @@ def _wants_json_response() -> bool:
 def _mobile_phone_home_endpoint() -> str:
     if current_user.role in WORKER_ROLES:
         return "main.my_tasks"
-    if current_user.role == ROLE_VERIFIER:
-        return "main.work_report"
     project_id = session.get("current_project_id") if current_user.can_access_all_projects else (
         current_user.project_id if current_user.is_authenticated and current_user.project_id else session.get("current_project_id")
     )
@@ -2094,8 +2143,6 @@ def _mobile_phone_home_endpoint() -> str:
 def _mobile_phone_allowed_endpoints() -> set[str]:
     if current_user.role in WORKER_ROLES:
         return set(WORKER_ALLOWED_ENDPOINTS)
-    if current_user.role == ROLE_VERIFIER:
-        return set(VERIFIER_ALLOWED_ENDPOINTS)
 
     allowed = {
         "main.report_error",
@@ -3195,7 +3242,7 @@ def contractor_directory():
 @bp.route("/contractors/statuses", methods=["GET", "POST"])
 @login_required
 def contractor_response_statuses():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -3265,7 +3312,7 @@ def contractor_edit(contractor_id: int):
 @bp.route("/contractors/<int:contractor_id>/delete", methods=["POST"])
 @login_required
 def contractor_delete(contractor_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -3281,7 +3328,7 @@ def contractor_delete(contractor_id: int):
 
 
 def _contractor_form_response(contractor: Contractor | None = None):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -3837,7 +3884,7 @@ def _assignment_issued_filter_label(issued_filter: str, issued_filter_date: date
 @bp.route("/assignments", methods=["GET", "POST"])
 @login_required
 def assignments():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4239,7 +4286,7 @@ def assignments():
 @bp.route("/assignments/<int:task_id>/unassign", methods=["POST"])
 @login_required
 def assignment_unassign(task_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4282,7 +4329,7 @@ def assignment_unassign(task_id: int):
 @login_required
 def assignment_delete_from_employee(task_id: int):
     wants_json = _wants_json_response()
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4367,7 +4414,7 @@ def assignment_delete_from_employee(task_id: int):
 @bp.route("/assignments/issued/<int:user_id>/export")
 @login_required
 def assignment_issued_employee_export(user_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4491,7 +4538,7 @@ def _manual_assignment_work_point() -> WorkPoint:
 @bp.route("/assignments/manual/new", methods=["GET", "POST"])
 @login_required
 def assignment_manual_task_new():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4546,7 +4593,7 @@ def assignment_manual_task_new():
 @bp.route("/assignments/report")
 @login_required
 def assignments_report():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4606,7 +4653,7 @@ def assignments_report():
 @bp.route("/assignments/report/<int:user_id>/excel")
 @login_required
 def assignments_report_worker_pdf(user_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -4642,7 +4689,7 @@ def assignments_report_worker_pdf(user_id: int):
 @bp.route("/my-tasks")
 @login_required
 def my_tasks():
-    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role == ROLE_ADMIN or current_user.role in OFFICE_MANAGER_ROLES:
         return redirect(url_for("main.dashboard"))
     project = selected_project()
     today_value = date.today()
@@ -4683,7 +4730,7 @@ def _worker_status_payload(task: Task):
 def my_task_done(task_id: int):
     task = db.session.get(Task, task_id) or abort(404)
     project = selected_project()
-    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role == ROLE_ADMIN or current_user.role in OFFICE_MANAGER_ROLES:
         if project is None or task.project_id != project.id:
             abort(404)
     elif task.responsible_id != current_user.id:
@@ -4700,7 +4747,7 @@ def my_task_done(task_id: int):
 def my_task_return(task_id: int):
     task = db.session.get(Task, task_id) or abort(404)
     project = selected_project()
-    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role == ROLE_ADMIN or current_user.role in OFFICE_MANAGER_ROLES:
         if project is None or task.project_id != project.id:
             abort(404)
     elif task.responsible_id != current_user.id:
@@ -6847,6 +6894,9 @@ def _get_or_create_manual_work_point(point_number: str | None = None) -> WorkPoi
         )
         db.session.add(point)
         db.session.flush()
+    else:
+        point.short_name = label
+        point.original_column_name = label
     return point
 
 
@@ -8058,8 +8108,13 @@ def _apartment_manual_comment(apartments: list[Apartment]) -> str | None:
 
 def _apartment_history_anchor_task(apartments: list[Apartment]) -> Task | None:
     tasks = [task for apartment in apartments for task in list(apartment.tasks or [])]
+    apartment = _pick_apartment_representative(apartments) if apartments else None
+    if apartment is not None:
+        source_uid = stable_hash(["apartment-history", apartment.project_id, apartment.id])
+        existing_anchor = Task.query.filter_by(source_uid=source_uid).first()
+        if existing_anchor is not None and existing_anchor not in tasks:
+            tasks.append(existing_anchor)
     if not tasks:
-        apartment = _pick_apartment_representative(apartments) if apartments else None
         if apartment is None:
             return None
         work_point = WorkPoint.query.filter_by(point_number="history", source_sheet_name="apartment_history").first()
@@ -8073,7 +8128,6 @@ def _apartment_history_anchor_task(apartments: list[Apartment]) -> Task | None:
             )
             db.session.add(work_point)
             db.session.flush()
-        source_uid = stable_hash(["apartment-history", apartment.project_id, apartment.id])
         task = Task(
             source_uid=source_uid,
             project_id=apartment.project_id,
@@ -8300,17 +8354,7 @@ def _avr_owner_options(owner_name: str | None) -> list[str]:
 
 
 def _contractor_point_options() -> list[dict[str, str]]:
-    points = (
-        WorkPoint.query.filter(WorkPoint.point_number.in_(CONTRACTOR_POINT_LABELS.keys()))
-        .order_by(WorkPoint.point_number.asc())
-        .all()
-    )
-    existing_numbers = {str(point.point_number).strip() for point in points}
-    options = []
-    for number, label in CONTRACTOR_POINT_LABELS.items():
-        if number in existing_numbers:
-            options.append({"number": number, "label": label})
-    return options
+    return [{"number": number, "label": label} for number, label in CONTRACTOR_POINT_LABELS.items()]
 
 
 def _contractor_apartment_options(project_id: int) -> list[dict]:
@@ -8628,6 +8672,9 @@ def _filtered_apartment_overview_rows(
     app_status_filter = (args.get("app_status") or "").strip()
     avr_status_filter = (args.get("avr_status") or "").strip()
     po_status_filter = (args.get("po_status") or "").strip()
+    if current_user.is_authenticated and current_user.role == ROLE_OFFICE:
+        po_only = False
+        po_status_filter = ""
     finishing_groups = set(get_multi_param_values(args, "finishing_group"))
     rows = []
     overview_rows = source_rows
@@ -9106,11 +9153,13 @@ def update_apartment_inspection_status(apartment_id: int):
             return jsonify({"ok": False, "message": message}), 400
         flash(message, "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+    old_status = _apartment_inspection_status(target_group) or ""
     if any(_is_unsold_apartment(item) for item in target_group):
         for item in target_group:
             item.first_inspection_present = False
             item.first_inspection_date = None
             item.inspection_date = None
+        _log_apartment_field_change(target_group, "apartment_inspection_status", old_status, _apartment_inspection_status(target_group) or "")
         db.session.commit()
         flash("У непроданной квартиры осмотр фиксируется автоматически: Не был", "info")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
@@ -9132,9 +9181,12 @@ def update_apartment_inspection_status(apartment_id: int):
             item.first_inspection_present = False
             if _parse_inspection_schedule_marker(item.inspection_note):
                 item.inspection_note = None
+    new_status = _apartment_inspection_status(target_group) or ""
+    history_change = _log_apartment_field_change(target_group, "apartment_inspection_status", old_status, new_status)
     db.session.commit()
     if _wants_json_response():
         overview = _build_apartment_overview(target_group)
+        history_entry = _build_change_history_entry(history_change[0], task=history_change[1]) if history_change else None
         return jsonify({
             "ok": True,
             "message": "Статус осмотра обновлён",
@@ -9142,6 +9194,7 @@ def update_apartment_inspection_status(apartment_id: int):
             "inspection_date_label": overview.get("inspection_display") or "—",
             "inspection_status": overview.get("inspection_status") or "",
             "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
+            "history_entry": history_entry,
         })
     flash("Статус осмотра обновлён", "success")
     return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
@@ -9173,17 +9226,21 @@ def update_apartment_inspection_date(apartment_id: int):
             return jsonify({"ok": False, "message": message}), 400
         flash(message, "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+    old_date_label = _apartment_inspection_display(target_group)
     for item in target_group:
         item.inspection_date = inspection_date
         item.first_inspection_date = inspection_date
         item.first_inspection_present = inspection_date is not None
         if inspection_date is not None:
             item.inspection_date_backup = inspection_date
+    new_date_label = _apartment_inspection_display(target_group)
+    history_change = _log_apartment_field_change(target_group, "apartment_inspection_date", old_date_label, new_date_label)
     db.session.commit()
 
     message = "Дата осмотра обновлена" if inspection_date else "Дата осмотра очищена"
     if _wants_json_response():
         overview = _build_apartment_overview(target_group)
+        history_entry = _build_change_history_entry(history_change[0], task=history_change[1]) if history_change else None
         return jsonify({
             "ok": True,
             "message": message,
@@ -9191,6 +9248,7 @@ def update_apartment_inspection_date(apartment_id: int):
             "inspection_date_label": overview.get("inspection_display") or "—",
             "inspection_status": overview.get("inspection_status") or "",
             "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
+            "history_entry": history_entry,
         })
     flash(message, "success")
     return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
@@ -9347,6 +9405,7 @@ def apartment_detail(apartment_id: int):
         _build_change_history_entry(item["change"], task=item["task"], users_cache=users_cache)
         for item in overview["changes"]
         if not _is_legacy_problem_comment_change(item["change"], item["task"])
+        and not (current_user.role == ROLE_OFFICE and item["change"].field_name == "po_status")
     ]
     history_page = max(request.args.get("history_page", 1, type=int), 1)
     history_per_page = 12
@@ -9457,7 +9516,7 @@ def work_report():
 @bp.route("/report/export")
 @login_required
 def work_report_export():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER, ROLE_VERIFIER}:
+    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     project = selected_project()
     if project is None:
@@ -10138,7 +10197,7 @@ def mapping_settings():
     if project is None:
         return redirect(url_for("main.objects"))
     ensure_default_categories()
-    hidden_point_numbers = {"7", "9", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33"}
+    hidden_point_numbers = {"7", "9", "25", "26", "27", "28", "29", "30", "31", "32", "33"}
     categories_to_show = [
         category
         for category in WorkCategory.query.filter(WorkCategory.is_active.is_(True)).order_by(WorkCategory.sort_order.asc()).all()
@@ -10324,7 +10383,7 @@ def users():
     if project:
         users = [
             user for user in users
-            if user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_VERIFIER} or user.can_access_project(project)
+            if user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE} or user.can_access_project(project)
         ]
     return render_template(
         "users.html",
@@ -10368,6 +10427,47 @@ def user_update_projects(user_id: int):
         label = "1 объект" if count == 1 else (f"{count} объекта" if 2 <= count <= 4 else f"{count} объектов")
         return jsonify(ok=True, project_ids=project_ids, count=count, label=label, message="Доступ к объектам сохранён.")
     flash("Доступ к объектам обновлён.", "success")
+    return redirect(url_for("main.users"))
+
+
+@bp.route("/users/<int:user_id>/role", methods=["POST"])
+@login_required
+@role_required(ROLE_ADMIN)
+def user_update_role(user_id: int):
+    wants_json = _wants_json_response()
+    user = db.session.get(User, user_id) or abort(404)
+    rejection = _reject_protected_developer_user(user, "изменять роль")
+    if rejection:
+        return rejection
+    _abort_if_user_outside_current_project(user)
+    if user.role == ROLE_ADMIN:
+        if wants_json:
+            return jsonify(ok=False, message="Роль разработчика нельзя изменить здесь."), 400
+        flash("Роль разработчика нельзя изменить здесь.", "danger")
+        return redirect(url_for("main.users"))
+    if user.id == current_user.id:
+        if wants_json:
+            return jsonify(ok=False, message="Нельзя изменить роль текущего пользователя."), 400
+        flash("Нельзя изменить роль текущего пользователя.", "danger")
+        return redirect(url_for("main.users"))
+
+    role_choices = dict(USER_ROLE_CHOICES)
+    role = str(request.form.get("role") or "").strip()
+    if role not in role_choices:
+        if wants_json:
+            return jsonify(ok=False, message="Выберите допустимую роль."), 400
+        flash("Выберите допустимую роль.", "danger")
+        return redirect(url_for("main.users"))
+
+    user.role = role
+    if role == ROLE_ADMIN:
+        user.set_project_access([], all_projects=True)
+    db.session.commit()
+
+    label = ROLE_LABELS.get(user.role, user.role)
+    if wants_json:
+        return jsonify(ok=True, role=user.role, label=label, message="Роль пользователя сохранена.")
+    flash("Роль пользователя обновлена.", "success")
     return redirect(url_for("main.users"))
 
 

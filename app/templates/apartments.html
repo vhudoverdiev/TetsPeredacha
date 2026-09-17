@@ -42,6 +42,7 @@
           <option value="{{ avr_status_signed }}" {% if args.get('avr_status') == avr_status_signed %}selected{% endif %}>Подписан</option>
         </select>
       </div>
+      {% if current_user.role != 'office' %}
       <div class="col-12 col-sm-6 col-lg-1">
         <label class="form-label">Внутренний статус</label>
         <select class="form-select" name="po_status" data-force-custom-select>
@@ -51,6 +52,7 @@
           {% endfor %}
         </select>
       </div>
+      {% endif %}
       <div class="col-12 col-lg-auto remarks-filter-finishing-col apartments-filter-finishing-col">
         <label class="form-label d-block">Отделка</label>
         <div class="remarks-filter-checks">
@@ -97,7 +99,7 @@
 <div class="apartments-grid" data-ajax-pagination-content data-ajax-items-selector=".apartment-card">
   {% for row in rows %}
   {% set apartment = row.apartment %}
-  <article class="apartment-card">
+  <article class="apartment-card{% if row.mode == 'не продана' %} apartment-card-unsold{% endif %}">
     <a class="apartment-card-link" href="{{ url_for('main.apartment_detail', apartment_id=apartment.id, back=request.full_path) }}">
     <div class="apartment-card-top">
       <div>
@@ -152,12 +154,12 @@
     </a>
 
 
-    {% if row.po_status %}
+    {% if row.po_status and current_user.role != 'office' %}
     <form method="post" action="{{ url_for('main.update_apartment_po_status', apartment_id=apartment.id) }}" class="apartment-po-form" data-apartment-async="1">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label class="form-label">Внутренний статус</label>
       <div class="apartment-po-row apartment-po-options">
-        {% if current_user.role != 'viewer' %}
+        {% if current_user.role not in ['viewer', 'office'] %}
           {% for value, label in po_status_labels.items() %}
           {% if value != 'po' %}<input class="btn-check" type="radio" name="po_status" id="po-{{ apartment.id }}-{{ value }}" value="{{ value }}" {% if row.po_status == value %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
           <label class="po-option po-option-{{ value }}" for="po-{{ apartment.id }}-{{ value }}">{{ label }}</label>{% endif %}
