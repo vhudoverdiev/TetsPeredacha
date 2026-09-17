@@ -3411,11 +3411,13 @@ def _contractor_form_response(contractor: Contractor | None = None):
             errors.append("Выберите хотя бы одну квартиру.")
 
         if not errors:
-            work_points = (
-                WorkPoint.query.filter(WorkPoint.point_number.in_(selected_point_numbers))
-                .order_by(WorkPoint.point_number.asc(), WorkPoint.id.asc())
-                .all()
-            )
+            work_points = [
+                _get_or_create_manual_work_point(number)
+                for number in sorted(
+                    selected_point_numbers,
+                    key=lambda value: (0, int(value)) if str(value).isdigit() else (1, str(value)),
+                )
+            ]
             apartment_ids = {
                 apartment_id
                 for group_id in selected_apartment_group_ids
@@ -5869,9 +5871,9 @@ def glass_manual_task_new():
     apartment_id = request.form.get("apartment_id", type=int)
     text = (request.form.get("description") or "").strip()
     apartment = db.session.get(Apartment, apartment_id) if apartment_id else None
-    default_point = WorkPoint.query.filter_by(point_number="22").order_by(WorkPoint.id.asc()).first()
+    default_point = WorkPoint.query.filter_by(point_number="25").order_by(WorkPoint.id.asc()).first()
     if default_point is None:
-        default_point = WorkPoint(point_number="22", short_name="Прочее", original_column_name="Прочее", source_sheet_name="manual", is_active=True)
+        default_point = WorkPoint(point_number="25", short_name="Прочее", original_column_name="Прочее", source_sheet_name="manual", is_active=True)
         db.session.add(default_point)
         db.session.flush()
 
@@ -6881,7 +6883,7 @@ def _remark_point_options() -> list[dict[str, str]]:
 
 
 def _get_or_create_manual_work_point(point_number: str | None = None) -> WorkPoint:
-    number = str(point_number or "22").strip() or "22"
+    number = str(point_number or "25").strip() or "25"
     label = CONTRACTOR_POINT_LABELS.get(number, "Прочее")
     point = WorkPoint.query.filter_by(point_number=number).order_by(WorkPoint.id.asc()).first()
     if point is None:
@@ -7455,7 +7457,7 @@ def task_new():
                 outcome = _save_remark_with_sync_fallback(
                     project=project,
                     apartment=apartment,
-                    point_number="22",
+                    point_number="25",
                     text=text,
                     created_source_sheet_name="manual",
                     created_action="manual_created",
@@ -7776,7 +7778,7 @@ def _task_list_response(contractor_page: bool = False):
     contractor_options = []
     selected_contractor = None
     if contractor_page:
-        # В разделе "Подрядчики" показываем ту же таблицу замечаний, но группируем/фильтруем по пунктам 10-22.
+        # В разделе "Подрядчики" показываем ту же таблицу замечаний, но группируем/фильтруем по рабочим пунктам.
         # Не принудительно фильтруем по статусу "Подрядчик", иначе вкладка пустая до ручной разметки задач.
         query_args["sort"] = "apartment"
         contractor_options = (
@@ -10290,7 +10292,7 @@ def mapping_settings():
     if project is None:
         return redirect(url_for("main.objects"))
     ensure_default_categories()
-    hidden_point_numbers = {"7", "9", "25", "26", "27", "28", "29", "30", "31", "32", "33"}
+    hidden_point_numbers = {"7", "9", "26", "27", "28", "29", "30", "31", "32", "33"}
     categories_to_show = [
         category
         for category in WorkCategory.query.filter(WorkCategory.is_active.is_(True)).order_by(WorkCategory.sort_order.asc()).all()

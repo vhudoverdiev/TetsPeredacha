@@ -76,6 +76,9 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertIn("select.addEventListener('change', saveRole)", script)
         self.assertIn("select.addEventListener('input', saveRole)", script)
         self.assertIn("form.addEventListener('submit'", script)
+        self.assertNotIn("select.disabled = true", script)
+        self.assertIn("select.setAttribute('aria-busy', 'true')", script)
+        self.assertIn("if (select.value !== savedValue) saveRole();", script)
 
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)

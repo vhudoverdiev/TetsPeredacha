@@ -133,12 +133,12 @@ APARTMENT_IMPORT_CONFLICT_LABELS = {
     "inspection_note": "Комментарий осмотра",
 }
 
-# Основные рабочие замечания для вкладки "Все" и рабочих разделов: пункты 10-24.
-MAIN_WORK_POINT_NUMBERS = {str(number) for number in range(10, 25)}
+# Основные рабочие замечания для вкладки "Все" и рабочих разделов: пункты 10-25.
+MAIN_WORK_POINT_NUMBERS = {str(number) for number in range(10, 26)}
 # Колонка доп. соглашения сдвигается между объектами, поэтому определяем её по
 # названию заголовка, а не по фиксированному номеру пункта.
 DOP_AGREEMENT_POINT_NUMBERS = set()
-# Импортировать можно основные замечания + доп. соглашение, но во вкладку "Все" попадают только 10-22.
+# Импортировать можно основные замечания + доп. соглашение, но во вкладку "Все" попадают только 10-25.
 VISIBLE_WORK_POINT_NUMBERS = MAIN_WORK_POINT_NUMBERS | DOP_AGREEMENT_POINT_NUMBERS
 
 AVR_STATUS_NEEDED = "needed"
@@ -1989,7 +1989,7 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
         else:
             query = query.filter(Task.work_point_id.in_(point_ids or [-1]))
     else:
-        # Вкладка "Все" должна показывать только рабочие пункты 10-22.
+        # Вкладка "Все" должна показывать только рабочие пункты.
         query = query.filter(WorkPoint.point_number.in_(MAIN_WORK_POINT_NUMBERS))
 
     apartment_number = (params.get("apartment_number") or "").strip()

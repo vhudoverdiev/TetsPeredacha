@@ -93,7 +93,7 @@ class GlassManualTaskEntryTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.get_json()["ok"])
         manual_task = Task.query.filter_by(source_sheet_name="manual_glass").one()
-        self.assertEqual(manual_task.work_point.point_number, "22")
+        self.assertEqual(manual_task.work_point.point_number, "25")
         self.assertIsNotNone(manual_task.glass_measurement)
         self.assertEqual(manual_task.glass_measurement.status, "none")
 

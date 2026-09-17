@@ -20,7 +20,7 @@ DEFAULT_POINT_MAPPING = {
     "Доп.Соглашение": [],
 }
 
-MAIN_POINT_NUMBERS = {str(number) for number in range(10, 25)}
+MAIN_POINT_NUMBERS = {str(number) for number in range(10, 26)}
 DOP_AGREEMENT_POINT_NUMBERS = set()
 VISIBLE_POINT_NUMBERS = MAIN_POINT_NUMBERS | DOP_AGREEMENT_POINT_NUMBERS
 HIDDEN_POINT_NUMBERS = {str(number) for number in range(1, 101)} - VISIBLE_POINT_NUMBERS

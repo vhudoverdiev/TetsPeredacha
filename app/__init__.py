@@ -376,6 +376,45 @@ def create_app(config_class=Config):
             if "work_points" in inspector.get_table_names():
                 from app.work_points import WORK_POINT_LABELS
 
+                split_21_done = db.session.execute(
+                    text(
+                        "SELECT COUNT(*) FROM work_points "
+                        "WHERE point_number = '22' AND (short_name = :canalization OR original_column_name = :canalization)"
+                    ),
+                    {"canalization": WORK_POINT_LABELS["22"]},
+                ).scalar()
+                if not split_21_done:
+                    all_point_rows = db.session.execute(
+                        text("SELECT id, point_number FROM work_points")
+                    ).mappings().all()
+                    rows_to_shift = [
+                        row
+                        for row in all_point_rows
+                        if str(row["point_number"] or "").isdigit() and int(row["point_number"]) >= 22
+                    ]
+                    for row in rows_to_shift:
+                        db.session.execute(
+                            text("UPDATE work_points SET point_number = :temporary_number WHERE id = :id"),
+                            {"id": row["id"], "temporary_number": f"__split21_{row['id']}"},
+                        )
+                    for row in sorted(rows_to_shift, key=lambda item: int(item["point_number"]), reverse=True):
+                        new_number = str(int(row["point_number"]) + 1)
+                        label = WORK_POINT_LABELS.get(new_number)
+                        if label:
+                            db.session.execute(
+                                text(
+                                    "UPDATE work_points "
+                                    "SET point_number = :new_number, short_name = :label, original_column_name = :label "
+                                    "WHERE id = :id"
+                                ),
+                                {"id": row["id"], "new_number": new_number, "label": label},
+                            )
+                        else:
+                            db.session.execute(
+                                text("UPDATE work_points SET point_number = :new_number WHERE id = :id"),
+                                {"id": row["id"], "new_number": new_number},
+                            )
+
                 for number, label in WORK_POINT_LABELS.items():
                     db.session.execute(
                         text(

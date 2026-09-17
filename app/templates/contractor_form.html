@@ -50,7 +50,7 @@
         <label class="form-label mt-3" for="contractorContractNumber">№ договора подряда</label>
         <input class="form-control form-control-lg" id="contractorContractNumber" name="contract_number" type="text" value="{{ contractor_contract_number }}" maxlength="255">
         <label class="form-label mt-3" for="contractorContractDate">Дата договора</label>
-        <input class="form-control form-control-lg" id="contractorContractDate" name="contract_date" type="text" value="{{ contractor_contract_date }}" maxlength="50" placeholder="07.04.2025">
+        <input class="form-control form-control-lg" id="contractorContractDate" name="contract_date" type="text" value="{{ contractor_contract_date }}" maxlength="50" autocomplete="off">
         <label class="form-label mt-3" for="contractorEmail">Эл.почта</label>
         <input class="form-control form-control-lg" id="contractorEmail" name="email" type="email" value="{{ contractor_email }}" maxlength="255" autocomplete="email">
       </div>

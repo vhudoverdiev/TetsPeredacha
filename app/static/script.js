@@ -8513,12 +8513,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!select) return;
     let savedValue = form.dataset.savedValue || select.value;
     let saving = false;
+    let savingValue = null;
 
     const saveRole = async () => {
       const requestedValue = select.value;
-      if (saving || requestedValue === savedValue) return;
+      if (requestedValue === savedValue) return;
+      if (saving) {
+        if (requestedValue === savingValue) return;
+        return;
+      }
       saving = true;
-      select.disabled = true;
+      savingValue = requestedValue;
+      select.setAttribute('aria-busy', 'true');
       form.classList.add('is-saving');
       try {
         const formData = new FormData(form);
@@ -8534,19 +8540,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || data.ok === false) throw new Error(data.message || 'Не удалось сохранить роль');
+        const currentValue = select.value;
         savedValue = data.role || requestedValue;
         form.dataset.savedValue = savedValue;
-        select.value = savedValue;
+        select.value = currentValue === requestedValue ? savedValue : currentValue;
         form.classList.add('is-saved');
         window.setTimeout(() => form.classList.remove('is-saved'), 900);
         window.showCrmNotice?.(data.message || 'Роль пользователя сохранена.', 'success');
       } catch (error) {
-        select.value = savedValue;
+        if (select.value === requestedValue) select.value = savedValue;
         window.showCrmNotice?.(error.message || 'Не удалось сохранить роль', 'danger');
       } finally {
         saving = false;
-        select.disabled = false;
+        savingValue = null;
+        select.removeAttribute('aria-busy');
         form.classList.remove('is-saving');
+        if (select.value !== savedValue) saveRole();
       }
     };
 

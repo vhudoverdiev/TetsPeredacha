@@ -102,6 +102,18 @@ class ContractorClaimButtonVisibilityTests(unittest.TestCase):
         self.assertEqual(contractor.contract_number, "07-04/2025")
         self.assertEqual(contractor.contract_date, "07.04.2025")
 
+    def test_new_contractor_contract_date_is_not_prefilled_or_autocomplete_hint(self):
+        response = self.client.get("/contractors/new")
+        html = response.get_data(as_text=True)
+
+        start = html.index('id="contractorContractDate"')
+        field = html[start:html.index(">", start)]
+        self.assertIn('name="contract_date"', field)
+        self.assertIn('value=""', field)
+        self.assertIn('autocomplete="off"', field)
+        self.assertNotIn("07.04.2025", field)
+        self.assertNotIn("placeholder=", field)
+
     def test_directory_hides_claim_fields_but_edit_form_keeps_them(self):
         self.contractor.legal_address = "164520, Архангельская обл."
         self.contractor.director_full_name = "Елена Петровна"
