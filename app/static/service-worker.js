@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v171-user-role-autosave';
+const STATIC_CACHE = 'peredacha-static-v172-point-autosave-dop';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -13,10 +13,10 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/bootstrap.bundle.min.js?v=5.3.3',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
-  '/static/style.css?v=v641-apartment-filter-single-row',
+  '/static/style.css?v=v642-contractor-points',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
   '/static/desktop-only.css?v=v72-apartment-filter-single-row',
-  '/static/script.js?v=v674-user-role-autosave',
+  '/static/script.js?v=v675-point-autosave-dop',
 ];
 
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3000;

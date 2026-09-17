@@ -114,7 +114,7 @@ from app.services.excel_export import _excel_premise_label, _safe_filename_part,
 from app.services.pdf_export import export_assignment_worker_pdf, export_table_pdf, export_tasks_pdf
 from app.services.excel_import import inspect_remarks_workbook, mark_stale_running_sync_logs, preview_excel, save_upload, sync_excel_file
 from app.services.google_sheets_sync import sync_google_sheets, update_task_strike_in_google_sheet
-from app.services.mapping_service import ensure_default_categories, update_category_points
+from app.services.mapping_service import ensure_default_categories, is_dop_agreement_point, update_category_points
 from app.services.pdf_recognition import is_no_remark_text, recognize_pdf_act
 from app.services.transfer_import import _is_app_mode, _parse_app_date, inspect_transfer_workbook, sync_transfer_statistics
 from app.services.task_service import (
@@ -3237,6 +3237,63 @@ def contractor_directory():
         "contractor_directory.html",
         project=project,
         contractor_rows=contractor_rows,
+    )
+
+
+@bp.route("/contractors/points")
+@login_required
+def contractor_points():
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+
+    search_query = str(request.args.get("q") or "").strip()
+    sort = str(request.args.get("sort") or "point_asc").strip()
+    sort_desc = sort == "point_desc"
+
+    tasks_query = (
+        Task.query
+        .join(Apartment)
+        .join(WorkPoint)
+        .options(selectinload(Task.apartment), selectinload(Task.work_point))
+        .filter(Task.project_id == project.id, Task.is_archived.is_(False))
+    )
+    if search_query:
+        like_value = f"%{search_query}%"
+        tasks_query = tasks_query.filter(
+            or_(
+                Apartment.apartment_number.ilike(like_value),
+                Apartment.construction_number.ilike(like_value),
+                Apartment.owner_name.ilike(like_value),
+                Apartment.phone.ilike(like_value),
+                Task.description.ilike(like_value),
+                Task.source_cell_value.ilike(like_value),
+                WorkPoint.point_number.ilike(like_value),
+                WorkPoint.short_name.ilike(like_value),
+                WorkPoint.original_column_name.ilike(like_value),
+            )
+        )
+
+    point_order = cast(WorkPoint.point_number, Integer).desc() if sort_desc else cast(WorkPoint.point_number, Integer).asc()
+    tasks = (
+        tasks_query
+        .order_by(
+            point_order,
+            WorkPoint.point_number.desc() if sort_desc else WorkPoint.point_number.asc(),
+            cast(Apartment.apartment_number, Integer).asc(),
+            Apartment.apartment_number.asc(),
+            Task.id.asc(),
+        )
+        .all()
+    )
+    return render_template(
+        "contractor_points.html",
+        project=project,
+        tasks=tasks,
+        points=_remark_point_options(min_number=10),
+        search_query=search_query,
+        sort=sort,
+        sort_desc=sort_desc,
     )
 
 
@@ -6885,7 +6942,33 @@ def _remark_point_options(min_number: int = 1) -> list[dict[str, str]]:
         if str(number).isdigit() and int(number) < min_number:
             continue
         options.append({"number": number, "label": label})
+    existing_numbers = {option["number"] for option in options}
+    dop_points = [
+        point
+        for point in WorkPoint.query.filter_by(is_active=True).all()
+        if is_dop_agreement_point(point) and str(point.point_number or "").strip() not in existing_numbers
+    ]
+    dop_points.sort(
+        key=lambda point: (
+            0,
+            int(point.point_number),
+        ) if str(point.point_number or "").isdigit() else (1, str(point.point_number or ""))
+    )
+    for point in dop_points:
+        number = str(point.point_number or "").strip()
+        if not number:
+            continue
+        options.append({"number": number, "label": "Доп соглашение"})
     return options
+
+
+def _resolve_remark_work_point(point_number: str) -> WorkPoint | None:
+    if point_number in CONTRACTOR_POINT_LABELS:
+        return _get_or_create_manual_work_point(point_number)
+    point = WorkPoint.query.filter_by(point_number=point_number, is_active=True).order_by(WorkPoint.id.asc()).first()
+    if point and is_dop_agreement_point(point):
+        return point
+    return None
 
 
 def _get_or_create_manual_work_point(point_number: str | None = None) -> WorkPoint:
@@ -9948,13 +10031,18 @@ def update_task_point(task_id: int):
     if not can_change_task(current_user, task):
         abort(403)
     point_number = (request.form.get("point_number") or "").strip()
-    if point_number not in CONTRACTOR_POINT_LABELS or not point_number.isdigit() or int(point_number) < 10:
+    if not point_number.isdigit() or int(point_number) < 10:
         if wants_json:
             return jsonify(ok=False, message="Выберите корректный пункт с 10-го и дальше."), 400
         flash("Выберите корректный пункт", "danger")
         return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
     old_point = task.work_point
-    new_point = _get_or_create_manual_work_point(point_number)
+    new_point = _resolve_remark_work_point(point_number)
+    if new_point is None:
+        if wants_json:
+            return jsonify(ok=False, message="Выберите корректный пункт с 10-го и дальше."), 400
+        flash("Выберите корректный пункт", "danger")
+        return redirect(url_for("main.task_detail", task_id=task.id, back=request.form.get("next")))
     if old_point and old_point.id == new_point.id:
         if wants_json:
             return jsonify(ok=True, changed=False, point_number=point_number, label=new_point.display_name, message="Пункт не изменился.")

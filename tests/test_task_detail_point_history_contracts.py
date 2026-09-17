@@ -38,6 +38,7 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.apartment = Apartment(project=self.project, apartment_number="1")
         self.point_11 = WorkPoint(point_number="11", short_name="Стены. Потолки")
         self.point_16 = WorkPoint(point_number="16", short_name="Разнорабочие")
+        self.point_26 = WorkPoint(point_number="26", short_name="Доп соглашение ТМЦ", original_column_name="Доп соглашение ТМЦ")
         self.task = Task(
             source_uid="task-detail-point-change",
             project=self.project,
@@ -49,7 +50,7 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.admin = self._user("admin", ROLE_ADMIN)
         self.manager = self._user("manager", ROLE_MANAGER)
         self.other = self._user("other", ROLE_MANAGER)
-        db.session.add_all([self.apartment, self.point_11, self.point_16, self.task])
+        db.session.add_all([self.apartment, self.point_11, self.point_16, self.point_26, self.task])
         db.session.commit()
 
     def tearDown(self):
@@ -130,8 +131,25 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("data-task-detail-point-autosave", html)
         self.assertIn('<option value="10"', html)
+        self.assertIn('<option value="26"', html)
+        self.assertIn("26. Доп соглашение", html)
         self.assertNotIn('<option value="1"', html)
         self.assertNotIn("task-detail-point-save-btn", html)
+
+    def test_task_point_can_be_changed_to_dop_agreement_point(self):
+        self._login(self.admin)
+
+        response = self.client.post(
+            f"/tasks/{self.task.id}/point",
+            data={"point_number": "26"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get_json()["ok"])
+        db.session.refresh(self.task)
+        self.assertEqual(self.task.work_point.point_number, "26")
+        self.assertEqual(self.task.work_point.original_column_name, "Доп соглашение ТМЦ")
 
     def test_non_admin_sees_only_own_history_entries(self):
         db.session.add_all([

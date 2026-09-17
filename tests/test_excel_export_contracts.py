@@ -27,6 +27,7 @@ from app.services.excel_export import (
     _excel_premise_label,
     _prefix_dash_for_struck_cell,
     _safe_filename_part,
+    _normalize_source_work_point_headers,
     style_header_row,
     style_report_header_row,
     _task_export_value,
@@ -84,6 +85,34 @@ class ExcelExportPureContractsTests(unittest.TestCase):
                 self.assertTrue(cell.alignment.wrap_text)
                 self.assertEqual(cell.border.left.style, "thin")
                 self.assertEqual(cell.fill.fgColor.rgb, "FFE2F0D9")
+
+    def test_source_export_normalizes_split_work_point_21_headers(self):
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Таблица"
+        old_labels = [
+            "Работы по монтажу системы отопления, в/с, канализации",
+            "Работы по монтажу входных дверей",
+            "Электрика",
+            "Прочее",
+            "Сертификат Стройбат",
+        ]
+        old_numbers = [21, 22, 23, 24, 25]
+        for offset, value in enumerate(old_labels, start=1):
+            sheet.cell(row=5, column=offset, value=value)
+        for offset, value in enumerate(old_numbers, start=1):
+            sheet.cell(row=6, column=offset, value=value)
+
+        inserted = _normalize_source_work_point_headers(workbook)
+
+        self.assertEqual(inserted, {"Таблица": 2})
+        self.assertEqual(sheet.cell(row=5, column=1).value, "Работы по монтажу системы отопления, в/с")
+        self.assertEqual(sheet.cell(row=5, column=2).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=3).value, "Работы по монтажу входных дверей")
+        self.assertEqual(sheet.cell(row=5, column=4).value, "Электрика")
+        self.assertEqual(sheet.cell(row=5, column=5).value, "Прочее")
+        self.assertEqual([sheet.cell(row=6, column=index).value for index in range(1, 6)], [21, 22, 23, 24, 25])
+        self.assertEqual(sheet.cell(row=5, column=6).value, "Сертификат Стройбат")
 
 
 class ExcelExportDatabaseContractsTests(unittest.TestCase):

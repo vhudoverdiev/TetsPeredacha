@@ -11,6 +11,9 @@
     </div>
     <div class="contractor-directory-actions">
       {% if current_user.role in ['admin', 'manager', 'office'] %}
+      <a class="btn btn-outline-success contractor-points-link" href="{{ url_for('main.contractor_points') }}">
+        <i class="bi bi-list-check me-2"></i>Пункты
+      </a>
       <a class="btn btn-outline-success d-none contractor-response-status-link" href="{{ url_for('main.contractor_response_statuses') }}">
         <i class="bi bi-activity me-2"></i>Статусы подрядчиков
       </a>

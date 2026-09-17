@@ -3,7 +3,7 @@ from pathlib import Path
 
 from config import Config
 from app import create_app, db, login_manager
-from app.models import ROLE_ADMIN, ROLE_GLAZIER, ROLE_MANAGER, ROLE_OFFICE, ROLE_PAINTER, Project, User
+from app.models import ROLE_ADMIN, ROLE_GLAZIER, ROLE_MANAGER, ROLE_OFFICE, ROLE_PAINTER, Project, SecurityEvent, User
 
 
 class TestConfig(Config):
@@ -146,6 +146,23 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertFalse(response.get_json()["ok"])
         self.assertEqual(db.session.get(User, other_admin.id).role, ROLE_ADMIN)
+
+    def test_admin_can_delete_user_with_security_events(self):
+        admin = self._user("admin-delete", ROLE_ADMIN)
+        user = self._user("worker-delete", ROLE_MANAGER)
+        event = SecurityEvent(user_id=user.id, kind="login_failed", severity="warning", ip_address="203.0.113.44")
+        db.session.add(event)
+        db.session.commit()
+        event_id = event.id
+        self._login(admin)
+
+        response = self.client.post(f"/users/{user.id}/delete", follow_redirects=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNone(db.session.get(User, user.id))
+        detached_event = db.session.get(SecurityEvent, event_id)
+        self.assertIsNotNone(detached_event)
+        self.assertIsNone(detached_event.user_id)
 
 
 if __name__ == "__main__":

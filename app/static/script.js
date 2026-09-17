@@ -8575,11 +8575,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!select) return;
     let savedValue = select.value;
     let saving = false;
+    let savingValue = null;
 
     const savePoint = async () => {
       const requestedValue = select.value;
-      if (saving || requestedValue === savedValue) return;
+      if (requestedValue === savedValue) return;
+      if (saving) {
+        if (requestedValue === savingValue) return;
+        return;
+      }
       saving = true;
+      savingValue = requestedValue;
       select.setAttribute('aria-busy', 'true');
       form.classList.add('is-saving');
       try {
@@ -8606,12 +8612,16 @@ document.addEventListener('DOMContentLoaded', () => {
         window.showCrmNotice?.(error.message || 'Не удалось сохранить пункт', 'danger');
       } finally {
         saving = false;
+        savingValue = null;
         select.removeAttribute('aria-busy');
         form.classList.remove('is-saving');
+        if (select.value !== savedValue) savePoint();
       }
     };
 
     select.addEventListener('change', savePoint);
+    select.addEventListener('input', savePoint);
+    select.addEventListener('blur', savePoint);
     form.addEventListener('submit', event => {
       event.preventDefault();
       savePoint();

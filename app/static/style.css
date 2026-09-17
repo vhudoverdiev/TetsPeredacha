@@ -55669,6 +55669,192 @@ html body.app-body .developer-select-menu-portal .developer-select-option {
   }
 }
 
+.contractor-points-page {
+  width: min(1380px, 100%);
+  margin: 0 auto;
+}
+
+.contractor-points-filter {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) auto auto auto;
+  gap: .75rem;
+  align-items: end;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  background: var(--crm-surface);
+  box-shadow: var(--crm-shadow-soft);
+}
+
+.contractor-points-search {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
+}
+
+.contractor-points-search label {
+  margin: 0;
+  color: var(--crm-title);
+  font-size: .85rem;
+  font-weight: 800;
+}
+
+.contractor-points-search .form-control,
+.contractor-points-point-select {
+  border-color: #cfe6b8;
+  border-radius: .8rem;
+}
+
+.contractor-points-summary {
+  margin: .35rem 0 .85rem;
+  color: var(--crm-text);
+}
+
+.contractor-points-table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--crm-radius);
+  background: var(--crm-surface);
+  box-shadow: var(--crm-shadow-soft);
+}
+
+.contractor-points-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.contractor-points-table th,
+.contractor-points-table td {
+  padding: .85rem 1rem;
+  border-bottom: 1px solid #edf2e7;
+  vertical-align: middle;
+}
+
+.contractor-points-table th {
+  background: #f3f8ed;
+  color: var(--crm-title);
+  font-size: .86rem;
+  font-weight: 850;
+  text-align: left;
+}
+
+.contractor-points-table th:first-child,
+.contractor-points-table td:first-child {
+  width: 11rem;
+}
+
+.contractor-points-table th:last-child,
+.contractor-points-table td:last-child {
+  width: 22rem;
+}
+
+.contractor-points-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.contractor-points-premise-link {
+  color: var(--crm-title);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.contractor-points-premise-link:hover,
+.contractor-points-premise-link:focus {
+  color: #5fb315;
+}
+
+.contractor-points-remark {
+  color: var(--crm-text);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.contractor-points-point-form {
+  margin: 0;
+}
+
+.contractor-points-point-form.is-saving .contractor-points-point-select {
+  opacity: .72;
+}
+
+.contractor-points-point-form.is-saved .contractor-points-point-select {
+  border-color: #68bf18;
+  box-shadow: 0 0 0 .16rem rgba(104, 191, 24, .14);
+}
+
+.contractor-points-empty-cell {
+  padding: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .contractor-points-filter {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .contractor-points-search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .contractor-points-filter {
+    grid-template-columns: 1fr;
+    padding: .85rem;
+  }
+
+  .contractor-points-filter .btn {
+    width: 100%;
+  }
+
+  .contractor-points-table-wrap {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .contractor-points-table,
+  .contractor-points-table tbody,
+  .contractor-points-table tr,
+  .contractor-points-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .contractor-points-table thead {
+    display: none;
+  }
+
+  .contractor-points-table tr {
+    margin-bottom: .75rem;
+    border: 1px solid var(--crm-border);
+    border-radius: var(--crm-radius);
+    background: var(--crm-surface);
+    box-shadow: var(--crm-shadow-soft);
+    overflow: hidden;
+  }
+
+  .contractor-points-table td {
+    padding: .8rem .9rem;
+    border-bottom: 1px solid #edf2e7;
+  }
+
+  .contractor-points-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .contractor-points-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: .25rem;
+    color: var(--crm-muted);
+    font-size: .76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+}
+
 /* Empty states in mobile task tables should read like compact cards, not broken rows. */
 .assignment-empty-cell,
 .remarks-empty-cell {

@@ -119,8 +119,8 @@ class DesktopModalViewportTests(unittest.TestCase):
         css_template = re.search(r"desktop-only\.css'\) }}\?v=([^\"]+)", self.base).group(1)
         css_worker = re.search(r"/static/desktop-only\.css\?v=([^']+)", self.worker).group(1)
 
-        self.assertEqual(script_template, "v673-material-tabs-replace-content")
-        self.assertEqual(css_template, "v69-material-list-rise-animation")
+        self.assertEqual(script_template, "v675-point-autosave-dop")
+        self.assertEqual(css_template, "v72-apartment-filter-single-row")
         self.assertEqual(script_template, script_worker)
         self.assertEqual(css_template, css_worker)
 
