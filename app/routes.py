@@ -1201,6 +1201,9 @@ def enforce_role_access():
     if locked_section and locked_section["key"] in _setting_csv("blocked_site_sections"):
         return _blocked_section_response(locked_section["label"])
 
+    if current_user.role == ROLE_MANAGER and locked_section and locked_section["key"] == "service":
+        abort(403)
+
     if _setting_bool("site_maintenance_mode") and current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
         return _maintenance_response()
 
@@ -10497,7 +10500,7 @@ def user_delete(user_id: int):
 @bp.route("/sync-logs")
 @login_required
 def sync_logs():
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = selected_project()
     if project is None:
@@ -10604,7 +10607,7 @@ def _sync_log_conflicts(log: SyncLog, project_id: int) -> list[SyncConflict]:
 @bp.route("/sync-logs/<int:log_id>/details")
 @login_required
 def sync_log_details(log_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = selected_project()
     if project is None:
@@ -10688,7 +10691,7 @@ def sync_log_details(log_id: int):
 @bp.route("/sync-logs/<int:log_id>/delete", methods=["POST"])
 @login_required
 def delete_sync_log(log_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = selected_project()
     if project is None:
@@ -10728,7 +10731,7 @@ def delete_sync_log(log_id: int):
 @bp.route("/sync-logs/<int:log_id>/rollback", methods=["POST"])
 @login_required
 def rollback_sync_log(log_id: int):
-    if current_user.role not in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = selected_project()
     if project is None:

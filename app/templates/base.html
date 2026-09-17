@@ -1445,7 +1445,7 @@
       {% endif %}
 
       <div class="topbar-actions">
-        {% if current_user.role in ['admin', 'manager'] %}
+        {% if current_user.role == 'admin' %}
         <div class="dropdown">
           <a class="topbar-icon dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Разделы">
             <i class="bi bi-gear"></i>

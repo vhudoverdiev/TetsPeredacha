@@ -149,7 +149,7 @@ class AccessRightsContractsTests(unittest.TestCase):
             with self.subTest(endpoint=mutating_endpoint):
                 self.assertNotIn(mutating_endpoint, VIEWER_ALLOWED_GET_ENDPOINTS)
 
-    def test_permission_helpers_allow_only_admin_manager_for_sync_mapping_and_export(self):
+    def test_permission_helpers_reserve_sync_and_mapping_for_admin(self):
         users = {
             role: self._user(role=role, username=f"perm-{role}")
             for role in (ROLE_ADMIN, ROLE_MANAGER, ROLE_VIEWER, ROLE_VERIFIER, ROLE_GLAZIER)
@@ -157,10 +157,9 @@ class AccessRightsContractsTests(unittest.TestCase):
 
         for role, user in users.items():
             with self.subTest(role=role):
-                expected = role in {ROLE_ADMIN, ROLE_MANAGER}
-                self.assertEqual(can_manage_sync(user), expected)
-                self.assertEqual(can_manage_mapping(user), expected)
-                self.assertEqual(can_export(user), expected)
+                self.assertEqual(can_manage_sync(user), role == ROLE_ADMIN)
+                self.assertEqual(can_manage_mapping(user), role == ROLE_ADMIN)
+                self.assertEqual(can_export(user), role in {ROLE_ADMIN, ROLE_MANAGER})
                 self.assertEqual(readonly(user), role == ROLE_VIEWER)
 
     def test_can_change_task_allows_managers_and_assigned_workers_only(self):
@@ -209,13 +208,34 @@ class AccessRightsContractsTests(unittest.TestCase):
             with self.subTest(endpoint=endpoint):
                 self.assertIsNone(self._guard(None, endpoint))
 
-    def test_admin_and_manager_bypass_role_restrictions_for_main_endpoints(self):
+    def test_admin_and_manager_bypass_general_role_restrictions(self):
         for role in (ROLE_ADMIN, ROLE_MANAGER):
             with self.subTest(role=role):
                 user = self._user(role=role, username=f"bypass-{role}")
                 self.assertIsNone(self._guard(user, "main.users"))
-                self.assertIsNone(self._guard(user, "main.mapping_settings", method="POST"))
                 self.assertIsNone(self._guard(user, "main.assignment_manual_task_new"))
+
+        admin = self._user(role=ROLE_ADMIN, username="admin-service-access")
+        self.assertIsNone(self._guard(admin, "main.mapping_settings", method="POST"))
+
+    def test_manager_cannot_open_service_tools(self):
+        manager = self._user(role=ROLE_MANAGER, username="manager-service-access")
+
+        for endpoint in (
+            "main.upload_excel",
+            "main.sync_google",
+            "main.sync_logs",
+            "main.sync_log_details",
+            "main.delete_sync_log",
+            "main.rollback_sync_log",
+            "main.sync_conflicts",
+            "main.resolve_conflict",
+            "main.resolve_conflicts_bulk",
+            "main.mapping_settings",
+        ):
+            with self.subTest(endpoint=endpoint):
+                with self.assertRaises(Forbidden):
+                    self._guard(manager, endpoint)
 
     def test_worker_can_open_allowed_pages_but_get_is_redirected_from_backoffice(self):
         worker = self._user(role=ROLE_GLAZIER, username="worker-access")

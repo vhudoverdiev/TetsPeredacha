@@ -18,11 +18,11 @@ def role_required(*roles):
 
 
 def can_manage_sync(user) -> bool:
-    return user.role in {ROLE_ADMIN, ROLE_MANAGER}
+    return user.role == ROLE_ADMIN
 
 
 def can_manage_mapping(user) -> bool:
-    return user.role in {ROLE_ADMIN, ROLE_MANAGER}
+    return user.role == ROLE_ADMIN
 
 
 def can_change_task(user, task) -> bool:
