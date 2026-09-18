@@ -7080,6 +7080,20 @@ def _open_remark_count_for_apartment_group(*, project: Project, apartment: Apart
     )
 
 
+def _remark_count_for_apartment_group(*, project: Project, apartment: Apartment) -> int:
+    apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
+    if not apartment_ids:
+        apartment_ids = [apartment.id]
+    return (
+        Task.query.filter(
+            Task.project_id == project.id,
+            Task.apartment_id.in_(apartment_ids),
+            Task.is_archived.is_(False),
+        )
+        .count()
+    )
+
+
 def _create_manual_remark_tasks(
     *,
     project: Project,
@@ -7474,7 +7488,11 @@ def task_new():
             if not prepared_entries:
                 db.session.rollback()
                 flash("Заполните хотя бы одно замечание по пункту", "warning")
-            elif not po_mode and len(prepared_entries) >= 3 and _open_remark_count_for_apartment_group(project=project, apartment=apartment) > 4:
+            elif (
+                not po_mode
+                and len(prepared_entries) >= 3
+                and _remark_count_for_apartment_group(project=project, apartment=apartment) > 0
+            ):
                 db.session.rollback()
                 flash("Поставьте кнопку ПО. Вероятнее всего вы пытаетесь загрузить акт с повторного осмотра.", "warning")
             else:

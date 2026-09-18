@@ -379,9 +379,14 @@ def create_app(config_class=Config):
                 split_21_done = db.session.execute(
                     text(
                         "SELECT COUNT(*) FROM work_points "
-                        "WHERE point_number = '22' AND (short_name = :canalization OR original_column_name = :canalization)"
+                        "WHERE point_number = '22' "
+                        "AND (short_name IN (:canalization, :old_canalization) "
+                        "OR original_column_name IN (:canalization, :old_canalization))"
                     ),
-                    {"canalization": WORK_POINT_LABELS["22"]},
+                    {
+                        "canalization": WORK_POINT_LABELS["22"],
+                        "old_canalization": "Работы по монтажу канализации",
+                    },
                 ).scalar()
                 if not split_21_done:
                     all_point_rows = db.session.execute(

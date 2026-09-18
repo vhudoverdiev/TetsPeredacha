@@ -106,8 +106,8 @@ class ExcelExportPureContractsTests(unittest.TestCase):
         inserted = _normalize_source_work_point_headers(workbook)
 
         self.assertEqual(inserted, {"Таблица": 2})
-        self.assertEqual(sheet.cell(row=5, column=1).value, "Работы по монтажу системы отопления, в/с")
-        self.assertEqual(sheet.cell(row=5, column=2).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=1).value, "Работы по монтажу системы отопления")
+        self.assertEqual(sheet.cell(row=5, column=2).value, "Работы по монтажу канализации, в/с")
         self.assertEqual(sheet.cell(row=5, column=3).value, "Работы по монтажу входных дверей")
         self.assertEqual(sheet.cell(row=5, column=4).value, "Электрика")
         self.assertEqual(sheet.cell(row=5, column=5).value, "Прочее")
@@ -127,8 +127,8 @@ class ExcelExportPureContractsTests(unittest.TestCase):
         inserted = _normalize_source_work_point_headers(workbook)
 
         self.assertEqual(inserted, {"Таблица": 22})
-        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления, в/с")
-        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления")
+        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации, в/с")
         self.assertEqual(sheet.cell(row=5, column=23).value, "Работы по монтажу входных дверей")
         self.assertEqual(sheet.cell(row=5, column=24).value, "Электрика")
         self.assertEqual(sheet.cell(row=5, column=25).value, "Прочее")
@@ -150,8 +150,8 @@ class ExcelExportPureContractsTests(unittest.TestCase):
         inserted = _normalize_source_work_point_headers(workbook)
 
         self.assertEqual(inserted, {"Таблица": 22})
-        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления, в/с")
-        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации")
+        self.assertEqual(sheet.cell(row=5, column=21).value, "Работы по монтажу системы отопления")
+        self.assertEqual(sheet.cell(row=5, column=22).value, "Работы по монтажу канализации, в/с")
         self.assertEqual(sheet.cell(row=5, column=23).value, "Работы по монтажу входных дверей")
         self.assertEqual([sheet.cell(row=6, column=index).value for index in range(21, 26)], [21, 22, 23, 24, 25])
 

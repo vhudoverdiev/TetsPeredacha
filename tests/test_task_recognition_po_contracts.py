@@ -226,18 +226,10 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         new_task = Task.query.filter(Task.description == "Новое по вентиляции").one()
         self.assertEqual(new_task.status, STATUS_NOT_STARTED)
 
-    def test_manual_act_warns_to_enable_po_for_three_points_when_open_remarks_exist(self):
+    def test_manual_act_warns_to_enable_po_for_three_points_when_existing_remarks_exist(self):
         self._login()
-        for index in range(5):
-            db.session.add(Task(
-                source_uid=f"manual-po-many-{index}",
-                project=self.project,
-                apartment=self.apartment,
-                work_point=self.point_10,
-                description=f"Ручное открытое {index}",
-                status=STATUS_NOT_STARTED,
-                is_done=False,
-            ))
+        self.old_task.status = STATUS_DONE
+        self.old_task.is_done = True
         db.session.commit()
 
         response = self.client.post(
