@@ -40,9 +40,31 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertIn("navigator.sendBeacon", template)
         self.assertNotIn("AbortController", template)
         self.assertIn("current_user.role == ROLE_ADMIN", template)
-        self.assertIn('name="current_password"', template)
-        self.assertIn('name="new_password"', template)
-        self.assertIn('name="confirm_password"', template)
+        self.assertIn("url_for('main.account_password')", template)
+        self.assertNotIn('name="current_password"', template)
+        self.assertNotIn('name="new_password"', template)
+        self.assertNotIn('name="confirm_password"', template)
+
+    def test_password_change_fields_live_on_separate_page(self):
+        account_template = (ROOT / "app" / "templates" / "account.html").read_text(encoding="utf-8")
+        password_template = (ROOT / "app" / "templates" / "account_password.html").read_text(encoding="utf-8")
+
+        self.assertIn("url_for('main.account_password')", account_template)
+        self.assertIn('name="current_password"', password_template)
+        self.assertIn('name="new_password"', password_template)
+        self.assertIn('name="confirm_password"', password_template)
+        self.assertIn("Сменить пароль", password_template)
+
+    def test_two_factor_start_uses_ajax_without_page_reload(self):
+        template = (ROOT / "app" / "templates" / "account.html").read_text(encoding="utf-8")
+        routes = (ROOT / "app" / "routes.py").read_text(encoding="utf-8")
+
+        self.assertIn('data-account-2fa-start="1"', template)
+        self.assertIn("event.preventDefault()", template)
+        self.assertIn("const startUrl = form.getAttribute('action') || window.location.href", template)
+        self.assertIn("fetch(startUrl", template)
+        self.assertIn("pending_secret=pending_secret", routes)
+        self.assertIn("qr_data_uri=qr_svg_data_uri(provisioning)", routes)
 
 
 class AccountAutosaveContactsTests(unittest.TestCase):
@@ -101,9 +123,8 @@ class AccountAutosaveContactsTests(unittest.TestCase):
 
     def test_account_password_change_updates_current_user_password(self):
         response = self.client.post(
-            "/account",
+            "/account/password",
             data={
-                "action": "change_password",
                 "current_password": "Strong-test-password-2026!",
                 "new_password": "Another-strong-password-2026!",
                 "confirm_password": "Another-strong-password-2026!",

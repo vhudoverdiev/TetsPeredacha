@@ -81,6 +81,7 @@
             </b>
           </div>
           {% endif %}
+          {% if row.mode != 'не продана' %}
           {% if row.inspection_date %}
           <div class="apartment-data-row">
             <span>Осмотр</span>
@@ -94,6 +95,7 @@
             <span>Осмотр</span>
             <b data-apartment-inspection-display><span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span></b>
           </div>
+          {% endif %}
           {% endif %}
           {% set can_manage_inspection = current_user.role != 'viewer' and row.mode not in ['не продана', 'АПП'] %}
           {% set can_edit_inspection_date = can_manage_inspection %}
@@ -138,10 +140,6 @@
               <label class="inspection-option inspection-option-not-was" for="inspection-detail-not-was-{{ apartment.id }}">Не был</label>
             </div>
           </form>
-          {% elif row.mode == 'не продана' %}
-          <div class="apartment-inspection-static-note mb-3">
-            <i class="bi bi-info-circle"></i><span>Для непроданной квартиры осмотр фиксируется автоматически: <b>не продана</b>.</span>
-          </div>
           {% endif %}
 
           {% if row.mode == 'АПП' %}
@@ -178,25 +176,21 @@
           </form>
           {% endif %}
           {% endif %}
-          {% if row.mode == 'АПП' %}
           <div class="apartment-data-note">
             <span>Комментарий(передача)</span>
             <p data-apartment-comment-display>{{ row.manual_comment or '—' }}</p>
           </div>
-          {% elif row.mode == 'не принята' %}
           <div class="apartment-data-note">
             <span>Комментарий(устранение замечаний)</span>
             <p data-apartment-inspection-note-display>{{ row.inspection_comment or '—' }}</p>
           </div>
-          {% endif %}
-          {% if row.mode == 'АПП' and current_user.role not in ['viewer', 'office'] %}
+          {% if current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий(передача)</label>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
             <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
           </form>
-          {% elif row.mode == 'не принята' and current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="inspection-note-{{ apartment.id }}">Комментарий(устранение замечаний)</label>

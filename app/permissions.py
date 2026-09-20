@@ -1,10 +1,10 @@
 from functools import wraps
 from flask import abort, flash, redirect, url_for
 from flask_login import current_user
-from app.models import ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_VIEWER, WORKER_ROLES
+from app.models import ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_SUPERVISOR, ROLE_VIEWER, WORKER_ROLES
 
 
-OFFICE_MANAGER_ROLES = {ROLE_MANAGER, ROLE_OFFICE}
+OFFICE_MANAGER_ROLES = {ROLE_MANAGER, ROLE_OFFICE, ROLE_SUPERVISOR}
 
 
 def role_required(*roles):
@@ -16,7 +16,7 @@ def role_required(*roles):
             if (
                 current_user.role == ROLE_ADMIN
                 or current_user.role in roles
-                or (ROLE_MANAGER in roles and current_user.role == ROLE_OFFICE)
+                or (ROLE_MANAGER in roles and current_user.role in OFFICE_MANAGER_ROLES)
             ):
                 return view(*args, **kwargs)
             abort(403)

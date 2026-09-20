@@ -3,7 +3,7 @@ from pathlib import Path
 
 from config import Config
 from app import create_app, db, login_manager
-from app.models import ROLE_ADMIN, ROLE_GLAZIER, ROLE_MANAGER, ROLE_OFFICE, ROLE_PAINTER, Project, SecurityEvent, User
+from app.models import ROLE_ADMIN, ROLE_GLAZIER, ROLE_MANAGER, ROLE_OFFICE, ROLE_PAINTER, ROLE_SUPERVISOR, Project, SecurityEvent, User
 
 
 class TestConfig(Config):
@@ -92,6 +92,7 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         users_template = Path("app/templates/users.html").read_text(encoding="utf-8")
         reset_template = Path("app/templates/user_password.html").read_text(encoding="utf-8")
         script = Path("app/static/script.js").read_text(encoding="utf-8")
+        style = Path("app/static/style.css").read_text(encoding="utf-8")
 
         self.assertIn('data_generated_password_target="create-user"', users_template)
         self.assertIn('data-generate-password="create-user"', users_template)
@@ -100,6 +101,13 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertIn("const generatePassword = (length = 14)", script)
         self.assertIn("window.crypto?.getRandomValues", script)
         self.assertIn("field.type = 'text'", script)
+        start = style.index(".password-generate-btn,")
+        end = style.index("@media (max-width: 575.98px)", start)
+        rule = style[start:end]
+        self.assertIn("var(--peredacha-action-green)", rule)
+        self.assertIn("var(--peredacha-action-green-hover)", rule)
+        self.assertIn("color: #ffffff !important", rule)
+        self.assertNotIn("rgba(121,191,37,.08)", rule)
 
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)
@@ -115,6 +123,21 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["role"], ROLE_OFFICE)
         self.assertEqual(db.session.get(User, user.id).role, ROLE_OFFICE)
+
+    def test_admin_can_update_user_to_supervisor_role(self):
+        admin = self._user("admin-supervisor", ROLE_ADMIN)
+        user = self._user("worker-supervisor", ROLE_MANAGER)
+        self._login(admin)
+
+        response = self.client.post(
+            f"/users/{user.id}/role",
+            data={"role": ROLE_SUPERVISOR},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["role"], ROLE_SUPERVISOR)
+        self.assertEqual(db.session.get(User, user.id).role, ROLE_SUPERVISOR)
 
     def test_role_update_rejects_invalid_role(self):
         admin = self._user("admin-invalid", ROLE_ADMIN)

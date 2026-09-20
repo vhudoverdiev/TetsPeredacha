@@ -102,7 +102,7 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
 
         self.assertIn("mobile-nav-item-home", primary_nav)
         self.assertIn("active == 'dashboard'", primary_nav)
-        self.assertIn("4 if current_user.role in ['admin', 'manager'] else 3", self.base)
+        self.assertIn("4 if current_user.role in ['admin', 'manager', 'supervisor'] else 3", self.base)
 
     def test_mobile_active_tab_map_covers_all_site_sections_including_home(self):
         endpoint_to_active_tab = {

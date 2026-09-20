@@ -12,6 +12,7 @@ from app.time_utils import utc_now
 
 ROLE_ADMIN = "admin"
 ROLE_MANAGER = "manager"
+ROLE_SUPERVISOR = "supervisor"
 ROLE_OFFICE = "office"
 ROLE_EXECUTOR = "executor"
 ROLE_PAINTER = "painter"
@@ -23,6 +24,7 @@ ALL_PROJECTS_ROLES = {ROLE_ADMIN}
 ROLE_LABELS = {
     ROLE_ADMIN: "Разработчик",
     ROLE_MANAGER: "Инженер",
+    ROLE_SUPERVISOR: "Руководитель",
     ROLE_OFFICE: "Передача(Офис)",
     ROLE_EXECUTOR: "Маляр",
     ROLE_PAINTER: "Маляр",
@@ -32,12 +34,13 @@ ROLE_LABELS = {
 }
 USER_ROLE_CHOICES = [
     (ROLE_MANAGER, "Инженер"),
+    (ROLE_SUPERVISOR, "Руководитель"),
     (ROLE_OFFICE, "Передача(Офис)"),
     (ROLE_PAINTER, "Маляр"),
     (ROLE_HANDYMAN, "Разнорабочий"),
     (ROLE_GLAZIER, "Витражник"),
 ]
-ROLES = [ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER, ROLE_VIEWER]
+ROLES = [ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE, ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER, ROLE_VIEWER]
 
 STATUS_NOT_STARTED = "not_started"
 STATUS_IN_PROGRESS = "in_progress"
@@ -185,7 +188,7 @@ class User(UserMixin, TimestampMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def can(self, *roles: str) -> bool:
-        return self.role in roles or self.role == ROLE_ADMIN or (ROLE_MANAGER in roles and self.role == ROLE_OFFICE)
+        return self.role in roles or self.role == ROLE_ADMIN or (ROLE_MANAGER in roles and self.role in {ROLE_OFFICE, ROLE_SUPERVISOR})
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -273,6 +276,7 @@ class Apartment(TimestampMixin, db.Model):
     deadline_date = db.Column(db.Date, nullable=True)
     remark_deadline_date = db.Column(db.Date, nullable=True)
     inspection_note = db.Column(db.Text, nullable=True)
+    correction_comment = db.Column(db.Text, nullable=True)
     is_app_mode = db.Column(db.Boolean, default=False, nullable=False, index=True)
     po_status = db.Column(db.String(30), default="not_ready", nullable=False, index=True)
     po_status_manual = db.Column(db.Boolean, default=False, nullable=False, index=True)

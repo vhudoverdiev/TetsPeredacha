@@ -18,6 +18,7 @@ from app.models import (
     ROLE_MANAGER,
     ROLE_OFFICE,
     ROLE_PAINTER,
+    ROLE_SUPERVISOR,
     ROLE_VIEWER,
     ROLES,
     Task,
@@ -97,6 +98,7 @@ class AccessRightsContractsTests(unittest.TestCase):
         cases = {
             ROLE_ADMIN: "main.dashboard",
             ROLE_MANAGER: "main.dashboard",
+            ROLE_SUPERVISOR: "main.dashboard",
             ROLE_OFFICE: "main.dashboard",
             ROLE_VIEWER: "main.dashboard",
             ROLE_EXECUTOR: "main.my_tasks",
@@ -117,6 +119,7 @@ class AccessRightsContractsTests(unittest.TestCase):
             "main.my_task_done",
             "main.my_task_return",
             "main.account",
+            "main.account_password",
             "main.report_error",
         })
         self.assertTrue(WORKER_ROLES.issuperset({ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER}))
@@ -145,19 +148,20 @@ class AccessRightsContractsTests(unittest.TestCase):
     def test_permission_helpers_reserve_sync_and_mapping_for_admin(self):
         users = {
             role: self._user(role=role, username=f"perm-{role}")
-            for role in (ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, ROLE_VIEWER, ROLE_GLAZIER)
+            for role in (ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE, ROLE_VIEWER, ROLE_GLAZIER)
         }
 
         for role, user in users.items():
             with self.subTest(role=role):
                 self.assertEqual(can_manage_sync(user), role == ROLE_ADMIN)
                 self.assertEqual(can_manage_mapping(user), role == ROLE_ADMIN)
-                self.assertEqual(can_export(user), role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE})
+                self.assertEqual(can_export(user), role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE})
                 self.assertEqual(readonly(user), role == ROLE_VIEWER)
 
     def test_can_change_task_allows_managers_and_assigned_workers_only(self):
         admin = self._user(role=ROLE_ADMIN, username="change-admin")
         manager = self._user(role=ROLE_MANAGER, username="change-manager")
+        supervisor = self._user(role=ROLE_SUPERVISOR, username="change-supervisor")
         worker = self._user(role=ROLE_GLAZIER, username="change-worker")
         other_worker = self._user(role=ROLE_HANDYMAN, username="change-other")
         viewer = self._user(role=ROLE_VIEWER, username="change-viewer")
@@ -165,6 +169,7 @@ class AccessRightsContractsTests(unittest.TestCase):
 
         self.assertTrue(can_change_task(admin, task))
         self.assertTrue(can_change_task(manager, task))
+        self.assertTrue(can_change_task(supervisor, task))
         self.assertTrue(can_change_task(worker, task))
         self.assertFalse(can_change_task(other_worker, task))
         self.assertFalse(can_change_task(viewer, task))
@@ -251,6 +256,40 @@ class AccessRightsContractsTests(unittest.TestCase):
                 with self.assertRaises(Forbidden):
                     self._guard(office, endpoint, method="POST")
 
+    def test_supervisor_role_matches_manager_except_admin_and_service_sections(self):
+        supervisor = self._user(role=ROLE_SUPERVISOR, username="supervisor-access", project=self.project)
+
+        self.assertTrue(supervisor.can(ROLE_MANAGER))
+        self.assertFalse(supervisor.can(ROLE_ADMIN))
+
+        for endpoint in (
+            "main.dashboard",
+            "main.task_list",
+            "main.task_new",
+            "main.contractors_list",
+            "main.apartments",
+            "main.assignments",
+            "main.glass_measurements",
+            "main.materials",
+            "main.work_report",
+        ):
+            with self.subTest(endpoint=endpoint):
+                self.assertIsNone(self._guard(supervisor, endpoint))
+
+        for endpoint in (
+            "main.users",
+            "main.site_settings",
+            "main.site_errors",
+            "main.developer_statistics",
+            "main.upload_excel",
+            "main.sync_google",
+            "main.sync_logs",
+            "main.mapping_settings",
+            "main.export_source_with_strikes",
+        ):
+            with self.subTest(endpoint=endpoint):
+                self.assertRedirectsTo(self._guard(supervisor, endpoint), "/")
+
     def test_manager_cannot_open_service_tools(self):
         manager = self._user(role=ROLE_MANAGER, username="manager-service-access")
 
@@ -275,6 +314,7 @@ class AccessRightsContractsTests(unittest.TestCase):
 
         self.assertIsNone(self._guard(worker, "main.my_tasks"))
         self.assertIsNone(self._guard(worker, "main.account"))
+        self.assertIsNone(self._guard(worker, "main.account_password"))
         self.assertRedirectsTo(self._guard(worker, "main.task_list"), "/my-tasks")
         self.assertRedirectsTo(self._guard(worker, "main.users"), "/my-tasks")
 
@@ -287,7 +327,7 @@ class AccessRightsContractsTests(unittest.TestCase):
     def test_viewer_can_read_allowed_pages_but_cannot_open_write_pages(self):
         viewer = self._user(role=ROLE_VIEWER, username="viewer-read")
 
-        for endpoint in ("main.dashboard", "main.task_list", "main.task_detail", "main.apartments", "main.materials", "main.account"):
+        for endpoint in ("main.dashboard", "main.task_list", "main.task_detail", "main.apartments", "main.materials", "main.account", "main.account_password"):
             with self.subTest(endpoint=endpoint):
                 self.assertIsNone(self._guard(viewer, endpoint))
         self.assertRedirectsTo(self._guard(viewer, "main.task_new"), "/")
@@ -334,6 +374,7 @@ class AccessRightsContractsTests(unittest.TestCase):
         cases = (
             (ROLE_GLAZIER, "main.my_tasks", "main.assignments"),
             (ROLE_MANAGER, "main.assignments", "main.users"),
+            (ROLE_SUPERVISOR, "main.assignments", "main.users"),
             (ROLE_OFFICE, "main.task_list", "main.assignments"),
             (ROLE_VIEWER, "main.task_list", "main.assignments"),
         )

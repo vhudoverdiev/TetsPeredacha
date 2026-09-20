@@ -112,7 +112,7 @@
       {% else %}
         <span class="status-pill status-pill-warning">не принята</span>
       {% endif %}
-      {% if row.inspection_status %}
+      {% if row.inspection_status and row.mode != 'не продана' %}
         <span class="status-pill {{ row.inspection_status_class }}">Осмотр: {{ row.inspection_status }}</span>
       {% endif %}
       {% if row.has_replaced_glass %}<span class="glass-ordered-badge glass-replaced-badge" title="{{ row.glass_status_label }}">{{ row.glass_status_label }}</span>{% elif row.has_ordered_glass %}<span class="glass-ordered-badge" title="{{ row.glass_status_label }}">{{ row.glass_status_label }}</span>{% endif %}

@@ -334,6 +334,8 @@ def create_app(config_class=Config):
                 if "inspection_note" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN inspection_note TEXT"))
                     db.session.execute(text("UPDATE apartments SET inspection_note = comment WHERE comment IS NOT NULL AND comment != ''"))
+                if "correction_comment" not in apartment_columns:
+                    db.session.execute(text("ALTER TABLE apartments ADD COLUMN correction_comment TEXT"))
                 if "is_unsold" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN is_unsold BOOLEAN NOT NULL DEFAULT 0"))
                     # В старых версиях строка «не продано» сохранялась как пустой собственник.

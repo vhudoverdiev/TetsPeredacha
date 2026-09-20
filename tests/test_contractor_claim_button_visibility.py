@@ -1,9 +1,12 @@
 import tempfile
 import unittest
+from pathlib import Path
+from zipfile import ZipFile
+import re
 
 from config import Config
 from app import create_app, db, login_manager
-from app.models import Apartment, Contractor, Project, ROLE_ADMIN, STATUS_NOT_STARTED, Task, User, WorkPoint
+from app.models import Apartment, Contractor, Project, ROLE_ADMIN, ROLE_OFFICE, STATUS_NOT_STARTED, Task, User, WorkPoint
 
 
 class TestConfig(Config):
@@ -79,6 +82,37 @@ class ContractorClaimButtonVisibilityTests(unittest.TestCase):
         response = self.client.get("/contractors/export?format=docx", follow_redirects=False)
         self.assertEqual(response.status_code, 302)
         self.assertIn("/contractors", response.headers["Location"])
+
+    def test_docx_export_uses_office_contacts_when_current_user_is_not_office(self):
+        self.user.full_name = "Инженер Тестовый"
+        self.user.email = "engineer@example.test"
+        self.user.phone = "8 900 111-11-11"
+        office = User(
+            username="office-claim-author",
+            full_name="Офис Передачи",
+            email="office@example.test",
+            phone="8 900 222-22-22",
+            role=ROLE_OFFICE,
+            is_active=True,
+            project_id=self.project.id,
+            password_hash="unused",
+        )
+        db.session.add(office)
+        db.session.commit()
+
+        response = self.client.get(f"/contractors/export?format=docx&contractor_id={self.contractor.id}")
+
+        self.assertEqual(response.status_code, 200)
+        exported = sorted(Path(self.tempdir.name).glob("*.docx"))
+        self.assertTrue(exported)
+        with ZipFile(exported[-1]) as archive:
+            document_xml = archive.read("word/document.xml").decode("utf-8")
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", document_xml))
+        self.assertIn("Исп.: Офис Передачи", text)
+        self.assertIn("8 900 222-22-22", text)
+        self.assertIn("office@example.test", text)
+        self.assertNotIn("Инженер Тестовый", text)
+        self.assertNotIn("engineer@example.test", text)
 
     def test_contractor_form_saves_director_and_contract_date(self):
         response = self.client.post(

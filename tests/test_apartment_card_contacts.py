@@ -47,6 +47,11 @@ class ApartmentCardContactsTests(unittest.TestCase):
         self.assertIn("rgba(255, 214, 102, 0.18)", STYLE)
         self.assertIn("body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold", STYLE)
         self.assertIn("rgba(255, 214, 102, 0.12) !important", STYLE)
+        self.assertIn(".apartment-card.apartment-card-unsold:active", STYLE)
+        self.assertIn(".apartment-card.apartment-card-unsold .apartment-card-link:active", STYLE)
+
+    def test_unsold_cards_do_not_render_inspection_badge(self):
+        self.assertIn("row.inspection_status and row.mode != 'не продана'", TEMPLATE)
 
 
 if __name__ == "__main__":

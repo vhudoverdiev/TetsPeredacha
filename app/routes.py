@@ -63,6 +63,7 @@ from app.models import (
     WorkPoint,
     ROLE_ADMIN,
     ROLE_MANAGER,
+    ROLE_SUPERVISOR,
     ROLE_OFFICE,
     ROLE_EXECUTOR,
     ROLE_PAINTER,
@@ -343,6 +344,8 @@ SECTION_LOCK_CHOICES = [
             "main.developer_delete_logs",
             "main.developer_delete_log_undo",
             "main.developer_statistics",
+            "main.developer_statistics_visits",
+            "main.developer_statistics_sources",
         },
     },
     {
@@ -730,8 +733,8 @@ def _build_change_history_entry(change: ChangeLog, task: Task | None = None, use
                 "стала",
             ),
             "apartment_inspection_note": (
-                "Синхронизация изменила комментарий осмотра помещения",
-                "Комментарий осмотра помещения изменён",
+                "Синхронизация изменила комментарий устранения замечаний",
+                "Комментарий устранения замечаний изменён",
                 "было",
                 "стало",
             ),
@@ -1178,6 +1181,7 @@ WORKER_ALLOWED_ENDPOINTS = {
     "main.my_task_done",
     "main.my_task_return",
     "main.account",
+    "main.account_password",
     "main.report_error",
 }
 
@@ -1199,6 +1203,7 @@ VIEWER_ALLOWED_GET_ENDPOINTS = {
     "main.documents",
     "main.documents_download",
     "main.account",
+    "main.account_password",
 }
 
 OFFICE_FORBIDDEN_ENDPOINTS = {
@@ -1240,6 +1245,12 @@ OFFICE_FORBIDDEN_ENDPOINTS = {
     "main.material_manual_task_new",
 }
 
+SUPERVISOR_FORBIDDEN_SECTION_KEYS = {"users", "service", "site_errors"}
+SUPERVISOR_FORBIDDEN_ENDPOINTS = {
+    "main.site_settings",
+    "main.export_source_with_strikes",
+}
+
 
 @bp.before_request
 def enforce_role_access():
@@ -1260,6 +1271,12 @@ def enforce_role_access():
     locked_section = _section_lock_choice_for_endpoint(endpoint)
     if locked_section and locked_section["key"] in _setting_csv("blocked_site_sections"):
         return _blocked_section_response(locked_section["label"])
+
+    if current_user.role == ROLE_SUPERVISOR and (
+        endpoint in SUPERVISOR_FORBIDDEN_ENDPOINTS
+        or (locked_section and locked_section["key"] in SUPERVISOR_FORBIDDEN_SECTION_KEYS)
+    ):
+        return _deny_or_redirect()
 
     if current_user.role in OFFICE_MANAGER_ROLES and locked_section and locked_section["key"] == "service":
         abort(403)
@@ -2153,6 +2170,7 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
         "main.dashboard",
         "main.dashboard_legacy",
         "main.account",
+        "main.account_password",
         "main.task_list",
         "main.task_detail",
         "main.task_new",
@@ -2188,7 +2206,7 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
         "main.update_apartment_avr_status",
         "main.update_apartment_details",
     }
-    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER}:
+    if current_user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR}:
         allowed.update({
             "main.assignments",
             "main.assignment_unassign",
@@ -3697,12 +3715,34 @@ def contractors_export():
             tasks,
             project=project,
             contractor=selected_contractor,
-            author=current_user,
+            author=_contractor_claim_author(project),
         )
         return send_file(path, as_attachment=True, download_name=Path(path).name)
     title = f"Подрядчик: {contractor_label}" if selected_contractor else contractor_label
     path = export_remark_tasks_excel(tasks, filename_prefix, title=title)
     return send_file(path, as_attachment=True, download_name=Path(path).name)
+
+
+def _contractor_claim_author(project: Project | None) -> User:
+    if current_user.role == ROLE_OFFICE:
+        return current_user
+    office_users = (
+        User.query
+        .filter(User.role == ROLE_OFFICE, User.is_active.is_(True))
+        .order_by(User.full_name.is_(None), User.full_name.asc(), User.username.asc())
+        .all()
+    )
+    if project:
+        project_office_users = [user for user in office_users if user.can_access_project(project)]
+        for user in project_office_users:
+            if (user.email or "").strip() or (user.phone or "").strip():
+                return user
+        if project_office_users:
+            return project_office_users[0]
+    for user in office_users:
+        if (user.email or "").strip() or (user.phone or "").strip():
+            return user
+    return office_users[0] if office_users else current_user
 
 
 def _unique_int_list(values) -> list[int]:
@@ -8355,9 +8395,9 @@ def _po_status_for_group(apartments: list[Apartment], tasks: list[Task]) -> str 
 
 def _apartment_inspection_comment(apartments: list[Apartment]) -> str | None:
     for apartment in apartments:
-        note = str(apartment.inspection_note or "").strip()
-        if note and not note.startswith("__inspection_schedule__:"):
-            return note
+        comment = str(apartment.correction_comment or "").strip()
+        if comment:
+            return comment
     return None
 
 
@@ -8894,7 +8934,7 @@ def _apartment_overview_search_haystack(row: dict) -> str:
             apartment.phone or "",
             apartment.finishing_type or "",
             apartment.comment or "",
-            apartment.inspection_note or "",
+            apartment.correction_comment or "",
         ])
     values.append(str(row.get("glass_status_label") or ""))
     values.append(str(row.get("mode") or ""))
@@ -9537,7 +9577,7 @@ def update_apartment_inspection_note(apartment_id: int):
     target_group = group or [apartment]
     old_note = _apartment_inspection_comment(target_group) or ""
     for item in group or [apartment]:
-        item.inspection_note = note or None
+        item.correction_comment = note or None
     history_change = _log_apartment_field_change(target_group, "apartment_inspection_note", old_note, note)
     db.session.commit()
     if _wants_json_response():
@@ -10585,9 +10625,18 @@ def account():
 
     if request.method == "POST":
         action = (request.form.get("action") or "").strip()
+        wants_json = request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.accept_mimetypes.best == "application/json"
         if action == "start_2fa":
             pending_secret = generate_totp_secret()
             session["account_2fa_pending_secret"] = pending_secret
+            if wants_json:
+                provisioning = provisioning_uri(user.username, pending_secret)
+                return jsonify(
+                    ok=True,
+                    message="Отсканируйте QR-код или введите ключ вручную, затем подтвердите кодом.",
+                    pending_secret=pending_secret,
+                    qr_data_uri=qr_svg_data_uri(provisioning),
+                )
             flash("Отсканируйте QR-код или введите ключ вручную, затем подтвердите кодом.", "info")
         elif action == "confirm_2fa":
             secret = pending_secret or user.two_factor_secret
@@ -10618,7 +10667,6 @@ def account():
             full_name = str(request.form.get("full_name") or "").strip()
             email = str(request.form.get("email") or "").strip()
             phone = str(request.form.get("phone") or "").strip()
-            wants_json = request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.accept_mimetypes.best == "application/json"
             contact_error = ""
             if len(full_name) > 160:
                 contact_error = "ФИО не должно превышать 160 символов."
@@ -10641,19 +10689,7 @@ def account():
                     return jsonify(ok=True, message="Контакты сохранены.")
                 flash("Контакты сохранены.", "success")
         elif action == "change_password":
-            current_password = request.form.get("current_password") or ""
-            new_password = request.form.get("new_password") or ""
-            confirm_password = request.form.get("confirm_password") or ""
-            if not user.check_password(current_password):
-                flash("Текущий пароль указан неверно.", "danger")
-            elif len(new_password) < 8:
-                flash("Новый пароль должен быть не короче 8 символов.", "warning")
-            elif new_password != confirm_password:
-                flash("Новый пароль и подтверждение не совпадают.", "warning")
-            else:
-                user.set_password(new_password)
-                db.session.commit()
-                flash("Пароль изменён.", "success")
+            return redirect(url_for("main.account_password"))
         return redirect(url_for("main.account"))
 
     if pending_secret:
@@ -10666,6 +10702,28 @@ def account():
         provisioning_uri=provisioning,
         qr_data_uri=qr_data_uri,
     )
+
+
+@bp.route("/account/password", methods=["GET", "POST"])
+@login_required
+def account_password():
+    user = db.session.get(User, current_user.id) or abort(404)
+    if request.method == "POST":
+        current_password = request.form.get("current_password") or ""
+        new_password = request.form.get("new_password") or ""
+        confirm_password = request.form.get("confirm_password") or ""
+        if not user.check_password(current_password):
+            flash("Текущий пароль указан неверно.", "danger")
+        elif len(new_password) < 8:
+            flash("Новый пароль должен быть не короче 8 символов.", "warning")
+        elif new_password != confirm_password:
+            flash("Новый пароль и подтверждение не совпадают.", "warning")
+        else:
+            user.set_password(new_password)
+            db.session.commit()
+            flash("Пароль изменён.", "success")
+            return redirect(url_for("main.account"))
+    return render_template("account_password.html")
 
 
 @bp.route("/users", methods=["GET", "POST"])
@@ -10710,7 +10768,7 @@ def users():
     if project:
         users = [
             user for user in users
-            if user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE} or user.can_access_project(project)
+            if user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE} or user.can_access_project(project)
         ]
     return render_template(
         "users.html",

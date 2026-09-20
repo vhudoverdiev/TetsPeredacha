@@ -3373,17 +3373,19 @@ textarea.form-control {
 .password-generate-btn,
 .password-generate-btn:hover,
 .password-generate-btn:focus-visible {
-  border-color: rgba(121,191,37,.45) !important;
-  color: var(--peredacha-brand-green-dark) !important;
-  background: rgba(121,191,37,.08) !important;
+  background: linear-gradient(180deg, var(--peredacha-action-green) 0%, var(--peredacha-action-green-hover) 100%) !important;
+  border-color: var(--peredacha-action-green-hover) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   font-weight: 850;
-  box-shadow: none !important;
+  box-shadow: 0 10px 22px var(--peredacha-action-green-shadow) !important;
 }
 
 .password-generate-btn:hover,
 .password-generate-btn:focus-visible {
-  background: rgba(121,191,37,.16) !important;
-  border-color: rgba(121,191,37,.72) !important;
+  background: linear-gradient(180deg, var(--peredacha-action-green-hover) 0%, var(--peredacha-action-green-dark) 100%) !important;
+  border-color: var(--peredacha-action-green-dark) !important;
+  box-shadow: 0 12px 26px rgba(95, 152, 36, .26) !important;
 }
 
 @media (max-width: 575.98px) {
@@ -57503,9 +57505,20 @@ html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartm
 }
 
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:hover,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:active,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:focus,
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold:focus-within {
   background: rgba(255, 214, 102, 0.15) !important;
   background-color: rgba(255, 214, 102, 0.15) !important;
   border-color: rgba(230, 176, 34, 0.5) !important;
   box-shadow: 0 18px 45px rgba(145, 111, 18, 0.14) !important;
+}
+
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:hover,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
 }
