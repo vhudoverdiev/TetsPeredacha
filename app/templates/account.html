@@ -42,12 +42,6 @@
           </dl>
         </form>
         <div class="account-password-panel mb-4">
-          <div class="account-card-title account-password-title">
-            <span><i class="bi bi-key"></i></span>
-            <div>
-              <h2>Пароль</h2>
-            </div>
-          </div>
           <a class="btn btn-primary account-password-submit" href="{{ url_for('main.account_password') }}"><i class="bi bi-key me-2"></i>Сменить пароль</a>
         </div>
         <form class="account-logout-form js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">

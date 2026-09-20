@@ -108,6 +108,9 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertIn("var(--peredacha-action-green-hover)", rule)
         self.assertIn("color: #ffffff !important", rule)
         self.assertNotIn("rgba(121,191,37,.08)", rule)
+        self.assertIn(".btn.btn-outline-primary.password-generate-btn:active", style)
+        self.assertIn("--bs-btn-active-color: #ffffff", style)
+        self.assertIn(".btn.btn-outline-primary.password-generate-btn:active *::before", style)
 
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)

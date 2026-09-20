@@ -1077,7 +1077,12 @@ def short_user_display_name(user: User | None) -> str:
         return ""
     full_name = str(user.full_name or "").strip()
     if full_name:
-        return full_name.split()[0]
+        parts = full_name.split()
+        if len(parts) >= 3:
+            return f"{parts[0]} {parts[1][0]}.{parts[2][0]}."
+        if len(parts) >= 2:
+            return f"{parts[0]} {parts[1][0]}."
+        return parts[0]
     return str(user.username or "").strip()
 
 

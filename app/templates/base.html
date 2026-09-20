@@ -976,7 +976,7 @@
   </script>
   <link href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}?v=5.3.3" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendor/bootstrap/bootstrap-icons.min.css') }}?v=1.11.3" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=v652-password-generator">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=v653-pressed-states">
   <link rel="stylesheet" href="{{ url_for('static', filename='mobile-only.css') }}?v=v88-remark-sentence-lines">
   <link rel="stylesheet" href="{{ url_for('static', filename='desktop-only.css') }}?v=v72-apartment-filter-single-row">
   <script>
@@ -1281,7 +1281,7 @@
           <li><a class="dropdown-item" href="{{ url_for('main.site_settings') }}"><i class="bi bi-sliders me-2"></i>Настройки сайта</a></li>
           <li><hr class="dropdown-divider"></li>
           {% endif %}
-          <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+          <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
           <li><hr class="dropdown-divider"></li>
           <li>
             <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
@@ -1320,7 +1320,7 @@
           <li><a class="dropdown-item" href="{{ url_for('main.site_settings') }}"><i class="bi bi-sliders me-2"></i>Настройки сайта</a></li>
           <li><hr class="dropdown-divider"></li>
           {% endif %}
-          <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+          <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
           <li><hr class="dropdown-divider"></li>
           <li>
             <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
@@ -1448,7 +1448,7 @@
             <li><a class="dropdown-item download-excel-btn" href="{{ url_for('main.export_source_with_strikes') }}" data-download-mode="fetch" data-loading-text="Готовим Excel..."><i class="bi bi-file-earmark-arrow-down me-2"></i>Скачать Excel</a></li>
             <li><hr class="dropdown-divider"></li>
             {% endif %}
-            <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+            <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>
               <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">

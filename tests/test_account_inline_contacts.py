@@ -4,6 +4,7 @@ from pathlib import Path
 from config import Config
 from app import create_app, db
 from app.models import ROLE_ADMIN, ROLE_MANAGER, User
+from app.routes import short_user_display_name
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +42,11 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertNotIn("AbortController", template)
         self.assertIn("current_user.role == ROLE_ADMIN", template)
         self.assertIn("url_for('main.account_password')", template)
+        self.assertIn("account-password-panel", template)
+        password_panel = template.split('<div class="account-password-panel', 1)[1].split("</div>", 1)[0]
+        self.assertIn("Сменить пароль", password_panel)
+        self.assertNotIn("<h2>Пароль</h2>", password_panel)
+        self.assertNotIn("bi bi-key\"></i></span>", password_panel)
         self.assertNotIn('name="current_password"', template)
         self.assertNotIn('name="new_password"', template)
         self.assertNotIn('name="confirm_password"', template)
@@ -54,6 +60,27 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertIn('name="new_password"', password_template)
         self.assertIn('name="confirm_password"', password_template)
         self.assertIn("Сменить пароль", password_template)
+        self.assertNotIn("<h2>Пароль</h2>", password_template)
+        self.assertNotIn("account-card-title account-password-title", password_template)
+
+    def test_topbar_user_name_uses_surname_with_initials(self):
+        self.assertEqual(
+            short_user_display_name(User(full_name="Федотов Дмитрий Сергеевич", username="fedotovds")),
+            "Федотов Д.С.",
+        )
+        self.assertEqual(
+            short_user_display_name(User(full_name="Федотов Дмитрий", username="fedotovds")),
+            "Федотов Д.",
+        )
+        self.assertEqual(short_user_display_name(User(full_name="", username="fedotovds")), "fedotovds")
+
+    def test_account_dropdown_item_uses_site_button_style(self):
+        template = (ROOT / "app" / "templates" / "base.html").read_text(encoding="utf-8")
+        style = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn("account-dropdown-item", template)
+        self.assertIn(".dropdown-item.account-dropdown-item", style)
+        self.assertIn("linear-gradient(180deg, #f8fff0 0%, #eef9df 100%)", style)
 
     def test_two_factor_start_uses_ajax_without_page_reload(self):
         template = (ROOT / "app" / "templates" / "account.html").read_text(encoding="utf-8")
