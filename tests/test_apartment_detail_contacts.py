@@ -38,6 +38,12 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("update_apartment_po_status", TEMPLATE)
         self.assertIn("update_apartment_po_status", APARTMENTS_TEMPLATE)
 
+    def test_apartment_comments_have_separate_labels(self):
+        self.assertIn("Комментарий(передача)", TEMPLATE)
+        self.assertIn("Комментарий(устранение замечаний)", TEMPLATE)
+        self.assertIn("Комментарий(передача)", APARTMENTS_TEMPLATE)
+        self.assertIn("Комментарий(устранение замечаний)", APARTMENTS_TEMPLATE)
+
     def test_inspection_reset_hover_matches_save_button_green(self):
         start = STYLE.index(".apartment-inspection-reset-btn:hover")
         end = STYLE.index(".apartment-detail-page .apartment-task-item:hover", start)

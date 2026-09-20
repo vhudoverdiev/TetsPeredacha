@@ -3,7 +3,7 @@ from pathlib import Path
 
 from config import Config
 from app import create_app, db
-from app.models import ROLE_MANAGER, User
+from app.models import ROLE_ADMIN, ROLE_MANAGER, User
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +39,10 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertIn("if (!response.ok || data.ok === false)", template)
         self.assertIn("navigator.sendBeacon", template)
         self.assertNotIn("AbortController", template)
+        self.assertIn("current_user.role == ROLE_ADMIN", template)
+        self.assertIn('name="current_password"', template)
+        self.assertIn('name="new_password"', template)
+        self.assertIn('name="confirm_password"', template)
 
 
 class AccountAutosaveContactsTests(unittest.TestCase):
@@ -77,6 +81,40 @@ class AccountAutosaveContactsTests(unittest.TestCase):
         self.assertEqual(updated.full_name, "Иванов Иван Иванович")
         self.assertEqual(updated.email, "ivanov@example.test")
         self.assertEqual(updated.phone, "8 900 000-00-00")
+
+    def test_account_hides_role_for_non_developer(self):
+        response = self.client.get("/account")
+
+        html = response.get_data(as_text=True)
+        self.assertNotIn("<dt>Роль</dt>", html)
+        self.assertNotIn("Инженер", html)
+
+    def test_account_shows_role_for_developer(self):
+        self.user.role = ROLE_ADMIN
+        db.session.commit()
+
+        response = self.client.get("/account")
+
+        html = response.get_data(as_text=True)
+        self.assertIn("<dt>Роль</dt>", html)
+        self.assertIn("Разработчик", html)
+
+    def test_account_password_change_updates_current_user_password(self):
+        response = self.client.post(
+            "/account",
+            data={
+                "action": "change_password",
+                "current_password": "Strong-test-password-2026!",
+                "new_password": "Another-strong-password-2026!",
+                "confirm_password": "Another-strong-password-2026!",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        updated = db.session.get(User, self.user.id)
+        self.assertFalse(updated.check_password("Strong-test-password-2026!"))
+        self.assertTrue(updated.check_password("Another-strong-password-2026!"))
 
 
 if __name__ == "__main__":

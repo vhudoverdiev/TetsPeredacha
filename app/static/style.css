@@ -3363,6 +3363,35 @@ textarea.form-control {
   color: #565d62;
 }
 
+.password-generate-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .55rem;
+  align-items: center;
+}
+
+.password-generate-btn,
+.password-generate-btn:hover,
+.password-generate-btn:focus-visible {
+  border-color: rgba(121,191,37,.45) !important;
+  color: var(--peredacha-brand-green-dark) !important;
+  background: rgba(121,191,37,.08) !important;
+  font-weight: 850;
+  box-shadow: none !important;
+}
+
+.password-generate-btn:hover,
+.password-generate-btn:focus-visible {
+  background: rgba(121,191,37,.16) !important;
+  border-color: rgba(121,191,37,.72) !important;
+}
+
+@media (max-width: 575.98px) {
+  .password-generate-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-check-input {
   border-color: #cfe4b4;
 }
@@ -30743,6 +30772,43 @@ body:has(.users-page) textarea:-webkit-autofill:active {
 .account-profile-input.form-control:focus {
   border-color: rgba(121,191,37,.72);
   box-shadow: 0 0 0 .18rem rgba(121,191,37,.16);
+}
+.account-password-form {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(121,191,37,.14);
+}
+.account-password-title {
+  margin-bottom: .8rem;
+}
+.account-password-title > span {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: .9rem;
+  font-size: 1.15rem;
+}
+.account-password-title h2 {
+  font-size: 1.12rem;
+}
+.account-password-grid {
+  display: grid;
+  gap: .65rem;
+  margin-bottom: .9rem;
+}
+.account-password-field {
+  display: grid;
+  gap: .35rem;
+  margin: 0;
+  color: var(--peredacha-brand-gray);
+  font-weight: 850;
+}
+.account-password-field .account-profile-input.form-control {
+  margin: 0;
+  color: #111827;
+}
+.account-password-submit,
+.account-password-submit:hover,
+.account-password-submit:focus-visible {
+  color: #ffffff !important;
 }
 .account-security-status {
   display: inline-flex;

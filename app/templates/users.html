@@ -16,7 +16,15 @@
             {{ form.hidden_tag() }}
             <div class="mb-2">{{ form.username.label(class="form-label") }} {{ form.username(class="form-control") }}</div>
             <div class="mb-2">{{ form.full_name.label(class="form-label") }} {{ form.full_name(class="form-control") }}</div>
-            <div class="mb-3">{{ form.password.label(class="form-label") }} {{ form.password(class="form-control", placeholder="минимум 8 символов", required=True) }}</div>
+            <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              <div class="password-generate-row">
+                {{ form.password(class="form-control", placeholder="минимум 8 символов", required=True, data_generated_password_target="create-user") }}
+                <button class="btn btn-outline-primary password-generate-btn" type="button" data-generate-password="create-user">
+                  <i class="bi bi-shuffle me-2"></i>Сгенерировать
+                </button>
+              </div>
+            </div>
             <fieldset class="mb-3 users-role-fieldset">
               <legend class="form-label mb-2">{{ form.role.label.text }}</legend>
               <div class="users-role-grid" role="radiogroup" aria-label="{{ form.role.label.text }}">

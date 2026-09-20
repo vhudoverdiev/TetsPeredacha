@@ -1045,6 +1045,7 @@ def inject_globals():
         "STATUS_DONE": STATUS_DONE,
         "DONE_STATUSES": DONE_STATUSES,
         "ROLE_LABELS": ROLE_LABELS,
+        "ROLE_ADMIN": ROLE_ADMIN,
         "current_project": current_project,
         "mobile_switch_projects": mobile_switch_projects,
         "new_site_errors_count": new_site_errors_count,
@@ -5252,6 +5253,21 @@ def _group_glass_all_rows(rows: list[dict[str, object]]) -> list[dict[str, objec
     return result
 
 
+def _glass_all_row_sort_key(row: dict[str, object]):
+    related_rows = row.get("related_rows") or [row]
+    related_tasks = [
+        related_row.get("task")
+        for related_row in related_rows
+        if isinstance(related_row.get("task"), Task)
+    ]
+    done_rank = 1 if related_tasks and all(getattr(task, "is_done", False) for task in related_tasks) else 0
+    task = row.get("task")
+    return (
+        done_rank,
+        *_task_apartment_sort_value_no_done(task if isinstance(task, Task) else None),
+    )
+
+
 @bp.route("/glass")
 @bp.route("/glass-measurements")
 @login_required
@@ -5298,6 +5314,7 @@ def glass_measurements():
         )
         if not is_mobile_phone:
             rows = _group_glass_all_rows(rows)
+        rows.sort(key=_glass_all_row_sort_key)
     elif tab == "order":
         order_rows = _filter_glass_rows(available_tasks, q=q, status=GLASS_STATUS_MEASURE_NEEDED)
         order_rows.sort(key=lambda row: _task_apartment_sort_value_no_done(row["task"]))
@@ -10623,6 +10640,20 @@ def account():
                 if wants_json:
                     return jsonify(ok=True, message="Контакты сохранены.")
                 flash("Контакты сохранены.", "success")
+        elif action == "change_password":
+            current_password = request.form.get("current_password") or ""
+            new_password = request.form.get("new_password") or ""
+            confirm_password = request.form.get("confirm_password") or ""
+            if not user.check_password(current_password):
+                flash("Текущий пароль указан неверно.", "danger")
+            elif len(new_password) < 8:
+                flash("Новый пароль должен быть не короче 8 символов.", "warning")
+            elif new_password != confirm_password:
+                flash("Новый пароль и подтверждение не совпадают.", "warning")
+            else:
+                user.set_password(new_password)
+                db.session.commit()
+                flash("Пароль изменён.", "success")
         return redirect(url_for("main.account"))
 
     if pending_secret:

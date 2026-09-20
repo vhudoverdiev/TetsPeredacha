@@ -88,6 +88,19 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertNotIn('class="users-password-cell"', template)
         self.assertNotIn("password-preview", template)
 
+    def test_user_password_forms_have_generate_button(self):
+        users_template = Path("app/templates/users.html").read_text(encoding="utf-8")
+        reset_template = Path("app/templates/user_password.html").read_text(encoding="utf-8")
+        script = Path("app/static/script.js").read_text(encoding="utf-8")
+
+        self.assertIn('data_generated_password_target="create-user"', users_template)
+        self.assertIn('data-generate-password="create-user"', users_template)
+        self.assertIn('data_generated_password_target="reset-user"', reset_template)
+        self.assertIn('data-generate-password="reset-user"', reset_template)
+        self.assertIn("const generatePassword = (length = 14)", script)
+        self.assertIn("window.crypto?.getRandomValues", script)
+        self.assertIn("field.type = 'text'", script)
+
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)
         user = self._user("worker-office", ROLE_MANAGER)

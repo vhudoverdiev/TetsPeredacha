@@ -35,9 +35,36 @@
               <dt><label for="accountPhone">Телефон</label></dt>
               <dd><input class="form-control account-profile-input" id="accountPhone" name="phone" type="text" value="{{ current_user.phone or '' }}" maxlength="80" autocomplete="tel" placeholder="Укажите телефон"></dd>
             </div>
-            <div><dt>Роль</dt><dd>{{ ROLE_LABELS.get(current_user.role, current_user.role) }}</dd></div>
+            {% if current_user.role == ROLE_ADMIN %}
+              <div><dt>Роль</dt><dd>{{ ROLE_LABELS.get(current_user.role, current_user.role) }}</dd></div>
+            {% endif %}
             <div><dt>Капча</dt><dd>{{ 'отключена' if current_user.captcha_disabled else 'включена' }}</dd></div>
           </dl>
+        </form>
+        <form class="account-password-form mb-4" method="post" action="{{ url_for('main.account') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="change_password">
+          <div class="account-card-title account-password-title">
+            <span><i class="bi bi-key"></i></span>
+            <div>
+              <h2>Пароль</h2>
+            </div>
+          </div>
+          <div class="account-password-grid">
+            <label class="account-password-field" for="accountCurrentPassword">
+              <span>Текущий пароль</span>
+              <input class="form-control account-profile-input" id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password" required>
+            </label>
+            <label class="account-password-field" for="accountNewPassword">
+              <span>Новый пароль</span>
+              <input class="form-control account-profile-input" id="accountNewPassword" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+            </label>
+            <label class="account-password-field" for="accountConfirmPassword">
+              <span>Повторите пароль</span>
+              <input class="form-control account-profile-input" id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+            </label>
+          </div>
+          <button class="btn btn-primary account-password-submit" type="submit"><i class="bi bi-check2-circle me-2"></i>Сменить пароль</button>
         </form>
         <form class="account-logout-form js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

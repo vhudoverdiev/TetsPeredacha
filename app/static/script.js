@@ -2933,6 +2933,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const generatePassword = (length = 14) => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+    const values = new Uint32Array(length);
+    if (window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(values);
+    } else {
+      for (let index = 0; index < values.length; index += 1) {
+        values[index] = Math.floor(Math.random() * chars.length);
+      }
+    }
+    return Array.from(values, value => chars[value % chars.length]).join('');
+  };
+
+  document.querySelectorAll('[data-generate-password]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetName = btn.dataset.generatePassword;
+      const field = Array.from(document.querySelectorAll('[data-generated-password-target]'))
+        .find(item => item.dataset.generatedPasswordTarget === targetName);
+      if (!field) return;
+      field.value = generatePassword();
+      field.type = 'text';
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      field.focus();
+      field.select();
+    });
+  });
+
   document.querySelectorAll('.users-captcha-form').forEach(form => {
     const input = form.querySelector('.users-captcha-input');
     const valueField = form.querySelector('[data-captcha-disabled-value]');
