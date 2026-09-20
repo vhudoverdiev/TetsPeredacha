@@ -93,6 +93,7 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         reset_template = Path("app/templates/user_password.html").read_text(encoding="utf-8")
         script = Path("app/static/script.js").read_text(encoding="utf-8")
         style = Path("app/static/style.css").read_text(encoding="utf-8")
+        desktop_style = Path("app/static/desktop-only.css").read_text(encoding="utf-8")
 
         self.assertIn('data_generated_password_target="create-user"', users_template)
         self.assertIn('data-generate-password="create-user"', users_template)
@@ -111,6 +112,8 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertIn(".btn.btn-outline-primary.password-generate-btn:active", style)
         self.assertIn("--bs-btn-active-color: #ffffff", style)
         self.assertIn(".btn.btn-outline-primary.password-generate-btn:active *::before", style)
+        self.assertIn("html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:active", desktop_style)
+        self.assertIn("--bs-btn-active-color: #ffffff !important", desktop_style)
 
     def test_admin_can_update_user_to_office_role(self):
         admin = self._user("admin-office", ROLE_ADMIN)

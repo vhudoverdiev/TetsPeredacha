@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v172-point-autosave-dop';
+const STATIC_CACHE = 'peredacha-static-v173-pressed-state-guards';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -13,9 +13,9 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/bootstrap.bundle.min.js?v=5.3.3',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
-  '/static/style.css?v=v652-password-generator',
+  '/static/style.css?v=v653-pressed-states',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
-  '/static/desktop-only.css?v=v72-apartment-filter-single-row',
+  '/static/desktop-only.css?v=v73-pressed-state-guards',
   '/static/script.js?v=v676-password-generator',
 ];
 

@@ -8,6 +8,7 @@ from app.routes import _apartment_group_contact_values
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
 STYLE = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
+DESKTOP_STYLE = (ROOT / "app" / "static" / "desktop-only.css").read_text(encoding="utf-8")
 
 
 class ApartmentCardContactsTests(unittest.TestCase):
@@ -54,6 +55,8 @@ class ApartmentCardContactsTests(unittest.TestCase):
         self.assertIn(".apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info span", STYLE)
         self.assertIn("body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold", STYLE)
         self.assertIn(".apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info i", STYLE)
+        self.assertIn("html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold", DESKTOP_STYLE)
+        self.assertIn(".apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info i", DESKTOP_STYLE)
 
     def test_unsold_cards_do_not_render_inspection_badge(self):
         self.assertIn("row.inspection_status and row.mode != 'не продана'", TEMPLATE)

@@ -2009,3 +2009,72 @@ html.desktop-like-pointer body.app-body:has(.developer-statistics-page)
   }
 
 }
+
+/* v73: final desktop guard loaded after style.css. */
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:hover,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus-visible,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:active,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn.active,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn.show {
+  --bs-btn-color: #ffffff !important;
+  --bs-btn-hover-color: #ffffff !important;
+  --bs-btn-active-color: #ffffff !important;
+  --bs-btn-bg: var(--peredacha-action-green) !important;
+  --bs-btn-hover-bg: var(--peredacha-action-green-hover) !important;
+  --bs-btn-active-bg: var(--peredacha-action-green-hover) !important;
+  --bs-btn-border-color: var(--peredacha-action-green) !important;
+  --bs-btn-hover-border-color: var(--peredacha-action-green-hover) !important;
+  --bs-btn-active-border-color: var(--peredacha-action-green-hover) !important;
+  background: linear-gradient(180deg, var(--peredacha-action-green) 0%, var(--peredacha-action-green-hover) 100%) !important;
+  border-color: var(--peredacha-action-green-hover) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn *,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn *::before,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:hover *,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:hover *::before,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus *,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus *::before,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus-visible *,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:focus-visible *::before,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:active *,
+html.desktop-like-pointer body.app-body .btn.btn-outline-primary.password-generate-btn:active *::before {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold:hover,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold:active,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold:focus,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold:focus-within {
+  background: rgba(255, 214, 102, 0.12) !important;
+  background-color: rgba(255, 214, 102, 0.12) !important;
+}
+
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:hover,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-info,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-info span,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-info i,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info span,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info i,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-info,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-info span,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-info i,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-info,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-info span,
+html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-info i {
+  background: transparent !important;
+  background-color: transparent !important;
+}
