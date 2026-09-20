@@ -3372,7 +3372,8 @@ textarea.form-control {
 
 .password-generate-btn,
 .password-generate-btn:hover,
-.password-generate-btn:focus-visible {
+.password-generate-btn:focus-visible,
+.password-generate-btn:active {
   background: linear-gradient(180deg, var(--peredacha-action-green) 0%, var(--peredacha-action-green-hover) 100%) !important;
   border-color: var(--peredacha-action-green-hover) !important;
   color: #ffffff !important;
@@ -3382,10 +3383,37 @@ textarea.form-control {
 }
 
 .password-generate-btn:hover,
-.password-generate-btn:focus-visible {
+.password-generate-btn:focus-visible,
+.password-generate-btn:active {
   background: linear-gradient(180deg, var(--peredacha-action-green-hover) 0%, var(--peredacha-action-green-dark) 100%) !important;
   border-color: var(--peredacha-action-green-dark) !important;
   box-shadow: 0 12px 26px rgba(95, 152, 36, .26) !important;
+}
+
+.password-generate-btn,
+.password-generate-btn *,
+.password-generate-btn i,
+.password-generate-btn .bi,
+.password-generate-btn .bi::before,
+.password-generate-btn:hover,
+.password-generate-btn:hover *,
+.password-generate-btn:hover i,
+.password-generate-btn:hover .bi,
+.password-generate-btn:hover .bi::before,
+.password-generate-btn:focus-visible,
+.password-generate-btn:focus-visible *,
+.password-generate-btn:focus-visible i,
+.password-generate-btn:focus-visible .bi,
+.password-generate-btn:focus-visible .bi::before,
+.password-generate-btn:active,
+.password-generate-btn:active *,
+.password-generate-btn:active i,
+.password-generate-btn:active .bi,
+.password-generate-btn:active .bi::before {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 @media (max-width: 575.98px) {
@@ -57519,6 +57547,30 @@ html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartm
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active,
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus,
 html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-top,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-label,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-number,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-info,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-info span,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-top,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-top,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-top,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-label,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-label,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-label,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-number,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-number,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-number,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-info,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-info,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:active .apartment-card-info span,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus .apartment-card-info span,
+html body.app-body:has(.apartments-page) .apartments-grid .apartment-card.apartment-card-unsold .apartment-card-link:focus-visible .apartment-card-info span {
   background: transparent !important;
   background-color: transparent !important;
 }
