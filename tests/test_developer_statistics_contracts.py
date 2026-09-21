@@ -143,6 +143,48 @@ class DeveloperStatisticsContractsTests(unittest.TestCase):
         self.assertIn("Активный Пользователь", labels)
         self.assertIn("Старый Пользователь", labels)
 
+    def test_user_guest_groups_and_sources_are_sorted_by_latest_visit_first(self):
+        frequent_user = User(username="frequent", full_name="Частый Пользователь", role=ROLE_ADMIN, password_hash="unused")
+        fresh_user = User(username="fresh", full_name="Свежий Пользователь", role=ROLE_ADMIN, password_hash="unused")
+        db.session.add_all([frequent_user, fresh_user])
+        db.session.flush()
+
+        visits = [
+            SiteVisit(
+                user=frequent_user,
+                ip_address="203.0.113.20",
+                endpoint="main.dashboard",
+                path="/",
+                method="GET",
+                status_code=200,
+                is_authenticated=True,
+                visit_kind="request",
+                created_at=datetime(2026, 8, 4, 9, minute),
+            )
+            for minute in range(10)
+        ]
+        visits.append(
+            SiteVisit(
+                user=fresh_user,
+                ip_address="203.0.113.99",
+                endpoint="main.dashboard",
+                path="/",
+                method="GET",
+                status_code=200,
+                is_authenticated=True,
+                visit_kind="request",
+                created_at=datetime(2026, 8, 4, 11, 0),
+            )
+        )
+        db.session.add_all(visits)
+        db.session.commit()
+
+        with self.app.test_request_context("/developer/statistics/visits?start_date=2026-08-04&end_date=2026-08-04"):
+            context = _build_developer_statistics_context()
+
+        self.assertEqual(context["visitor_groups"][0]["label"], "Свежий Пользователь")
+        self.assertEqual(context["top_ips"][0]["ip_address"], "203.0.113.99")
+
     def test_request_visit_is_persisted_before_response_returns(self):
         client = self.app.test_client()
 

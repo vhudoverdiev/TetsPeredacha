@@ -2469,7 +2469,7 @@ def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_grou
         group["ip_count"] = len(group["ip_set"])
         group.pop("ip_set", None)
 
-    return sorted(ordered_groups, key=lambda item: (item["hits"], item["last_seen"] or datetime.min), reverse=True)
+    return sorted(ordered_groups, key=lambda item: (item["last_seen"] or datetime.min, item["hits"]), reverse=True)
 
 
 def _build_site_visit_agent_stats(base_query) -> tuple[list[dict], list[dict], list[dict]]:
@@ -2643,7 +2643,7 @@ def _build_developer_statistics_context() -> dict:
         )
         .filter(SiteVisit.ip_address.isnot(None))
         .group_by(SiteVisit.ip_address)
-        .order_by(func.count(SiteVisit.id).desc(), func.max(SiteVisit.created_at).desc())
+        .order_by(func.max(SiteVisit.created_at).desc(), func.count(SiteVisit.id).desc())
         .limit(10)
         .all()
     )
