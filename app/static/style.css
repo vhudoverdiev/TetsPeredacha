@@ -30719,25 +30719,25 @@ body:has(.users-page) textarea:-webkit-autofill:active {
 .account-back-button:active {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: .45rem;
-  min-height: 2.45rem;
+  min-height: 0;
   margin-bottom: .55rem;
-  padding: .58rem .92rem;
-  border-radius: .9rem;
-  border: 1px solid rgba(17, 24, 39, .12);
-  background: #1f2933;
-  color: #ffffff !important;
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  color: #111827 !important;
   font-weight: 850;
   line-height: 1;
   text-decoration: none !important;
-  box-shadow: 0 12px 28px rgba(17, 24, 39, .16);
+  box-shadow: none;
 }
 .account-back-button:hover,
 .account-back-button:focus-visible {
-  background: #111827;
-  border-color: rgba(17, 24, 39, .22);
-  transform: translateY(-1px);
+  color: #000000 !important;
+  text-decoration: none !important;
+  transform: none;
 }
 .account-back-button i,
 .account-back-button span {
@@ -57675,7 +57675,7 @@ html body.app-body .apartments-page .apartments-grid .apartment-card.apartment-c
   background-color: transparent !important;
 }
 
-/* v654: force account password back link to render as the black site button. */
+/* v655: account password back link is plain black text without a button shell. */
 html body.app-body a.account-back-button,
 html body.app-body a.account-back-button:link,
 html body.app-body a.account-back-button:visited,
@@ -57686,30 +57686,30 @@ html body.app-body a.account-back-button:active,
 html body.app-body a.account-back-button.active {
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   gap: .5rem !important;
   width: auto !important;
-  min-height: 2.6rem !important;
+  min-height: 0 !important;
   margin: 0 0 .65rem !important;
-  padding: .62rem 1rem !important;
-  border: 1px solid rgba(255, 255, 255, .08) !important;
-  border-radius: .95rem !important;
-  background: #111827 !important;
-  color: #ffffff !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #111827 !important;
   font-weight: 850 !important;
   line-height: 1 !important;
   text-decoration: none !important;
-  box-shadow: 0 14px 30px rgba(17, 24, 39, .22) !important;
+  box-shadow: none !important;
 }
 
 html body.app-body a.account-back-button:hover,
 html body.app-body a.account-back-button:focus,
 html body.app-body a.account-back-button:focus-visible,
 html body.app-body a.account-back-button:active {
-  background: #182029 !important;
-  border-color: rgba(255, 255, 255, .14) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px);
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #000000 !important;
+  transform: none !important;
 }
 
 html body.app-body a.account-back-button i,
@@ -57724,5 +57724,5 @@ html body.app-body a.account-back-button:active i,
 html body.app-body a.account-back-button:active span,
 html body.app-body a.account-back-button:active .bi,
 html body.app-body a.account-back-button:active .bi::before {
-  color: #ffffff !important;
+  color: inherit !important;
 }

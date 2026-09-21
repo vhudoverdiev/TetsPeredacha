@@ -135,6 +135,7 @@ from app.services.task_service import (
     parse_date,
     premise_matches_search,
     premise_matches_selector,
+    repair_completed_source_marker_statuses,
     set_setting,
     AVR_STATUS_NEEDED,
     AVR_STATUS_SIGNED,
@@ -4033,6 +4034,7 @@ def assignments():
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
+    repair_completed_source_marker_statuses(project_id=project.id)
     users = _executor_users(project.id)
     wants_json = _wants_json_response()
     view_mode = (request.args.get("view") or "issue").strip()
@@ -8015,6 +8017,7 @@ def _task_list_response(contractor_page: bool = False):
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
+    repair_completed_source_marker_statuses(project_id=project.id)
     ensure_default_categories()
     category_id = request.args.get("category_id", type=int)
     categories = WorkCategory.query.filter_by(is_active=True).order_by(WorkCategory.sort_order.asc()).all()

@@ -855,6 +855,51 @@ def detect_status_marker(remark_text: str) -> str | None:
     return None
 
 
+def has_completed_source_marker(task: Task) -> bool:
+    """Return True when legacy source text visually marks a task as completed."""
+    values = (
+        task.description,
+        task.source_cell_value,
+    )
+    return any(
+        detect_status_marker(str(value or "")) == STATUS_DONE
+        or is_fully_quoted_remark_text(value)
+        for value in values
+        if str(value or "").strip()
+    )
+
+
+def repair_completed_source_marker_statuses(
+    *,
+    project_id: int | None = None,
+    task_ids: Iterable[int] | None = None,
+) -> int:
+    """Normalize old rows where completed source text was saved as not done."""
+    query = Task.query.filter(
+        Task.status.notin_(DONE_STATUSES),
+        Task.is_done.is_(False),
+        Task.is_archived.is_(False),
+        Task.is_missing_in_latest_sync.is_(False),
+    )
+    if project_id is not None:
+        query = query.filter(Task.project_id == project_id)
+    if task_ids is not None:
+        ids = [int(task_id) for task_id in task_ids if task_id]
+        if not ids:
+            return 0
+        query = query.filter(Task.id.in_(ids))
+
+    changed = 0
+    for task in query.yield_per(200):
+        if not has_completed_source_marker(task):
+            continue
+        change_task_status(task, STATUS_DONE, commit=False)
+        changed += 1
+    if changed:
+        db.session.commit()
+    return changed
+
+
 def _pending_text_sync_conflict(task_id: int) -> SyncConflict | None:
     return (
         SyncConflict.query.filter(

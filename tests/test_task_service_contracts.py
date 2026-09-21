@@ -11,6 +11,7 @@ from app.models import (
     STATUS_DONE,
     STATUS_FINISHERS,
     STATUS_NOT_STARTED,
+    STATUS_PROBLEM,
     Task,
     WorkPoint,
 )
@@ -34,6 +35,7 @@ from app.services.task_service import (
     parse_date,
     parse_multi_premise_search,
     premise_matches_search,
+    repair_completed_source_marker_statuses,
     select_primary_work_point_columns,
     upsert_task_from_cell,
 )
@@ -239,6 +241,48 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
 
         self.assertFalse(task.is_done)
         self.assertIsNone(task.completed_date)
+
+    def test_repair_marks_legacy_struck_remark_text_as_done(self):
+        task = Task(
+            source_uid="legacy-struck-open",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.work_point,
+            description='"Требуется восстановить стяжку пола."',
+            source_cell_value='"Требуется восстановить стяжку пола."',
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        db.session.add(task)
+        db.session.commit()
+
+        changed = repair_completed_source_marker_statuses(project_id=self.project.id)
+
+        db.session.refresh(task)
+        self.assertEqual(changed, 1)
+        self.assertEqual(task.status, STATUS_DONE)
+        self.assertTrue(task.is_done)
+        self.assertIsNotNone(task.completed_date)
+
+    def test_repair_marks_legacy_struck_non_done_status_as_done(self):
+        task = Task(
+            source_uid="legacy-struck-problem",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.work_point,
+            description='"Требуется очистка от строительных смесей."',
+            status=STATUS_PROBLEM,
+            is_done=False,
+        )
+        db.session.add(task)
+        db.session.commit()
+
+        changed = repair_completed_source_marker_statuses(project_id=self.project.id)
+
+        db.session.refresh(task)
+        self.assertEqual(changed, 1)
+        self.assertEqual(task.status, STATUS_DONE)
+        self.assertTrue(task.is_done)
 
     def test_upsert_marks_fully_quoted_excel_remark_as_done(self):
         task, created = upsert_task_from_cell(

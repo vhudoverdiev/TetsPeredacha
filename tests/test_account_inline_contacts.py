@@ -64,15 +64,17 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertNotIn("<h2>Пароль</h2>", password_template)
         self.assertNotIn("account-card-title account-password-title", password_template)
 
-    def test_password_account_back_link_uses_black_button_style(self):
+    def test_password_account_back_link_uses_plain_black_text_style(self):
         password_template = (ROOT / "app" / "templates" / "account_password.html").read_text(encoding="utf-8")
         style = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
 
         self.assertIn('class="account-back-button"', password_template)
         self.assertIn("bi bi-arrow-left", password_template)
         self.assertIn(".account-back-button,", style)
-        self.assertIn("background: #1f2933;", style)
-        self.assertIn("color: #ffffff !important;", style)
+        self.assertIn("background: transparent !important;", style)
+        self.assertIn("border: 0 !important;", style)
+        self.assertIn("box-shadow: none !important;", style)
+        self.assertIn("color: #111827 !important;", style)
 
     def test_topbar_user_name_uses_surname_with_initials(self):
         self.assertEqual(
