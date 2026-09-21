@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/v25pmy",
-    "id": "v25pmy",
+    "aid": "sl/1hrdy6",
+    "id": "1hrdy6",
     "slide": 9,
-    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutId": "f858cffa-0ba0-4978-abf0-396ab83fd905",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
     "masterLayoutName": "Master",
     "backgroundColor": "#FBFDF8",
     "frame": {
@@ -45,15 +45,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "id": "f858cffa-0ba0-4978-abf0-396ab83fd905",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "parentLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "id": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -64,7 +64,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/jel8nydg",
+      "aid": "sh/up8jepwr",
       "id": "1",
       "bbox": [
         1152,
@@ -80,7 +80,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/kfu9g3e1",
+      "aid": "sh/hsji9kf2",
       "id": "2",
       "bbox": [
         695,
@@ -96,7 +96,7 @@
       "order": 3,
       "kind": "image",
       "scope": "slide",
-      "aid": "im/wfe9gfmx",
+      "aid": "im/tsjq5wfa",
       "id": "3",
       "bbox": [
         44,
@@ -108,7 +108,7 @@
       "contentType": "image/png",
       "imageFit": "contain",
       "asset": {
-        "assetId": "1f92639f-8ed0-4c0b-95f3-a4d5d3e78639",
+        "assetId": "820493ea-2a65-4c0b-b776-bd4a2a98e1b2",
         "contentType": "image/png",
         "byteLength": 20679
       }
@@ -117,7 +117,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/apcratwz",
+      "aid": "sh/72h03ax0",
       "id": "4",
       "bbox": [
         116,
@@ -126,8 +126,8 @@
         34
       ],
       "geometry": "rect",
-      "text": "09 · КВАРТИРЫ",
-      "textPreview": "09 · КВАРТИРЫ",
+      "text": "09 · ЗАДАЧИ",
+      "textPreview": "09 · ЗАДАЧИ",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
@@ -148,14 +148,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "09 · КВАРТИРЫ"
+            "text": "09 · ЗАДАЧИ"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "09 · КВАРТИРЫ",
+          "text": "09 · ЗАДАЧИ",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
@@ -165,7 +165,7 @@
           "runs": [
             {
               "index": 1,
-              "text": "09 · КВАРТИРЫ",
+              "text": "09 · ЗАДАЧИ",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#258A11",
@@ -181,7 +181,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bql8jydk",
+      "aid": "sh/618za5wf",
       "id": "5",
       "bbox": [
         86,
@@ -190,15 +190,15 @@
         62
       ],
       "geometry": "rect",
-      "text": "Квартиры",
-      "textPreview": "Квартиры",
-      "resolvedFontSize": 36,
+      "text": "Выдача задач сотрудникам",
+      "textPreview": "Выдача задач сотрудникам",
+      "resolvedFontSize": 38,
       "resolvedTextStyle": {
-        "fontSize": 36,
+        "fontSize": 38,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -212,28 +212,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Квартиры"
+            "text": "Выдача задач сотрудникам"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Квартиры",
+          "text": "Выдача задач сотрудникам",
           "resolvedTextStyle": {
-            "fontSize": 36,
+            "fontSize": 38,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Квартиры",
-              "fontSize": 36,
+              "text": "Выдача задач сотрудникам",
+              "fontSize": 38,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -245,23 +247,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wru9cje5",
+      "aid": "sh/tozi5kf6",
       "id": "6",
       "bbox": [
-        88,
+        160,
         205,
-        1060,
+        960,
         34
       ],
       "geometry": "rect",
-      "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
-      "textPreview": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+      "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
+      "textPreview": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
       "resolvedFontSize": 19,
       "resolvedTextStyle": {
         "fontSize": 19,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -275,26 +277,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии."
+            "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+          "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
           "resolvedTextStyle": {
             "fontSize": 19,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+              "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
               "fontSize": 19,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -306,7 +310,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xs3qlova",
+      "aid": "sh/snq1cfel",
       "id": "7",
       "bbox": [
         88,
@@ -367,7 +371,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/mls769wn",
+      "aid": "sh/ryl0fux4",
       "id": "8",
       "bbox": [
         88,
@@ -384,7 +388,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nm18fed8",
+      "aid": "sh/qxcjm9wz",
       "id": "9",
       "bbox": [
         106,
@@ -400,7 +404,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7il8z6l4",
+      "aid": "sh/c7ad4n69",
       "id": "10",
       "bbox": [
         106,
@@ -466,24 +470,24 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6hcr61kz",
+      "aid": "sh/d8juxsnu",
       "id": "11",
       "bbox": [
-        162,
+        166,
         260,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Откройте Квартиры",
-      "textPreview": "Откройте Квартиры",
+      "text": "Откройте раздел",
+      "textPreview": "Откройте раздел",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -497,28 +501,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Откройте Квартиры"
+            "text": "Откройте раздел"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Откройте Квартиры",
+          "text": "Откройте раздел",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Откройте Квартиры",
+              "text": "Откройте раздел",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -530,23 +536,23 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tk3q1w3a",
+      "aid": "sh/q5sv2do3",
       "id": "12",
       "bbox": [
-        162,
+        180,
         286,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "В левом меню нажмите Квартиры.",
-      "textPreview": "В левом меню нажмите Квартиры.",
+      "text": "В левом меню нажмите Выдача задач.",
+      "textPreview": "В левом меню нажмите Выдача задач.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -560,26 +566,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "В левом меню нажмите Квартиры."
+            "text": "В левом меню нажмите Выдача задач."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "В левом меню нажмите Квартиры.",
+          "text": "В левом меню нажмите Выдача задач.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "В левом меню нажмите Квартиры.",
+              "text": "В левом меню нажмите Выдача задач.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -591,7 +599,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/sju98b2p",
+      "aid": "sh/r61cvi5o",
       "id": "13",
       "bbox": [
         88,
@@ -608,7 +616,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fml836lg",
+      "aid": "sh/43ad036x",
       "id": "14",
       "bbox": [
         106,
@@ -624,7 +632,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ulcra1kv",
+      "aid": "sh/p4jut8ni",
       "id": "15",
       "bbox": [
         106,
@@ -690,24 +698,24 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/honq5g3m",
+      "aid": "sh/218vyto7",
       "id": "16",
       "bbox": [
-        162,
+        166,
         326,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Найдите помещение",
-      "textPreview": "Найдите помещение",
+      "text": "Отфильтруйте список",
+      "textPreview": "Отфильтруйте список",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -721,28 +729,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Найдите помещение"
+            "text": "Отфильтруйте список"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Найдите помещение",
+          "text": "Отфильтруйте список",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Найдите помещение",
+              "text": "Отфильтруйте список",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -754,23 +764,23 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gnu9cb21",
+      "aid": "sh/321c7yps",
       "id": "17",
       "bbox": [
-        162,
+        180,
         352,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Введите номер квартиры или текст в поле Поиск.",
-      "textPreview": "Введите номер квартиры или текст в поле Поиск.",
+      "text": "Выберите квартиру, пункт, статус или исполнителя.",
+      "textPreview": "Выберите квартиру, пункт, статус или исполнителя.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -784,26 +794,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Введите номер квартиры или текст в поле Поиск."
+            "text": "Выберите квартиру, пункт, статус или исполнителя."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Введите номер квартиры или текст в поле Поиск.",
+          "text": "Выберите квартиру, пункт, статус или исполнителя.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Введите номер квартиры или текст в поле Поиск.",
+              "text": "Выберите квартиру, пункт, статус или исполнителя.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -815,7 +827,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/vq18rmlc",
+      "aid": "sh/gfqdw361",
       "id": "18",
       "bbox": [
         88,
@@ -832,7 +844,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/aps7yh4r",
+      "aid": "sh/h0zu5o7m",
       "id": "19",
       "bbox": [
         106,
@@ -848,7 +860,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yh03m98b",
+      "aid": "sh/xwratkza",
       "id": "20",
       "bbox": [
         106,
@@ -914,24 +926,24 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zi9kve9w",
+      "aid": "sh/wvit0fyp",
       "id": "21",
       "bbox": [
-        162,
+        166,
         392,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Примените фильтры",
-      "textPreview": "Примените фильтры",
+      "text": "Отметьте замечания",
+      "textPreview": "Отметьте замечания",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -945,28 +957,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Примените фильтры"
+            "text": "Отметьте замечания"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Примените фильтры",
+          "text": "Отметьте замечания",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Примените фильтры",
+              "text": "Отметьте замечания",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -978,23 +992,23 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0jilojqh",
+      "aid": "sh/vu9srah4",
       "id": "22",
       "bbox": [
-        162,
+        180,
         418,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
-      "textPreview": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+      "text": "Поставьте галочки у строк, которые нужно выдать.",
+      "textPreview": "Поставьте галочки у строк, которые нужно выдать.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1008,26 +1022,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку."
+            "text": "Поставьте галочки у строк, которые нужно выдать."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+          "text": "Поставьте галочки у строк, которые нужно выдать.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+              "text": "Поставьте галочки у строк, которые нужно выдать.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1039,7 +1055,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lkr2xor2",
+      "aid": "sh/a90bypgz",
       "id": "23",
       "bbox": [
         88,
@@ -1056,7 +1072,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qt0ji98f",
+      "aid": "sh/98rapkze",
       "id": "24",
       "bbox": [
         106,
@@ -1072,7 +1088,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bu9kre90",
+      "aid": "sh/87i9wfyt",
       "id": "25",
       "bbox": [
         106,
@@ -1138,24 +1154,24 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/cvilkjql",
+      "aid": "sh/n6psnah8",
       "id": "26",
       "bbox": [
-        162,
+        166,
         458,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Откройте карточку",
-      "textPreview": "Откройте карточку",
+      "text": "Выберите сотрудника",
+      "textPreview": "Выберите сотрудника",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1169,28 +1185,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Откройте карточку"
+            "text": "Выберите сотрудника"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Откройте карточку",
+          "text": "Выберите сотрудника",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Откройте карточку",
+              "text": "Выберите сотрудника",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1202,23 +1220,23 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/dgr2t4rq",
+      "aid": "sh/m5gru5gn",
       "id": "27",
       "bbox": [
-        162,
+        180,
         484,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Нажмите на нужную карточку квартиры или коммерции.",
-      "textPreview": "Нажмите на нужную карточку квартиры или коммерции.",
+      "text": "Укажите исполнителя и дату выдачи.",
+      "textPreview": "Укажите исполнителя и дату выдачи.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1232,26 +1250,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Нажмите на нужную карточку квартиры или коммерции."
+            "text": "Укажите исполнителя и дату выдачи."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Нажмите на нужную карточку квартиры или коммерции.",
+          "text": "Укажите исполнителя и дату выдачи.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Нажмите на нужную карточку квартиры или коммерции.",
+              "text": "Укажите исполнителя и дату выдачи.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1263,7 +1283,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2pgjep83",
+      "aid": "sh/t4ba14zi",
       "id": "28",
       "bbox": [
         88,
@@ -1280,7 +1300,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3qpknu9o",
+      "aid": "sh/s32t8zyx",
       "id": "29",
       "bbox": [
         106,
@@ -1296,7 +1316,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5kf6tsb6",
+      "aid": "sh/q9w721wf",
       "id": "30",
       "bbox": [
         106,
@@ -1362,24 +1382,24 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/4jm5knal",
+      "aid": "sh/ba58v6x0",
       "id": "31",
       "bbox": [
-        162,
+        166,
         524,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Проверьте данные",
-      "textPreview": "Проверьте данные",
+      "text": "Сохраните выдачу",
+      "textPreview": "Сохраните выдачу",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1393,28 +1413,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Проверьте данные"
+            "text": "Сохраните выдачу"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Проверьте данные",
+          "text": "Сохраните выдачу",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Проверьте данные",
+              "text": "Сохраните выдачу",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1426,23 +1448,23 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/jidor2tg",
+      "aid": "sh/cbep4bel",
       "id": "32",
       "bbox": [
-        162,
+        180,
         550,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
-      "textPreview": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+      "text": "После сохранения задачи появятся у сотрудника в его списке.",
+      "textPreview": "После сохранения задачи появятся у сотрудника в его списке.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1456,26 +1478,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы."
+            "text": "После сохранения задачи появятся у сотрудника в его списке."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+          "text": "После сохранения задачи появятся у сотрудника в его списке.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+              "text": "После сохранения задачи появятся у сотрудника в его списке.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1487,7 +1511,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ih4nixsv",
+      "aid": "sh/dcnqxgf6",
       "id": "33",
       "bbox": [
         88,
@@ -1504,24 +1528,24 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hgvmpsba",
+      "aid": "sh/25c7y1wj",
       "id": "34",
       "bbox": [
         116,
-        606,
-        320,
+        604,
+        260,
         24
       ],
       "geometry": "rect",
-      "text": "Подсказка",
-      "textPreview": "Подсказка",
+      "text": "Проверка",
+      "textPreview": "Проверка",
       "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "fontSize": 20,
         "typeface": "Arial",
         "color": "#258A11",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1535,28 +1559,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Подсказка"
+            "text": "Проверка"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Подсказка",
+          "text": "Проверка",
           "resolvedTextStyle": {
             "fontSize": 20,
             "typeface": "Arial",
             "color": "#258A11",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Подсказка",
+              "text": "Проверка",
               "fontSize": 20,
               "typeface": "Arial",
               "color": "#258A11",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1568,23 +1594,23 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wfm5gnap",
+      "aid": "sh/36l8r6x4",
       "id": "35",
       "bbox": [
-        420,
+        380,
         609,
-        720,
+        740,
         22
       ],
       "geometry": "rect",
-      "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
-      "textPreview": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+      "text": "Выдавайте только актуальные невыполненные замечания.",
+      "textPreview": "Выдавайте только актуальные невыполненные замечания.",
       "resolvedFontSize": 16,
       "resolvedTextStyle": {
         "fontSize": 16,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1598,26 +1624,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна."
+            "text": "Выдавайте только актуальные невыполненные замечания."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+          "text": "Выдавайте только актуальные невыполненные замечания.",
           "resolvedTextStyle": {
             "fontSize": 16,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+              "text": "Выдавайте только актуальные невыполненные замечания.",
               "fontSize": 16,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0

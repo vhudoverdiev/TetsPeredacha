@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/ieq8ov",
-    "id": "ieq8ov",
+    "aid": "sl/4nyqba",
+    "id": "4nyqba",
     "slide": 8,
-    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutId": "f858cffa-0ba0-4978-abf0-396ab83fd905",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
     "masterLayoutName": "Master",
     "backgroundColor": "#FBFDF8",
     "frame": {
@@ -45,15 +45,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "id": "f858cffa-0ba0-4978-abf0-396ab83fd905",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "parentLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "id": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -64,7 +64,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ojax4ji1",
+      "aid": "sh/pk32h47i",
       "id": "1",
       "bbox": [
         1152,
@@ -80,7 +80,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ni1wve1g",
+      "aid": "sh/2xsjmpor",
       "id": "2",
       "bbox": [
         695,
@@ -96,7 +96,7 @@
       "order": 3,
       "kind": "image",
       "scope": "slide",
-      "aid": "im/bqxgvuts",
+      "aid": "im/658ba1wv",
       "id": "3",
       "bbox": [
         44,
@@ -108,7 +108,7 @@
       "contentType": "image/png",
       "imageFit": "contain",
       "asset": {
-        "assetId": "374673f2-7fee-4d66-b896-0399f5731c7e",
+        "assetId": "8d693b48-89b7-44d5-9f9e-c35424fc581c",
         "contentType": "image/png",
         "byteLength": 20679
       }
@@ -117,7 +117,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xo3y18ji",
+      "aid": "sh/gva1kf6l",
       "id": "4",
       "bbox": [
         116,
@@ -126,8 +126,8 @@
         34
       ],
       "geometry": "rect",
-      "text": "08 · ЗАДАЧИ",
-      "textPreview": "08 · ЗАДАЧИ",
+      "text": "08 · ПОДРЯДЧИКИ",
+      "textPreview": "08 · ПОДРЯДЧИКИ",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
@@ -148,14 +148,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "08 · ЗАДАЧИ"
+            "text": "08 · ПОДРЯДЧИКИ"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "08 · ЗАДАЧИ",
+          "text": "08 · ПОДРЯДЧИКИ",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
@@ -165,7 +165,7 @@
           "runs": [
             {
               "index": 1,
-              "text": "08 · ЗАДАЧИ",
+              "text": "08 · ПОДРЯДЧИКИ",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#258A11",
@@ -181,7 +181,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wnux83ix",
+      "aid": "sh/1wjidk76",
       "id": "5",
       "bbox": [
         86,
@@ -190,15 +190,15 @@
         62
       ],
       "geometry": "rect",
-      "text": "Выдача задач сотрудникам",
-      "textPreview": "Выдача задач сотрудникам",
-      "resolvedFontSize": 36,
+      "text": "Добавление подрядчика",
+      "textPreview": "Добавление подрядчика",
+      "resolvedFontSize": 38,
       "resolvedTextStyle": {
-        "fontSize": 36,
+        "fontSize": 38,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -212,28 +212,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Выдача задач сотрудникам"
+            "text": "Добавление подрядчика"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Выдача задач сотрудникам",
+          "text": "Добавление подрядчика",
           "resolvedTextStyle": {
-            "fontSize": 36,
+            "fontSize": 38,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Выдача задач сотрудникам",
-              "fontSize": 36,
+              "text": "Добавление подрядчика",
+              "fontSize": 38,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -245,23 +247,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bmlgzy1c",
+      "aid": "sh/etsjipov",
       "id": "6",
       "bbox": [
-        88,
+        160,
         205,
-        1060,
+        960,
         34
       ],
       "geometry": "rect",
-      "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
-      "textPreview": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
+      "text": "Подрядчик нужен для претензий, распределения замечаний и контроля исполнителей.",
+      "textPreview": "Подрядчик нужен для претензий, распределения замечаний и контроля исполнителей.",
       "resolvedFontSize": 19,
       "resolvedTextStyle": {
         "fontSize": 19,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -275,26 +277,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю."
+            "text": "Подрядчик нужен для претензий, распределения замечаний и контроля исполнителей."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
+          "text": "Подрядчик нужен для претензий, распределения замечаний и контроля исполнителей.",
           "resolvedTextStyle": {
             "fontSize": 19,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.",
+              "text": "Подрядчик нужен для претензий, распределения замечаний и контроля исполнителей.",
               "fontSize": 19,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -306,7 +310,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/alcf6t0r",
+      "aid": "sh/fu10bap0",
       "id": "7",
       "bbox": [
         88,
@@ -367,7 +371,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/dszep4je",
+      "aid": "sh/sra1gf6p",
       "id": "8",
       "bbox": [
         88,
@@ -384,7 +388,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/crqxwzit",
+      "aid": "sh/tsji9k7a",
       "id": "9",
       "bbox": [
         106,
@@ -400,7 +404,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6ls72pk7",
+      "aid": "sh/9sbi9cna",
       "id": "10",
       "bbox": [
         106,
@@ -466,24 +470,24 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/rm1obuls",
+      "aid": "sh/or2h07m5",
       "id": "11",
       "bbox": [
-        162,
+        166,
         260,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Откройте раздел",
-      "textPreview": "Откройте раздел",
+      "text": "Откройте Подрядчики",
+      "textPreview": "Откройте Подрядчики",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -497,28 +501,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Откройте раздел"
+            "text": "Откройте Подрядчики"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Откройте раздел",
+          "text": "Откройте Подрядчики",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Откройте раздел",
+              "text": "Откройте Подрядчики",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -530,23 +536,23 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/snap4z2d",
+      "aid": "sh/nqt07m5k",
       "id": "12",
       "bbox": [
-        162,
+        180,
         286,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "В левом меню нажмите Выдача задач.",
-      "textPreview": "В левом меню нажмите Выдача задач.",
+      "text": "В левом меню нажмите Подрядчики.",
+      "textPreview": "В левом меню нажмите Подрядчики.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -560,26 +566,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "В левом меню нажмите Выдача задач."
+            "text": "В левом меню нажмите Подрядчики."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "В левом меню нажмите Выдача задач.",
+          "text": "В левом меню нажмите Подрядчики.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "В левом меню нажмите Выдача задач.",
+              "text": "В левом меню нажмите Подрядчики.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -591,7 +599,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tojqd43y",
+      "aid": "sh/mpkzyh4z",
       "id": "13",
       "bbox": [
         88,
@@ -608,7 +616,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/e9s769kj",
+      "aid": "sh/1obi5cne",
       "id": "14",
       "bbox": [
         106,
@@ -624,7 +632,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fa18fel4",
+      "aid": "sh/0n2hw7mt",
       "id": "15",
       "bbox": [
         106,
@@ -690,24 +698,24 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gbap8j29",
+      "aid": "sh/z2t03258",
       "id": "16",
       "bbox": [
-        162,
+        166,
         326,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Отфильтруйте список",
-      "textPreview": "Отфильтруйте список",
+      "text": "Нажмите добавить",
+      "textPreview": "Нажмите добавить",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -721,28 +729,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Отфильтруйте список"
+            "text": "Нажмите добавить"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Отфильтруйте список",
+          "text": "Нажмите добавить",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Отфильтруйте список",
+              "text": "Нажмите добавить",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -754,23 +764,23 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1c3qho3u",
+      "aid": "sh/e10zux4n",
       "id": "17",
       "bbox": [
-        162,
+        180,
         352,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Выберите квартиру, пункт, статус или исполнителя.",
-      "textPreview": "Выберите квартиру, пункт, статус или исполнителя.",
+      "text": "Откройте форму создания нового подрядчика.",
+      "textPreview": "Откройте форму создания нового подрядчика.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -784,26 +794,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Выберите квартиру, пункт, статус или исполнителя."
+            "text": "Откройте форму создания нового подрядчика."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Выберите квартиру, пункт, статус или исполнителя.",
+          "text": "Откройте форму создания нового подрядчика.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Выберите квартиру, пункт, статус или исполнителя.",
+              "text": "Откройте форму создания нового подрядчика.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -815,7 +827,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2dc7a9kf",
+      "aid": "sh/d0ri1sni",
       "id": "18",
       "bbox": [
         88,
@@ -832,7 +844,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3el8jel0",
+      "aid": "sh/szihsnmx",
       "id": "19",
       "bbox": [
         106,
@@ -848,7 +860,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ziloreh8",
+      "aid": "sh/43m187ut",
       "id": "20",
       "bbox": [
         106,
@@ -914,24 +926,24 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yhc7yt0n",
+      "aid": "sh/54vihcvy",
       "id": "21",
       "bbox": [
-        162,
+        166,
         392,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Отметьте замечания",
-      "textPreview": "Отметьте замечания",
+      "text": "Заполните данные",
+      "textPreview": "Заполните данные",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -945,28 +957,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Отметьте замечания"
+            "text": "Заполните данные"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Отметьте замечания",
+          "text": "Заполните данные",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Отметьте замечания",
+              "text": "Заполните данные",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -978,23 +992,23 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lkn6toze",
+      "aid": "sh/ih4z6xcn",
       "id": "22",
       "bbox": [
-        162,
+        180,
         418,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Поставьте галочки у строк, которые нужно выдать.",
-      "textPreview": "Поставьте галочки у строк, которые нужно выдать.",
+      "text": "Укажите название, контактное лицо, телефон и email, если они известны.",
+      "textPreview": "Укажите название, контактное лицо, телефон и email, если они известны.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1008,26 +1022,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Поставьте галочки у строк, которые нужно выдать."
+            "text": "Укажите название, контактное лицо, телефон и email, если они известны."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Поставьте галочки у строк, которые нужно выдать.",
+          "text": "Укажите название, контактное лицо, телефон и email, если они известны.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Поставьте галочки у строк, которые нужно выдать.",
+              "text": "Укажите название, контактное лицо, телефон и email, если они известны.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1039,7 +1055,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0jep0jit",
+      "aid": "sh/j2d0f2d8",
       "id": "23",
       "bbox": [
         88,
@@ -1056,7 +1072,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/belonehw",
+      "aid": "sh/wf2h4neh",
       "id": "24",
       "bbox": [
         106,
@@ -1072,7 +1088,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qdcnu90r",
+      "aid": "sh/hgvidsv2",
       "id": "25",
       "bbox": [
         106,
@@ -1138,24 +1154,24 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/dg36poz2",
+      "aid": "sh/udkz2dwb",
       "id": "26",
       "bbox": [
-        162,
+        166,
         458,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Выберите сотрудника",
-      "textPreview": "Выберите сотрудника",
+      "text": "Выберите разделы работ",
+      "textPreview": "Выберите разделы работ",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1169,28 +1185,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Выберите сотрудника"
+            "text": "Выберите разделы работ"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Выберите сотрудника",
+          "text": "Выберите разделы работ",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Выберите сотрудника",
+              "text": "Выберите разделы работ",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1202,23 +1220,23 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/cfu5wjih",
+      "aid": "sh/vet0bidw",
       "id": "27",
       "bbox": [
-        162,
+        180,
         484,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Укажите исполнителя и дату выдачи.",
-      "textPreview": "Укажите исполнителя и дату выдачи.",
+      "text": "Отметьте пункты или направления, за которые отвечает подрядчик.",
+      "textPreview": "Отметьте пункты или направления, за которые отвечает подрядчик.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1232,26 +1250,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Укажите исполнителя и дату выдачи."
+            "text": "Отметьте пункты или направления, за которые отвечает подрядчик."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Укажите исполнителя и дату выдачи.",
+          "text": "Отметьте пункты или направления, за которые отвечает подрядчик.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Укажите исполнителя и дату выдачи.",
+              "text": "Отметьте пункты или направления, за которые отвечает подрядчик.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1263,7 +1283,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3q1ojuh0",
+      "aid": "sh/0b61grul",
       "id": "28",
       "bbox": [
         88,
@@ -1280,7 +1300,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2psnq90f",
+      "aid": "sh/1cfipwv6",
       "id": "29",
       "bbox": [
         106,
@@ -1296,7 +1316,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/svql0vyd",
+      "aid": "sh/bi1cva1k",
       "id": "30",
       "bbox": [
         106,
@@ -1362,24 +1382,24 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/twzmt0fy",
+      "aid": "sh/ahsb250f",
       "id": "31",
       "bbox": [
-        162,
+        166,
         524,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Сохраните выдачу",
-      "textPreview": "Сохраните выдачу",
+      "text": "Сохраните",
+      "textPreview": "Сохраните",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1393,28 +1413,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Сохраните выдачу"
+            "text": "Сохраните"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Сохраните выдачу",
+          "text": "Сохраните",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Сохраните выдачу",
+              "text": "Сохраните",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1426,23 +1448,23 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6t83y5g7",
+      "aid": "sh/x43uxkjq",
       "id": "32",
       "bbox": [
-        162,
+        180,
         550,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "После сохранения задачи появятся у сотрудника в его списке.",
-      "textPreview": "После сохранения задачи появятся у сотрудника в его списке.",
+      "text": "Нажмите Сохранить и проверьте, что подрядчик появился в списке.",
+      "textPreview": "Нажмите Сохранить и проверьте, что подрядчик появился в списке.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1456,26 +1478,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "После сохранения задачи появятся у сотрудника в его списке."
+            "text": "Нажмите Сохранить и проверьте, что подрядчик появился в списке."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "После сохранения задачи появятся у сотрудника в его списке.",
+          "text": "Нажмите Сохранить и проверьте, что подрядчик появился в списке.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "После сохранения задачи появятся у сотрудника в его списке.",
+              "text": "Нажмите Сохранить и проверьте, что подрядчик появился в списке.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1487,7 +1511,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ruh4raxs",
+      "aid": "sh/w3ud4fi5",
       "id": "33",
       "bbox": [
         88,
@@ -1504,24 +1528,24 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gjql4fy9",
+      "aid": "sh/j6lczu1w",
       "id": "34",
       "bbox": [
         116,
-        606,
-        320,
+        604,
+        260,
         24
       ],
       "geometry": "rect",
-      "text": "Проверка",
-      "textPreview": "Проверка",
+      "text": "Важно",
+      "textPreview": "Важно",
       "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "fontSize": 20,
         "typeface": "Arial",
         "color": "#258A11",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1535,28 +1559,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Проверка"
+            "text": "Важно"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Проверка",
+          "text": "Важно",
           "resolvedTextStyle": {
             "fontSize": 20,
             "typeface": "Arial",
             "color": "#258A11",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Проверка",
+              "text": "Важно",
               "fontSize": 20,
               "typeface": "Arial",
               "color": "#258A11",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1568,23 +1594,23 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1kjmxkfu",
+      "aid": "sh/y5cv6p0b",
       "id": "35",
       "bbox": [
-        420,
+        380,
         609,
-        720,
+        740,
         22
       ],
       "geometry": "rect",
-      "text": "Выдавайте только актуальные невыполненные замечания.",
-      "textPreview": "Выдавайте только актуальные невыполненные замечания.",
+      "text": "Без правильного раздела работ подрядчик может не появиться при формировании претензии.",
+      "textPreview": "Без правильного раздела работ подрядчик может не появиться при формировании претензии.",
       "resolvedFontSize": 16,
       "resolvedTextStyle": {
         "fontSize": 16,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1598,26 +1624,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Выдавайте только актуальные невыполненные замечания."
+            "text": "Без правильного раздела работ подрядчик может не появиться при формировании претензии."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Выдавайте только актуальные невыполненные замечания.",
+          "text": "Без правильного раздела работ подрядчик может не появиться при формировании претензии.",
           "resolvedTextStyle": {
             "fontSize": 16,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Выдавайте только актуальные невыполненные замечания.",
+              "text": "Без правильного раздела работ подрядчик может не появиться при формировании претензии.",
               "fontSize": 16,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0

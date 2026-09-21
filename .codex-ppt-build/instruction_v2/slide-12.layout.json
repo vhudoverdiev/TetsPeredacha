@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/mr8hkb",
-    "id": "mr8hkb",
+    "aid": "sl/f2cu9i",
+    "id": "f2cu9i",
     "slide": 12,
-    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutId": "f858cffa-0ba0-4978-abf0-396ab83fd905",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
     "masterLayoutName": "Master",
     "backgroundColor": "#FBFDF8",
     "frame": {
@@ -45,15 +45,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "id": "f858cffa-0ba0-4978-abf0-396ab83fd905",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "parentLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "id": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -64,7 +64,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/4nml4jap",
+      "aid": "sh/83id0re9",
       "id": "1",
       "bbox": [
         1152,
@@ -80,7 +80,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/jmdkbet4",
+      "aid": "sh/7ipc76do",
       "id": "2",
       "bbox": [
         695,
@@ -96,7 +96,7 @@
       "order": 3,
       "kind": "image",
       "scope": "slide",
-      "aid": "im/ba9sj6lg",
+      "aid": "im/j6p0j6ls",
       "id": "3",
       "bbox": [
         44,
@@ -108,7 +108,7 @@
       "contentType": "image/png",
       "imageFit": "contain",
       "asset": {
-        "assetId": "6f0f379f-fa22-4705-8f97-6d569bb6462f",
+        "assetId": "8cb11c73-abcc-45bb-aba0-b32cbfac7e38",
         "contentType": "image/png",
         "byteLength": 20679
       }
@@ -117,7 +117,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/h0v29oby",
+      "aid": "sh/lg7u5wvi",
       "id": "4",
       "bbox": [
         116,
@@ -126,8 +126,8 @@
         34
       ],
       "geometry": "rect",
-      "text": "12 · ЗАМЕРЫ",
-      "textPreview": "12 · ЗАМЕРЫ",
+      "text": "12 · МАТЕРИАЛЫ",
+      "textPreview": "12 · МАТЕРИАЛЫ",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
@@ -148,14 +148,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "12 · ЗАМЕРЫ"
+            "text": "12 · МАТЕРИАЛЫ"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "12 · ЗАМЕРЫ",
+          "text": "12 · МАТЕРИАЛЫ",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
@@ -165,7 +165,7 @@
           "runs": [
             {
               "index": 1,
-              "text": "12 · ЗАМЕРЫ",
+              "text": "12 · МАТЕРИАЛЫ",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#258A11",
@@ -181,7 +181,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wz210jat",
+      "aid": "sh/kfydwrex",
       "id": "5",
       "bbox": [
         86,
@@ -190,15 +190,15 @@
         62
       ],
       "geometry": "rect",
-      "text": "Замеры",
-      "textPreview": "Замеры",
-      "resolvedFontSize": 36,
+      "text": "Расход материалов",
+      "textPreview": "Расход материалов",
+      "resolvedFontSize": 38,
       "resolvedTextStyle": {
-        "fontSize": 36,
+        "fontSize": 38,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -212,28 +212,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Замеры"
+            "text": "Расход материалов"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Замеры",
+          "text": "Расход материалов",
           "resolvedTextStyle": {
-            "fontSize": 36,
+            "fontSize": 38,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Замеры",
-              "fontSize": 36,
+              "text": "Расход материалов",
+              "fontSize": 38,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -245,23 +247,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/vytk7et8",
+      "aid": "sh/zepc3mxc",
       "id": "6",
       "bbox": [
-        88,
+        160,
         205,
-        1060,
+        960,
         34
       ],
       "geometry": "rect",
-      "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
-      "textPreview": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
+      "text": "Материалы списываются на конкретную работу, чтобы сохранить историю расхода.",
+      "textPreview": "Материалы списываются на конкретную работу, чтобы сохранить историю расхода.",
       "resolvedFontSize": 19,
       "resolvedTextStyle": {
         "fontSize": 19,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -275,26 +277,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам."
+            "text": "Материалы списываются на конкретную работу, чтобы сохранить историю расхода."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
+          "text": "Материалы списываются на конкретную работу, чтобы сохранить историю расхода.",
           "resolvedTextStyle": {
             "fontSize": 19,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
+              "text": "Материалы списываются на конкретную работу, чтобы сохранить историю расхода.",
               "fontSize": 19,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -306,7 +310,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/uxkjy9sn",
+      "aid": "sh/ydgvuhw7",
       "id": "7",
       "bbox": [
         88,
@@ -367,7 +371,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1wf2l8ri",
+      "aid": "sh/5cbehgv2",
       "id": "8",
       "bbox": [
         88,
@@ -384,7 +388,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0v6lc3ax",
+      "aid": "sh/4b2d8veh",
       "id": "9",
       "bbox": [
         106,
@@ -400,7 +404,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6dojap0j",
+      "aid": "sh/qhsz2hov",
       "id": "10",
       "bbox": [
         106,
@@ -466,24 +470,24 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7exkjuh4",
+      "aid": "sh/ri10bmpg",
       "id": "11",
       "bbox": [
-        162,
+        166,
         260,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Откройте Замеры",
-      "textPreview": "Откройте Замеры",
+      "text": "Откройте раздел",
+      "textPreview": "Откройте раздел",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -497,28 +501,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Откройте Замеры"
+            "text": "Откройте раздел"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Откройте Замеры",
+          "text": "Откройте раздел",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Откройте Замеры",
+              "text": "Откройте раздел",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -530,23 +536,23 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/sf61czip",
+      "aid": "sh/sjah4761",
       "id": "12",
       "bbox": [
-        162,
+        180,
         286,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "В левом меню нажмите Замеры.",
-      "textPreview": "В левом меню нажмите Замеры.",
+      "text": "В левом меню нажмите Расход материалов.",
+      "textPreview": "В левом меню нажмите Расход материалов.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -560,26 +566,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "В левом меню нажмите Замеры."
+            "text": "В левом меню нажмите Расход материалов."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "В левом меню нажмите Замеры.",
+          "text": "В левом меню нажмите Расход материалов.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "В левом меню нажмите Замеры.",
+              "text": "В левом меню нажмите Расход материалов.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -591,7 +599,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tgf2l4za",
+      "aid": "sh/dkjidc7m",
       "id": "13",
       "bbox": [
         88,
@@ -608,7 +616,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yp4j650n",
+      "aid": "sh/id8zyxoj",
       "id": "14",
       "bbox": [
         106,
@@ -624,7 +632,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/jqd0fah8",
+      "aid": "sh/3eh072p4",
       "id": "15",
       "bbox": [
         106,
@@ -690,24 +698,24 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/krm18fid",
+      "aid": "sh/4fqh076p",
       "id": "16",
       "bbox": [
-        162,
+        166,
         326,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Создайте задачу",
-      "textPreview": "Создайте задачу",
+      "text": "Создайте запись",
+      "textPreview": "Создайте запись",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -721,28 +729,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Создайте задачу"
+            "text": "Создайте запись"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Создайте задачу",
+          "text": "Создайте запись",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Создайте задачу",
+              "text": "Создайте запись",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -754,23 +764,23 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5cf2hkzy",
+      "aid": "sh/5gji9c7a",
       "id": "17",
       "bbox": [
-        162,
+        180,
         352,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
-      "textPreview": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
+      "text": "Нажмите добавление расхода и выберите квартиру или коммерцию.",
+      "textPreview": "Нажмите добавление расхода и выберите квартиру или коммерцию.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -784,26 +794,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Нажмите Добавить задачу, выберите помещение и заполните текст."
+            "text": "Нажмите добавление расхода и выберите квартиру или коммерцию."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
+          "text": "Нажмите добавление расхода и выберите квартиру или коммерцию.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
+              "text": "Нажмите добавление расхода и выберите квартиру или коммерцию.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -815,7 +827,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2l8ji90r",
+      "aid": "sh/29cja1o3",
       "id": "18",
       "bbox": [
         88,
@@ -832,7 +844,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3mhkrehc",
+      "aid": "sh/nal0j6po",
       "id": "19",
       "bbox": [
         106,
@@ -848,7 +860,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zq9gj6ho",
+      "aid": "sh/judwby50",
       "id": "20",
       "bbox": [
         106,
@@ -914,24 +926,24 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ep0za1g3",
+      "aid": "sh/yt4f2t4f",
       "id": "21",
       "bbox": [
-        162,
+        166,
         392,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Работайте со списком",
-      "textPreview": "Работайте со списком",
+      "text": "Выберите работу",
+      "textPreview": "Выберите работу",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -945,28 +957,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Работайте со списком"
+            "text": "Выберите работу"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Работайте со списком",
+          "text": "Выберите работу",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Работайте со списком",
+              "text": "Выберите работу",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -978,23 +992,23 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1sbylgfu",
+      "aid": "sh/lwvedon6",
       "id": "22",
       "bbox": [
-        162,
+        180,
         418,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
-      "textPreview": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
+      "text": "Привяжите материал к конкретному замечанию или пункту работ.",
+      "textPreview": "Привяжите материал к конкретному замечанию или пункту работ.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1008,26 +1022,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец."
+            "text": "Привяжите материал к конкретному замечанию или пункту работ."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
+          "text": "Привяжите материал к конкретному замечанию или пункту работ.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
+              "text": "Привяжите материал к конкретному замечанию или пункту работ.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1039,7 +1055,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0rihcby9",
+      "aid": "sh/kvmx4jml",
       "id": "23",
       "bbox": [
         88,
@@ -1056,7 +1072,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nutgn6x0",
+      "aid": "sh/7ixwfy5w",
       "id": "24",
       "bbox": [
         106,
@@ -1072,7 +1088,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/mtkzelgf",
+      "aid": "sh/6xof6t4b",
       "id": "25",
       "bbox": [
         106,
@@ -1138,24 +1154,24 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9wbypgfq",
+      "aid": "sh/tkfyh8n2",
       "id": "26",
       "bbox": [
-        162,
+        166,
         458,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Меняйте статус",
-      "textPreview": "Меняйте статус",
+      "text": "Укажите материал",
+      "textPreview": "Укажите материал",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1169,28 +1185,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Меняйте статус"
+            "text": "Укажите материал"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Меняйте статус",
+          "text": "Укажите материал",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Меняйте статус",
+              "text": "Укажите материал",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1202,23 +1220,23 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ov2hgby5",
+      "aid": "sh/8j6x83mh",
       "id": "27",
       "bbox": [
-        162,
+        180,
         484,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "После выполнения отметьте задачу как выполненную или заказанную.",
-      "textPreview": "После выполнения отметьте задачу как выполненную или заказанную.",
+      "text": "Заполните наименование, единицу измерения и количество.",
+      "textPreview": "Заполните наименование, единицу измерения и количество.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1232,26 +1250,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "После выполнения отметьте задачу как выполненную или заказанную."
+            "text": "Заполните наименование, единицу измерения и количество."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "После выполнения отметьте задачу как выполненную или заказанную.",
+          "text": "Заполните наименование, единицу измерения и количество.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "После выполнения отметьте задачу как выполненную или заказанную.",
+              "text": "Заполните наименование, единицу измерения и количество.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1263,7 +1283,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bytgrqxw",
+      "aid": "sh/vmxgji58",
       "id": "28",
       "bbox": [
         88,
@@ -1280,7 +1300,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/axkzilgb",
+      "aid": "sh/ulofad4n",
       "id": "29",
       "bbox": [
         106,
@@ -1296,7 +1316,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8nmx8vep",
+      "aid": "sh/srqd0n2l",
       "id": "30",
       "bbox": [
         106,
@@ -1362,24 +1382,24 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tovy10va",
+      "aid": "sh/dszetsj6",
       "id": "31",
       "bbox": [
-        162,
+        166,
         524,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Проверяйте карточку",
-      "textPreview": "Проверяйте карточку",
+      "text": "Сохраните расход",
+      "textPreview": "Сохраните расход",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1393,28 +1413,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Проверяйте карточку"
+            "text": "Сохраните расход"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Проверяйте карточку",
+          "text": "Сохраните расход",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Проверяйте карточку",
+              "text": "Сохраните расход",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1426,23 +1448,23 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6l4f6lwj",
+      "aid": "sh/qp8vydkv",
       "id": "32",
       "bbox": [
-        162,
+        180,
         550,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
-      "textPreview": "Открывайте карточку задачи, если нужен текст, история или действие.",
+      "text": "После сохранения проверьте запись в списке и истории помещения.",
+      "textPreview": "После сохранения проверьте запись в списке и истории помещения.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1456,26 +1478,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Открывайте карточку задачи, если нужен текст, история или действие."
+            "text": "После сохранения проверьте запись в списке и истории помещения."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
+          "text": "После сохранения проверьте запись в списке и истории помещения.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
+              "text": "После сохранения проверьте запись в списке и истории помещения.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1487,7 +1511,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7mdgzqd4",
+      "aid": "sh/rqhwri1g",
       "id": "33",
       "bbox": [
         88,
@@ -1504,24 +1528,24 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/kzmx4bed",
+      "aid": "sh/4n6dw32p",
       "id": "34",
       "bbox": [
         116,
-        606,
-        320,
+        604,
+        260,
         24
       ],
       "geometry": "rect",
-      "text": "Порядок",
-      "textPreview": "Порядок",
+      "text": "Правило",
+      "textPreview": "Правило",
       "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "fontSize": 20,
         "typeface": "Arial",
         "color": "#258A11",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1535,28 +1559,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Порядок"
+            "text": "Правило"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Порядок",
+          "text": "Правило",
           "resolvedTextStyle": {
             "fontSize": 20,
             "typeface": "Arial",
             "color": "#258A11",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Порядок",
+              "text": "Правило",
               "fontSize": 20,
               "typeface": "Arial",
               "color": "#258A11",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1568,23 +1594,23 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lkvyxgvy",
+      "aid": "sh/5ozep8ja",
       "id": "35",
       "bbox": [
-        420,
+        380,
         609,
-        720,
+        740,
         22
       ],
       "geometry": "rect",
-      "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
-      "textPreview": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
+      "text": "Не списывайте материал без привязки к работе: потом сложно проверить расход.",
+      "textPreview": "Не списывайте материал без привязки к работе: потом сложно проверить расход.",
       "resolvedFontSize": 16,
       "resolvedTextStyle": {
         "fontSize": 16,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1594,34 +1620,32 @@
         }
       },
       "textLayout": {
-        "lineCount": 2,
+        "lineCount": 1,
         "lines": [
           {
             "index": 1,
-            "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую"
-          },
-          {
-            "index": 2,
-            "text": "страницу."
+            "text": "Не списывайте материал без привязки к работе: потом сложно проверить расход."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
+          "text": "Не списывайте материал без привязки к работе: потом сложно проверить расход.",
           "resolvedTextStyle": {
             "fontSize": 16,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
+              "text": "Не списывайте материал без привязки к работе: потом сложно проверить расход.",
               "fontSize": 16,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0

@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/7f0r0x",
-    "id": "7f0r0x",
+    "aid": "sl/jkxhij",
+    "id": "jkxhij",
     "slide": 4,
-    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutId": "f858cffa-0ba0-4978-abf0-396ab83fd905",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
     "masterLayoutName": "Master",
     "backgroundColor": "#FBFDF8",
     "frame": {
@@ -45,15 +45,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "id": "f858cffa-0ba0-4978-abf0-396ab83fd905",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "parentLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "id": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -64,7 +64,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/vylgfqlc",
+      "aid": "sh/2twzahsb",
       "id": "1",
       "bbox": [
         1152,
@@ -80,7 +80,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gzuh8v2x",
+      "aid": "sh/pwnilwbm",
       "id": "2",
       "bbox": [
         695,
@@ -96,7 +96,7 @@
       "order": 3,
       "kind": "image",
       "scope": "slide",
-      "aid": "im/o7qhonid",
+      "aid": "im/54fydsj6",
       "id": "3",
       "bbox": [
         44,
@@ -108,7 +108,7 @@
       "contentType": "image/png",
       "imageFit": "contain",
       "asset": {
-        "assetId": "8a4f7402-deac-4b51-9ab1-3975524dea91",
+        "assetId": "c2bad9f4-9fec-4bfc-8a2b-7a7285aa83f8",
         "contentType": "image/png",
         "byteLength": 20679
       }
@@ -117,7 +117,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/69sz2lkf",
+      "aid": "sh/byp0n6ts",
       "id": "4",
       "bbox": [
         116,
@@ -181,7 +181,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7a1gb6l0",
+      "aid": "sh/qxwze1s7",
       "id": "5",
       "bbox": [
         86,
@@ -192,13 +192,13 @@
       "geometry": "rect",
       "text": "Кнопка ПО при повторном осмотре",
       "textPreview": "Кнопка ПО при повторном осмотре",
-      "resolvedFontSize": 36,
+      "resolvedFontSize": 38,
       "resolvedTextStyle": {
-        "fontSize": 36,
+        "fontSize": 38,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -221,19 +221,21 @@
           "index": 1,
           "text": "Кнопка ПО при повторном осмотре",
           "resolvedTextStyle": {
-            "fontSize": 36,
+            "fontSize": 38,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
               "text": "Кнопка ПО при повторном осмотре",
-              "fontSize": 36,
+              "fontSize": 38,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -245,12 +247,12 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8bah4b2l",
+      "aid": "sh/dk7ipwby",
       "id": "6",
       "bbox": [
-        88,
+        160,
         205,
-        1060,
+        960,
         34
       ],
       "geometry": "rect",
@@ -261,7 +263,7 @@
         "fontSize": 19,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -271,11 +273,15 @@
         }
       },
       "textLayout": {
-        "lineCount": 1,
+        "lineCount": 2,
         "lines": [
           {
             "index": 1,
-            "text": "ПО используется, когда загружается акт повторного осмотра по квартире с уже существующими замечаниями."
+            "text": "ПО используется, когда загружается акт повторного осмотра по квартире с уже существующими"
+          },
+          {
+            "index": 2,
+            "text": "замечаниями."
           }
         ]
       },
@@ -286,7 +292,8 @@
           "resolvedTextStyle": {
             "fontSize": 19,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -294,7 +301,8 @@
               "text": "ПО используется, когда загружается акт повторного осмотра по квартире с уже существующими замечаниями.",
               "fontSize": 19,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -306,7 +314,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/twjydg36",
+      "aid": "sh/czy1gbad",
       "id": "7",
       "bbox": [
         88,
@@ -367,7 +375,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/q5cze5kz",
+      "aid": "sh/72l0b2to",
       "id": "8",
       "bbox": [
         88,
@@ -384,7 +392,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/r650nalk",
+      "aid": "sh/61cz2xc3",
       "id": "9",
       "bbox": [
         106,
@@ -400,7 +408,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/jqp0zix4",
+      "aid": "sh/4rmtgzyh",
       "id": "10",
       "bbox": [
         106,
@@ -466,12 +474,12 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ipgzqdgj",
+      "aid": "sh/5svup4z2",
       "id": "11",
       "bbox": [
-        162,
+        166,
         260,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
@@ -483,7 +491,7 @@
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -509,7 +517,8 @@
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -518,7 +527,8 @@
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -530,12 +540,12 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5sri1sfa",
+      "aid": "sh/ip4bepgb",
       "id": "12",
       "bbox": [
-        162,
+        180,
         286,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
@@ -546,7 +556,7 @@
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -571,7 +581,8 @@
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -579,7 +590,8 @@
               "text": "В форме акта нажмите кнопку ПО перед сохранением.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -591,7 +603,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/4rihsnyp",
+      "aid": "sh/3qdcnuhw",
       "id": "13",
       "bbox": [
         88,
@@ -608,7 +620,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ru9032xg",
+      "aid": "sh/svmtkjyd",
       "id": "14",
       "bbox": [
         106,
@@ -624,7 +636,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6t0zuxgv",
+      "aid": "sh/dgvut4zy",
       "id": "15",
       "bbox": [
         106,
@@ -690,12 +702,12 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tgri5sf6",
+      "aid": "sh/qt4bi9g7",
       "id": "16",
       "bbox": [
-        162,
+        166,
         326,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
@@ -707,7 +719,7 @@
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -733,7 +745,8 @@
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -742,7 +755,8 @@
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -754,12 +768,12 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/svi1w7yl",
+      "aid": "sh/rudcrehs",
       "id": "17",
       "bbox": [
-        162,
+        180,
         352,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
@@ -770,7 +784,7 @@
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -795,7 +809,8 @@
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -803,7 +818,8 @@
               "text": "Оставьте галочки только у новых замечаний из повторного акта.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -815,7 +831,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fi9072xc",
+      "aid": "sh/8z2t8fi9",
       "id": "18",
       "bbox": [
         88,
@@ -832,7 +848,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/eh0jyxgr",
+      "aid": "sh/tkbuhkzu",
       "id": "19",
       "bbox": [
         106,
@@ -848,7 +864,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/apobm54b",
+      "aid": "sh/p4jipcn6",
       "id": "20",
       "bbox": [
         106,
@@ -914,12 +930,12 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bqxcfalw",
+      "aid": "sh/o3a1w76l",
       "id": "21",
       "bbox": [
-        162,
+        166,
         392,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
@@ -931,7 +947,7 @@
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -957,7 +973,8 @@
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -966,7 +983,8 @@
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -978,12 +996,12 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wr6tofmh",
+      "aid": "sh/n210n25g",
       "id": "22",
       "bbox": [
-        162,
+        180,
         418,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
@@ -994,7 +1012,7 @@
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1019,7 +1037,8 @@
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1027,7 +1046,8 @@
               "text": "CRM переведет старые невыполненные замечания в Выполнено.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1039,7 +1059,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xsfuh03m",
+      "aid": "sh/2hsjuhov",
       "id": "23",
       "bbox": [
         88,
@@ -1056,7 +1076,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ml4bil4z",
+      "aid": "sh/x83itwni",
       "id": "24",
       "bbox": [
         106,
@@ -1072,7 +1092,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nmdcbqlk",
+      "aid": "sh/c7a10r6x",
       "id": "25",
       "bbox": [
         106,
@@ -1138,12 +1158,12 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/onmtkvm5",
+      "aid": "sh/b610rm5c",
       "id": "26",
       "bbox": [
-        162,
+        166,
         458,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
@@ -1155,7 +1175,7 @@
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1181,7 +1201,8 @@
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1190,7 +1211,8 @@
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1202,12 +1224,12 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9ofud03q",
+      "aid": "sh/a5sjyhor",
       "id": "27",
       "bbox": [
-        162,
+        180,
         484,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
@@ -1218,7 +1240,7 @@
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1243,7 +1265,8 @@
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1251,7 +1274,8 @@
               "text": "Идентичные замечания остаются как есть и не создают вторую строку.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1263,7 +1287,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6h8vup4j",
+      "aid": "sh/lc3ixwne",
       "id": "28",
       "bbox": [
         88,
@@ -1280,7 +1304,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7ihcnul4",
+      "aid": "sh/kbu14r6t",
       "id": "29",
       "bbox": [
         106,
@@ -1296,7 +1320,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hcjedon6",
+      "aid": "sh/ihofit4b",
       "id": "30",
       "bbox": [
         106,
@@ -1362,12 +1386,12 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gbaxkj6l",
+      "aid": "sh/3ixgrylw",
       "id": "31",
       "bbox": [
-        162,
+        166,
         524,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
@@ -1379,7 +1403,7 @@
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1405,7 +1429,8 @@
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1414,7 +1439,8 @@
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1426,12 +1452,12 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/va1wbe50",
+      "aid": "sh/4j6xk3mh",
       "id": "32",
       "bbox": [
-        162,
+        180,
         550,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
@@ -1442,7 +1468,7 @@
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1467,7 +1493,8 @@
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1475,7 +1502,8 @@
               "text": "Сообщение про ПО означает, что в квартире уже много замечаний.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1487,7 +1515,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/upsfi9of",
+      "aid": "sh/5kfyt832",
       "id": "33",
       "bbox": [
         88,
@@ -1504,12 +1532,12 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/toje94nu",
+      "aid": "sh/qlofmd4n",
       "id": "34",
       "bbox": [
         116,
-        606,
-        320,
+        604,
+        260,
         24
       ],
       "geometry": "rect",
@@ -1521,7 +1549,7 @@
         "typeface": "Arial",
         "color": "#258A11",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1547,7 +1575,8 @@
             "fontSize": 20,
             "typeface": "Arial",
             "color": "#258A11",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1556,7 +1585,8 @@
               "fontSize": 20,
               "typeface": "Arial",
               "color": "#258A11",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1568,12 +1598,12 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8naxgz6p",
+      "aid": "sh/rmxgvyl8",
       "id": "35",
       "bbox": [
-        420,
+        380,
         609,
-        720,
+        740,
         22
       ],
       "geometry": "rect",
@@ -1584,7 +1614,7 @@
         "fontSize": 16,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1609,7 +1639,8 @@
           "resolvedTextStyle": {
             "fontSize": 16,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
@@ -1617,7 +1648,8 @@
               "text": "Старые строки закрываются, новые добавляются со статусом Не выполнено.",
               "fontSize": 16,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0

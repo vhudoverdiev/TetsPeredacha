@@ -63,25 +63,27 @@ class ContractorClaimButtonVisibilityTests(unittest.TestCase):
     def test_claim_word_button_requires_selected_contractor(self):
         response = self.client.get("/contractors")
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Претензия Word", response.get_data(as_text=True))
+        self.assertIn("Претензия Word", response.get_data(as_text=True))
 
         response = self.client.get(f"/contractors?contractor_id={self.contractor.id}")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Претензия Word", response.get_data(as_text=True))
 
-    def test_claim_word_button_is_hidden_on_excel_selection_without_contractor(self):
+    def test_claim_word_button_is_visible_on_excel_selection_without_contractor(self):
         response = self.client.get("/contractors/excel-selection")
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Претензия Word", response.get_data(as_text=True))
+        self.assertIn("Претензия Word", response.get_data(as_text=True))
 
         response = self.client.get(f"/contractors/excel-selection?contractor_id={self.contractor.id}")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Претензия Word", response.get_data(as_text=True))
 
     def test_docx_export_without_contractor_redirects_to_list(self):
-        response = self.client.get("/contractors/export?format=docx", follow_redirects=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("/contractors", response.headers["Location"])
+        response = self.client.get("/contractors/export?format=docx", follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Прежде чем скачать, выберите подрядчика.", html)
+        self.assertIn("Претензия Word", html)
 
     def test_docx_export_uses_office_contacts_when_current_user_is_not_office(self):
         self.user.full_name = "Инженер Тестовый"

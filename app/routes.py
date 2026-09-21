@@ -3743,7 +3743,7 @@ def contractors_export():
     query_args["sort"] = "apartment"
     selected_contractor = _project_contractor(project.id, request.args.get("contractor_id", type=int))
     if export_format == "docx" and selected_contractor is None:
-        flash("Выберите подрядчика для формирования претензии Word.", "warning")
+        flash("Прежде чем скачать, выберите подрядчика.", "warning")
         return redirect(url_for("main.contractors_list", **query_args))
     tasks = _filter_tasks_for_contractor(_export_tasks_from_request(query_args, project.id), selected_contractor).all()
     contractor_label = selected_contractor.name if selected_contractor else "Все подрядчики"

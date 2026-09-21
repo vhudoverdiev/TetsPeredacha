@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/dlkvd4",
-    "id": "dlkvd4",
+    "aid": "sl/1pfdaf",
+    "id": "1pfdaf",
     "slide": 14,
-    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutId": "f858cffa-0ba0-4978-abf0-396ab83fd905",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
     "masterLayoutName": "Master",
     "backgroundColor": "#FBFDF8",
     "frame": {
@@ -45,15 +45,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "id": "f858cffa-0ba0-4978-abf0-396ab83fd905",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "parentLayoutId": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "id": "f8ef2ebc-c552-4f63-adaf-ac931cf297f0",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -64,7 +64,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/dgnqds76",
+      "aid": "sh/mxwv6lkj",
       "id": "1",
       "bbox": [
         1152,
@@ -80,7 +80,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qtw72dof",
+      "aid": "sh/907e10ja",
       "id": "2",
       "bbox": [
         695,
@@ -96,7 +96,7 @@
       "order": 3,
       "kind": "image",
       "scope": "slide",
-      "aid": "im/mto3q5kz",
+      "aid": "im/p0vy5wz2",
       "id": "3",
       "bbox": [
         44,
@@ -108,7 +108,7 @@
       "contentType": "image/png",
       "imageFit": "contain",
       "asset": {
-        "assetId": "22df7e13-fb3a-4748-a605-b3611e5f4719",
+        "assetId": "7d5469df-309b-4c3f-a289-0e0fcd7a6b78",
         "contentType": "image/png",
         "byteLength": 20679
       }
@@ -117,7 +117,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0jyp8n6h",
+      "aid": "sh/v2pw3q10",
       "id": "4",
       "bbox": [
         116,
@@ -126,8 +126,8 @@
         34
       ],
       "geometry": "rect",
-      "text": "14 · АККАУНТ",
-      "textPreview": "14 · АККАУНТ",
+      "text": "14 · ЗАМЕРЫ",
+      "textPreview": "14 · ЗАМЕРЫ",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
@@ -148,14 +148,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "14 · АККАУНТ"
+            "text": "14 · ЗАМЕРЫ"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "14 · АККАУНТ",
+          "text": "14 · ЗАМЕРЫ",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
@@ -165,7 +165,7 @@
           "runs": [
             {
               "index": 1,
-              "text": "14 · АККАУНТ",
+              "text": "14 · ЗАМЕРЫ",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#258A11",
@@ -181,7 +181,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1k7qhs72",
+      "aid": "sh/u1gfal0f",
       "id": "5",
       "bbox": [
         86,
@@ -190,15 +190,15 @@
         62
       ],
       "geometry": "rect",
-      "text": "Подключение 2FA",
-      "textPreview": "Подключение 2FA",
-      "resolvedFontSize": 36,
+      "text": "Замеры",
+      "textPreview": "Замеры",
+      "resolvedFontSize": 38,
       "resolvedTextStyle": {
-        "fontSize": 36,
+        "fontSize": 38,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -212,28 +212,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Подключение 2FA"
+            "text": "Замеры"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Подключение 2FA",
+          "text": "Замеры",
           "resolvedTextStyle": {
-            "fontSize": 36,
+            "fontSize": 38,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Подключение 2FA",
-              "fontSize": 36,
+              "text": "Замеры",
+              "fontSize": 38,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -245,23 +247,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ehw76dob",
+      "aid": "sh/h47e50j6",
       "id": "6",
       "bbox": [
-        88,
+        160,
         205,
-        1060,
+        960,
         34
       ],
       "geometry": "rect",
-      "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
-      "textPreview": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+      "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
+      "textPreview": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
       "resolvedFontSize": 19,
       "resolvedTextStyle": {
         "fontSize": 19,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -275,26 +277,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения."
+            "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+          "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
           "resolvedTextStyle": {
             "fontSize": 19,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+              "text": "Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.",
               "fontSize": 19,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -306,7 +310,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zi58fipw",
+      "aid": "sh/w3yxcvil",
       "id": "7",
       "bbox": [
         88,
@@ -367,7 +371,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gnupw36d",
+      "aid": "sh/b6lwr61w",
       "id": "8",
       "bbox": [
         88,
@@ -384,7 +388,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ho3q587y",
+      "aid": "sh/a5cvy1kb",
       "id": "9",
       "bbox": [
         106,
@@ -400,7 +404,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xwjq5kji",
+      "aid": "sh/sfipwjex",
       "id": "10",
       "bbox": [
         106,
@@ -466,24 +470,24 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/cbapwfix",
+      "aid": "sh/dgrq5ofi",
       "id": "11",
       "bbox": [
-        162,
+        166,
         260,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Откройте Аккаунт",
-      "textPreview": "Откройте Аккаунт",
+      "text": "Откройте Замеры",
+      "textPreview": "Откройте Замеры",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -497,28 +501,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Откройте Аккаунт"
+            "text": "Откройте Замеры"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Откройте Аккаунт",
+          "text": "Откройте Замеры",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Откройте Аккаунт",
+              "text": "Откройте Замеры",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -530,23 +536,23 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ba183a1s",
+      "aid": "sh/qdg7u9gr",
       "id": "12",
       "bbox": [
-        162,
+        180,
         286,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
-      "textPreview": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+      "text": "В левом меню нажмите Замеры.",
+      "textPreview": "В левом меню нажмите Замеры.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -560,26 +566,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт."
+            "text": "В левом меню нажмите Замеры."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+          "text": "В левом меню нажмите Замеры.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+              "text": "В левом меню нажмите Замеры.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -591,7 +599,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/a9s7u507",
+      "aid": "sh/re983exc",
       "id": "13",
       "bbox": [
         88,
@@ -608,7 +616,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l03q9kju",
+      "aid": "sh/0ji903e9",
       "id": "14",
       "bbox": [
         106,
@@ -624,7 +632,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/kzu90fi9",
+      "aid": "sh/1krq98fe",
       "id": "15",
       "bbox": [
         106,
@@ -690,24 +698,24 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zyl87u1o",
+      "aid": "sh/eh0rytw3",
       "id": "16",
       "bbox": [
-        162,
+        166,
         326,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Нажмите Подключить 2FA",
-      "textPreview": "Нажмите Подключить 2FA",
+      "text": "Создайте задачу",
+      "textPreview": "Создайте задачу",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -721,28 +729,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Нажмите Подключить 2FA"
+            "text": "Создайте задачу"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Нажмите Подключить 2FA",
+          "text": "Создайте задачу",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Нажмите Подключить 2FA",
+              "text": "Создайте задачу",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -754,23 +764,23 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yxcryp03",
+      "aid": "sh/fi987yxo",
       "id": "17",
       "bbox": [
-        162,
+        180,
         352,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
-      "textPreview": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+      "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
+      "textPreview": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -784,26 +794,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Кнопка находится в правом блоке Двухэтапная аутентификация."
+            "text": "Нажмите Добавить задачу, выберите помещение и заполните текст."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+          "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+              "text": "Нажмите Добавить задачу, выберите помещение и заполните текст.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -815,7 +827,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/943qd4jq",
+      "aid": "sh/gnypozyp",
       "id": "18",
       "bbox": [
         88,
@@ -832,7 +844,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/83u94zi5",
+      "aid": "sh/ho7qx4fa",
       "id": "19",
       "bbox": [
         106,
@@ -848,7 +860,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/sjm1w7ut",
+      "aid": "sh/x8fe5w32",
       "id": "20",
       "bbox": [
         106,
@@ -914,24 +926,24 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tkv2pcbe",
+      "aid": "sh/c76xcrmh",
       "id": "21",
       "bbox": [
-        162,
+        166,
         392,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Добавьте ключ",
-      "textPreview": "Добавьте ключ",
+      "text": "Работайте со списком",
+      "textPreview": "Работайте со списком",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -945,28 +957,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Добавьте ключ"
+            "text": "Работайте со списком"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Добавьте ключ",
+          "text": "Работайте со списком",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Добавьте ключ",
+              "text": "Работайте со списком",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -978,23 +992,23 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6h4juxcn",
+      "aid": "sh/b6xw3mlw",
       "id": "22",
       "bbox": [
-        162,
+        180,
         418,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
-      "textPreview": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+      "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
+      "textPreview": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1008,26 +1022,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password."
+            "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+          "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+              "text": "Сначала отображаются невыполненные задачи, выполненные уходят в конец.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1039,7 +1055,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ridkn2t8",
+      "aid": "sh/a54fa14b",
       "id": "23",
       "bbox": [
         88,
@@ -1056,7 +1072,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gn6107up",
+      "aid": "sh/lwfe9g3y",
       "id": "24",
       "bbox": [
         106,
@@ -1072,7 +1088,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/1of2tcba",
+      "aid": "sh/kv6xgbmd",
       "id": "25",
       "bbox": [
         106,
@@ -1138,24 +1154,24 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/el4jyxcj",
+      "aid": "sh/zuxw76ls",
       "id": "26",
       "bbox": [
-        162,
+        166,
         458,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Введите код",
-      "textPreview": "Введите код",
+      "text": "Меняйте статус",
+      "textPreview": "Меняйте статус",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1169,28 +1185,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Введите код"
+            "text": "Меняйте статус"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Введите код",
+          "text": "Меняйте статус",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Введите код",
+              "text": "Меняйте статус",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1202,23 +1220,23 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fmxkr2t4",
+      "aid": "sh/ytofe14n",
       "id": "27",
       "bbox": [
-        162,
+        180,
         484,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Введите шесть цифр из приложения в поле Код из приложения.",
-      "textPreview": "Введите шесть цифр из приложения в поле Код из приложения.",
+      "text": "После выполнения отметьте задачу как выполненную или заказанную.",
+      "textPreview": "После выполнения отметьте задачу как выполненную или заказанную.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1232,26 +1250,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Введите шесть цифр из приложения в поле Код из приложения."
+            "text": "После выполнения отметьте задачу как выполненную или заказанную."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Введите шесть цифр из приложения в поле Код из приложения.",
+          "text": "После выполнения отметьте задачу как выполненную или заказанную.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Введите шесть цифр из приложения в поле Код из приложения.",
+              "text": "После выполнения отметьте задачу как выполненную или заказанную.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1263,7 +1283,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wr21onul",
+      "aid": "sh/t0zydg3a",
       "id": "28",
       "bbox": [
         88,
@@ -1280,7 +1300,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hsbihsb6",
+      "aid": "sh/8zqxkbmp",
       "id": "29",
       "bbox": [
         106,
@@ -1296,7 +1316,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/z6143qdo",
+      "aid": "sh/q50bedk7",
       "id": "30",
       "bbox": [
         106,
@@ -1362,24 +1382,24 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/y5snulw3",
+      "aid": "sh/r6tc7i1s",
       "id": "31",
       "bbox": [
-        162,
+        166,
         524,
-        330,
+        960,
         22
       ],
       "geometry": "rect",
-      "text": "Подтвердите",
-      "textPreview": "Подтвердите",
+      "text": "Проверяйте карточку",
+      "textPreview": "Проверяйте карточку",
       "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "fontSize": 18,
         "typeface": "Arial",
         "color": "#111827",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1393,28 +1413,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Подтвердите"
+            "text": "Проверяйте карточку"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Подтвердите",
+          "text": "Проверяйте карточку",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Arial",
             "color": "#111827",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Подтвердите",
+              "text": "Проверяйте карточку",
               "fontSize": 18,
               "typeface": "Arial",
               "color": "#111827",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1426,23 +1448,23 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l8jm50vu",
+      "aid": "sh/s72tgn2x",
       "id": "32",
       "bbox": [
-        162,
+        180,
         550,
-        986,
+        932,
         20
       ],
       "geometry": "rect",
-      "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
-      "textPreview": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+      "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
+      "textPreview": "Открывайте карточку задачи, если нужен текст, история или действие.",
       "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "fontSize": 14,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1456,26 +1478,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Нажмите Подключить. После подключения при входе CRM запросит код."
+            "text": "Открывайте карточку задачи, если нужен текст, история или действие."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+          "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+              "text": "Открывайте карточку задачи, если нужен текст, история или действие.",
               "fontSize": 14,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1487,7 +1511,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/k7a5wve9",
+      "aid": "sh/d8bu9sji",
       "id": "33",
       "bbox": [
         88,
@@ -1504,24 +1528,24 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bih4z6dc",
+      "aid": "sh/e9kbixk3",
       "id": "34",
       "bbox": [
         116,
-        606,
-        320,
+        604,
+        260,
         24
       ],
       "geometry": "rect",
-      "text": "Если QR не читается",
-      "textPreview": "Если QR не читается",
+      "text": "Порядок",
+      "textPreview": "Порядок",
       "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "fontSize": 20,
         "typeface": "Arial",
         "color": "#258A11",
         "bold": true,
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1535,28 +1559,30 @@
         "lines": [
           {
             "index": 1,
-            "text": "Если QR не читается"
+            "text": "Порядок"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Если QR не читается",
+          "text": "Порядок",
           "resolvedTextStyle": {
             "fontSize": 20,
             "typeface": "Arial",
             "color": "#258A11",
-            "bold": true
+            "bold": true,
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Если QR не читается",
+              "text": "Порядок",
               "fontSize": 20,
               "typeface": "Arial",
               "color": "#258A11",
-              "bold": true
+              "bold": true,
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
@@ -1568,23 +1594,23 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ah83q1wr",
+      "aid": "sh/fatcbi1o",
       "id": "35",
       "bbox": [
-        420,
+        380,
         609,
-        720,
+        740,
         22
       ],
       "geometry": "rect",
-      "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
-      "textPreview": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+      "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
+      "textPreview": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
       "resolvedFontSize": 16,
       "resolvedTextStyle": {
         "fontSize": 16,
         "typeface": "Arial",
         "color": "#7587A6",
-        "alignment": "left",
+        "alignment": "center",
         "autoFit": "none",
         "insets": {
           "top": 4.8,
@@ -1598,26 +1624,28 @@
         "lines": [
           {
             "index": 1,
-            "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор."
+            "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+          "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
           "resolvedTextStyle": {
             "fontSize": 16,
             "typeface": "Arial",
-            "color": "#7587A6"
+            "color": "#7587A6",
+            "alignment": "center"
           },
           "runs": [
             {
               "index": 1,
-              "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+              "text": "Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.",
               "fontSize": 16,
               "typeface": "Arial",
-              "color": "#7587A6"
+              "color": "#7587A6",
+              "alignment": "center"
             }
           ],
           "marginLeft": 0
