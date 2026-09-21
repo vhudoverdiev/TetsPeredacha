@@ -35,6 +35,7 @@ from app.services.task_service import (
     parse_multi_premise_search,
     premise_matches_search,
     select_primary_work_point_columns,
+    upsert_task_from_cell,
 )
 from app.time_utils import utc_now
 
@@ -238,6 +239,49 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
 
         self.assertFalse(task.is_done)
         self.assertIsNone(task.completed_date)
+
+    def test_upsert_marks_fully_quoted_excel_remark_as_done(self):
+        task, created = upsert_task_from_cell(
+            project=self.project,
+            apartment=self.apartment,
+            legacy_construction_number="",
+            legacy_apartment_number="",
+            work_point=self.work_point,
+            remark_text='"Требуется восстановить стяжку пола."',
+            source_cell_value='"Требуется восстановить стяжку пола."',
+            sheet_name="Таблица",
+            row_index=12,
+            column_index=10,
+            source_cell_address="J12",
+            sync_time=utc_now(),
+        )
+        db.session.commit()
+
+        self.assertTrue(created)
+        self.assertEqual(task.status, STATUS_DONE)
+        self.assertTrue(task.is_done)
+        self.assertIsNotNone(task.completed_date)
+
+    def test_upsert_keeps_partial_quoted_remark_open(self):
+        task, created = upsert_task_from_cell(
+            project=self.project,
+            apartment=self.apartment,
+            legacy_construction_number="",
+            legacy_apartment_number="",
+            work_point=self.work_point,
+            remark_text='Заменить "ручку"',
+            source_cell_value='Заменить "ручку"',
+            sheet_name="Таблица",
+            row_index=13,
+            column_index=10,
+            source_cell_address="J13",
+            sync_time=utc_now(),
+        )
+        db.session.commit()
+
+        self.assertTrue(created)
+        self.assertEqual(task.status, STATUS_NOT_STARTED)
+        self.assertFalse(task.is_done)
 
     def test_build_task_query_filters_multiple_premises_and_keeps_user_order(self):
         tasks = build_task_query({"q": "к15/к2, кв 12"}, project_id=self.project.id).all()

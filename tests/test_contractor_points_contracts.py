@@ -29,7 +29,7 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.apartment_2 = Apartment(project=self.project, apartment_number="44", owner_name="Петров")
         self.point_10 = WorkPoint(point_number="10", short_name="Вентиляция", original_column_name="Вентиляция")
         self.point_11 = WorkPoint(point_number="11", short_name="Стены", original_column_name="Стены. Потолки")
-        self.point_26 = WorkPoint(point_number="26", short_name="Доп соглашение ТМЦ", original_column_name="Доп соглашение ТМЦ")
+        self.point_26 = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)", original_column_name="Отступное (ТМЦ)")
         db.session.add_all([self.project, self.admin, self.apartment_1, self.apartment_2, self.point_10, self.point_11, self.point_26])
         db.session.flush()
         self.task_1 = Task(
@@ -84,7 +84,7 @@ class ContractorPointsContractsTests(unittest.TestCase):
         self.assertIn(f'action="/tasks/{self.task_1.id}/point"', html)
         self.assertIn("10. Вентиляция", html)
         self.assertIn("11. Стены. Потолки", html)
-        self.assertIn("26. Доп соглашение", html)
+        self.assertIn("26. Отступное (ТМЦ)", html)
         self.assertIn('name="point"', html)
         self.assertNotIn('name="q"', html)
         self.assertNotIn('for="contractor-points-search"', html)

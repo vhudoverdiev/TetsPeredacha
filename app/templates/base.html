@@ -1265,7 +1265,7 @@
       <span class="brand-text">Передача</span>
     </a>
     <div class="topbar-actions">
-      {% if current_user.role in ['admin', 'manager', 'supervisor', 'office'] %}
+      {% if can_create_object_today() %}
       <a class="btn btn-primary object-add-button" href="{{ url_for('main.object_new') }}"><i class="bi bi-plus-lg me-2"></i>Добавить объект</a>
       {% endif %}
       {% if not worker_role and not hide_documents_section %}
@@ -1281,7 +1281,7 @@
           <li><a class="dropdown-item" href="{{ url_for('main.site_settings') }}"><i class="bi bi-sliders me-2"></i>Настройки сайта</a></li>
           <li><hr class="dropdown-divider"></li>
           {% endif %}
-          <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
           <li><hr class="dropdown-divider"></li>
           <li>
             <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
@@ -1320,7 +1320,7 @@
           <li><a class="dropdown-item" href="{{ url_for('main.site_settings') }}"><i class="bi bi-sliders me-2"></i>Настройки сайта</a></li>
           <li><hr class="dropdown-divider"></li>
           {% endif %}
-          <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
           <li><hr class="dropdown-divider"></li>
           <li>
             <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">
@@ -1448,7 +1448,7 @@
             <li><a class="dropdown-item download-excel-btn" href="{{ url_for('main.export_source_with_strikes') }}" data-download-mode="fetch" data-loading-text="Готовим Excel..."><i class="bi bi-file-earmark-arrow-down me-2"></i>Скачать Excel</a></li>
             <li><hr class="dropdown-divider"></li>
             {% endif %}
-            <li><a class="dropdown-item account-dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.account') }}"><i class="bi bi-person-circle me-2"></i>Аккаунт</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>
               <form class="px-3 py-1 js-auth-safe-submit" method="post" action="{{ url_for('auth.logout') }}" data-loading-text="Выходим...">

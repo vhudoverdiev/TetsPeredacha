@@ -87,6 +87,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
                 "act_0_apartment_id": str(self.apartment.id),
                 "act_0_inspection_date": "2026-09-17",
                 "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
                 "act_0_row_0_point": "16",
                 "act_0_row_0_description": "Новое замечание после ПО",
             },
@@ -115,6 +116,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
                 "act_0_project_ok": "1",
                 "act_0_apartment_id": str(self.apartment.id),
                 "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
                 "act_0_row_0_point": "16",
                 "act_0_row_0_description": "Старое замечание",
             },
@@ -152,6 +154,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
                 "act_0_project_ok": "1",
                 "act_0_apartment_id": str(self.apartment.id),
                 "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
                 "act_0_row_0_point": "16",
                 "act_0_row_0_description": "Старое замечание",
             },
@@ -192,6 +195,35 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIsNone(Task.query.filter(Task.description == "Старый пункт не должен сохраниться").one_or_none())
         saved_task = Task.query.filter(Task.description == "Пункт десять сохраняется").one()
+        self.assertEqual(saved_task.work_point.point_number, "10")
+
+    def test_save_ignores_unchecked_recognition_rows_even_with_text_in_po_mode(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "po_mode": "1",
+                "act_count": "1",
+                "act_0_filename": "unchecked.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "1",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "2",
+                "act_0_row_0_point": "16",
+                "act_0_row_0_description": "Снятая строка не должна сохраниться",
+                "act_0_row_1_active": "1",
+                "act_0_row_1_point": "10",
+                "act_0_row_1_description": "Отмеченная строка сохраняется",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNone(Task.query.filter(Task.description == "Снятая строка не должна сохраниться").one_or_none())
+        saved_task = Task.query.filter(Task.description == "Отмеченная строка сохраняется").one()
         self.assertEqual(saved_task.work_point.point_number, "10")
 
     def test_auto_import_warns_to_enable_po_when_apartment_already_has_many_open_remarks(self):

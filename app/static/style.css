@@ -3612,29 +3612,6 @@ textarea.form-control {
   background: #f7faef;
 }
 
-.dropdown-item.account-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  border: 1px solid rgba(121, 191, 37, .28);
-  background: linear-gradient(180deg, #f8fff0 0%, #eef9df 100%);
-  color: #24340f;
-  font-weight: 850;
-}
-
-.dropdown-item.account-dropdown-item i,
-.dropdown-item.account-dropdown-item .bi::before {
-  color: #5fab18;
-  -webkit-text-fill-color: #5fab18;
-}
-
-.dropdown-item.account-dropdown-item:hover,
-.dropdown-item.account-dropdown-item:focus {
-  border-color: rgba(121, 191, 37, .48);
-  background: linear-gradient(180deg, #effbdc 0%, #e2f3ca 100%);
-  color: #1f310d;
-}
-
 .metric-card,
 .category-card {
   height: 100%;
@@ -30735,6 +30712,36 @@ body:has(.users-page) textarea:-webkit-autofill:active {
     radial-gradient(circle at 100% 0%, rgba(141, 214, 44, .08), transparent 12rem),
     linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(251, 253, 247, .98)) !important;
   box-shadow: 0 18px 44px rgba(86, 93, 98, .08);
+}
+.account-back-button,
+.account-back-button:hover,
+.account-back-button:focus-visible,
+.account-back-button:active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.45rem;
+  margin-bottom: .55rem;
+  padding: .58rem .92rem;
+  border-radius: .9rem;
+  border: 1px solid rgba(17, 24, 39, .12);
+  background: #1f2933;
+  color: #ffffff !important;
+  font-weight: 850;
+  line-height: 1;
+  text-decoration: none !important;
+  box-shadow: 0 12px 28px rgba(17, 24, 39, .16);
+}
+.account-back-button:hover,
+.account-back-button:focus-visible {
+  background: #111827;
+  border-color: rgba(17, 24, 39, .22);
+  transform: translateY(-1px);
+}
+.account-back-button i,
+.account-back-button span {
+  color: inherit !important;
 }
 .account-grid {
   display: grid;

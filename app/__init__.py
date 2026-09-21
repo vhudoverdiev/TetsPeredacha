@@ -286,6 +286,8 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN has_commercial BOOLEAN NOT NULL DEFAULT 1"))
                 if "has_storerooms" not in project_columns:
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN has_storerooms BOOLEAN NOT NULL DEFAULT 0"))
+                if "created_by_id" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN created_by_id INTEGER"))
                 db.session.commit()
             if "users" in inspector.get_table_names():
                 user_columns = {column["name"] for column in inspector.get_columns("users")}

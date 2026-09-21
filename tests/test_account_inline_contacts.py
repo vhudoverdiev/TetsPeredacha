@@ -60,8 +60,19 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertIn('name="new_password"', password_template)
         self.assertIn('name="confirm_password"', password_template)
         self.assertIn("Сменить пароль", password_template)
+        self.assertIn("account-back-button", password_template)
         self.assertNotIn("<h2>Пароль</h2>", password_template)
         self.assertNotIn("account-card-title account-password-title", password_template)
+
+    def test_password_account_back_link_uses_black_button_style(self):
+        password_template = (ROOT / "app" / "templates" / "account_password.html").read_text(encoding="utf-8")
+        style = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
+
+        self.assertIn('class="account-back-button"', password_template)
+        self.assertIn("bi bi-arrow-left", password_template)
+        self.assertIn(".account-back-button,", style)
+        self.assertIn("background: #1f2933;", style)
+        self.assertIn("color: #ffffff !important;", style)
 
     def test_topbar_user_name_uses_surname_with_initials(self):
         self.assertEqual(
@@ -74,13 +85,12 @@ class AccountInlineContactsTests(unittest.TestCase):
         )
         self.assertEqual(short_user_display_name(User(full_name="", username="fedotovds")), "fedotovds")
 
-    def test_account_dropdown_item_uses_site_button_style(self):
+    def test_account_dropdown_item_uses_default_menu_style(self):
         template = (ROOT / "app" / "templates" / "base.html").read_text(encoding="utf-8")
         style = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
 
-        self.assertIn("account-dropdown-item", template)
-        self.assertIn(".dropdown-item.account-dropdown-item", style)
-        self.assertIn("linear-gradient(180deg, #f8fff0 0%, #eef9df 100%)", style)
+        self.assertNotIn("account-dropdown-item", template)
+        self.assertNotIn(".dropdown-item.account-dropdown-item", style)
 
     def test_two_factor_start_uses_ajax_without_page_reload(self):
         template = (ROOT / "app" / "templates" / "account.html").read_text(encoding="utf-8")

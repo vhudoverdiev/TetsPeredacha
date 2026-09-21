@@ -1024,6 +1024,33 @@ PO_STATUS_CLASSES = {
 }
 WALL_POINT_NUMBERS = {"11"}
 
+
+def _object_creation_day_bounds() -> tuple[datetime, datetime]:
+    day_start = datetime.combine(date.today(), time.min)
+    return day_start, day_start + timedelta(days=1)
+
+
+def _objects_created_today_by_user(user_id: int | None) -> int:
+    if not user_id:
+        return 0
+    day_start, next_day = _object_creation_day_bounds()
+    return Project.query.filter(
+        Project.created_by_id == user_id,
+        Project.created_at >= day_start,
+        Project.created_at < next_day,
+    ).count()
+
+
+def can_create_object_today(user: User | None = None) -> bool:
+    user = user or current_user
+    if not getattr(user, "is_authenticated", False):
+        return False
+    if user.role == ROLE_ADMIN:
+        return True
+    if user.role not in OFFICE_MANAGER_ROLES:
+        return False
+    return _objects_created_today_by_user(user.id) < 1
+
 @bp.app_context_processor
 def inject_globals():
     has_all_projects = current_user.is_authenticated and current_user.can_access_all_projects
@@ -1069,6 +1096,7 @@ def inject_globals():
         "remark_plain_text": remark_plain_text_html,
         "glass_measurement_action_label": glass_measurement_action_label,
         "short_user_display_name": short_user_display_name,
+        "can_create_object_today": can_create_object_today,
     }
 
 
@@ -1955,8 +1983,14 @@ def objects():
 def object_new():
     if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
+    if not can_create_object_today(current_user):
+        flash("Можно добавить только 1 объект в сутки.", "warning")
+        return redirect(url_for("main.objects"))
     form = ProjectForm()
     if form.validate_on_submit():
+        if not can_create_object_today(current_user):
+            flash("Можно добавить только 1 объект в сутки.", "warning")
+            return redirect(url_for("main.objects"))
         if form.has_storerooms.data:
             flash("Кладовки пока нельзя добавить: раздел находится в разработке.", "warning")
             return render_template("object_form.html", form=form, form_title="Добавить объект", submit_label="Создать объект")
@@ -1977,6 +2011,7 @@ def object_new():
             has_apartments=bool(form.has_apartments.data),
             has_commercial=bool(form.has_commercial.data),
             has_storerooms=False,
+            created_by_id=current_user.id,
         )
         db.session.add(project)
         db.session.commit()
@@ -7002,32 +7037,12 @@ def _remark_point_options(min_number: int = 1) -> list[dict[str, str]]:
         if str(number).isdigit() and int(number) < min_number:
             continue
         options.append({"number": number, "label": label})
-    existing_numbers = {option["number"] for option in options}
-    dop_points = [
-        point
-        for point in WorkPoint.query.filter_by(is_active=True).all()
-        if is_dop_agreement_point(point) and str(point.point_number or "").strip() not in existing_numbers
-    ]
-    dop_points.sort(
-        key=lambda point: (
-            0,
-            int(point.point_number),
-        ) if str(point.point_number or "").isdigit() else (1, str(point.point_number or ""))
-    )
-    for point in dop_points:
-        number = str(point.point_number or "").strip()
-        if not number:
-            continue
-        options.append({"number": number, "label": "Доп соглашение"})
     return options
 
 
 def _resolve_remark_work_point(point_number: str) -> WorkPoint | None:
     if point_number in CONTRACTOR_POINT_LABELS:
         return _get_or_create_manual_work_point(point_number)
-    point = WorkPoint.query.filter_by(point_number=point_number, is_active=True).order_by(WorkPoint.id.asc()).first()
-    if point and is_dop_agreement_point(point):
-        return point
     return None
 
 
@@ -7807,7 +7822,7 @@ def task_recognition():
                         duplicate_task_ids: set[int] = set()
                         duplicate_row_count = 0
                         for row_idx in range(row_count):
-                            if not po_mode and request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
+                            if request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
                                 continue
                             text = (request.form.get(f"act_{act_idx}_row_{row_idx}_description") or "").strip()
                             point_number = (request.form.get(f"act_{act_idx}_row_{row_idx}_point") or "22").strip()
@@ -10045,6 +10060,8 @@ def task_detail(task_id: int):
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
+    ensure_default_categories()
+    db.session.commit()
     task = db.session.get(Task, task_id) or abort(404)
     if task.project_id != project.id:
         abort(404)

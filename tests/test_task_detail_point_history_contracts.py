@@ -38,7 +38,7 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.apartment = Apartment(project=self.project, apartment_number="1")
         self.point_11 = WorkPoint(point_number="11", short_name="Стены. Потолки")
         self.point_16 = WorkPoint(point_number="16", short_name="Разнорабочие")
-        self.point_26 = WorkPoint(point_number="26", short_name="Доп соглашение ТМЦ", original_column_name="Доп соглашение ТМЦ")
+        self.point_26 = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)", original_column_name="Отступное (ТМЦ)")
         self.task = Task(
             source_uid="task-detail-point-change",
             project=self.project,
@@ -132,7 +132,7 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.assertIn("data-task-detail-point-autosave", html)
         self.assertIn('<option value="10"', html)
         self.assertIn('<option value="26"', html)
-        self.assertIn("26. Доп соглашение", html)
+        self.assertIn("26. Отступное (ТМЦ)", html)
         self.assertNotIn('<option value="1"', html)
         self.assertNotIn("task-detail-point-save-btn", html)
 
@@ -149,7 +149,7 @@ class TaskDetailPointHistoryContractsTests(unittest.TestCase):
         self.assertTrue(response.get_json()["ok"])
         db.session.refresh(self.task)
         self.assertEqual(self.task.work_point.point_number, "26")
-        self.assertEqual(self.task.work_point.original_column_name, "Доп соглашение ТМЦ")
+        self.assertEqual(self.task.work_point.original_column_name, "Отступное (ТМЦ)")
 
     def test_non_admin_sees_only_own_history_entries(self):
         db.session.add_all([

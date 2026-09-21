@@ -126,7 +126,7 @@ class User(UserMixin, TimestampMixin, db.Model):
     two_factor_confirmed_at = db.Column(db.DateTime, nullable=True)
 
     assigned_tasks = db.relationship("Task", back_populates="responsible", foreign_keys="Task.responsible_id")
-    project = db.relationship("Project")
+    project = db.relationship("Project", foreign_keys=[project_id])
     site_error_reports = db.relationship("SiteErrorReport", back_populates="user")
 
     @property
@@ -216,7 +216,14 @@ class Project(TimestampMixin, db.Model):
     has_apartments = db.Column(db.Boolean, default=True, nullable=False)
     has_commercial = db.Column(db.Boolean, default=True, nullable=False)
     has_storerooms = db.Column(db.Boolean, default=False, nullable=False)
+    created_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", name="fk_projects_created_by_id_users", use_alter=True),
+        nullable=True,
+        index=True,
+    )
 
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
     apartments = db.relationship("Apartment", back_populates="project", cascade="all, delete-orphan")
     tasks = db.relationship("Task", back_populates="project", cascade="all, delete-orphan")
     material_requests = db.relationship("MaterialRequest", back_populates="project", cascade="all, delete-orphan")

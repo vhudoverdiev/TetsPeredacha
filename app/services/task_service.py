@@ -24,10 +24,14 @@ from app.models import (
 )
 from app.services.changelog_service import log_change
 from app.services.mapping_service import (
+    DOP_AGREEMENT_LABEL,
+    DOP_AGREEMENT_POINT_NUMBER,
+    DOP_AGREEMENT_POINT_NUMBERS,
     ensure_default_categories,
     apply_default_point_mapping,
     is_dop_agreement_header,
 )
+from app.services.remark_format import is_fully_quoted_remark_text
 from app.services.uid_service import (
     build_source_fragment_uid,
     build_task_uid,
@@ -135,9 +139,6 @@ APARTMENT_IMPORT_CONFLICT_LABELS = {
 
 # Основные рабочие замечания для вкладки "Все" и рабочих разделов: пункты 10-25.
 MAIN_WORK_POINT_NUMBERS = {str(number) for number in range(10, 26)}
-# Колонка доп. соглашения сдвигается между объектами, поэтому определяем её по
-# названию заголовка, а не по фиксированному номеру пункта.
-DOP_AGREEMENT_POINT_NUMBERS = set()
 # Импортировать можно основные замечания + доп. соглашение, но во вкладку "Все" попадают только 10-25.
 VISIBLE_WORK_POINT_NUMBERS = MAIN_WORK_POINT_NUMBERS | DOP_AGREEMENT_POINT_NUMBERS
 
@@ -700,6 +701,7 @@ def dop_agreement_work_point_clause():
         return and_(*(text_field.like(f"%{part}%") for part in parts))
 
     return or_(
+        WorkPoint.point_number.in_(DOP_AGREEMENT_POINT_NUMBERS),
         field_has_all(WorkPoint.original_column_name, "Отступ", "ТМЦ"),
         field_has_all(WorkPoint.original_column_name, "отступ", "тмц"),
         field_has_all(WorkPoint.short_name, "Отступ", "ТМЦ"),
@@ -1449,7 +1451,12 @@ def get_or_update_apartment(
 
 
 def get_or_update_work_point(point_number: str, header: str, sheet_name: str, column_index: int) -> WorkPoint:
-    point = WorkPoint.query.filter_by(point_number=point_number, source_sheet_name=sheet_name).first()
+    if is_dop_agreement_header(header) or str(point_number or "").strip() in DOP_AGREEMENT_POINT_NUMBERS:
+        point_number = DOP_AGREEMENT_POINT_NUMBER
+        header = DOP_AGREEMENT_LABEL
+        point = WorkPoint.query.filter_by(point_number=point_number).order_by(WorkPoint.id.asc()).first()
+    else:
+        point = WorkPoint.query.filter_by(point_number=point_number, source_sheet_name=sheet_name).first()
     if point is None:
         point = WorkPoint(point_number=point_number, source_sheet_name=sheet_name)
         db.session.add(point)
@@ -1717,7 +1724,7 @@ def upsert_task_from_cell(
     # которое в CRM всё ещё находится в статусе «Не выполнено». Уже выставленные
     # статусы являются приоритетными и импортом не перезаписываются.
     auto_status = detect_status_marker(remark_text)
-    if source_cell_is_struck and auto_status is None:
+    if (source_cell_is_struck or is_fully_quoted_remark_text(remark_text)) and auto_status is None:
         auto_status = STATUS_DONE
     if should_auto_finishers(apartment, work_point):
         auto_status = STATUS_FINISHERS
