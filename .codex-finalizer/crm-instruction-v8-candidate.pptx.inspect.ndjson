@@ -1,0 +1,599 @@
+{"kind":"deck","id":"pr/lfad3l","name":"Deck"}
+{"kind":"layout","layoutId":"dea2321c-7eca-482d-90f9-c5def61d4bd2","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"a95cdcec-21fd-47ba-9994-48f8ba40a6b4","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/t9gkb1","slide":1,"title":"CRM Передача","textShapes":8}
+{"kind":"textbox","id":"sh/pgbuhgru","slide":1,"text":"CRM Передача","textPreview":"CRM Передача","textChars":12,"textLines":1,"bbox":[146,63,330,34]}
+{"kind":"textbox","id":"sh/4f2t8bq9","slide":1,"text":"Инструкция\nпо работе в CRM","textPreview":"Инструкция | по работе в CRM","textChars":26,"textLines":2,"bbox":[88,184,610,110]}
+{"kind":"textbox","id":"sh/ridcjq9k","slide":1,"text":"Пошаговая памятка: куда зайти, что нажать и как проверить результат.","textPreview":"Пошаговая памятка: куда зайти, что нажать и как проверить результат.","textChars":68,"textLines":1,"bbox":[92,318,630,32]}
+{"kind":"shape","id":"sh/qh4bal8f","slide":1,"bbox":[92,382,290,48]}
+{"kind":"textbox","id":"sh/dkvul0rq","slide":1,"text":"Для сотрудников передачи","textPreview":"Для сотрудников передачи","textChars":24,"textLines":1,"bbox":[118,395,240,20]}
+{"kind":"shape","id":"sh/cjmdcvq5","slide":1,"bbox":[846,160,300,300]}
+{"kind":"shape","id":"sh/6l0byh8v","slide":1,"bbox":[752,492,238,56]}
+{"kind":"textbox","id":"sh/onehofyt","slide":1,"text":"Замечания","textPreview":"Замечания","textChars":9,"textLines":1,"bbox":[780,507,180,20]}
+{"kind":"shape","id":"sh/po7ixkze","slide":1,"bbox":[1010,492,180,56]}
+{"kind":"textbox","id":"sh/2lwzmpgn","slide":1,"text":"Документы","textPreview":"Документы","textChars":9,"textLines":1,"bbox":[1034,507,140,20]}
+{"kind":"shape","id":"sh/nm50vuh8","slide":1,"bbox":[822,574,260,56]}
+{"kind":"textbox","id":"sh/cryhszyp","slide":1,"text":"Задачи и материалы","textPreview":"Задачи и материалы","textChars":18,"textLines":1,"bbox":[850,589,210,20]}
+{"kind":"textbox","id":"sh/xs7i14fa","slide":1,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"image","id":"im/7etk3up0","slide":1,"name":"","alt":"Логотип Аквилон","bbox":[56,54,72,72]}
+{"kind":"image","id":"im/254329on","slide":1,"name":"","alt":"Логотип Аквилон","bbox":[925,238,140,140]}
+{"kind":"notes","id":"nt/t9gkb1","slide":1,"text":"Обложка инструкции. Использован только логотип из app/static/brand-logo.png."}
+{"kind":"slide","id":"sl/iuynkr","slide":2,"title":"02 · ОБЗОР","textShapes":36}
+{"kind":"shape","id":"sh/u1o3qt47","slide":2,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/h4z21ony","slide":2,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/36hk3y5o","slide":2,"text":"02 · ОБЗОР","textPreview":"02 · ОБЗОР","textChars":10,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/i583ut43","slide":2,"text":"Карта функций в CRM","textPreview":"Карта функций в CRM","textChars":19,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/58z258nu","slide":2,"text":"Все функции ниже раскрыты отдельными пошаговыми слайдами.","textPreview":"Все функции ниже раскрыты отдельными пошаговыми слайдами.","textChars":57,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/47qlw3m9","slide":2,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/ruhk7i50","slide":2,"bbox":[88,260,500,104]}
+{"kind":"shape","id":"sh/qt83yd4f","slide":2,"bbox":[108,287,50,50]}
+{"kind":"textbox","id":"sh/svepojyt","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[108,301,50,18]}
+{"kind":"textbox","id":"sh/twnqxofe","slide":2,"text":"Автоматическое распознавание актов","textPreview":"Автоматическое распознавание актов","textChars":34,"textLines":1,"bbox":[176,274,370,38]}
+{"kind":"textbox","id":"sh/6tw7m9gn","slide":2,"text":"Замечания → Добавить с акта","textPreview":"Замечания → Добавить с акта","textChars":27,"textLines":1,"bbox":[176,320,370,18]}
+{"kind":"textbox","id":"sh/7u58vex8","slide":2,"text":"Загрузка PDF и проверка строк","textPreview":"Загрузка PDF и проверка строк","textChars":29,"textLines":1,"bbox":[176,340,380,16]}
+{"kind":"shape","id":"sh/gjyps3e5","slide":2,"bbox":[650,260,500,104]}
+{"kind":"shape","id":"sh/hk7q18fa","slide":2,"bbox":[670,287,50,50]}
+{"kind":"textbox","id":"sh/uxw7qtwz","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[670,301,50,18]}
+{"kind":"textbox","id":"sh/fi58zyxk","slide":2,"text":"Ручное добавление замечаний","textPreview":"Ручное добавление замечаний","textChars":27,"textLines":1,"bbox":[738,274,370,38]}
+{"kind":"textbox","id":"sh/4ny9w3e1","slide":2,"text":"Замечания → Добавить вручную","textPreview":"Замечания → Добавить вручную","textChars":28,"textLines":1,"bbox":[738,320,370,18]}
+{"kind":"textbox","id":"sh/po7q58fm","slide":2,"text":"Ввод квартиры, даты и пунктов","textPreview":"Ввод квартиры, даты и пунктов","textChars":29,"textLines":1,"bbox":[738,340,380,16]}
+{"kind":"shape","id":"sh/d43qp87q","slide":2,"bbox":[88,378,500,104]}
+{"kind":"shape","id":"sh/c3upg365","slide":2,"bbox":[108,405,50,50]}
+{"kind":"textbox","id":"sh/b2l8nypk","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[108,419,50,18]}
+{"kind":"textbox","id":"sh/qhc7etoz","slide":2,"text":"Кнопка ПО","textPreview":"Кнопка ПО","textChars":9,"textLines":1,"bbox":[176,392,370,38]}
+{"kind":"textbox","id":"sh/l8nqt87m","slide":2,"text":"В форме добавления акта","textPreview":"В форме добавления акта","textChars":23,"textLines":1,"bbox":[176,438,370,18]}
+{"kind":"textbox","id":"sh/07epkn6h","slide":2,"text":"Повторный осмотр без дублей","textPreview":"Повторный осмотр без дублей","textChars":27,"textLines":1,"bbox":[176,458,380,16]}
+{"kind":"shape","id":"sh/z658ripw","slide":2,"bbox":[650,378,500,104]}
+{"kind":"shape","id":"sh/y5c7idob","slide":2,"bbox":[670,405,50,50]}
+{"kind":"textbox","id":"sh/1cjqho7i","slide":2,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[670,419,50,18]}
+{"kind":"textbox","id":"sh/gbap8j6x","slide":2,"text":"Генерация АВР","textPreview":"Генерация АВР","textChars":13,"textLines":1,"bbox":[738,392,370,38]}
+{"kind":"textbox","id":"sh/6h8nip4v","slide":2,"text":"АВР → выбрать помещение","textPreview":"АВР → выбрать помещение","textChars":23,"textLines":1,"bbox":[738,438,370,18]}
+{"kind":"textbox","id":"sh/rih4ru5g","slide":2,"text":"Word по данным CRM","textPreview":"Word по данным CRM","textChars":18,"textLines":1,"bbox":[738,458,380,16]}
+{"kind":"shape","id":"sh/sjq5kzm1","slide":2,"bbox":[88,496,500,104]}
+{"kind":"shape","id":"sh/tkzmt4nm","slide":2,"bbox":[108,523,50,50]}
+{"kind":"textbox","id":"sh/el8nmp4r","slide":2,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[108,537,50,18]}
+{"kind":"textbox","id":"sh/fm14vu5c","slide":2,"text":"Претензии подрядчикам","textPreview":"Претензии подрядчикам","textChars":21,"textLines":1,"bbox":[176,510,370,38]}
+{"kind":"textbox","id":"sh/gna5ozmx","slide":2,"text":"Подрядчики → раздел работ","textPreview":"Подрядчики → раздел работ","textChars":25,"textLines":1,"bbox":[176,556,370,18]}
+{"kind":"textbox","id":"sh/18j6x4ni","slide":2,"text":"Word по исполнителю","textPreview":"Word по исполнителю","textChars":19,"textLines":1,"bbox":[176,576,380,16]}
+{"kind":"shape","id":"sh/upona5on","slide":2,"bbox":[650,496,500,104]}
+{"kind":"shape","id":"sh/vqx4ja58","slide":2,"bbox":[670,523,50,50]}
+{"kind":"textbox","id":"sh/bu5cr2t0","slide":2,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[670,537,50,18]}
+{"kind":"textbox","id":"sh/q9wbyxcf","slide":2,"text":"Выдача задач","textPreview":"Выдача задач","textChars":12,"textLines":1,"bbox":[738,510,370,38]}
+{"kind":"textbox","id":"sh/dwnutcbq","slide":2,"text":"Выдача задач → выбрать замечания","textPreview":"Выдача задач → выбрать замечания","textChars":32,"textLines":1,"bbox":[738,556,370,18]}
+{"kind":"textbox","id":"sh/cvet07u5","slide":2,"text":"Назначение сотруднику","textPreview":"Назначение сотруднику","textChars":21,"textLines":1,"bbox":[738,576,380,16]}
+{"kind":"shape","id":"sh/zypcv2tw","slide":2,"bbox":[88,606,250,34]}
+{"kind":"textbox","id":"sh/yxwb2hcb","slide":2,"text":"07  Квартиры","textPreview":"07  Квартиры","textChars":12,"textLines":1,"bbox":[100,616,222,14]}
+{"kind":"shape","id":"sh/l07uxcb2","slide":2,"bbox":[363,606,250,34]}
+{"kind":"textbox","id":"sh/kzyt47uh","slide":2,"text":"08  Отчет","textPreview":"08  Отчет","textChars":9,"textLines":1,"bbox":[375,616,222,14]}
+{"kind":"shape","id":"sh/72pczmts","slide":2,"bbox":[638,606,250,34]}
+{"kind":"textbox","id":"sh/m1gb6hcn","slide":2,"text":"09  Расход материалов","textPreview":"09  Расход материалов","textChars":21,"textLines":1,"bbox":[650,616,222,14]}
+{"kind":"shape","id":"sh/47itgrql","slide":2,"bbox":[913,606,250,34]}
+{"kind":"textbox","id":"sh/5srapwr6","slide":2,"text":"10  Замеры","textPreview":"10  Замеры","textChars":10,"textLines":1,"bbox":[925,616,222,14]}
+{"kind":"shape","id":"sh/i50beh8f","slide":2,"bbox":[88,654,250,34]}
+{"kind":"textbox","id":"sh/j69snm90","slide":2,"text":"11  Почта и телефон","textPreview":"11  Почта и телефон","textChars":19,"textLines":1,"bbox":[100,664,222,14]}
+{"kind":"shape","id":"sh/w3ytc7qp","slide":2,"bbox":[363,654,250,34]}
+{"kind":"textbox","id":"sh/h47alcra","slide":2,"text":"12  Подключение 2FA","textPreview":"12  Подключение 2FA","textChars":19,"textLines":1,"bbox":[375,664,222,14]}
+{"kind":"shape","id":"sh/u1gbah8j","slide":2,"bbox":[638,654,250,34]}
+{"kind":"textbox","id":"sh/v2psjm94","slide":2,"text":"13  Смена пароля","textPreview":"13  Смена пароля","textChars":16,"textLines":1,"bbox":[650,664,222,14]}
+{"kind":"shape","id":"sh/8zyt87qd","slide":2,"bbox":[913,654,250,34]}
+{"kind":"textbox","id":"sh/907ahcry","slide":2,"text":"14  Excel","textPreview":"14  Excel","textChars":9,"textLines":1,"bbox":[925,664,222,14]}
+{"kind":"image","id":"im/1w3qdsvq","slide":2,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/iuynkr","slide":2,"text":"Страница 2 содержит все функции, которые далее показываются в инструкции."}
+{"kind":"slide","id":"sl/qt4y53","slide":3,"title":"03 · ЗАМЕЧАНИЯ","textShapes":21}
+{"kind":"shape","id":"sh/czu1cr65","slide":3,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/bylk3mpk","slide":3,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/lon29g7m","slide":3,"text":"03 · ЗАМЕЧАНИЯ","textPreview":"03 · ЗАМЕЧАНИЯ","textChars":14,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/03elgb61","slide":3,"text":"Добавление замечаний автоматически","textPreview":"Добавление замечаний автоматически","textChars":34,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/z2lk76pg","slide":3,"text":"PDF-акт распознается в CRM, но перед сохранением строки нужно проверить.","textPreview":"PDF-акт распознается в CRM, но перед сохранением строки нужно проверить.","textChars":72,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/y1cje1ob","slide":3,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/9sn2dgny","slide":3,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/8relkb6d","slide":3,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/u907i1gj","slide":3,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/va9or6h4","slide":3,"text":"Откройте форму","textPreview":"Откройте форму","textChars":14,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/gbipkbyp","slide":3,"text":"В левом меню нажмите Замечания, затем Добавить с акта.","textPreview":"В левом меню нажмите Замечания, затем Добавить с акта.","textChars":54,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/hcr6tgzu","slide":3,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/id07mlgf","slide":3,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/3e9ovqh0","slide":3,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/4f2pobyl","slide":3,"text":"Загрузите PDF","textPreview":"Загрузите PDF","textChars":13,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/5gb6xgz6","slide":3,"text":"Нажмите Выберите PDF и приложите акт осмотра.","textPreview":"Нажмите Выберите PDF и приложите акт осмотра.","textChars":45,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/yhgnahgb","slide":3,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/jipojmhw","slide":3,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/na1cvytc","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/29sv2tsr","slide":3,"text":"Проверьте распознавание","textPreview":"Проверьте распознавание","textChars":23,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/pc3uxobi","slide":3,"text":"CRM покажет квартиру, дату, пункт и текст каждой строки.","textPreview":"CRM покажет квартиру, дату, пункт и текст каждой строки.","textChars":56,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/obud4jax","slide":3,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/f61cretg","slide":3,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/elsby9sv","slide":3,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/18jutob6","slide":3,"text":"Снимите лишние галочки","textPreview":"Снимите лишние галочки","textChars":22,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/07at0ja1","slide":3,"text":"Если строку не нужно заносить, уберите галочку Оставить.","textPreview":"Если строку не нужно заносить, уберите галочку Оставить.","textChars":56,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/z25c3itk","slide":3,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/yhcvadsz","slide":3,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/wn69ovqh","slide":3,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/hofax0r2","slide":3,"text":"Сохраните","textPreview":"Сохраните","textChars":9,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/ulorm58b","slide":3,"text":"Поставьте подтверждение проверки и нажмите Сохранить.","textPreview":"Поставьте подтверждение проверки и нажмите Сохранить.","textChars":53,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/vmxsva9w","slide":3,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/4rq9sfqt","slide":3,"text":"Важно","textPreview":"Важно","textChars":5,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/5cza1kry","slide":3,"text":"Строка без галочки не сохраняется, даже если в ней остался текст.","textPreview":"Строка без галочки не сохраняется, даже если в ней остался текст.","textChars":65,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/j698byp4","slide":3,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/qt4y53","slide":3,"text":"Добавление замечаний автоматически. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/7f0r0x","slide":4,"title":"04 · ПОВТОРНЫЙ ОСМОТР","textShapes":21}
+{"kind":"shape","id":"sh/vylgfqlc","slide":4,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/gzuh8v2x","slide":4,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/69sz2lkf","slide":4,"text":"04 · ПОВТОРНЫЙ ОСМОТР","textPreview":"04 · ПОВТОРНЫЙ ОСМОТР","textChars":21,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/7a1gb6l0","slide":4,"text":"Кнопка ПО при повторном осмотре","textPreview":"Кнопка ПО при повторном осмотре","textChars":31,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/8bah4b2l","slide":4,"text":"ПО используется, когда загружается акт повторного осмотра по квартире с уже существующими замечаниями.","textPreview":"ПО используется, когда загружается акт повторного осмотра по квартире с уже существующими замечаниями.","textChars":102,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/twjydg36","slide":4,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/q5cze5kz","slide":4,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/r650nalk","slide":4,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/jqp0zix4","slide":4,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/ipgzqdgj","slide":4,"text":"Включите ПО","textPreview":"Включите ПО","textChars":11,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/5sri1sfa","slide":4,"text":"В форме акта нажмите кнопку ПО перед сохранением.","textPreview":"В форме акта нажмите кнопку ПО перед сохранением.","textChars":49,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/4rihsnyp","slide":4,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/ru9032xg","slide":4,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/6t0zuxgv","slide":4,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/tgri5sf6","slide":4,"text":"Проверьте новые строки","textPreview":"Проверьте новые строки","textChars":22,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/svi1w7yl","slide":4,"text":"Оставьте галочки только у новых замечаний из повторного акта.","textPreview":"Оставьте галочки только у новых замечаний из повторного акта.","textChars":61,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/fi9072xc","slide":4,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/eh0jyxgr","slide":4,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/apobm54b","slide":4,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/bqxcfalw","slide":4,"text":"Сохраните акт","textPreview":"Сохраните акт","textChars":13,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/wr6tofmh","slide":4,"text":"CRM переведет старые невыполненные замечания в Выполнено.","textPreview":"CRM переведет старые невыполненные замечания в Выполнено.","textChars":57,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/xsfuh03m","slide":4,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/ml4bil4z","slide":4,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/nmdcbqlk","slide":4,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/onmtkvm5","slide":4,"text":"Проверьте дубли","textPreview":"Проверьте дубли","textChars":15,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/9ofud03q","slide":4,"text":"Идентичные замечания остаются как есть и не создают вторую строку.","textPreview":"Идентичные замечания остаются как есть и не создают вторую строку.","textChars":66,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/6h8vup4j","slide":4,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/7ihcnul4","slide":4,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/hcjedon6","slide":4,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/gbaxkj6l","slide":4,"text":"Если CRM предупреждает","textPreview":"Если CRM предупреждает","textChars":22,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/va1wbe50","slide":4,"text":"Сообщение про ПО означает, что в квартире уже много замечаний.","textPreview":"Сообщение про ПО означает, что в квартире уже много замечаний.","textChars":62,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/upsfi9of","slide":4,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/toje94nu","slide":4,"text":"Результат","textPreview":"Результат","textChars":9,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/8naxgz6p","slide":4,"text":"Старые строки закрываются, новые добавляются со статусом Не выполнено.","textPreview":"Старые строки закрываются, новые добавляются со статусом Не выполнено.","textChars":70,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/o7qhonid","slide":4,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/7f0r0x","slide":4,"text":"Кнопка ПО при повторном осмотре. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/t0lr05","slide":5,"title":"05 · ЗАМЕЧАНИЯ","textShapes":21}
+{"kind":"shape","id":"sh/t8r690je","slide":5,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/6l0nelk3","slide":5,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/gbi5kf25","slide":5,"text":"05 · ЗАМЕЧАНИЯ","textPreview":"05 · ЗАМЕЧАНИЯ","textChars":14,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/1cb6d0jq","slide":5,"text":"Добавление замечаний вручную","textPreview":"Добавление замечаний вручную","textChars":28,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/e90ni5kz","slide":5,"text":"Ручной ввод нужен, если PDF не подходит или замечание нужно добавить без акта.","textPreview":"Ручной ввод нужен, если PDF не подходит или замечание нужно добавить без акта.","textChars":78,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/fa9oba1k","slide":5,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/of2pofi1","slide":5,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/pgb6hkjm","slide":5,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/p83a1ozy","slide":5,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/47u983id","slide":5,"text":"Откройте форму","textPreview":"Откройте форму","textChars":14,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/36lszyhs","slide":5,"text":"Зайдите в Замечания и нажмите Добавить вручную.","textPreview":"Зайдите в Замечания и нажмите Добавить вручную.","textChars":47,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/25cr6t07","slide":5,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/dw3a58zu","slide":5,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/cvu9c3ip","slide":5,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/rals3yh4","slide":5,"text":"Выберите помещение","textPreview":"Выберите помещение","textChars":18,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/q9crat0j","slide":5,"text":"Укажите квартиру или коммерцию, затем дату осмотра.","textPreview":"Укажите квартиру или коммерцию, затем дату осмотра.","textChars":51,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/t0jqt4zq","slide":5,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/sza90ji5","slide":5,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/kje9gjq1","slide":5,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/lkna9o7m","slide":5,"text":"Выберите пункт","textPreview":"Выберите пункт","textChars":14,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/yhcre98v","slide":5,"text":"В каждой строке выберите пункт от 10 и выше.","textPreview":"В каждой строке выберите пункт от 10 и выше.","textChars":44,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/jils7epg","slide":5,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/8ne9kjqd","slide":5,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/tonado7i","slide":5,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/6lwrit87","slide":5,"text":"Введите текст","textPreview":"Введите текст","textChars":13,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/7m5sbeps","slide":5,"text":"Запишите замечание в поле Замечание. Можно добавить несколько строк.","textPreview":"Запишите замечание в поле Замечание. Можно добавить несколько строк.","textChars":68,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/gbyto3q9","slide":5,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/hc7ah87u","slide":5,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/r69cn29w","slide":5,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/q50vexsb","slide":5,"text":"Сохраните","textPreview":"Сохраните","textChars":9,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/d8rupcr2","slide":5,"text":"Проверьте галочки, при повторном осмотре включите ПО.","textPreview":"Проверьте галочки, при повторном осмотре включите ПО.","textChars":53,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/s7idg7ah","slide":5,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/3i9cji90","slide":5,"text":"Защита","textPreview":"Защита","textChars":6,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/ihgvadsf","slide":5,"text":"Если в квартире уже есть замечания и добавляется несколько пунктов, CRM просит поставить ПО.","textPreview":"Если в квартире уже есть замечания и добавляется несколько пунктов, CRM просит поставить ПО.","textChars":92,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/6lkb6pg3","slide":5,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/t0lr05","slide":5,"text":"Добавление замечаний вручную. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/fdia5j","slide":6,"title":"06 · АВР","textShapes":21}
+{"kind":"shape","id":"sh/rmh0z2dw","slide":6,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/snq18nuh","slide":6,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/ep8jaxcn","slide":6,"text":"06 · АВР","textPreview":"06 · АВР","textChars":8,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/fqh032ds","slide":6,"text":"Генерация АВР","textPreview":"Генерация АВР","textChars":13,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/grq1c7ud","slide":6,"text":"АВР формируется по данным квартиры и замечаниям, которые уже есть в CRM.","textPreview":"АВР формируется по данным квартиры и замечаниям, которые уже есть в CRM.","textChars":72,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/1sz25cvy","slide":6,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/ut4jydw3","slide":6,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/vux0rido","slide":6,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/ry9gnu14","slide":6,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/qx0zupkj","slide":6,"text":"Откройте раздел","textPreview":"Откройте раздел","textChars":15,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/d0rypkju","slide":6,"text":"В левом меню нажмите АВР.","textPreview":"В левом меню нажмите АВР.","textChars":25,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/szihwf29","slide":6,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/3upgja1s","slide":6,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/itgfq5k7","slide":6,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/5wrylkjy","slide":6,"text":"Выберите помещение","textPreview":"Выберите помещение","textChars":18,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/4vihsf2d","slide":6,"text":"Найдите квартиру или коммерцию через поиск.","textPreview":"Найдите квартиру или коммерцию через поиск.","textChars":43,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/v6pgfa1w","slide":6,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/u5gfm5kb","slide":6,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/y1wzy543","slide":6,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/j2507q5o","slide":6,"text":"Проверьте данные","textPreview":"Проверьте данные","textChars":16,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/k3eh0vm9","slide":6,"text":"Проверьте собственника, телефон, дату и список замечаний.","textPreview":"Проверьте собственника, телефон, дату и список замечаний.","textChars":57,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/l47i90nu","slide":6,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/65gz254z","slide":6,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/7qp0ba5k","slide":6,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/8ryh4fm5","slide":6,"text":"Нажмите Сформировать","textPreview":"Нажмите Сформировать","textChars":20,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/ts7idknq","slide":6,"text":"CRM подготовит документ Word.","textPreview":"CRM подготовит документ Word.","textChars":29,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/utgz6p4b","slide":6,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/vup0fa5w","slide":6,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/5ob25o7y","slide":6,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/4n21wj6d","slide":6,"text":"Скачайте файл","textPreview":"Скачайте файл","textChars":13,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/3m9k3eps","slide":6,"text":"Откройте Word и проверьте реквизиты перед отправкой.","textPreview":"Откройте Word и проверьте реквизиты перед отправкой.","textChars":52,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/il0ju9o7","slide":6,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/dsb29o7u","slide":6,"text":"Перед созданием","textPreview":"Перед созданием","textChars":15,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/sr2l0j6p","slide":6,"text":"Если данных собственника нет, заполните карточку помещения.","textPreview":"Если данных собственника нет, заполните карточку помещения.","textChars":59,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/kbm9wfmh","slide":6,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/fdia5j","slide":6,"text":"Генерация АВР. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/i9zdwn","slide":7,"title":"07 · ПОДРЯДЧИКИ","textShapes":21}
+{"kind":"shape","id":"sh/9gfmdwzm","slide":7,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/mt432hgv","slide":7,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/0rml07y5","slide":7,"text":"07 · ПОДРЯДЧИКИ","textPreview":"07 · ПОДРЯДЧИКИ","textChars":15,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/lsvm9czq","slide":7,"text":"Претензии подрядчикам","textPreview":"Претензии подрядчикам","textChars":21,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/yp43yxgz","slide":7,"text":"Претензия создается по выбранному подрядчику и его невыполненным работам.","textPreview":"Претензия создается по выбранному подрядчику и его невыполненным работам.","textChars":73,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/zqd472hk","slide":7,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/cn2lw7yt","slide":7,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/dovm5cze","slide":7,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/p0z2dcrm","slide":7,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/4zql47a1","slide":7,"text":"Откройте Подрядчики","textPreview":"Откройте Подрядчики","textChars":19,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/3yhkbm9g","slide":7,"text":"Перейдите в Подрядчики и выберите нужный раздел работ.","textPreview":"Перейдите в Подрядчики и выберите нужный раздел работ.","textChars":54,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/2x832hsv","slide":7,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/hwz29cra","slide":7,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/gvql07a5","slide":7,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/fuxk729k","slide":7,"text":"Проверьте пункт","textPreview":"Проверьте пункт","textChars":15,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/uto3yxsz","slide":7,"text":"Фильтруйте замечания по пункту и статусу.","textPreview":"Фильтруйте замечания по пункту и статусу.","textChars":41,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/tsf25sre","slide":7,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/s76lwnat","slide":7,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/kbalc7ip","slide":7,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/lcj2lsza","slide":7,"text":"Выберите подрядчика","textPreview":"Выберите подрядчика","textChars":19,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/y9s3ax0j","slide":7,"text":"В карточке подрядчика должны быть почта и телефон.","textPreview":"В карточке подрядчика должны быть почта и телефон.","textChars":50,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/ja1kj2h4","slide":7,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/w7ql8nit","slide":7,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/x8j2hszy","slide":7,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/al836d0n","slide":7,"text":"Нажмите претензию","textPreview":"Нажмите претензию","textChars":17,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/bmhkfih8","slide":7,"text":"Сформируйте Word по выбранным замечаниям.","textPreview":"Сформируйте Word по выбранным замечаниям.","textChars":41,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/g3ulkrix","slide":7,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/h43mtczi","slide":7,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/ry5ojq1k","slide":7,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/qxwnalkz","slide":7,"text":"Проверьте исполнителя","textPreview":"Проверьте исполнителя","textChars":21,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/d076lgjq","slide":7,"text":"Если вы не Передача(Офис), CRM подставит данные аккаунта Передача(Офис).","textPreview":"Если вы не Передача(Офис), CRM подставит данные аккаунта Передача(Офис).","textChars":72,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/szy5cv25","slide":7,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/f2ponq1w","slide":7,"text":"Важно","textPreview":"Важно","textChars":5,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/e1gnelkb","slide":7,"text":"Пункт 26 называется Отступное (ТМЦ). Доп. соглашение не должно появляться как пункт 47.","textPreview":"Пункт 26 называется Отступное (ТМЦ). Доп. соглашение не должно появляться как пункт 47.","textChars":87,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/2pc7ux8b","slide":7,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/i9zdwn","slide":7,"text":"Претензии подрядчикам. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/ieq8ov","slide":8,"title":"08 · ЗАДАЧИ","textShapes":21}
+{"kind":"shape","id":"sh/ojax4ji1","slide":8,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/ni1wve1g","slide":8,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/xo3y18ji","slide":8,"text":"08 · ЗАДАЧИ","textPreview":"08 · ЗАДАЧИ","textChars":11,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/wnux83ix","slide":8,"text":"Выдача задач сотрудникам","textPreview":"Выдача задач сотрудникам","textChars":24,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/bmlgzy1c","slide":8,"text":"Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.","textPreview":"Раздел нужен, чтобы передать конкретные замечания в работу исполнителю.","textChars":71,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/alcf6t0r","slide":8,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/dszep4je","slide":8,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/crqxwzit","slide":8,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/6ls72pk7","slide":8,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/rm1obuls","slide":8,"text":"Откройте раздел","textPreview":"Откройте раздел","textChars":15,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/snap4z2d","slide":8,"text":"В левом меню нажмите Выдача задач.","textPreview":"В левом меню нажмите Выдача задач.","textChars":34,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/tojqd43y","slide":8,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/e9s769kj","slide":8,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/fa18fel4","slide":8,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/gbap8j29","slide":8,"text":"Отфильтруйте список","textPreview":"Отфильтруйте список","textChars":19,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/1c3qho3u","slide":8,"text":"Выберите квартиру, пункт, статус или исполнителя.","textPreview":"Выберите квартиру, пункт, статус или исполнителя.","textChars":49,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/2dc7a9kf","slide":8,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/3el8jel0","slide":8,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/ziloreh8","slide":8,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/yhc7yt0n","slide":8,"text":"Отметьте замечания","textPreview":"Отметьте замечания","textChars":18,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/lkn6toze","slide":8,"text":"Поставьте галочки у строк, которые нужно выдать.","textPreview":"Поставьте галочки у строк, которые нужно выдать.","textChars":48,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/0jep0jit","slide":8,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/belonehw","slide":8,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/qdcnu90r","slide":8,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/dg36poz2","slide":8,"text":"Выберите сотрудника","textPreview":"Выберите сотрудника","textChars":19,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/cfu5wjih","slide":8,"text":"Укажите исполнителя и дату выдачи.","textPreview":"Укажите исполнителя и дату выдачи.","textChars":34,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/3q1ojuh0","slide":8,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/2psnq90f","slide":8,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/svql0vyd","slide":8,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/twzmt0fy","slide":8,"text":"Сохраните выдачу","textPreview":"Сохраните выдачу","textChars":16,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/6t83y5g7","slide":8,"text":"После сохранения задачи появятся у сотрудника в его списке.","textPreview":"После сохранения задачи появятся у сотрудника в его списке.","textChars":59,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/ruh4raxs","slide":8,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/gjql4fy9","slide":8,"text":"Проверка","textPreview":"Проверка","textChars":8,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/1kjmxkfu","slide":8,"text":"Выдавайте только актуальные невыполненные замечания.","textPreview":"Выдавайте только актуальные невыполненные замечания.","textChars":52,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/bqxgvuts","slide":8,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/ieq8ov","slide":8,"text":"Выдача задач сотрудникам. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/v25pmy","slide":9,"title":"09 · КВАРТИРЫ","textShapes":21}
+{"kind":"shape","id":"sh/jel8nydg","slide":9,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/kfu9g3e1","slide":9,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/apcratwz","slide":9,"text":"09 · КВАРТИРЫ","textPreview":"09 · КВАРТИРЫ","textChars":13,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/bql8jydk","slide":9,"text":"Квартиры","textPreview":"Квартиры","textChars":8,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/wru9cje5","slide":9,"text":"Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.","textPreview":"Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.","textChars":76,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/xs3qlova","slide":9,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/mls769wn","slide":9,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/nm18fed8","slide":9,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/7il8z6l4","slide":9,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/6hcr61kz","slide":9,"text":"Откройте Квартиры","textPreview":"Откройте Квартиры","textChars":17,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/tk3q1w3a","slide":9,"text":"В левом меню нажмите Квартиры.","textPreview":"В левом меню нажмите Квартиры.","textChars":30,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/sju98b2p","slide":9,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/fml836lg","slide":9,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/ulcra1kv","slide":9,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/honq5g3m","slide":9,"text":"Найдите помещение","textPreview":"Найдите помещение","textChars":17,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/gnu9cb21","slide":9,"text":"Введите номер квартиры или текст в поле Поиск.","textPreview":"Введите номер квартиры или текст в поле Поиск.","textChars":46,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/vq18rmlc","slide":9,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/aps7yh4r","slide":9,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/yh03m98b","slide":9,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/zi9kve9w","slide":9,"text":"Примените фильтры","textPreview":"Примените фильтры","textChars":17,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/0jilojqh","slide":9,"text":"Выберите Осмотр, АПП, АВР, внутренний статус и отделку.","textPreview":"Выберите Осмотр, АПП, АВР, внутренний статус и отделку.","textChars":55,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/lkr2xor2","slide":9,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/qt0ji98f","slide":9,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/bu9kre90","slide":9,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/cvilkjql","slide":9,"text":"Откройте карточку","textPreview":"Откройте карточку","textChars":17,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/dgr2t4rq","slide":9,"text":"Нажмите на нужную карточку квартиры или коммерции.","textPreview":"Нажмите на нужную карточку квартиры или коммерции.","textChars":50,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/2pgjep83","slide":9,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/3qpknu9o","slide":9,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/5kf6tsb6","slide":9,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/4jm5knal","slide":9,"text":"Проверьте данные","textPreview":"Проверьте данные","textChars":16,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/jidor2tg","slide":9,"text":"В карточке смотрите замечания, комментарии, историю, готовность и статусы.","textPreview":"В карточке смотрите замечания, комментарии, историю, готовность и статусы.","textChars":74,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/ih4nixsv","slide":9,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/hgvmpsba","slide":9,"text":"Подсказка","textPreview":"Подсказка","textChars":9,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/wfm5gnap","slide":9,"text":"Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.","textPreview":"Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.","textChars":82,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/wfe9gfmx","slide":9,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/v25pmy","slide":9,"text":"Квартиры. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/u9c4z6","slide":10,"title":"10 · ОТЧЕТ","textShapes":21}
+{"kind":"shape","id":"sh/10bypkr2","slide":10,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/ex0zu5sr","slide":10,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/svihsval","slide":10,"text":"10 · ОТЧЕТ","textPreview":"10 · ОТЧЕТ","textChars":10,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/dwryl0r6","slide":10,"text":"Отчет","textPreview":"Отчет","textChars":5,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/qt0fq5sf","slide":10,"text":"Отчет нужен для контроля готовности объекта, статусов и общего количества работ.","textPreview":"Отчет нужен для контроля готовности объекта, статусов и общего количества работ.","textChars":80,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/ru9gjq90","slide":10,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/47ixova9","slide":10,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/5sryh0ru","slide":10,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/1cz2dsfy","slide":10,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/0bqlknyt","slide":10,"text":"Откройте Отчет","textPreview":"Откройте Отчет","textChars":14,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/zahkb2x8","slide":10,"text":"В левом меню нажмите Отчет.","textPreview":"В левом меню нажмите Отчет.","textChars":27,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/e9o3ixgn","slide":10,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/d8f29sf2","slide":10,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/c76lgnyh","slide":10,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/r6xk7ixw","slide":10,"text":"Проверьте сводку","textPreview":"Проверьте сводку","textChars":16,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/q5o3edgb","slide":10,"text":"Посмотрите количество помещений, замечаний и готовность по объекту.","textPreview":"Посмотрите количество помещений, замечаний и готовность по объекту.","textChars":67,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/pkf258f6","slide":10,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/4j61c3yl","slide":10,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/gnalsn6h","slide":10,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/hoj2ls7m","slide":10,"text":"Используйте фильтры","textPreview":"Используйте фильтры","textChars":19,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/ul83qdob","slide":10,"text":"Выберите нужный статус, отделку или другую доступную группировку.","textPreview":"Выберите нужный статус, отделку или другую доступную группировку.","textChars":65,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/vmhkjipw","slide":10,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/8zqlo365","slide":10,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/tkz2h87q","slide":10,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/6x83mtoz","slide":10,"text":"Сравните показатели","textPreview":"Сравните показатели","textChars":19,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/7yhkfypk","slide":10,"text":"Проверьте выполненные и оставшиеся работы перед выгрузкой или планеркой.","textPreview":"Проверьте выполненные и оставшиеся работы перед выгрузкой или планеркой.","textChars":72,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/svul076p","slide":10,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/dg3mtcnu","slide":10,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/nmpwfqd8","slide":10,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/mlgf6lc3","slide":10,"text":"Откройте детали","textPreview":"Откройте детали","textChars":15,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/9o7eh0be","slide":10,"text":"Переходите из отчета в нужный раздел, если нужно проверить конкретную строку.","textPreview":"Переходите из отчета в нужный раздел, если нужно проверить конкретную строку.","textChars":77,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/onyx8vut","slide":10,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/bqpwjatk","slide":10,"text":"Контроль","textPreview":"Контроль","textChars":8,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/apgfa5cz","slide":10,"text":"Если цифры в отчете не совпадают с карточками, сначала проверьте фильтры и выбранный объект.","textPreview":"Если цифры в отчете не совпадают с карточками, сначала проверьте фильтры и выбранный объект.","textChars":92,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/ut8vy1or","slide":10,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/u9c4z6","slide":10,"text":"Отчет. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/0ol5ik","slide":11,"title":"11 · МАТЕРИАЛЫ","textShapes":21}
+{"kind":"shape","id":"sh/s7ut47yh","slide":11,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/76lsv2hw","slide":11,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/hc3u1wzy","slide":11,"text":"11 · МАТЕРИАЛЫ","textPreview":"11 · МАТЕРИАЛЫ","textChars":14,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/gbut8ryd","slide":11,"text":"Расход материалов","textPreview":"Расход материалов","textChars":17,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/falczmhs","slide":11,"text":"Материалы списываются на конкретную работу, чтобы сохранить историю расхода.","textPreview":"Материалы списываются на конкретную работу, чтобы сохранить историю расхода.","textChars":76,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/u9cb6hgn","slide":11,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/xgjapszu","slide":11,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/wfatwni9","slide":11,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/y9ove50z","slide":11,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/zaxwnq1k","slide":11,"text":"Откройте раздел","textPreview":"Откройте раздел","textChars":15,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/kb6dgvi5","slide":11,"text":"В левом меню нажмите Расход материалов.","textPreview":"В левом меню нажмите Расход материалов.","textChars":39,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/lcfep0jq","slide":11,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/md8fi50b","slide":11,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/7ehwra1g","slide":11,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/8fqxkfi1","slide":11,"text":"Создайте запись","textPreview":"Создайте запись","textChars":15,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/90zetkzm","slide":11,"text":"Нажмите добавление расхода и выберите квартиру или коммерцию.","textPreview":"Нажмите добавление расхода и выберите квартиру или коммерцию.","textChars":61,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/u18fmp07","slide":11,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/v2hwvahs","slide":11,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/r61cjux0","slide":11,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/65svapgf","slide":11,"text":"Выберите работу","textPreview":"Выберите работу","textChars":15,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/t8jelkfq","slide":11,"text":"Привяжите материал к конкретному замечанию или пункту работ.","textPreview":"Привяжите материал к конкретному замечанию или пункту работ.","textChars":60,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/s7adcfy5","slide":11,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/j2hcfaxo","slide":11,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/ih8v65g3","slide":11,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/54juhkfu","slide":11,"text":"Укажите материал","textPreview":"Укажите материал","textChars":16,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/43qd8fy9","slide":11,"text":"Заполните наименование, единицу измерения и количество.","textPreview":"Заполните наименование, единицу измерения и количество.","textChars":55,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/vehcbaxs","slide":11,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/ud8v25g7","slide":11,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/0721w7at","slide":11,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/l8v2pcre","slide":11,"text":"Сохраните расход","textPreview":"Сохраните расход","textChars":16,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/y5kjuxsn","slide":11,"text":"После сохранения проверьте запись в списке и истории помещения.","textPreview":"После сохранения проверьте запись в списке и истории помещения.","textChars":63,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/z6t0n298","slide":11,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/8bm10rap","slide":11,"text":"Правило","textPreview":"Правило","textChars":7,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/9cv2tcra","slide":11,"text":"Не списывайте материал без привязки к работе: потом сложно проверить расход.","textPreview":"Не списывайте материал без привязки к работе: потом сложно проверить расход.","textChars":76,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/f6h0felg","slide":11,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/0ol5ik","slide":11,"text":"Расход материалов. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/mr8hkb","slide":12,"title":"12 · ЗАМЕРЫ","textShapes":21}
+{"kind":"shape","id":"sh/4nml4jap","slide":12,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/jmdkbet4","slide":12,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/h0v29oby","slide":12,"text":"12 · ЗАМЕРЫ","textPreview":"12 · ЗАМЕРЫ","textChars":11,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/wz210jat","slide":12,"text":"Замеры","textPreview":"Замеры","textChars":6,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/vytk7et8","slide":12,"text":"Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.","textPreview":"Замеры помогают отдельно контролировать задачи по стеклу и связанным работам.","textChars":77,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/uxkjy9sn","slide":12,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/1wf2l8ri","slide":12,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/0v6lc3ax","slide":12,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/6dojap0j","slide":12,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/7exkjuh4","slide":12,"text":"Откройте Замеры","textPreview":"Откройте Замеры","textChars":15,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/sf61czip","slide":12,"text":"В левом меню нажмите Замеры.","textPreview":"В левом меню нажмите Замеры.","textChars":28,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/tgf2l4za","slide":12,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/yp4j650n","slide":12,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/jqd0fah8","slide":12,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/krm18fid","slide":12,"text":"Создайте задачу","textPreview":"Создайте задачу","textChars":15,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/5cf2hkzy","slide":12,"text":"Нажмите Добавить задачу, выберите помещение и заполните текст.","textPreview":"Нажмите Добавить задачу, выберите помещение и заполните текст.","textChars":62,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/2l8ji90r","slide":12,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/3mhkrehc","slide":12,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/zq9gj6ho","slide":12,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/ep0za1g3","slide":12,"text":"Работайте со списком","textPreview":"Работайте со списком","textChars":20,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/1sbylgfu","slide":12,"text":"Сначала отображаются невыполненные задачи, выполненные уходят в конец.","textPreview":"Сначала отображаются невыполненные задачи, выполненные уходят в конец.","textChars":70,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/0rihcby9","slide":12,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/nutgn6x0","slide":12,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/mtkzelgf","slide":12,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/9wbypgfq","slide":12,"text":"Меняйте статус","textPreview":"Меняйте статус","textChars":14,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/ov2hgby5","slide":12,"text":"После выполнения отметьте задачу как выполненную или заказанную.","textPreview":"После выполнения отметьте задачу как выполненную или заказанную.","textChars":64,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/bytgrqxw","slide":12,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/axkzilgb","slide":12,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/8nmx8vep","slide":12,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/tovy10va","slide":12,"text":"Проверяйте карточку","textPreview":"Проверяйте карточку","textChars":19,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/6l4f6lwj","slide":12,"text":"Открывайте карточку задачи, если нужен текст, история или действие.","textPreview":"Открывайте карточку задачи, если нужен текст, история или действие.","textChars":67,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/7mdgzqd4","slide":12,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/kzmx4bed","slide":12,"text":"Порядок","textPreview":"Порядок","textChars":7,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/lkvyxgvy","slide":12,"text":"Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.","textPreview":"Если выполненная строка выше невыполненной, проверьте фильтр, статус и текущую страницу.","textChars":88,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/ba9sj6lg","slide":12,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/mr8hkb","slide":12,"text":"Замеры. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/dj95py","slide":13,"title":"13 · АККАУНТ","textShapes":21}
+{"kind":"shape","id":"sh/be50ne10","slide":13,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/cfy1gj25","slide":13,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/yhgjitkb","slide":13,"text":"13 · АККАУНТ","textPreview":"13 · АККАУНТ","textChars":12,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/zip0ry1w","slide":13,"text":"Почта и телефон","textPreview":"Почта и телефон","textChars":15,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/kjy1k32h","slide":13,"text":"Почта и номер телефона нужны для профиля и документов, которые CRM формирует по пользователю.","textPreview":"Почта и номер телефона нужны для профиля и документов, которые CRM формирует по пользователю.","textChars":93,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/l472t8j2","slide":13,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/elcj69k7","slide":13,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/fml0fu1s","slide":13,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/3mhw7etk","slide":13,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/2l8vy9cz","slide":13,"text":"Откройте Аккаунт","textPreview":"Откройте Аккаунт","textChars":16,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/poze9obq","slide":13,"text":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textPreview":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textChars":58,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/onqd0ju5","slide":13,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/fyxw3et8","slide":13,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/exovu9c3","slide":13,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/1kze5obe","slide":13,"text":"Найдите блок Профиль","textPreview":"Найдите блок Профиль","textChars":20,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/gz6dwjut","slide":13,"text":"В левой карточке откройте строки Email и Телефон.","textPreview":"В левой карточке откройте строки Email и Телефон.","textChars":49,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/ruxwzutc","slide":13,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/6tovqpcr","slide":13,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/up4f2pwj","slide":13,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/vqdwbux4","slide":13,"text":"Введите email","textPreview":"Введите email","textChars":13,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/wrmx4zep","slide":13,"text":"В строке Email укажите рабочую почту без лишних пробелов.","textPreview":"В строке Email укажите рабочую почту без лишних пробелов.","textChars":57,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/hsved4fa","slide":13,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/itof69wv","slide":13,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/juxwfedg","slide":13,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/4v6x8je1","slide":13,"text":"Введите телефон","textPreview":"Введите телефон","textChars":15,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/5wfyh4v6","slide":13,"text":"В строке Телефон укажите номер в рабочем формате.","textPreview":"В строке Телефон укажите номер в рабочем формате.","textChars":49,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/6xofa9wr","slide":13,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/ryxgjedc","slide":13,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/1sji98fe","slide":13,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/grqh03y9","slide":13,"text":"Сохраните данные","textPreview":"Сохраните данные","textChars":16,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/fqh07iho","slide":13,"text":"Нажмите Сохранить в профиле и проверьте уведомление об успешном сохранении.","textPreview":"Нажмите Сохранить в профиле и проверьте уведомление об успешном сохранении.","textChars":75,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/ep8zydg3","slide":13,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/pgjidsfq","slide":13,"text":"Важно","textPreview":"Важно","textChars":5,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/ofah4ny5","slide":13,"text":"Эти контакты используются в документах, поэтому перед генерацией претензии проверьте email и телефон.","textPreview":"Эти контакты используются в документах, поэтому перед генерацией претензии проверьте email и телефон.","textChars":101,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/knu5cba5","slide":13,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/dj95py","slide":13,"text":"Почта и телефон. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/dlkvd4","slide":14,"title":"14 · АККАУНТ","textShapes":21}
+{"kind":"shape","id":"sh/dgnqds76","slide":14,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/qtw72dof","slide":14,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/0jyp8n6h","slide":14,"text":"14 · АККАУНТ","textPreview":"14 · АККАУНТ","textChars":12,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/1k7qhs72","slide":14,"text":"Подключение 2FA","textPreview":"Подключение 2FA","textChars":15,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/ehw76dob","slide":14,"text":"Двухэтапная аутентификация защищает вход в CRM кодом из приложения.","textPreview":"Двухэтапная аутентификация защищает вход в CRM кодом из приложения.","textChars":67,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/zi58fipw","slide":14,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/gnupw36d","slide":14,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/ho3q587y","slide":14,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/xwjq5kji","slide":14,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/cbapwfix","slide":14,"text":"Откройте Аккаунт","textPreview":"Откройте Аккаунт","textChars":16,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/ba183a1s","slide":14,"text":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textPreview":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textChars":58,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/a9s7u507","slide":14,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/l03q9kju","slide":14,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/kzu90fi9","slide":14,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/zyl87u1o","slide":14,"text":"Нажмите Подключить 2FA","textPreview":"Нажмите Подключить 2FA","textChars":22,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/yxcryp03","slide":14,"text":"Кнопка находится в правом блоке Двухэтапная аутентификация.","textPreview":"Кнопка находится в правом блоке Двухэтапная аутентификация.","textChars":59,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/943qd4jq","slide":14,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/83u94zi5","slide":14,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/sjm1w7ut","slide":14,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/tkv2pcbe","slide":14,"text":"Добавьте ключ","textPreview":"Добавьте ключ","textChars":13,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/6h4juxcn","slide":14,"text":"Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.","textPreview":"Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.","textChars":82,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/ridkn2t8","slide":14,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/gn6107up","slide":14,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/1of2tcba","slide":14,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/el4jyxcj","slide":14,"text":"Введите код","textPreview":"Введите код","textChars":11,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/fmxkr2t4","slide":14,"text":"Введите шесть цифр из приложения в поле Код из приложения.","textPreview":"Введите шесть цифр из приложения в поле Код из приложения.","textChars":58,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/wr21onul","slide":14,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/hsbihsb6","slide":14,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/z6143qdo","slide":14,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/y5snulw3","slide":14,"text":"Подтвердите","textPreview":"Подтвердите","textChars":11,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/l8jm50vu","slide":14,"text":"Нажмите Подключить. После подключения при входе CRM запросит код.","textPreview":"Нажмите Подключить. После подключения при входе CRM запросит код.","textChars":65,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/k7a5wve9","slide":14,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/bih4z6dc","slide":14,"text":"Если QR не читается","textPreview":"Если QR не читается","textChars":19,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/ah83q1wr","slide":14,"text":"Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.","textPreview":"Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.","textChars":77,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/mto3q5kz","slide":14,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/dlkvd4","slide":14,"text":"Подключение 2FA. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/p3h64c","slide":15,"title":"15 · АККАУНТ","textShapes":21}
+{"kind":"shape","id":"sh/obm5sn2d","slide":15,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/nadozils","slide":15,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/xgf65s3a","slide":15,"text":"15 · АККАУНТ","textPreview":"15 · АККАУНТ","textChars":12,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/wfmpwn2p","slide":15,"text":"Смена пароля","textPreview":"Смена пароля","textChars":12,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/bedo3il4","slide":15,"text":"Пароль меняется на отдельной странице, чтобы не смешивать профиль и безопасность.","textPreview":"Пароль меняется на отдельной странице, чтобы не смешивать профиль и безопасность.","textChars":81,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/ad4nudkj","slide":15,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/dkb6to3q","slide":15,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/cj25kjm5","slide":15,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/eh8vixkv","slide":15,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/fihcb2lg","slide":15,"text":"Откройте Аккаунт","textPreview":"Откройте Аккаунт","textChars":16,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/0jadk721","slide":15,"text":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textPreview":"Нажмите имя пользователя сверху справа и выберите Аккаунт.","textChars":58,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/1kjudc3m","slide":15,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/mlsvmhk7","slide":15,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/nm1cfmlc","slide":15,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/onador2x","slide":15,"text":"Нажмите Сменить пароль","textPreview":"Нажмите Сменить пароль","textChars":22,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/9ojuhw3i","slide":15,"text":"Кнопка находится в блоке профиля.","textPreview":"Кнопка находится в блоке профиля.","textChars":33,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/apsvqhk3","slide":15,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/balcjm1o","slide":15,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/7elc7mhw","slide":15,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/6dcbe10b","slide":15,"text":"Заполните поля","textPreview":"Заполните поля","textChars":14,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/tg3u9wzm","slide":15,"text":"Введите текущий пароль, новый пароль и повтор нового пароля.","textPreview":"Введите текущий пароль, новый пароль и повтор нового пароля.","textChars":60,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/8futgrih","slide":15,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/jqlc3mhk","slide":15,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/ypsbah0z","slide":15,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/lc3u5wzq","slide":15,"text":"Сохраните","textPreview":"Сохраните","textChars":9,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/kbutcri5","slide":15,"text":"Нажмите Сменить пароль. После ошибки проверьте текущий пароль.","textPreview":"Нажмите Сменить пароль. После ошибки проверьте текущий пароль.","textChars":62,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/bm1sz2ho","slide":15,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/alsb6h03","slide":15,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/0rq9g3y1","slide":15,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/1szq98fm","slide":15,"text":"Вернитесь назад","textPreview":"Вернитесь назад","textChars":15,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/eporedgv","slide":15,"text":"Кнопка Аккаунт сверху возвращает в профиль.","textPreview":"Кнопка Аккаунт сверху возвращает в профиль.","textChars":43,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/fqx87ixg","slide":15,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/ovq9knyx","slide":15,"text":"Безопасность","textPreview":"Безопасность","textChars":12,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/9wzqdsfi","slide":15,"text":"Роль видит только разработчик. Остальные пользователи видят профиль без строки роли.","textPreview":"Роль видит только разработчик. Остальные пользователи видят профиль без строки роли.","textChars":84,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/b2xkfe1w","slide":15,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/p3h64c","slide":15,"text":"Смена пароля. Слайд содержит конкретные действия пользователя в CRM."}
+{"kind":"slide","id":"sl/bhek8y","slide":16,"title":"16 · EXCEL","textShapes":21}
+{"kind":"shape","id":"sh/dcfuho3a","slide":16,"bbox":[1152,18,108,108]}
+{"kind":"shape","id":"sh/qpobmt4j","slide":16,"bbox":[695,638,54,54]}
+{"kind":"textbox","id":"sh/0fqts3m1","slide":16,"text":"16 · EXCEL","textPreview":"16 · EXCEL","textChars":10,"textLines":1,"bbox":[116,48,360,34]}
+{"kind":"textbox","id":"sh/1gzul836","slide":16,"text":"Excel выгрузка","textPreview":"Excel выгрузка","textChars":14,"textLines":1,"bbox":[86,132,1050,62]}
+{"kind":"textbox","id":"sh/edobqt4v","slide":16,"text":"Выгрузки нужны для проверки квартир, замечаний и результатов работ.","textPreview":"Выгрузки нужны для проверки квартир, замечаний и результатов работ.","textChars":67,"textLines":1,"bbox":[88,205,1060,34]}
+{"kind":"textbox","id":"sh/zehcjylg","slide":16,"text":"akvilon-peredacha.ru","textPreview":"akvilon-peredacha.ru","textChars":20,"textLines":1,"bbox":[88,678,300,22]}
+{"kind":"shape","id":"sh/gjmtgzmh","slide":16,"bbox":[88,252,1090,58]}
+{"kind":"shape","id":"sh/hkva9432","slide":16,"bbox":[106,262,38,38]}
+{"kind":"textbox","id":"sh/h4jqx8f2","slide":16,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[106,272,38,18]}
+{"kind":"textbox","id":"sh/w3a9o3eh","slide":16,"text":"Откройте Квартиры","textPreview":"Откройте Квартиры","textChars":17,"textLines":1,"bbox":[162,260,330,22]}
+{"kind":"textbox","id":"sh/v2h8vyxw","slide":16,"text":"На странице квартир нажмите Скачать Excel.","textPreview":"На странице квартир нажмите Скачать Excel.","textChars":42,"textLines":1,"bbox":[162,286,986,20]}
+{"kind":"shape","id":"sh/u18rmtwr","slide":16,"bbox":[88,318,1090,58]}
+{"kind":"shape","id":"sh/5sjq18ve","slide":16,"bbox":[106,328,38,38]}
+{"kind":"textbox","id":"sh/47a9s3et","slide":16,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[106,338,38,18]}
+{"kind":"textbox","id":"sh/j618zid8","slide":16,"text":"Проверьте пункты","textPreview":"Проверьте пункты","textChars":16,"textLines":1,"bbox":[162,326,330,22]}
+{"kind":"textbox","id":"sh/i5srqdwn","slide":16,"text":"Пункт 21: отопление. Пункт 22: канализация, в/с. Пункт 26: Отступное (ТМЦ).","textPreview":"Пункт 21: отопление. Пункт 22: канализация, в/с. Пункт 26: Отступное (ТМЦ).","textChars":75,"textLines":1,"bbox":[162,352,986,20]}
+{"kind":"shape","id":"sh/tw3a5sva","slide":16,"bbox":[88,384,1090,58]}
+{"kind":"shape","id":"sh/svu9wnep","slide":16,"bbox":[106,394,38,38]}
+{"kind":"textbox","id":"sh/cb21ovqd","slide":16,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[106,404,38,18]}
+{"kind":"textbox","id":"sh/dcv2h07i","slide":16,"text":"Сверьте с отчетом","textPreview":"Сверьте с отчетом","textChars":17,"textLines":1,"bbox":[162,392,330,22]}
+{"kind":"textbox","id":"sh/qpkjml87","slide":16,"text":"В меню Отчет смотрите сводку по статусам и готовности.","textPreview":"В меню Отчет смотрите сводку по статусам и готовности.","textChars":54,"textLines":1,"bbox":[162,418,986,20]}
+{"kind":"shape","id":"sh/batkfqps","slide":16,"bbox":[88,450,1090,58]}
+{"kind":"shape","id":"sh/kfmlsvq9","slide":16,"bbox":[106,460,38,38]}
+{"kind":"textbox","id":"sh/lgv2l07u","slide":16,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[106,470,38,18]}
+{"kind":"textbox","id":"sh/yd4jql83","slide":16,"text":"Используйте фильтры","textPreview":"Используйте фильтры","textChars":19,"textLines":1,"bbox":[162,458,330,22]}
+{"kind":"textbox","id":"sh/zedkjqpo","slide":16,"text":"Перед выгрузкой примените нужные фильтры.","textPreview":"Перед выгрузкой примените нужные фильтры.","textChars":41,"textLines":1,"bbox":[162,484,986,20]}
+{"kind":"shape","id":"sh/gji1gbq5","slide":16,"bbox":[88,516,1090,58]}
+{"kind":"shape","id":"sh/1kb29g7q","slide":16,"bbox":[106,526,38,38]}
+{"kind":"textbox","id":"sh/jeh4fe98","slide":16,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[106,536,38,18]}
+{"kind":"textbox","id":"sh/id8nm9sn","slide":16,"text":"Проверьте файл","textPreview":"Проверьте файл","textChars":14,"textLines":1,"bbox":[162,524,330,22]}
+{"kind":"textbox","id":"sh/50zmhory","slide":16,"text":"После скачивания откройте Excel и убедитесь, что столбцы не смещены.","textPreview":"После скачивания откройте Excel и убедитесь, что столбцы не смещены.","textChars":68,"textLines":1,"bbox":[162,550,986,20]}
+{"kind":"shape","id":"sh/4zq5ojat","slide":16,"bbox":[88,596,1090,58]}
+{"kind":"textbox","id":"sh/vax4bu9w","slide":16,"text":"Контроль","textPreview":"Контроль","textChars":8,"textLines":1,"bbox":[116,606,320,24]}
+{"kind":"textbox","id":"sh/u9onipsb","slide":16,"text":"Если в Excel виден пункт 47 Доп соглашение, нужно сообщить разработчику: это должен быть пункт 26.","textPreview":"Если в Excel виден пункт 47 Доп соглашение, нужно сообщить разработчику: это должен быть пункт 26.","textChars":98,"textLines":1,"bbox":[420,609,720,22]}
+{"kind":"image","id":"im/uxwv6x8j","slide":16,"name":"","alt":"Логотип Аквилон","bbox":[44,36,58,58]}
+{"kind":"notes","id":"nt/bhek8y","slide":16,"text":"Excel выгрузка. Слайд содержит конкретные действия пользователя в CRM."}

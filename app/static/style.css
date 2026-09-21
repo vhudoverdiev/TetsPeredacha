@@ -57674,3 +57674,55 @@ html body.app-body .apartments-page .apartments-grid .apartment-card.apartment-c
   background: transparent !important;
   background-color: transparent !important;
 }
+
+/* v654: force account password back link to render as the black site button. */
+html body.app-body a.account-back-button,
+html body.app-body a.account-back-button:link,
+html body.app-body a.account-back-button:visited,
+html body.app-body a.account-back-button:hover,
+html body.app-body a.account-back-button:focus,
+html body.app-body a.account-back-button:focus-visible,
+html body.app-body a.account-back-button:active,
+html body.app-body a.account-back-button.active {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .5rem !important;
+  width: auto !important;
+  min-height: 2.6rem !important;
+  margin: 0 0 .65rem !important;
+  padding: .62rem 1rem !important;
+  border: 1px solid rgba(255, 255, 255, .08) !important;
+  border-radius: .95rem !important;
+  background: #111827 !important;
+  color: #ffffff !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, .22) !important;
+}
+
+html body.app-body a.account-back-button:hover,
+html body.app-body a.account-back-button:focus,
+html body.app-body a.account-back-button:focus-visible,
+html body.app-body a.account-back-button:active {
+  background: #182029 !important;
+  border-color: rgba(255, 255, 255, .14) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+html body.app-body a.account-back-button i,
+html body.app-body a.account-back-button span,
+html body.app-body a.account-back-button .bi,
+html body.app-body a.account-back-button .bi::before,
+html body.app-body a.account-back-button:hover i,
+html body.app-body a.account-back-button:hover span,
+html body.app-body a.account-back-button:hover .bi,
+html body.app-body a.account-back-button:hover .bi::before,
+html body.app-body a.account-back-button:active i,
+html body.app-body a.account-back-button:active span,
+html body.app-body a.account-back-button:active .bi,
+html body.app-body a.account-back-button:active .bi::before {
+  color: #ffffff !important;
+}

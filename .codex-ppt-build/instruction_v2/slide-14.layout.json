@@ -1,0 +1,1630 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/dlkvd4",
+    "id": "dlkvd4",
+    "slide": 14,
+    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FBFDF8",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Arial"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dgnqds76",
+      "id": "1",
+      "bbox": [
+        1152,
+        18,
+        108,
+        108
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#EAF8DF",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtw72dof",
+      "id": "2",
+      "bbox": [
+        695,
+        638,
+        54,
+        54
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#EAF8DF",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/mto3q5kz",
+      "id": "3",
+      "bbox": [
+        44,
+        36,
+        58,
+        58
+      ],
+      "alt": "Логотип Аквилон",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "22df7e13-fb3a-4748-a605-b3611e5f4719",
+        "contentType": "image/png",
+        "byteLength": 20679
+      }
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0jyp8n6h",
+      "id": "4",
+      "bbox": [
+        116,
+        48,
+        360,
+        34
+      ],
+      "geometry": "rect",
+      "text": "14 · АККАУНТ",
+      "textPreview": "14 · АККАУНТ",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#258A11",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "14 · АККАУНТ"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "14 · АККАУНТ",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#258A11",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "14 · АККАУНТ",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#258A11",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1k7qhs72",
+      "id": "5",
+      "bbox": [
+        86,
+        132,
+        1050,
+        62
+      ],
+      "geometry": "rect",
+      "text": "Подключение 2FA",
+      "textPreview": "Подключение 2FA",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "fontSize": 36,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Подключение 2FA"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Подключение 2FA",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Подключение 2FA",
+              "fontSize": 36,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ehw76dob",
+      "id": "6",
+      "bbox": [
+        88,
+        205,
+        1060,
+        34
+      ],
+      "geometry": "rect",
+      "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+      "textPreview": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+      "resolvedFontSize": 19,
+      "resolvedTextStyle": {
+        "fontSize": 19,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Двухэтапная аутентификация защищает вход в CRM кодом из приложения.",
+              "fontSize": 19,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zi58fipw",
+      "id": "7",
+      "bbox": [
+        88,
+        678,
+        300,
+        22
+      ],
+      "geometry": "rect",
+      "text": "akvilon-peredacha.ru",
+      "textPreview": "akvilon-peredacha.ru",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "akvilon-peredacha.ru"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "akvilon-peredacha.ru",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "akvilon-peredacha.ru",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gnupw36d",
+      "id": "8",
+      "bbox": [
+        88,
+        252,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ho3q587y",
+      "id": "9",
+      "bbox": [
+        106,
+        262,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xwjq5kji",
+      "id": "10",
+      "bbox": [
+        106,
+        272,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "1",
+      "textPreview": "1",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cbapwfix",
+      "id": "11",
+      "bbox": [
+        162,
+        260,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Откройте Аккаунт",
+      "textPreview": "Откройте Аккаунт",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Откройте Аккаунт"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Откройте Аккаунт",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Откройте Аккаунт",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ba183a1s",
+      "id": "12",
+      "bbox": [
+        162,
+        286,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+      "textPreview": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Нажмите имя пользователя сверху справа и выберите Аккаунт.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a9s7u507",
+      "id": "13",
+      "bbox": [
+        88,
+        318,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l03q9kju",
+      "id": "14",
+      "bbox": [
+        106,
+        328,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kzu90fi9",
+      "id": "15",
+      "bbox": [
+        106,
+        338,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "2",
+      "textPreview": "2",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "2",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zyl87u1o",
+      "id": "16",
+      "bbox": [
+        162,
+        326,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Нажмите Подключить 2FA",
+      "textPreview": "Нажмите Подключить 2FA",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Нажмите Подключить 2FA"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Нажмите Подключить 2FA",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Нажмите Подключить 2FA",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxcryp03",
+      "id": "17",
+      "bbox": [
+        162,
+        352,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+      "textPreview": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Кнопка находится в правом блоке Двухэтапная аутентификация."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Кнопка находится в правом блоке Двухэтапная аутентификация.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/943qd4jq",
+      "id": "18",
+      "bbox": [
+        88,
+        384,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/83u94zi5",
+      "id": "19",
+      "bbox": [
+        106,
+        394,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sjm1w7ut",
+      "id": "20",
+      "bbox": [
+        106,
+        404,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "3",
+      "textPreview": "3",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "3",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tkv2pcbe",
+      "id": "21",
+      "bbox": [
+        162,
+        392,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Добавьте ключ",
+      "textPreview": "Добавьте ключ",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Добавьте ключ"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Добавьте ключ",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Добавьте ключ",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6h4juxcn",
+      "id": "22",
+      "bbox": [
+        162,
+        418,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+      "textPreview": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Отсканируйте QR-код в Google Authenticator, Microsoft Authenticator или 1Password.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ridkn2t8",
+      "id": "23",
+      "bbox": [
+        88,
+        450,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gn6107up",
+      "id": "24",
+      "bbox": [
+        106,
+        460,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1of2tcba",
+      "id": "25",
+      "bbox": [
+        106,
+        470,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "4",
+      "textPreview": "4",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "4",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/el4jyxcj",
+      "id": "26",
+      "bbox": [
+        162,
+        458,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Введите код",
+      "textPreview": "Введите код",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Введите код"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Введите код",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Введите код",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fmxkr2t4",
+      "id": "27",
+      "bbox": [
+        162,
+        484,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Введите шесть цифр из приложения в поле Код из приложения.",
+      "textPreview": "Введите шесть цифр из приложения в поле Код из приложения.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Введите шесть цифр из приложения в поле Код из приложения."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Введите шесть цифр из приложения в поле Код из приложения.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Введите шесть цифр из приложения в поле Код из приложения.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wr21onul",
+      "id": "28",
+      "bbox": [
+        88,
+        516,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hsbihsb6",
+      "id": "29",
+      "bbox": [
+        106,
+        526,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z6143qdo",
+      "id": "30",
+      "bbox": [
+        106,
+        536,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "5",
+      "textPreview": "5",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "5"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "5",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "5",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y5snulw3",
+      "id": "31",
+      "bbox": [
+        162,
+        524,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Подтвердите",
+      "textPreview": "Подтвердите",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Подтвердите"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Подтвердите",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Подтвердите",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l8jm50vu",
+      "id": "32",
+      "bbox": [
+        162,
+        550,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+      "textPreview": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Нажмите Подключить. После подключения при входе CRM запросит код."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Нажмите Подключить. После подключения при входе CRM запросит код.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k7a5wve9",
+      "id": "33",
+      "bbox": [
+        88,
+        596,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#EAF8DF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bih4z6dc",
+      "id": "34",
+      "bbox": [
+        116,
+        606,
+        320,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Если QR не читается",
+      "textPreview": "Если QR не читается",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "fontSize": 20,
+        "typeface": "Arial",
+        "color": "#258A11",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Если QR не читается"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Если QR не читается",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "typeface": "Arial",
+            "color": "#258A11",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Если QR не читается",
+              "fontSize": 20,
+              "typeface": "Arial",
+              "color": "#258A11",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ah83q1wr",
+      "id": "35",
+      "bbox": [
+        420,
+        609,
+        720,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+      "textPreview": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+          "resolvedTextStyle": {
+            "fontSize": 16,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Скопируйте ключ для ручного ввода и добавьте его в приложение-аутентификатор.",
+              "fontSize": 16,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

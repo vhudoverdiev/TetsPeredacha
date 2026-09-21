@@ -13,10 +13,10 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/bootstrap.bundle.min.js?v=5.3.3',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
-  '/static/style.css?v=v653-pressed-states',
+  '/static/style.css?v=v654-account-back-button',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
-  '/static/desktop-only.css?v=v73-pressed-state-guards',
-  '/static/script.js?v=v676-password-generator',
+  '/static/desktop-only.css?v=v74-account-back-button',
+  '/static/script.js?v=v677-account-back-button',
 ];
 
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3000;

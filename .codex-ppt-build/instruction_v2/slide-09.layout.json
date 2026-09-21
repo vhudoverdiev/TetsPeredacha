@@ -1,0 +1,1630 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/v25pmy",
+    "id": "v25pmy",
+    "slide": 9,
+    "layoutId": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FBFDF8",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Arial"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "a95cdcec-21fd-47ba-9994-48f8ba40a6b4",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "dea2321c-7eca-482d-90f9-c5def61d4bd2",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jel8nydg",
+      "id": "1",
+      "bbox": [
+        1152,
+        18,
+        108,
+        108
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#EAF8DF",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kfu9g3e1",
+      "id": "2",
+      "bbox": [
+        695,
+        638,
+        54,
+        54
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#EAF8DF",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/wfe9gfmx",
+      "id": "3",
+      "bbox": [
+        44,
+        36,
+        58,
+        58
+      ],
+      "alt": "Логотип Аквилон",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "1f92639f-8ed0-4c0b-95f3-a4d5d3e78639",
+        "contentType": "image/png",
+        "byteLength": 20679
+      }
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/apcratwz",
+      "id": "4",
+      "bbox": [
+        116,
+        48,
+        360,
+        34
+      ],
+      "geometry": "rect",
+      "text": "09 · КВАРТИРЫ",
+      "textPreview": "09 · КВАРТИРЫ",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#258A11",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "09 · КВАРТИРЫ"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "09 · КВАРТИРЫ",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#258A11",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "09 · КВАРТИРЫ",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#258A11",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bql8jydk",
+      "id": "5",
+      "bbox": [
+        86,
+        132,
+        1050,
+        62
+      ],
+      "geometry": "rect",
+      "text": "Квартиры",
+      "textPreview": "Квартиры",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "fontSize": 36,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Квартиры"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Квартиры",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Квартиры",
+              "fontSize": 36,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wru9cje5",
+      "id": "6",
+      "bbox": [
+        88,
+        205,
+        1060,
+        34
+      ],
+      "geometry": "rect",
+      "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+      "textPreview": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+      "resolvedFontSize": 19,
+      "resolvedTextStyle": {
+        "fontSize": 19,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Раздел показывает помещения, готовность, статусы осмотра, АВР и комментарии.",
+              "fontSize": 19,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xs3qlova",
+      "id": "7",
+      "bbox": [
+        88,
+        678,
+        300,
+        22
+      ],
+      "geometry": "rect",
+      "text": "akvilon-peredacha.ru",
+      "textPreview": "akvilon-peredacha.ru",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "akvilon-peredacha.ru"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "akvilon-peredacha.ru",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "akvilon-peredacha.ru",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mls769wn",
+      "id": "8",
+      "bbox": [
+        88,
+        252,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nm18fed8",
+      "id": "9",
+      "bbox": [
+        106,
+        262,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7il8z6l4",
+      "id": "10",
+      "bbox": [
+        106,
+        272,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "1",
+      "textPreview": "1",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6hcr61kz",
+      "id": "11",
+      "bbox": [
+        162,
+        260,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Откройте Квартиры",
+      "textPreview": "Откройте Квартиры",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Откройте Квартиры"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Откройте Квартиры",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Откройте Квартиры",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tk3q1w3a",
+      "id": "12",
+      "bbox": [
+        162,
+        286,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "В левом меню нажмите Квартиры.",
+      "textPreview": "В левом меню нажмите Квартиры.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "В левом меню нажмите Квартиры."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "В левом меню нажмите Квартиры.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "В левом меню нажмите Квартиры.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sju98b2p",
+      "id": "13",
+      "bbox": [
+        88,
+        318,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fml836lg",
+      "id": "14",
+      "bbox": [
+        106,
+        328,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ulcra1kv",
+      "id": "15",
+      "bbox": [
+        106,
+        338,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "2",
+      "textPreview": "2",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "2",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/honq5g3m",
+      "id": "16",
+      "bbox": [
+        162,
+        326,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Найдите помещение",
+      "textPreview": "Найдите помещение",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Найдите помещение"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Найдите помещение",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Найдите помещение",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gnu9cb21",
+      "id": "17",
+      "bbox": [
+        162,
+        352,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Введите номер квартиры или текст в поле Поиск.",
+      "textPreview": "Введите номер квартиры или текст в поле Поиск.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Введите номер квартиры или текст в поле Поиск."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Введите номер квартиры или текст в поле Поиск.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Введите номер квартиры или текст в поле Поиск.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vq18rmlc",
+      "id": "18",
+      "bbox": [
+        88,
+        384,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/aps7yh4r",
+      "id": "19",
+      "bbox": [
+        106,
+        394,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yh03m98b",
+      "id": "20",
+      "bbox": [
+        106,
+        404,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "3",
+      "textPreview": "3",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "3",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zi9kve9w",
+      "id": "21",
+      "bbox": [
+        162,
+        392,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Примените фильтры",
+      "textPreview": "Примените фильтры",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Примените фильтры"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Примените фильтры",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Примените фильтры",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0jilojqh",
+      "id": "22",
+      "bbox": [
+        162,
+        418,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+      "textPreview": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Выберите Осмотр, АПП, АВР, внутренний статус и отделку.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkr2xor2",
+      "id": "23",
+      "bbox": [
+        88,
+        450,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qt0ji98f",
+      "id": "24",
+      "bbox": [
+        106,
+        460,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bu9kre90",
+      "id": "25",
+      "bbox": [
+        106,
+        470,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "4",
+      "textPreview": "4",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "4",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cvilkjql",
+      "id": "26",
+      "bbox": [
+        162,
+        458,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Откройте карточку",
+      "textPreview": "Откройте карточку",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Откройте карточку"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Откройте карточку",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Откройте карточку",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dgr2t4rq",
+      "id": "27",
+      "bbox": [
+        162,
+        484,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Нажмите на нужную карточку квартиры или коммерции.",
+      "textPreview": "Нажмите на нужную карточку квартиры или коммерции.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Нажмите на нужную карточку квартиры или коммерции."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Нажмите на нужную карточку квартиры или коммерции.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Нажмите на нужную карточку квартиры или коммерции.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2pgjep83",
+      "id": "28",
+      "bbox": [
+        88,
+        516,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3qpknu9o",
+      "id": "29",
+      "bbox": [
+        106,
+        526,
+        38,
+        38
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#7ED321",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5kf6tsb6",
+      "id": "30",
+      "bbox": [
+        106,
+        536,
+        38,
+        18
+      ],
+      "geometry": "rect",
+      "text": "5",
+      "textPreview": "5",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "center",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "5"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "5",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "5",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4jm5knal",
+      "id": "31",
+      "bbox": [
+        162,
+        524,
+        330,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Проверьте данные",
+      "textPreview": "Проверьте данные",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Arial",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Проверьте данные"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Проверьте данные",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Arial",
+            "color": "#111827",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Проверьте данные",
+              "fontSize": 18,
+              "typeface": "Arial",
+              "color": "#111827",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jidor2tg",
+      "id": "32",
+      "bbox": [
+        162,
+        550,
+        986,
+        20
+      ],
+      "geometry": "rect",
+      "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+      "textPreview": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "В карточке смотрите замечания, комментарии, историю, готовность и статусы.",
+              "fontSize": 14,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih4nixsv",
+      "id": "33",
+      "bbox": [
+        88,
+        596,
+        1090,
+        58
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#EAF8DF",
+      "lineColor": "#BCEBA4",
+      "lineWidth": 1.2
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hgvmpsba",
+      "id": "34",
+      "bbox": [
+        116,
+        606,
+        320,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Подсказка",
+      "textPreview": "Подсказка",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "fontSize": 20,
+        "typeface": "Arial",
+        "color": "#258A11",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Подсказка"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Подсказка",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "typeface": "Arial",
+            "color": "#258A11",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Подсказка",
+              "fontSize": 20,
+              "typeface": "Arial",
+              "color": "#258A11",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wfm5gnap",
+      "id": "35",
+      "bbox": [
+        420,
+        609,
+        720,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+      "textPreview": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Arial",
+        "color": "#7587A6",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+          "resolvedTextStyle": {
+            "fontSize": 16,
+            "typeface": "Arial",
+            "color": "#7587A6"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Желтые карточки обозначают непроданные помещения. Для них строка осмотра не нужна.",
+              "fontSize": 16,
+              "typeface": "Arial",
+              "color": "#7587A6"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}
