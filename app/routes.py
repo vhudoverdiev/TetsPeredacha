@@ -2425,7 +2425,7 @@ def _build_site_visit_ip_summary(base_query, ip_address: str | None) -> dict | N
     }
 
 
-def _build_site_visit_visitor_groups(visits: list[SiteVisit]) -> list[dict]:
+def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_group_limit: int = 30) -> list[dict]:
     groups: dict[tuple[str, str], dict] = {}
     ordered_groups: list[dict] = []
 
@@ -2458,15 +2458,18 @@ def _build_site_visit_visitor_groups(visits: list[SiteVisit]) -> list[dict]:
             ordered_groups.append(group)
 
         group["hits"] += 1
+        if visit.created_at and (group["last_seen"] is None or visit.created_at > group["last_seen"]):
+            group["last_seen"] = visit.created_at
         if visit.ip_address:
             group["ip_set"].add(visit.ip_address)
-        group["visits"].append(visit)
+        if len(group["visits"]) < visits_per_group_limit:
+            group["visits"].append(visit)
 
     for group in ordered_groups:
         group["ip_count"] = len(group["ip_set"])
         group.pop("ip_set", None)
 
-    return ordered_groups
+    return sorted(ordered_groups, key=lambda item: (item["hits"], item["last_seen"] or datetime.min), reverse=True)
 
 
 def _build_site_visit_agent_stats(base_query) -> tuple[list[dict], list[dict], list[dict]]:
@@ -2687,7 +2690,14 @@ def _build_developer_statistics_context() -> dict:
         .limit(240)
         .all()
     )
-    visitor_groups = _build_site_visit_visitor_groups(recent_visits)
+    visitor_group_visits = (
+        statistics_query
+        .options(selectinload(SiteVisit.user), selectinload(SiteVisit.project))
+        .order_by(SiteVisit.created_at.desc(), SiteVisit.id.desc())
+        .limit(10000)
+        .all()
+    )
+    visitor_groups = _build_site_visit_visitor_groups(visitor_group_visits)
 
     focused_ip_summary = None
     if ip_filter and total_visits:
@@ -10562,7 +10572,7 @@ def mapping_settings():
     if project is None:
         return redirect(url_for("main.objects"))
     ensure_default_categories()
-    hidden_point_numbers = {"7", "9", "26", "27", "28", "29", "30", "31", "32", "33"}
+    hidden_point_numbers = {"7", "9", "26", "27", "28", "29", "30", "31", "32", "33", "43", "44", "45"}
     categories_to_show = [
         category
         for category in WorkCategory.query.filter(WorkCategory.is_active.is_(True)).order_by(WorkCategory.sort_order.asc()).all()
@@ -10571,11 +10581,16 @@ def mapping_settings():
     point_ids_for_project = [
         point_id for (point_id,) in db.session.query(Task.work_point_id).filter(Task.project_id == project.id).distinct().all()
     ]
-    points = (
-        WorkPoint.query.filter(WorkPoint.id.in_(point_ids_for_project or [-1]), WorkPoint.is_active.is_(True))
+    points = [
+        point
+        for point in WorkPoint.query.filter(
+            WorkPoint.id.in_(point_ids_for_project or [-1]),
+            WorkPoint.is_active.is_(True),
+        )
         .order_by(WorkPoint.point_number.asc())
         .all()
-    )
+        if str(point.point_number or "").strip() not in hidden_point_numbers
+    ]
     if request.method == "POST":
         wants_json = _wants_json_response()
         allowed_point_ids = {point.id for point in points}

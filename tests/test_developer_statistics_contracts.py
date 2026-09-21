@@ -100,6 +100,49 @@ class DeveloperStatisticsContractsTests(unittest.TestCase):
             {"203.0.113.10": 2, "198.51.100.25": 2},
         )
 
+    def test_user_guest_groups_are_built_from_whole_period_not_only_recent_visits(self):
+        active_user = User(username="active", full_name="Активный Пользователь", role=ROLE_ADMIN, password_hash="unused")
+        older_user = User(username="older", full_name="Старый Пользователь", role=ROLE_ADMIN, password_hash="unused")
+        db.session.add_all([active_user, older_user])
+        db.session.flush()
+
+        visits = [
+            SiteVisit(
+                user=older_user,
+                ip_address="203.0.113.50",
+                endpoint="main.dashboard",
+                path="/",
+                method="GET",
+                status_code=200,
+                is_authenticated=True,
+                visit_kind="request",
+                created_at=datetime(2026, 8, 4, 8, 0),
+            )
+        ]
+        visits.extend(
+            SiteVisit(
+                user=active_user,
+                ip_address="203.0.113.10",
+                endpoint="main.dashboard",
+                path="/",
+                method="GET",
+                status_code=200,
+                is_authenticated=True,
+                visit_kind="request",
+                created_at=datetime(2026, 8, 4, 10, minute % 60),
+            )
+            for minute in range(260)
+        )
+        db.session.add_all(visits)
+        db.session.commit()
+
+        with self.app.test_request_context("/developer/statistics/visits?start_date=2026-08-04&end_date=2026-08-04"):
+            context = _build_developer_statistics_context()
+
+        labels = [group["label"] for group in context["visitor_groups"]]
+        self.assertIn("Активный Пользователь", labels)
+        self.assertIn("Старый Пользователь", labels)
+
     def test_request_visit_is_persisted_before_response_returns(self):
         client = self.app.test_client()
 
