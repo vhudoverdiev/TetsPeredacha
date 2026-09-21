@@ -248,6 +248,72 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
             "query-apartment-done",
         ])
 
+    def test_build_task_query_text_search_filters_individual_remark_rows(self):
+        matching = Task(
+            source_uid="query-apartment-scratch",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.work_point,
+            description="Царапины на стеклопакете оконной створки.",
+            source_cell_value="Царапины на стеклопакете оконной створки.",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        same_premise_non_matching = Task(
+            source_uid="query-apartment-adjustment",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.second_point,
+            description="Требуется регулировка и очистка от строительных смесей ПВХ конструкций.",
+            source_cell_value="Царапины в другой строке этой квартиры.",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        other_premise_matching = Task(
+            source_uid="query-commercial-scratch",
+            project=self.project,
+            apartment=self.commercial,
+            work_point=self.work_point,
+            description="Царапины на витражном остеклении.",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        db.session.add_all([matching, same_premise_non_matching, other_premise_matching])
+        db.session.commit()
+
+        tasks = build_task_query({"q": "царапины"}, project_id=self.project.id).all()
+
+        self.assertEqual({task.source_uid for task in tasks}, {
+            "query-apartment-scratch",
+            "query-commercial-scratch",
+        })
+
+    def test_build_task_query_premise_tail_search_filters_individual_remark_rows(self):
+        matching = Task(
+            source_uid="query-tail-scratch",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.work_point,
+            description="Царапины на стеклопакете оконной створки.",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        same_premise_non_matching = Task(
+            source_uid="query-tail-adjustment",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.second_point,
+            description="Требуется регулировка и очистка от строительных смесей ПВХ конструкций.",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        db.session.add_all([matching, same_premise_non_matching])
+        db.session.commit()
+
+        tasks = build_task_query({"q": "кв 12 царапины"}, project_id=self.project.id).all()
+
+        self.assertEqual([task.source_uid for task in tasks], ["query-tail-scratch"])
+
     def test_build_task_query_status_filters_default_exclude_archived_and_missing(self):
         archived = Task(
             source_uid="query-archived",

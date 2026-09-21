@@ -4995,18 +4995,13 @@ def _glass_item_rows(measurement: GlassMeasurement | None) -> list[dict[str, obj
 
 
 def _task_search_blob(task: Task) -> str:
-    apartment = task.apartment
     categories = []
     if task.work_point:
         categories = [category.name for category in task.work_point.categories]
+    description = str(task.description or "").strip()
     parts = [
-        apartment.label() if apartment else "",
-        apartment.apartment_number if apartment else "",
-        apartment.construction_number if apartment else "",
-        apartment.building if apartment else "",
-        "коммерция" if apartment and apartment.premise_type == "commercial" else "квартира",
-        task.description or "",
-        task.source_cell_value or "",
+        description,
+        (task.source_cell_value or "") if not description else "",
         task.title or "",
         task.comment or "",
         task.status_label(),
@@ -7095,28 +7090,22 @@ def _apply_inspection_date_to_group(apartments: list[Apartment], inspection_date
         item.first_inspection_present = True
 
 
-def _complete_previous_po_tasks_for_points(
+def _complete_previous_po_tasks_for_apartment_group(
     *,
     project: Project,
     apartment: Apartment,
-    point_numbers: set[str],
     exclude_task_ids: set[int] | None = None,
 ) -> int:
-    normalized_points = {str(number or "").strip() for number in point_numbers if str(number or "").strip()}
-    if not normalized_points:
-        return 0
     excluded_ids = {int(task_id) for task_id in (exclude_task_ids or set()) if task_id}
     apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
     if not apartment_ids:
         apartment_ids = [apartment.id]
     tasks_query = (
-        Task.query.join(WorkPoint)
-        .filter(
+        Task.query.filter(
             Task.project_id == project.id,
             Task.apartment_id.in_(apartment_ids),
             Task.is_archived.is_(False),
             Task.status.notin_(list(DONE_STATUSES)),
-            WorkPoint.point_number.in_(normalized_points),
         )
     )
     if excluded_ids:
@@ -7607,10 +7596,9 @@ def task_new():
                                 duplicate_count += 1
                                 continue
                             entries_to_create.append((point_number, text))
-                        completed_previous_count += _complete_previous_po_tasks_for_points(
+                        completed_previous_count += _complete_previous_po_tasks_for_apartment_group(
                             project=project,
                             apartment=apartment,
-                            point_numbers={point_number for point_number, _ in prepared_entries},
                             exclude_task_ids=duplicate_task_ids,
                         )
                         for point_number, text in entries_to_create:
@@ -7857,10 +7845,9 @@ def task_recognition():
                         if prepared_rows:
                             _apply_inspection_date_to_group(_apartment_group_for_project(apartment, project.id), inspection_date)
                             if po_mode:
-                                completed_previous_count += _complete_previous_po_tasks_for_points(
+                                completed_previous_count += _complete_previous_po_tasks_for_apartment_group(
                                     project=project,
                                     apartment=apartment,
-                                    point_numbers={point_number for point_number, _ in prepared_rows},
                                     exclude_task_ids=duplicate_task_ids,
                                 )
                         for point_number, text in (rows_to_create if po_mode else prepared_rows):
@@ -7905,7 +7892,7 @@ def task_recognition():
                             message += f". Актов пропущено: {blocked_count}"
                         flash(message, "warning")
                         return redirect(url_for("main.sync_conflicts"))
-                    if created_count or conflict_count:
+                    if created_count or conflict_count or completed_previous_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,

@@ -38,6 +38,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.point_1 = WorkPoint(point_number="1", short_name="Пункт 1", source_sheet_name="manual")
         self.point_10 = WorkPoint(point_number="10", short_name="Вентиляция", source_sheet_name="manual")
         self.point = WorkPoint(point_number="16", short_name="Разнорабочие", source_sheet_name="manual")
+        self.point_25 = WorkPoint(point_number="25", short_name="Прочее", source_sheet_name="manual")
         self.old_task = Task(
             source_uid="recognition-po-old",
             project=self.project,
@@ -51,7 +52,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.admin = User(username="admin", role=ROLE_ADMIN, is_active=True, captcha_disabled=True)
         self.admin.set_password("correct-password")
         self.admin.set_project_access([self.project.id], all_projects=False)
-        db.session.add_all([self.apartment, self.point_1, self.point_10, self.point, self.old_task, self.admin])
+        db.session.add_all([self.apartment, self.point_1, self.point_10, self.point, self.point_25, self.old_task, self.admin])
         db.session.commit()
 
     def tearDown(self):
@@ -123,6 +124,45 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         db.session.refresh(self.old_task)
         self.assertEqual(self.old_task.status, STATUS_NOT_STARTED)
+        self.assertEqual(Task.query.filter(Task.description == "Старое замечание").count(), 1)
+
+    def test_po_mode_with_only_duplicate_rows_still_completes_other_previous_tasks(self):
+        self._login()
+        old_other = Task(
+            source_uid="recognition-po-duplicate-old-other",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.point_25,
+            description="Старое замечание другого пункта",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        db.session.add(old_other)
+        db.session.commit()
+
+        response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "po_mode": "1",
+                "act_count": "1",
+                "act_0_filename": "po-only-duplicates.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "1",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "1",
+                "act_0_row_0_point": "16",
+                "act_0_row_0_description": "Старое замечание",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.old_task)
+        db.session.refresh(old_other)
+        self.assertEqual(self.old_task.status, STATUS_NOT_STARTED)
+        self.assertEqual(old_other.status, STATUS_DONE)
         self.assertEqual(Task.query.filter(Task.description == "Старое замечание").count(), 1)
 
     def test_save_ignores_recognition_rows_before_point_ten(self):
@@ -201,7 +241,16 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
             status=STATUS_NOT_STARTED,
             is_done=False,
         )
-        db.session.add(old_other)
+        old_unmentioned_point = Task(
+            source_uid="manual-po-old-unmentioned-point",
+            project=self.project,
+            apartment=self.apartment,
+            work_point=self.point_25,
+            description="Старое по пункту которого нет в новом акте",
+            status=STATUS_NOT_STARTED,
+            is_done=False,
+        )
+        db.session.add_all([old_other, old_unmentioned_point])
         db.session.commit()
 
         response = self.client.post(
@@ -220,8 +269,10 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         db.session.refresh(self.old_task)
         db.session.refresh(old_other)
+        db.session.refresh(old_unmentioned_point)
         self.assertEqual(self.old_task.status, STATUS_NOT_STARTED)
         self.assertEqual(old_other.status, STATUS_DONE)
+        self.assertEqual(old_unmentioned_point.status, STATUS_DONE)
         self.assertEqual(Task.query.filter(Task.description == "Старое замечание").count(), 1)
         new_task = Task.query.filter(Task.description == "Новое по вентиляции").one()
         self.assertEqual(new_task.status, STATUS_NOT_STARTED)

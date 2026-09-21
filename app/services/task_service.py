@@ -328,6 +328,35 @@ def premise_matches_number(apartment: Apartment | None, number: str | None) -> b
     return False
 
 
+def text_search_variants(search_value: str) -> list[str]:
+    value = str(search_value or "").strip()
+    variants = {
+        value,
+        value.lower(),
+        value.upper(),
+        value.capitalize(),
+    }
+    return [variant for variant in variants if variant]
+
+
+def text_field_search_clause(field, search_value: str):
+    return or_(*(field.ilike(f"%{variant}%") for variant in text_search_variants(search_value)))
+
+
+def task_row_text_search_clause(search_value: str):
+    empty_description = or_(Task.description.is_(None), Task.description == "")
+    return or_(
+        text_field_search_clause(Task.description, search_value),
+        text_field_search_clause(Task.title, search_value),
+        and_(empty_description, text_field_search_clause(Task.source_cell_value, search_value)),
+        text_field_search_clause(WorkPoint.point_number, search_value),
+        text_field_search_clause(WorkPoint.short_name, search_value),
+        text_field_search_clause(WorkPoint.original_column_name, search_value),
+        text_field_search_clause(User.full_name, search_value),
+        text_field_search_clause(User.username, search_value),
+    )
+
+
 @dataclass
 class SyncResult:
     created_count: int = 0
@@ -2009,21 +2038,7 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
             if selector_clauses:
                 query = query.filter(or_(*selector_clauses))
             if tail_query:
-                like = f"%{tail_query}%"
-                query = query.filter(
-                    or_(
-                        Apartment.apartment_number.ilike(like),
-                        Apartment.construction_number.ilike(like),
-                        Apartment.owner_name.ilike(like),
-                        Apartment.phone.ilike(like),
-                        Task.description.ilike(like),
-                        Task.source_cell_value.ilike(like),
-                        WorkPoint.point_number.ilike(like),
-                        WorkPoint.short_name.ilike(like),
-                        User.full_name.ilike(like),
-                        User.username.ilike(like),
-                    )
-                )
+                query = query.filter(task_row_text_search_clause(tail_query))
         else:
             search_mode, search_value = detect_search_mode(q)
             if search_mode == "commercial_pair":
@@ -2045,21 +2060,7 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
             elif search_mode == "premise_number":
                 query = query.filter(Apartment.apartment_number == search_value)
             else:
-                like = f"%{search_value}%"
-                query = query.filter(
-                    or_(
-                        Apartment.apartment_number.ilike(like),
-                        Apartment.construction_number.ilike(like),
-                        Apartment.owner_name.ilike(like),
-                        Apartment.phone.ilike(like),
-                        Task.description.ilike(like),
-                        Task.source_cell_value.ilike(like),
-                        WorkPoint.point_number.ilike(like),
-                        WorkPoint.short_name.ilike(like),
-                        User.full_name.ilike(like),
-                        User.username.ilike(like),
-                    )
-                )
+                query = query.filter(task_row_text_search_clause(search_value))
 
     status = params.get("status")
     if status != "missing":
