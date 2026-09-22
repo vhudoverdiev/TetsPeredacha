@@ -2425,20 +2425,26 @@ def _build_site_visit_ip_summary(base_query, ip_address: str | None) -> dict | N
     }
 
 
-def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_group_limit: int = 30) -> list[dict]:
+ACTIVE_VISITOR_WINDOW = timedelta(minutes=15)
+
+
+def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_group_limit: int = 30, now: datetime | None = None) -> list[dict]:
     groups: dict[tuple[str, str], dict] = {}
     ordered_groups: list[dict] = []
+    now = now or utc_now()
 
     for visit in visits:
         if visit.user_id:
             key = ("user", str(visit.user_id))
             label = _visit_user_label(visit.user)
-            kind_label = "Авторизован"
-            kind_class = "is-auth"
+            is_account = True
+            kind_label = "Не авторизован"
+            kind_class = "is-guest"
         else:
             guest_ip = (visit.ip_address or "").strip()
             key = ("guest", guest_ip or f"guest-{visit.id}")
             label = f"Гость • {guest_ip}" if guest_ip else "Гость"
+            is_account = False
             kind_label = "Гость"
             kind_class = "is-guest"
 
@@ -2449,6 +2455,7 @@ def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_grou
                 "label": label,
                 "kind_label": kind_label,
                 "kind_class": kind_class,
+                "is_account": is_account,
                 "hits": 0,
                 "ip_set": set(),
                 "last_seen": visit.created_at,
@@ -2466,8 +2473,13 @@ def _build_site_visit_visitor_groups(visits: list[SiteVisit], *, visits_per_grou
             group["visits"].append(visit)
 
     for group in ordered_groups:
+        if group.get("is_account"):
+            is_current = bool(group["last_seen"] and group["last_seen"] >= now - ACTIVE_VISITOR_WINDOW)
+            group["kind_label"] = "Авторизован" if is_current else "Не авторизован"
+            group["kind_class"] = "is-auth" if is_current else "is-guest"
         group["ip_count"] = len(group["ip_set"])
         group.pop("ip_set", None)
+        group.pop("is_account", None)
 
     return sorted(ordered_groups, key=lambda item: (item["last_seen"] or datetime.min, item["hits"]), reverse=True)
 

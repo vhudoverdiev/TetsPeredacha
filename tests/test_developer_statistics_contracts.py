@@ -4,7 +4,7 @@ import unittest
 from config import Config
 from app import create_app, db
 from app.models import ROLE_ADMIN, SiteVisit, User
-from app.routes import _build_developer_statistics_context
+from app.routes import _build_developer_statistics_context, _build_site_visit_visitor_groups
 
 
 class TestConfig(Config):
@@ -184,6 +184,42 @@ class DeveloperStatisticsContractsTests(unittest.TestCase):
 
         self.assertEqual(context["visitor_groups"][0]["label"], "Свежий Пользователь")
         self.assertEqual(context["top_ips"][0]["ip_address"], "203.0.113.99")
+
+    def test_authorized_badge_is_used_only_for_current_account_activity(self):
+        user = User(username="badge-user", full_name="Пользователь", role=ROLE_ADMIN, password_hash="unused")
+        db.session.add(user)
+        db.session.flush()
+        now = datetime(2026, 8, 4, 12, 0)
+        old_visit = SiteVisit(
+            user=user,
+            user_id=user.id,
+            ip_address="203.0.113.10",
+            endpoint="main.dashboard",
+            path="/",
+            method="GET",
+            status_code=200,
+            is_authenticated=True,
+            visit_kind="request",
+            created_at=datetime(2026, 8, 4, 10, 0),
+        )
+        fresh_visit = SiteVisit(
+            user=user,
+            user_id=user.id,
+            ip_address="203.0.113.10",
+            endpoint="main.dashboard",
+            path="/",
+            method="GET",
+            status_code=200,
+            is_authenticated=True,
+            visit_kind="request",
+            created_at=datetime(2026, 8, 4, 11, 55),
+        )
+
+        old_group = _build_site_visit_visitor_groups([old_visit], now=now)[0]
+        fresh_group = _build_site_visit_visitor_groups([fresh_visit], now=now)[0]
+
+        self.assertEqual(old_group["kind_label"], "Не авторизован")
+        self.assertEqual(fresh_group["kind_label"], "Авторизован")
 
     def test_request_visit_is_persisted_before_response_returns(self):
         client = self.app.test_client()
