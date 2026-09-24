@@ -58748,3 +58748,48 @@ html body.app-body .site-error-reply-form textarea.form-control {
   resize: vertical !important;
 }
 
+/* v663: apartment APP/inspection dates match the deadline row and stay left aligned. */
+html body.app-body .apartment-detail-page [data-apartment-inspection-display],
+html body.app-body .apartment-detail-page [data-apartment-app-signed-display],
+html body.app-body .apartment-detail-page .apartment-deadline-display {
+  justify-self: start !important;
+  align-self: center !important;
+  text-align: left !important;
+  color: #111827 !important;
+  font-size: .86rem !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-body .apartment-detail-page [data-apartment-inspection-display] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: .25rem !important;
+}
+
+html body.app-body .apartment-detail-page [data-apartment-inspection-display] > span:not(.status-pill),
+html body.app-body .apartment-detail-page [data-apartment-app-signed-display],
+html body.app-body .apartment-detail-page .apartment-deadline-display .apartment-deadline-date {
+  display: inline-block !important;
+  color: #111827 !important;
+  font-size: .86rem !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-body .apartment-detail-page [data-apartment-inspection-display] .status-pill {
+  align-self: flex-start !important;
+  margin: 0 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inspection-date-form,
+html body.app-body .apartment-detail-page .apartment-inspection-status-form-detail {
+  justify-content: flex-start !important;
+}
+

@@ -1665,6 +1665,15 @@ document.addEventListener('DOMContentLoaded', () => {
       window.clearTimeout(saveTimer);
       saveTimer = window.setTimeout(save, 120);
     });
+    form.querySelectorAll('.settings-switch-row').forEach(row => {
+      row.addEventListener('click', event => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        if (!checkbox || event.target === checkbox) return;
+        event.preventDefault();
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
   });
 
   const getCsrfToken = () => {
