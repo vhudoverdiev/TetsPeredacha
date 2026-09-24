@@ -40,11 +40,11 @@ def _normalize_header(value: Any) -> str:
 
 def _find_header_map(rows: list[list[Any]]) -> tuple[int, dict[str, int]]:
     exact_headers = {
-        "number": ("№ кв", "№ квартиры"),
+        "number": ("№ кв", "№ квартиры", "факт/№ дду"),
         "owner_name": ("ф.и.о. дольщиков", "фио дольщиков", "ф.и.о дольщиков"),
         "phone": ("телефон",),
         "finishing_type": ("вид отделки",),
-        "inspection_note": ("дата осмотра", "запись на осмотр"),
+        "inspection_note": ("дата осмотра", "запись на осмотр", "запись"),
         "first_inspection_date": ("дата первичного осмотра",),
         "reinspection_date": ("дата повторного осмотра",),
         "app_signed_date": ("дата подписания апп",),
@@ -92,6 +92,14 @@ def _is_transfer_header_map(mapping: dict[str, int]) -> bool:
     }
     extra_hits = sum(1 for field in extra_fields if field in mapping)
     return extra_hits >= 2
+
+
+def _normalize_transfer_apartment_number(value: Any) -> str | None:
+    number = normalize_apartment_number_cell(value)
+    if not number:
+        return None
+    slash_match = re.fullmatch(r"\s*(\d+)\s*/\s*\d+\s*", number)
+    return slash_match.group(1) if slash_match else number
 
 
 def _value_at(row: list[Any], index: int | None) -> Any:
@@ -335,7 +343,10 @@ def sync_transfer_statistics(path: Path, project_name: str) -> dict[str, int]:
             rows = [[cell.value for cell in row] for row in cell_rows]
             if not rows:
                 continue
-            header_index, mapping = _find_header_map(rows)
+            try:
+                header_index, mapping = _find_header_map(rows)
+            except ValueError:
+                continue
             if not _is_transfer_header_map(mapping):
                 continue
             for row_idx, row in enumerate(rows[header_index + 1 :], start=header_index + 2):
@@ -350,7 +361,7 @@ def sync_transfer_statistics(path: Path, project_name: str) -> dict[str, int]:
                     continue
                 if raw_number is None or _is_section_row(raw_number):
                     continue
-                apartment_number = normalize_apartment_number_cell(raw_number)
+                apartment_number = _normalize_transfer_apartment_number(raw_number)
                 if not apartment_number:
                     continue
                 if not is_commercial_sheet and not looks_like_apartment_identifier(apartment_number):

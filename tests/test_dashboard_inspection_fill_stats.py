@@ -136,6 +136,29 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         workbook.save(path)
         return path
 
+    def _workbook_with_unsupported_middle_sheet(self) -> Path:
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Квартиры"
+        sheet.append([
+            "Факт/№ ДДУ",
+            "Ф.И.О. Дольщиков",
+            "Телефон",
+            "Вид отделки",
+            "Запись",
+            "Дата первичного осмотра",
+            "Дата подписания АПП",
+        ])
+        sheet.append(["310/1", "Owner 310", "+7999", "Белая", None, None, None])
+
+        parking = workbook.create_sheet("Паркинг")
+        parking.append(["№ паркинга", "Ф.И.О. Дольщиков", "Телефон"])
+        parking.append([1, "Parking Owner", "+7999"])
+
+        path = Path(self.tempdir.name) / "transfer-with-parking.xlsx"
+        workbook.save(path)
+        return path
+
     def test_red_and_yellow_cells_are_the_only_not_inspected_rows(self):
         path = self._statistics_workbook()
         self.assertTrue(inspect_transfer_workbook(path)["ok"])
@@ -199,6 +222,13 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         html = response.get_data(as_text=True)
         self.assertIn("принято - 1, ждёт - 1, не продано - 1", html)
         self.assertNotIn("принято - 2, ждёт - 2, не продано - 2", html)
+
+    def test_transfer_sync_skips_unsupported_sheets_and_uses_first_slash_number(self):
+        result = sync_transfer_statistics(self._workbook_with_unsupported_middle_sheet(), project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 1)
+        apartment = Apartment.query.one()
+        self.assertEqual(apartment.apartment_number, "310")
 
 
 if __name__ == "__main__":
