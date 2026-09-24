@@ -159,7 +159,7 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         workbook.save(path)
         return path
 
-    def test_red_and_yellow_cells_are_the_only_not_inspected_rows(self):
+    def test_only_date_in_inspection_column_marks_apartment_as_inspected(self):
         path = self._statistics_workbook()
         self.assertTrue(inspect_transfer_workbook(path)["ok"])
 
@@ -176,11 +176,37 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         }
         self.assertEqual(
             flags,
-            {"1": False, "2": False, "3": True, "4": True, "5": True},
+            {"1": True, "2": True, "3": True, "4": False, "5": False},
         )
         stats = dashboard_stats(self.project.id)
         self.assertEqual(stats["inspected"], 3)
         self.assertEqual(stats["not_inspected"], 2)
+
+    def test_transfer_sync_does_not_mark_free_form_record_text_as_inspected(self):
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Статистика"
+        sheet.append([
+            "№ кв",
+            "Ф.И.О. дольщиков",
+            "Телефон",
+            "Вид отделки",
+            "Запись",
+            "Дата первичного осмотра",
+            "Дата подписания АПП",
+        ])
+        sheet.append(["10", "Owner 10", "+10", "Белая", "позвонить позже", None, None])
+        sheet.append(["11", "Owner 11", "+11", "Белая", "25.09.2026", None, None])
+        path = Path(self.tempdir.name) / "transfer-record-text.xlsx"
+        workbook.save(path)
+
+        sync_transfer_statistics(path, project_name=self.project.name)
+
+        flags = {
+            apartment.apartment_number: apartment.first_inspection_present
+            for apartment in Apartment.query.order_by(Apartment.apartment_number.asc()).all()
+        }
+        self.assertEqual(flags, {"10": False, "11": True})
 
     def test_desktop_and_mobile_dashboard_render_the_same_fill_based_counts(self):
         sync_transfer_statistics(self._statistics_workbook(), project_name=self.project.name)

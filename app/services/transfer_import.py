@@ -390,14 +390,13 @@ def sync_transfer_statistics(path: Path, project_name: str) -> dict[str, int]:
                 phone = None if is_unsold else (str(_value_at(row, mapping.get("phone")) or "").strip() or None)
                 finishing_type = normalize_finishing_type(_value_at(row, mapping.get("finishing_type")))
                 inspection_note = _value_at(row, mapping.get("inspection_note"))
-                inspection_cell = _cell_at(cell_row, mapping.get("inspection_note"))
                 first_inspection_value = _value_at(row, mapping.get("first_inspection_date"))
                 inspection_text = str(inspection_note or "").strip()
                 # Принято / АПП считаем по цвету ячейки номера помещения:
                 # зелёная ячейка в колонке «№ кв» / «№ ком.» = принято.
                 accepted_date = _parse_app_date(inspection_note)
                 scheduled_inspection = _parse_inspection_schedule(inspection_note)
-                inspection_was_completed = not _is_not_inspected_fill(inspection_cell)
+                inspection_was_completed = scheduled_inspection is not None
                 is_app_mode = bool((_is_green_fill(number_cell) and not is_unsold) or accepted_date)
 
                 premise_type = "commercial" if is_commercial_sheet else "apartment"
