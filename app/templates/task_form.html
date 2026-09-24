@@ -64,6 +64,17 @@
         </select>
       </div>
       <div class="col-12">
+        <label class="form-label">Пункт</label>
+        <select class="form-select" name="point_number" required>
+          <option value="">Выберите пункт</option>
+          {% for point in points %}
+          <option value="{{ point.number }}" {% if request.form.get('point_number', '') == point.number %}selected{% endif %}>
+            {{ point.number }}. {{ point.label }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
         <label class="form-label">Описание замечания</label>
         <textarea class="form-control" name="description" rows="4" required placeholder="Например: отрегулировать входную дверь">{{ request.form.get('description', '') }}</textarea>
       </div>

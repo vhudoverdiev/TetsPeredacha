@@ -71,6 +71,38 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         with self.client.session_transaction() as sess:
             sess["current_project_id"] = self.project.id
 
+    def test_manual_single_form_requires_and_uses_selected_point(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "single",
+                "apartment_id": str(self.apartment.id),
+                "description": "Новое одиночное замечание",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(Task.query.filter_by(description="Новое одиночное замечание").first())
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "single",
+                "apartment_id": str(self.apartment.id),
+                "point_number": "10",
+                "description": "Новое одиночное замечание",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        task = Task.query.filter_by(description="Новое одиночное замечание").one()
+        self.assertEqual(task.work_point.point_number, "10")
+
     def test_po_mode_saves_all_rows_and_completes_previous_open_tasks(self):
         self._login()
 
@@ -195,6 +227,55 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIsNone(Task.query.filter(Task.description == "Старый пункт не должен сохраниться").one_or_none())
         saved_task = Task.query.filter(Task.description == "Пункт десять сохраняется").one()
+        self.assertEqual(saved_task.work_point.point_number, "10")
+
+    def test_save_allows_mismatched_project_when_manually_verified(self):
+        self._login()
+
+        blocked_response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "act_count": "1",
+                "act_0_filename": "mismatch.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "0",
+                "act_0_project_name": "Другой объект",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
+                "act_0_row_0_point": "10",
+                "act_0_row_0_description": "Ручная сверка без подтверждения",
+            },
+        )
+
+        self.assertEqual(blocked_response.status_code, 200)
+        self.assertIsNone(Task.query.filter_by(description="Ручная сверка без подтверждения").first())
+
+        saved_response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "act_count": "1",
+                "act_0_filename": "mismatch.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "0",
+                "act_0_project_override": "1",
+                "act_0_project_name": "Другой объект",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
+                "act_0_row_0_point": "10",
+                "act_0_row_0_description": "Ручная сверка подтверждена",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(saved_response.status_code, 302)
+        saved_task = Task.query.filter_by(description="Ручная сверка подтверждена").one()
+        self.assertEqual(saved_task.apartment_id, self.apartment.id)
         self.assertEqual(saved_task.work_point.point_number, "10")
 
     def test_save_ignores_unchecked_recognition_rows_even_with_text_in_po_mode(self):

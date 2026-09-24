@@ -7515,6 +7515,7 @@ def _pdf_previews_from_form(form) -> list[dict]:
             "filename": (form.get(f"act_{act_idx}_filename") or f"Акт {act_idx + 1}").strip(),
             "template_ok": form.get(f"act_{act_idx}_template_ok") == "1",
             "project_ok": form.get(f"act_{act_idx}_project_ok") == "1",
+            "project_override": form.get(f"act_{act_idx}_project_override") == "1",
             "project_name": (form.get(f"act_{act_idx}_project_name") or "").strip(),
             "project_prefix": (form.get(f"act_{act_idx}_project_prefix") or "").strip(),
             "used_ocr": form.get(f"act_{act_idx}_used_ocr") == "1",
@@ -7708,13 +7709,17 @@ def task_new():
         else:
             manual_kind = "single"
             text = (request.form.get("description") or "").strip()
+            point_number = (request.form.get("point_number") or "").strip()
+            allowed_point_numbers = {point["number"] for point in points}
             if not text:
                 flash("Введите описание работы", "warning")
+            elif point_number not in allowed_point_numbers:
+                flash("Выберите пункт", "warning")
             else:
                 outcome = _save_remark_with_sync_fallback(
                     project=project,
                     apartment=apartment,
-                    point_number="25",
+                    point_number=point_number,
                     text=text,
                     created_source_sheet_name="manual",
                     created_action="manual_created",
@@ -7830,7 +7835,11 @@ def task_recognition():
                         if request.form.get(f"act_{act_idx}_template_ok") != "1":
                             blocked_count += 1
                             continue
-                        if request.form.get(f"act_{act_idx}_project_ok") != "1":
+                        project_verified = (
+                            request.form.get(f"act_{act_idx}_project_ok") == "1"
+                            or request.form.get(f"act_{act_idx}_project_override") == "1"
+                        )
+                        if not project_verified:
                             blocked_count += 1
                             continue
                         apartment_id = request.form.get(f"act_{act_idx}_apartment_id", type=int)
