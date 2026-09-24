@@ -121,6 +121,10 @@ class AccessRightsContractsTests(unittest.TestCase):
             "main.account",
             "main.account_password",
             "main.report_error",
+            "main.messenger_thread",
+            "main.messenger_send",
+            "main.messenger_read",
+            "main.messenger_error_replies_read",
         })
         self.assertTrue(WORKER_ROLES.issuperset({ROLE_EXECUTOR, ROLE_PAINTER, ROLE_HANDYMAN, ROLE_GLAZIER}))
 

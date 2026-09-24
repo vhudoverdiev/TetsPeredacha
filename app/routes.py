@@ -172,7 +172,12 @@ ADDENDUM_STATUS_LABELS = {
     ADDENDUM_STATUS_NEEDED: "Не подписано",
     ADDENDUM_STATUS_SIGNED: "Подписано",
 }
-MESSENGER_ALLOWED_ROLES = {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE}
+MESSENGER_ENDPOINTS = {
+    "main.messenger_thread",
+    "main.messenger_send",
+    "main.messenger_read",
+    "main.messenger_error_replies_read",
+}
 
 
 def _asc_nulls_last(column):
@@ -1134,7 +1139,7 @@ def object_creation_limit_message(user: User | None = None) -> str:
 
 def _messenger_is_available(user: User | None = None) -> bool:
     user = user or current_user
-    return bool(getattr(user, "is_authenticated", False) and getattr(user, "role", None) in MESSENGER_ALLOWED_ROLES)
+    return bool(getattr(user, "is_authenticated", False))
 
 
 def _developer_user() -> User | None:
@@ -1333,7 +1338,7 @@ WORKER_ALLOWED_ENDPOINTS = {
     "main.account",
     "main.account_password",
     "main.report_error",
-}
+} | MESSENGER_ENDPOINTS
 
 VIEWER_ALLOWED_GET_ENDPOINTS = {
     "main.objects",

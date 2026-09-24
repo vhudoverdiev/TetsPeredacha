@@ -58405,3 +58405,63 @@ html body.app-body .dashboard-line-list.dashboard-line-list-compact div {
   padding: .62rem .75rem !important;
 }
 
+/* v659: accepted stats inside inspections card are a compact visual group. */
+html body.app-body .dashboard-accepted-summary {
+  margin-top: .8rem !important;
+  padding: .75rem !important;
+  border: 1px solid rgba(141, 214, 44, .22) !important;
+  border-radius: .9rem !important;
+  background: linear-gradient(180deg, rgba(243, 250, 237, .62), rgba(255, 255, 255, .92)) !important;
+}
+
+html body.app-body .dashboard-accepted-summary-title {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: .45rem !important;
+  margin-bottom: .6rem !important;
+  color: #1f7a12 !important;
+  font-size: .82rem !important;
+  font-weight: 950 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-title i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  border-radius: .5rem !important;
+  background: rgba(101, 173, 34, .14) !important;
+  color: #65ad22 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: .55rem !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid div {
+  min-width: 0 !important;
+  padding: .6rem .7rem !important;
+  border: 1px solid rgba(226, 232, 240, .9) !important;
+  border-radius: .75rem !important;
+  background: #ffffff !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid span {
+  display: block !important;
+  color: #667085 !important;
+  font-size: .76rem !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid b {
+  display: block !important;
+  margin-top: .25rem !important;
+  color: #111827 !important;
+  font-size: 1.12rem !important;
+  font-weight: 950 !important;
+}
+

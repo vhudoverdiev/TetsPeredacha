@@ -109,11 +109,15 @@
         <div><span>Были на осмотре</span><b>{{ stats.inspected }}</b></div>
         <div><span>Не были на осмотре</span><b>{{ stats.not_inspected }}</b></div>
       </div>
-      <div class="dashboard-info-divider"></div>
-      <div class="dashboard-info-subtitle">Принято</div>
-      <div class="dashboard-line-list dashboard-line-list-compact">
-        <div><span>С замечаниями</span><b>{{ stats.accepted_with_remarks }}</b></div>
-        <div><span>Без замечаний</span><b>{{ stats.accepted_no_remarks }}</b></div>
+      <div class="dashboard-accepted-summary">
+        <div class="dashboard-accepted-summary-title">
+          <i class="bi bi-check2-circle"></i>
+          <span>Принято</span>
+        </div>
+        <div class="dashboard-accepted-summary-grid">
+          <div><span>С замечаниями</span><b>{{ stats.accepted_with_remarks }}</b></div>
+          <div><span>Без замечаний</span><b>{{ stats.accepted_no_remarks }}</b></div>
+        </div>
       </div>
     </article>
 

@@ -69,18 +69,13 @@ class MessengerContractsTests(unittest.TestCase):
             session["session_version"] = int(user.session_version or 0)
             session["current_project_id"] = self.project.id
 
-    def test_messenger_available_only_for_office_roles_and_developer(self):
-        for user in (self.admin, self.manager, self.supervisor, self.office):
+    def test_messenger_available_for_authenticated_roles(self):
+        for user in (self.admin, self.manager, self.supervisor, self.office, self.worker):
             with self.subTest(role=user.role):
                 client = self.app.test_client()
                 self._login(user, client)
                 response = client.get("/messenger/thread")
                 self.assertEqual(response.status_code, 200)
-
-        worker_client = self.app.test_client()
-        self._login(self.worker, worker_client)
-        response = worker_client.get("/messenger/thread")
-        self.assertIn(response.status_code, {302, 403})
 
     def test_user_can_chat_with_developer_and_developer_sees_unread(self):
         self._login(self.office, self.office_client)
