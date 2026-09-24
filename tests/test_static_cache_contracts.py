@@ -10,10 +10,11 @@ SERVICE_WORKER = (ROOT / "app" / "static" / "service-worker.js").read_text(encod
 class StaticCacheContractsTests(unittest.TestCase):
     def test_static_cache_versions_match_current_stylesheets(self):
         self.assertIn("style.css') }}?v=v679-apartment-mobile-settings", BASE_TEMPLATE)
-        self.assertIn("desktop-only.css') }}?v=v75-account-back-text", BASE_TEMPLATE)
-        self.assertIn("peredacha-static-v174-apartment-mobile-settings", SERVICE_WORKER)
+        self.assertIn("desktop-only.css') }}?v=v76-objects-three-columns", BASE_TEMPLATE)
+        self.assertIn("peredacha-static-v175-objects-three-columns", SERVICE_WORKER)
         self.assertIn("/static/style.css?v=v679-apartment-mobile-settings", SERVICE_WORKER)
-        self.assertIn("/static/desktop-only.css?v=v75-account-back-text", SERVICE_WORKER)
+        self.assertIn("/static/desktop-only.css?v=v76-objects-three-columns", SERVICE_WORKER)
+        self.assertNotIn("/static/desktop-only.css?v=v75-account-back-text", SERVICE_WORKER)
         self.assertNotIn("/static/style.css?v=v652-password-generator", SERVICE_WORKER)
         self.assertNotIn("/static/desktop-only.css?v=v72-apartment-filter-single-row", SERVICE_WORKER)
 

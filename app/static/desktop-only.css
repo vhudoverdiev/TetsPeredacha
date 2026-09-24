@@ -2078,3 +2078,28 @@ html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apart
   background: transparent !important;
   background-color: transparent !important;
 }
+
+/* v76: object selection cards use three fixed columns on desktop. */
+html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  gap: 1.25rem !important;
+}
+
+html.desktop-like-pointer body.app-body:has(.objects-page) .object-card {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 1480px) {
+  html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

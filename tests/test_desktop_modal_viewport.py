@@ -120,7 +120,7 @@ class DesktopModalViewportTests(unittest.TestCase):
         css_worker = re.search(r"/static/desktop-only\.css\?v=([^']+)", self.worker).group(1)
 
         self.assertEqual(script_template, "v679-apartment-mobile-settings")
-        self.assertEqual(css_template, "v75-account-back-text")
+        self.assertEqual(css_template, "v76-objects-three-columns")
         self.assertEqual(script_template, script_worker)
         self.assertEqual(css_template, css_worker)
 

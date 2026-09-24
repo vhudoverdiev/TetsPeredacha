@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v174-apartment-mobile-settings';
+const STATIC_CACHE = 'peredacha-static-v175-objects-three-columns';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -15,7 +15,7 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
   '/static/style.css?v=v679-apartment-mobile-settings',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
-  '/static/desktop-only.css?v=v75-account-back-text',
+  '/static/desktop-only.css?v=v76-objects-three-columns',
   '/static/script.js?v=v679-apartment-mobile-settings',
 ];
 
