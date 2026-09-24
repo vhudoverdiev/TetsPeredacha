@@ -90,19 +90,20 @@
 
         {% if not act.project_ok %}
         <div class="task-recognition-project-override mb-3">
-          <div class="form-check">
+          <div class="task-recognition-project-override-inner">
             <input
-              class="form-check-input"
+              class="btn-check"
               type="checkbox"
               value="1"
               id="act{{ act_idx }}ProjectOverride"
               name="act_{{ act_idx }}_project_override"
               {% if act.project_override or request.form.get('act_' ~ act_idx ~ '_project_override') == '1' %}checked{% endif %}
-              required
             >
-            <label class="form-check-label" for="act{{ act_idx }}ProjectOverride">
+            <label class="btn btn-outline-success task-recognition-project-toggle" for="act{{ act_idx }}ProjectOverride">
+              <i class="bi bi-check2-circle me-2" aria-hidden="true"></i>
               ЖК совпадает
             </label>
+            <span class="task-recognition-project-override-hint">Подтвердите после сверки ЖК в акте и выбранного объекта.</span>
           </div>
         </div>
         {% endif %}
@@ -287,11 +288,57 @@
   }
 
   .task-recognition-page .task-recognition-project-override {
-    padding: .9rem 1rem;
+    padding: .8rem .9rem;
     border: 1px solid rgba(245, 158, 11, .28);
     border-radius: .9rem;
     background: #fffbeb;
     color: #111827;
+  }
+
+  .task-recognition-page .task-recognition-project-override-inner {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  .task-recognition-page .task-recognition-project-toggle,
+  .task-recognition-page .task-recognition-project-toggle:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: .65rem 1.1rem;
+    border-radius: .85rem;
+    border-color: rgba(95, 179, 21, .42) !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+    font-weight: 800;
+    box-shadow: 0 10px 22px rgba(17, 24, 39, .06) !important;
+  }
+
+  .task-recognition-page .task-recognition-project-toggle:hover,
+  .task-recognition-page .task-recognition-project-toggle:focus {
+    border-color: #5fb315 !important;
+    background: #f6fde9 !important;
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+  }
+
+  .task-recognition-page .btn-check:checked + .task-recognition-project-toggle,
+  .task-recognition-page .btn-check:checked + .task-recognition-project-toggle:hover,
+  .task-recognition-page .btn-check:checked + .task-recognition-project-toggle:focus {
+    background: #5fb315 !important;
+    border-color: #5fb315 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(95, 179, 21, .24) !important;
+  }
+
+  .task-recognition-page .task-recognition-project-override-hint {
+    color: #6b7280;
+    font-size: .92rem;
   }
 
   .task-recognition-page .task-recognition-po-mode {

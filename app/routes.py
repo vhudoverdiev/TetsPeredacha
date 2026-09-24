@@ -7840,6 +7840,7 @@ def task_recognition():
                             or request.form.get(f"act_{act_idx}_project_override") == "1"
                         )
                         if not project_verified:
+                            flash("Сверьте ЖК", "warning")
                             blocked_count += 1
                             continue
                         apartment_id = request.form.get(f"act_{act_idx}_apartment_id", type=int)

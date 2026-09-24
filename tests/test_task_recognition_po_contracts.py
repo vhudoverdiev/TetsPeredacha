@@ -251,6 +251,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(blocked_response.status_code, 200)
+        self.assertIn("Сверьте ЖК".encode("utf-8"), blocked_response.data)
         self.assertIsNone(Task.query.filter_by(description="Ручная сверка без подтверждения").first())
 
         saved_response = self.client.post(
