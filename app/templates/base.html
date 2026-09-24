@@ -1265,7 +1265,7 @@
       <span class="brand-text">Передача</span>
     </a>
     <div class="topbar-actions">
-      {% if can_create_object_today() %}
+      {% if can_open_object_creation() %}
       <a class="btn btn-primary object-add-button" href="{{ url_for('main.object_new') }}"><i class="bi bi-plus-lg me-2"></i>Добавить объект</a>
       {% endif %}
       {% if not worker_role and not hide_documents_section %}

@@ -1,3 +1,4 @@
+import hashlib
 import unittest
 
 from config import Config
@@ -7,6 +8,7 @@ from app.models import (
     Project,
     ROLE_ADMIN,
     STATUS_DONE,
+    STATUS_CONCESSION,
     STATUS_NOT_STARTED,
     Task,
     User,
@@ -49,7 +51,8 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
             status=STATUS_NOT_STARTED,
             is_done=False,
         )
-        self.admin = User(username="admin", role=ROLE_ADMIN, is_active=True, captcha_disabled=True)
+        username_suffix = hashlib.sha1(self._testMethodName.encode("utf-8")).hexdigest()[:10]
+        self.admin = User(username=f"admin-{username_suffix}", role=ROLE_ADMIN, is_active=True, captcha_disabled=True)
         self.admin.set_password("correct-password")
         self.admin.set_project_access([self.project.id], all_projects=False)
         db.session.add_all([self.apartment, self.point_1, self.point_10, self.point, self.point_25, self.old_task, self.admin])
@@ -100,6 +103,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         task = Task.query.filter_by(description="Новое одиночное замечание").one()
         self.assertEqual(task.work_point.point_number, "10")
 
@@ -127,11 +131,55 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         db.session.refresh(self.old_task)
         self.assertEqual(self.old_task.status, STATUS_DONE)
         new_task = Task.query.filter(Task.description == "Новое замечание после ПО").one()
         self.assertEqual(new_task.status, STATUS_NOT_STARTED)
         self.assertEqual(new_task.work_point.point_number, "16")
+
+    def test_manual_single_concession_marks_selected_existing_tasks_as_concession(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "single",
+                "apartment_id": str(self.apartment.id),
+                "point_number": "26",
+                "description": "Выданы отступные ТМЦ",
+                "concession_task_ids": [str(self.old_task.id)],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.old_task)
+        self.assertEqual(self.old_task.status, STATUS_CONCESSION)
+        concession_task = Task.query.filter(Task.description == "Выданы отступные ТМЦ").one()
+        self.assertEqual(concession_task.work_point.point_number, "26")
+
+    def test_manual_act_concession_marks_selected_point_tasks_as_concession(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "act",
+                "apartment_id": str(self.apartment.id),
+                "description_26": "Выданы отступные по акту",
+                "concession_point_numbers": ["16"],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.old_task)
+        self.assertEqual(self.old_task.status, STATUS_CONCESSION)
+        concession_task = Task.query.filter(Task.description == "Выданы отступные по акту").one()
+        self.assertEqual(concession_task.work_point.point_number, "26")
 
     def test_po_mode_keeps_identical_existing_remark_open(self):
         self._login()
@@ -225,9 +273,38 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         self.assertIsNone(Task.query.filter(Task.description == "Старый пункт не должен сохраниться").one_or_none())
         saved_task = Task.query.filter(Task.description == "Пункт десять сохраняется").one()
         self.assertEqual(saved_task.work_point.point_number, "10")
+
+    def test_auto_recognition_concession_marks_selected_point_tasks_as_concession(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "act_count": "1",
+                "act_0_filename": "concession.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "1",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "1",
+                "act_0_row_0_active": "1",
+                "act_0_row_0_point": "26",
+                "act_0_row_0_description": "Отступное из PDF",
+                "act_0_concession_point_numbers": ["16"],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.old_task)
+        self.assertEqual(self.old_task.status, STATUS_CONCESSION)
+        concession_task = Task.query.filter(Task.description == "Отступное из PDF").one()
+        self.assertEqual(concession_task.work_point.point_number, "26")
 
     def test_save_allows_mismatched_project_when_manually_verified(self):
         self._login()
@@ -275,6 +352,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(saved_response.status_code, 302)
+        self.assertEqual(saved_response.location, f"/apartments/{self.apartment.id}")
         saved_task = Task.query.filter_by(description="Ручная сверка подтверждена").one()
         self.assertEqual(saved_task.apartment_id, self.apartment.id)
         self.assertEqual(saved_task.work_point.point_number, "10")
@@ -304,6 +382,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         self.assertIsNone(Task.query.filter(Task.description == "Снятая строка не должна сохраниться").one_or_none())
         saved_task = Task.query.filter(Task.description == "Отмеченная строка сохраняется").one()
         self.assertEqual(saved_task.work_point.point_number, "10")
@@ -381,6 +460,7 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         db.session.refresh(self.old_task)
         db.session.refresh(old_other)
         db.session.refresh(old_unmentioned_point)

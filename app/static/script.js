@@ -8413,9 +8413,10 @@ document.addEventListener('crm:ajax-pagination-updated', event => {
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-project-access-control]').forEach(control => {
     const projectInputs = [...control.querySelectorAll('input[name="project_ids"]')];
+    const allProjectsInput = control.querySelector('[data-project-access-all]');
     const label = control.querySelector('[data-project-access-label]');
     const autosaveForm = control.querySelector('.users-project-autosave');
-    if (!projectInputs.length) return;
+    if (!projectInputs.length && !allProjectsInput) return;
 
     const projectCountLabel = count => {
       if (count === 1) return '1 объект';
@@ -8424,22 +8425,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const syncAccessControl = () => {
+      const allProjects = Boolean(allProjectsInput?.checked);
+      projectInputs.forEach(input => {
+        input.disabled = allProjects || control.classList.contains('is-saving');
+        input.closest('.users-access-project-option')?.classList.toggle('is-disabled', allProjects);
+      });
       if (label) {
+        if (allProjects) {
+          label.textContent = 'Все объекты';
+          return;
+        }
         const selectedCount = projectInputs.filter(input => input.checked).length;
         label.textContent = projectCountLabel(selectedCount);
       }
     };
 
     let savedIds = new Set(projectInputs.filter(input => input.checked).map(input => input.value));
+    let savedAllProjects = Boolean(allProjectsInput?.checked);
     const restoreSavedProjects = () => {
+      if (allProjectsInput) allProjectsInput.checked = savedAllProjects;
       projectInputs.forEach(input => { input.checked = savedIds.has(input.value); });
       syncAccessControl();
     };
 
-    projectInputs.forEach(input => input.addEventListener('change', async () => {
+    const submitAccessUpdate = async () => {
       syncAccessControl();
       if (!autosaveForm) return;
-      if (!projectInputs.some(projectInput => projectInput.checked)) {
+      if (!allProjectsInput?.checked && !projectInputs.some(projectInput => projectInput.checked)) {
         restoreSavedProjects();
         window.showCrmNotice?.('Выберите хотя бы один объект.', 'warning');
         return;
@@ -8447,6 +8459,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const formData = new FormData(autosaveForm);
       projectInputs.forEach(projectInput => { projectInput.disabled = true; });
+      if (allProjectsInput) allProjectsInput.disabled = true;
       control.classList.add('is-saving');
       try {
         const response = await fetch(autosaveForm.action, {
@@ -8461,6 +8474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json().catch(() => ({}));
         if (!response.ok || data.ok === false) throw new Error(data.message || 'Не удалось сохранить доступ');
         savedIds = new Set((data.project_ids || []).map(String));
+        savedAllProjects = Boolean(data.all_projects_access);
         restoreSavedProjects();
         if (label && data.label) label.textContent = data.label;
         control.classList.add('is-saved');
@@ -8469,10 +8483,14 @@ document.addEventListener('DOMContentLoaded', () => {
         restoreSavedProjects();
         window.showCrmNotice?.(error.message || 'Не удалось сохранить доступ к объектам', 'danger');
       } finally {
-        projectInputs.forEach(projectInput => { projectInput.disabled = false; });
         control.classList.remove('is-saving');
+        syncAccessControl();
+        if (allProjectsInput) allProjectsInput.disabled = false;
       }
-    }));
+    };
+
+    projectInputs.forEach(input => input.addEventListener('change', submitAccessUpdate));
+    allProjectsInput?.addEventListener('change', submitAccessUpdate);
     syncAccessControl();
   });
 

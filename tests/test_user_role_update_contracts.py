@@ -24,7 +24,8 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client()
         self.project = Project(name="Role update project")
-        db.session.add(self.project)
+        self.other_project = Project(name="Second role update project")
+        db.session.add_all([self.project, self.other_project])
         db.session.commit()
 
     def tearDown(self):
@@ -144,6 +145,49 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["role"], ROLE_SUPERVISOR)
         self.assertEqual(db.session.get(User, user.id).role, ROLE_SUPERVISOR)
+
+    def test_admin_can_grant_all_projects_access_from_users_table(self):
+        admin = self._user("admin-all-projects", ROLE_ADMIN)
+        user = self._user("manager-all-projects", ROLE_MANAGER)
+        self._login(admin)
+
+        response = self.client.post(
+            f"/users/{user.id}/projects",
+            data={"all_projects_access": "1"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertTrue(data["all_projects_access"])
+        self.assertEqual(data["label"], "Все объекты")
+        updated = db.session.get(User, user.id)
+        self.assertTrue(updated.can_access_all_projects)
+        self.assertTrue(updated.can_access_project(self.project))
+        self.assertTrue(updated.can_access_project(self.other_project))
+
+    def test_admin_can_create_office_user_with_all_projects_access(self):
+        admin = self._user("admin-create-all-projects", ROLE_ADMIN)
+        self._login(admin)
+
+        response = self.client.post(
+            "/users",
+            data={
+                "username": "office-all-projects",
+                "full_name": "Офис Все Объекты",
+                "password": "correct-password",
+                "role": ROLE_OFFICE,
+                "all_projects_access": "1",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        created = User.query.filter_by(username="office-all-projects").one()
+        self.assertEqual(created.role, ROLE_OFFICE)
+        self.assertTrue(created.can_access_all_projects)
+        self.assertTrue(created.can_access_project(self.project))
+        self.assertTrue(created.can_access_project(self.other_project))
 
     def test_role_update_rejects_invalid_role(self):
         admin = self._user("admin-invalid", ROLE_ADMIN)

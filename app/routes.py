@@ -1042,15 +1042,40 @@ def _objects_created_today_by_user(user_id: int | None) -> int:
     ).count()
 
 
+def can_open_object_creation(user: User | None = None) -> bool:
+    user = user or current_user
+    return bool(
+        getattr(user, "is_authenticated", False)
+        and (user.role == ROLE_ADMIN or user.role in OFFICE_MANAGER_ROLES)
+    )
+
+
+def object_creation_daily_limit(user: User | None = None) -> int | None:
+    user = user or current_user
+    if not can_open_object_creation(user):
+        return 0
+    if user.role == ROLE_ADMIN:
+        return None
+    if user.role == ROLE_OFFICE:
+        return 3
+    return 1
+
+
 def can_create_object_today(user: User | None = None) -> bool:
     user = user or current_user
-    if not getattr(user, "is_authenticated", False):
-        return False
-    if user.role == ROLE_ADMIN:
+    limit = object_creation_daily_limit(user)
+    if limit is None:
         return True
-    if user.role not in OFFICE_MANAGER_ROLES:
+    if not limit:
         return False
-    return _objects_created_today_by_user(user.id) < 1
+    return _objects_created_today_by_user(user.id) < limit
+
+
+def object_creation_limit_message(user: User | None = None) -> str:
+    limit = object_creation_daily_limit(user)
+    if limit == 3:
+        return "Можно добавить только 3 объекта в сутки."
+    return "Можно добавить только 1 объект в сутки."
 
 @bp.app_context_processor
 def inject_globals():
@@ -1098,6 +1123,7 @@ def inject_globals():
         "glass_measurement_action_label": glass_measurement_action_label,
         "short_user_display_name": short_user_display_name,
         "can_create_object_today": can_create_object_today,
+        "can_open_object_creation": can_open_object_creation,
     }
 
 
@@ -1985,12 +2011,12 @@ def object_new():
     if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
         abort(403)
     if not can_create_object_today(current_user):
-        flash("Можно добавить только 1 объект в сутки.", "warning")
+        flash(object_creation_limit_message(current_user), "warning")
         return redirect(url_for("main.objects"))
     form = ProjectForm()
     if form.validate_on_submit():
         if not can_create_object_today(current_user):
-            flash("Можно добавить только 1 объект в сутки.", "warning")
+            flash(object_creation_limit_message(current_user), "warning")
             return redirect(url_for("main.objects"))
         if form.has_storerooms.data:
             flash("Кладовки пока нельзя добавить: раздел находится в разработке.", "warning")
@@ -7170,6 +7196,59 @@ def _open_remark_count_for_apartment_group(*, project: Project, apartment: Apart
     )
 
 
+def _open_concession_candidate_tasks(*, project: Project, apartment: Apartment) -> list[Task]:
+    apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
+    if not apartment_ids:
+        apartment_ids = [apartment.id]
+    return (
+        Task.query.join(WorkPoint, Task.work_point_id == WorkPoint.id)
+        .filter(
+            Task.project_id == project.id,
+            Task.apartment_id.in_(apartment_ids),
+            Task.is_archived.is_(False),
+            Task.status.notin_(list(DONE_STATUSES)),
+            WorkPoint.point_number != "26",
+        )
+        .order_by(
+            cast(WorkPoint.point_number, Integer).asc(),
+            Task.created_at.asc(),
+            Task.id.asc(),
+        )
+        .all()
+    )
+
+
+def _apply_concession_to_tasks_by_ids(*, project: Project, apartment: Apartment, task_ids: set[int]) -> int:
+    normalized_ids = {int(task_id) for task_id in (task_ids or set()) if task_id}
+    if not normalized_ids:
+        return 0
+    allowed_ids = {task.id for task in _open_concession_candidate_tasks(project=project, apartment=apartment) if task.id}
+    changed = 0
+    for task in Task.query.filter(Task.id.in_(normalized_ids & allowed_ids)).all():
+        if task.status != STATUS_CONCESSION:
+            change_task_status(task, STATUS_CONCESSION, user_id=current_user.id, commit=False)
+            changed += 1
+    return changed
+
+
+def _apply_concession_to_tasks_by_point_numbers(
+    *,
+    project: Project,
+    apartment: Apartment,
+    point_numbers: set[str],
+) -> int:
+    normalized_numbers = {str(number).strip() for number in (point_numbers or set()) if str(number).strip()}
+    normalized_numbers.discard("26")
+    if not normalized_numbers:
+        return 0
+    changed = 0
+    for task in _open_concession_candidate_tasks(project=project, apartment=apartment):
+        if task.work_point and task.work_point.point_number in normalized_numbers and task.status != STATUS_CONCESSION:
+            change_task_status(task, STATUS_CONCESSION, user_id=current_user.id, commit=False)
+            changed += 1
+    return changed
+
+
 def _remark_count_for_apartment_group(*, project: Project, apartment: Apartment) -> int:
     apartment_ids = [item.id for item in _apartment_group_for_project(apartment, project.id) if item.id]
     if not apartment_ids:
@@ -7551,6 +7630,11 @@ def task_new():
 
     apartments = _project_apartment_options(project.id)
     points = _remark_point_options(min_number=10)
+    concession_candidates_by_apartment = {
+        apartment.id: _open_concession_candidate_tasks(project=project, apartment=apartment)
+        for apartment in apartments
+        if apartment.id
+    }
     add_mode = (request.form.get("add_mode") or request.args.get("mode") or "").strip()
     manual_kind = (request.form.get("manual_kind") or request.args.get("kind") or "").strip()
 
@@ -7569,6 +7653,7 @@ def task_new():
             conflict_count = 0
             duplicate_count = 0
             completed_previous_count = 0
+            concession_updated_count = 0
             prepared_entries: list[tuple[str, str]] = []
             for point in points:
                 point_number = point["number"]
@@ -7614,6 +7699,7 @@ def task_new():
                             project=project,
                             apartments=apartments,
                             points=points,
+                            concession_candidates_by_apartment=concession_candidates_by_apartment,
                             add_mode=add_mode,
                             manual_kind=manual_kind,
                         )
@@ -7669,8 +7755,19 @@ def task_new():
                                 conflict_count += 1
                             else:
                                 duplicate_count += 1
+                    if any(point_number == "26" for point_number, _ in prepared_entries):
+                        selected_concession_points = {
+                            value
+                            for value in request.form.getlist("concession_point_numbers")
+                            if str(value).strip()
+                        }
+                        concession_updated_count += _apply_concession_to_tasks_by_point_numbers(
+                            project=project,
+                            apartment=apartment,
+                            point_numbers=selected_concession_points,
+                        )
 
-                    if created_count or conflict_count or completed_previous_count:
+                    if created_count or conflict_count or completed_previous_count or concession_updated_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,
@@ -7688,10 +7785,12 @@ def task_new():
                         message = f"Добавлено замечаний из акта: {created_count}" if created_count else "Акт ПО обработан"
                         if completed_previous_count:
                             message += f". Переведено в выполнено: {completed_previous_count}"
+                        if concession_updated_count:
+                            message += f". Переведено в отступные: {concession_updated_count}"
                         if duplicate_count:
                             message += f". Идентичные оставлены невыполненными: {duplicate_count}"
                         flash(message, "success")
-                        return redirect(url_for("main.task_list", status=STATUS_NOT_STARTED))
+                        return redirect(url_for("main.apartment_detail", apartment_id=apartment.id))
 
                     db.session.rollback()
                     _finish_snapshot_sync_log(sync_log)
@@ -7749,18 +7848,35 @@ def task_new():
                         project=project,
                         apartments=apartments,
                         points=points,
+                        concession_candidates_by_apartment=concession_candidates_by_apartment,
                         add_mode=add_mode,
                         manual_kind=manual_kind,
                     )
+                concession_updated_count = 0
+                if point_number == "26":
+                    selected_concession_task_ids = {
+                        int(value)
+                        for value in request.form.getlist("concession_task_ids")
+                        if str(value).isdigit()
+                    }
+                    concession_updated_count = _apply_concession_to_tasks_by_ids(
+                        project=project,
+                        apartment=apartment,
+                        task_ids=selected_concession_task_ids,
+                    )
                 db.session.commit()
-                flash("Замечание добавлено со статусом не выполнено", "success")
-                return redirect(url_for("main.task_list", status=STATUS_NOT_STARTED))
+                message = "Замечание добавлено со статусом не выполнено"
+                if concession_updated_count:
+                    message += f". Переведено в отступные: {concession_updated_count}"
+                flash(message, "success")
+                return redirect(url_for("main.apartment_detail", apartment_id=apartment.id))
 
     return render_template(
         "task_form.html",
         project=project,
         apartments=apartments,
         points=points,
+        concession_candidates_by_apartment=concession_candidates_by_apartment,
         add_mode=add_mode,
         manual_kind=manual_kind,
     )
@@ -7819,6 +7935,8 @@ def task_recognition():
                 conflict_count = 0
                 blocked_count = 0
                 completed_previous_count = 0
+                concession_updated_count = 0
+                target_apartment_id: int | None = None
                 duplicate_act_names: list[str] = []
                 sync_log_source_names: list[str] = []
                 for act_idx in range(act_count):
@@ -7892,6 +8010,7 @@ def task_recognition():
                                 previews=previews,
                             )
                         if prepared_rows:
+                            target_apartment_id = apartment.id
                             _apply_inspection_date_to_group(_apartment_group_for_project(apartment, project.id), inspection_date)
                             if po_mode:
                                 completed_previous_count += _complete_previous_po_tasks_for_apartment_group(
@@ -7925,6 +8044,17 @@ def task_recognition():
                                     created_count += 1
                                 elif outcome == "conflict":
                                     conflict_count += 1
+                        if any(point_number == "26" for point_number, _ in prepared_rows):
+                            selected_concession_points = {
+                                value
+                                for value in request.form.getlist(f"act_{act_idx}_concession_point_numbers")
+                                if str(value).strip()
+                            }
+                            concession_updated_count += _apply_concession_to_tasks_by_point_numbers(
+                                project=project,
+                                apartment=apartment,
+                                point_numbers=selected_concession_points,
+                            )
                     if conflict_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
@@ -7941,7 +8071,7 @@ def task_recognition():
                             message += f". Актов пропущено: {blocked_count}"
                         flash(message, "warning")
                         return redirect(url_for("main.sync_conflicts"))
-                    if created_count or conflict_count or completed_previous_count:
+                    if created_count or conflict_count or completed_previous_count or concession_updated_count:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,
@@ -7953,9 +8083,13 @@ def task_recognition():
                         message = f"Сохранено замечаний: {created_count}"
                         if completed_previous_count:
                             message += f". Переведено в выполнено: {completed_previous_count}"
+                        if concession_updated_count:
+                            message += f". Переведено в отступные: {concession_updated_count}"
                         if blocked_count:
                             message += f". Актов пропущено: {blocked_count}"
                         flash(message, "success")
+                        if target_apartment_id:
+                            return redirect(url_for("main.apartment_detail", apartment_id=target_apartment_id))
                         return redirect(url_for("main.task_recognition"))
                     if duplicate_act_names:
                         db.session.rollback()
@@ -10790,9 +10924,10 @@ def users():
             requested_project_ids = {
                 value for value in request.form.getlist("project_ids") if str(value).isdigit()
             }
+            all_projects_access = request.form.get("all_projects_access") == "1"
             valid_project_ids = {project.id for project in all_projects}
             project_ids = sorted({int(value) for value in requested_project_ids if int(value) in valid_project_ids})
-            if not project_ids:
+            if not all_projects_access and not project_ids:
                 flash("Выберите хотя бы один объект.", "danger")
                 users = User.query.order_by(User.created_at.desc()).all()
                 return render_template("users.html", users=users, form=form, project=project, all_projects=all_projects, protected_user_ids=_protected_user_ids(users))
@@ -10804,7 +10939,7 @@ def users():
                 role=form.role.data,
                 is_active=True,
             )
-            user.set_project_access(project_ids, all_projects=False)
+            user.set_project_access(project_ids, all_projects=all_projects_access)
             password = form.password.data
             user.set_password(password)
             db.session.add(user)
@@ -10848,18 +10983,28 @@ def user_update_projects(user_id: int):
     requested_ids = {
         int(value) for value in request.form.getlist("project_ids") if str(value).isdigit()
     }
+    all_projects_access = request.form.get("all_projects_access") == "1"
     project_ids = sorted(requested_ids & valid_project_ids)
-    if not project_ids:
+    if not all_projects_access and not project_ids:
         if wants_json:
             return jsonify(ok=False, message="Выберите хотя бы один объект."), 400
         flash("Выберите хотя бы один объект.", "danger")
         return redirect(url_for("main.users"))
-    user.set_project_access(project_ids, all_projects=False)
+    user.set_project_access(project_ids, all_projects=all_projects_access)
     db.session.commit()
     if wants_json:
-        count = len(project_ids)
+        count = len(valid_project_ids) if all_projects_access else len(project_ids)
         label = "1 объект" if count == 1 else (f"{count} объекта" if 2 <= count <= 4 else f"{count} объектов")
-        return jsonify(ok=True, project_ids=project_ids, count=count, label=label, message="Доступ к объектам сохранён.")
+        if all_projects_access:
+            label = "Все объекты"
+        return jsonify(
+            ok=True,
+            project_ids=project_ids,
+            all_projects_access=all_projects_access,
+            count=count,
+            label=label,
+            message="Доступ к объектам сохранён.",
+        )
     flash("Доступ к объектам обновлён.", "success")
     return redirect(url_for("main.users"))
 

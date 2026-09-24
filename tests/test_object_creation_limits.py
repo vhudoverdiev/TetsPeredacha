@@ -1,8 +1,9 @@
 import unittest
+from pathlib import Path
 
 from config import Config
 from app import create_app, db
-from app.models import Project, ROLE_ADMIN, ROLE_MANAGER, User
+from app.models import Project, ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, User
 
 
 class TestConfig(Config):
@@ -76,6 +77,28 @@ class ObjectCreationLimitTests(unittest.TestCase):
         with self.client.session_transaction() as session:
             flashes = session.get("_flashes") or []
         self.assertIn(("warning", "Можно добавить только 1 объект в сутки."), flashes)
+
+    def test_office_role_can_create_three_objects_per_day(self):
+        office = self._create_user("office", ROLE_OFFICE)
+        self._login(office.username)
+
+        self.assertEqual(self._post_object("Офис объект 1").status_code, 302)
+        self.assertEqual(self._post_object("Офис объект 2").status_code, 302)
+        self.assertEqual(self._post_object("Офис объект 3").status_code, 302)
+
+        fourth_response = self._post_object("Офис объект 4")
+        self.assertEqual(fourth_response.status_code, 302)
+        self.assertEqual(Project.query.filter_by(name="Офис объект 4").count(), 0)
+
+        with self.client.session_transaction() as session:
+            flashes = session.get("_flashes") or []
+        self.assertIn(("warning", "Можно добавить только 3 объекта в сутки."), flashes)
+
+    def test_add_object_button_is_visible_for_roles_with_creation_access(self):
+        template = Path("app/templates/base.html").read_text(encoding="utf-8")
+
+        self.assertIn("can_open_object_creation()", template)
+        self.assertNotIn("{% if can_create_object_today() %}", template)
 
     def test_developer_is_not_limited_by_daily_object_count(self):
         admin = self._create_user("admin", ROLE_ADMIN)

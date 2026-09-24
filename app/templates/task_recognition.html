@@ -126,6 +126,21 @@
           </div>
         </div>
 
+        <div class="task-recognition-concession-panel mb-3 d-none" data-recognition-concession-block="{{ act_idx }}">
+          <h4 class="h6 mb-2">Пункты, за которые выданы отступные</h4>
+          <p class="text-muted small mb-3">Отметьте номера пунктов. Все открытые замечания по этим пунктам в выбранной квартире перейдут в статус “Отступные”.</p>
+          <div class="task-recognition-concession-grid">
+            {% for point in points %}
+              {% if point.number != '26' %}
+              <label class="task-recognition-concession-option">
+                <input type="checkbox" name="act_{{ act_idx }}_concession_point_numbers" value="{{ point.number }}" {% if point.number in request.form.getlist('act_' ~ act_idx ~ '_concession_point_numbers') %}checked{% endif %}>
+                <span>{{ point.number }}</span>
+              </label>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
         <div class="table-responsive task-recognition-table-wrap">
           <table class="table align-middle mb-0">
             <thead>
@@ -348,6 +363,42 @@
     flex-wrap: wrap;
   }
 
+  .task-recognition-page .task-recognition-concession-panel {
+    padding: 1rem;
+    border: 1px solid rgba(245, 158, 11, .32);
+    border-radius: 1rem;
+    background: #fffbeb;
+  }
+
+  .task-recognition-page .task-recognition-concession-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+    gap: .55rem;
+  }
+
+  .task-recognition-page .task-recognition-concession-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    min-height: 2.65rem;
+    padding: .45rem .65rem;
+    border: 1px solid rgba(95, 179, 21, .28);
+    border-radius: .75rem;
+    background: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .task-recognition-page .task-recognition-concession-option input {
+    accent-color: #79bf25;
+  }
+
+  .task-recognition-page .task-recognition-concession-option:has(input:checked) {
+    border-color: #5fb315;
+    background: #f2fde5;
+  }
+
   .task-recognition-page .btn-check:checked + .task-recognition-po-toggle,
   .task-recognition-page .btn-check:checked + .task-recognition-po-toggle:hover,
   .task-recognition-page .btn-check:checked + .task-recognition-po-toggle:focus {
@@ -393,10 +444,34 @@
         const addedRow = tableBody.lastElementChild;
         addedRow?.querySelector('textarea')?.focus();
         document.dispatchEvent(new CustomEvent('crm:ajax-pagination-updated', { detail: { content: addedRow || tableBody } }));
+        syncRecognitionConcessionBlocks();
+      });
+    });
+
+    const syncRecognitionConcessionBlocks = () => {
+      document.querySelectorAll('[data-task-recognition-rows]').forEach(tableBody => {
+        const actIndex = tableBody.dataset.taskRecognitionRows;
+        const block = document.querySelector(`[data-recognition-concession-block="${actIndex}"]`);
+        if (!block) return;
+        const hasConcessionRow = [...tableBody.querySelectorAll('tr')].some(row => {
+          const activeInput = row.querySelector('input[name$="_active"]');
+          const pointSelect = row.querySelector('select[name$="_point"]');
+          return (!activeInput || activeInput.checked) && pointSelect?.value === '26';
+        });
+        block.classList.toggle('d-none', !hasConcessionRow);
+      });
+    };
+
+    document.querySelectorAll('[data-task-recognition-rows]').forEach(tableBody => {
+      tableBody.addEventListener('change', event => {
+        if (event.target?.matches('select[name$="_point"], input[name$="_active"]')) {
+          syncRecognitionConcessionBlocks();
+        }
       });
     });
 
     syncRecognitionTextareasToTop();
+    syncRecognitionConcessionBlocks();
     window.requestAnimationFrame(syncRecognitionTextareasToTop);
     window.setTimeout(syncRecognitionTextareasToTop, 120);
     window.addEventListener('pageshow', syncRecognitionTextareasToTop, { once: true });
