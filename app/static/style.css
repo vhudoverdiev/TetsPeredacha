@@ -58608,8 +58608,8 @@ html body.app-body .apartment-detail-page .inspection-option {
 
 html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  width: min(100%, 20rem) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: min(100%, 13.5rem) !important;
 }
 
 html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls .btn {
@@ -58617,13 +58617,13 @@ html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-in
   justify-content: center !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-addendum-form input[name="addendum_signed_date"] {
-  grid-column: 1 / -1 !important;
-  width: 100% !important;
-}
-
-html body.app-body .apartment-detail-page .apartment-addendum-form input[name="addendum_signed_date"][hidden] {
-  display: none !important;
+html body.app-body .apartment-detail-page :is(.apartment-avr-form, .apartment-addendum-form) .btn-outline-success:hover,
+html body.app-body .apartment-detail-page :is(.apartment-avr-form, .apartment-addendum-form) .btn-outline-success:focus-visible,
+html body.app-body .apartment-detail-page :is(.apartment-avr-form, .apartment-addendum-form) .btn-outline-success:active {
+  background: linear-gradient(180deg, var(--peredacha-action-green), var(--peredacha-action-green-hover)) !important;
+  border-color: var(--peredacha-action-green-hover) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 24px rgba(103, 184, 28, .22) !important;
 }
 
 html body.app-body .apartment-detail-page .inspection-note-form {

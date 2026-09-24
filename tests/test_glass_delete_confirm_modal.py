@@ -43,9 +43,9 @@ class GlassDeleteConfirmModalTest(unittest.TestCase):
         template = (ROOT / "app" / "templates" / "base.html").read_text(encoding="utf-8")
         worker = (ROOT / "app" / "static" / "service-worker.js").read_text(encoding="utf-8")
 
-        self.assertIn("script.js') }}?v=v679-apartment-mobile-settings", template)
-        self.assertIn("/static/script.js?v=v679-apartment-mobile-settings", worker)
-        self.assertIn("peredacha-static-v175-objects-three-columns", worker)
+        self.assertIn("script.js') }}?v=v680-addendum-buttons", template)
+        self.assertIn("/static/script.js?v=v680-addendum-buttons", worker)
+        self.assertIn("peredacha-static-v176-addendum-buttons", worker)
 
 
 if __name__ == "__main__":

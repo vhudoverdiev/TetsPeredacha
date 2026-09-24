@@ -9346,6 +9346,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "addendum_status": _group_addendum_status(apartments),
         "addendum_status_label": ADDENDUM_STATUS_LABELS.get(_group_addendum_status(apartments), "Нет"),
         "addendum_signed_date": _group_addendum_signed_date(apartments),
+        "has_addendum_task": _group_has_dop_agreement_task(apartments),
         "avr_status": _group_avr_status(apartments),
         "avr_signed_date": _group_avr_signed_date(apartments),
         "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") == "apartment" and app_status != APP_DEADLINE_NO_REMARKS,

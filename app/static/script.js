@@ -3075,28 +3075,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const addendumDisplay = document.querySelector('[data-apartment-addendum-display]');
         if (addendumDisplay && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
           addendumDisplay.innerHTML = data.addendum_status === 'signed'
-            ? `<span class="badge-avr-signed">Подписано${data.addendum_signed_date_label ? ` от ${escapeHtml(data.addendum_signed_date_label)}` : ''}</span>`
-            : (data.addendum_status === 'needed'
-              ? '<span class="badge-avr-needed">Не подписано</span>'
-              : '<span class="status-pill status-pill-muted">Нет</span>');
+            ? '<span class="badge-avr-signed">Подписано</span>'
+            : '<span class="badge-avr-needed">Не подписано</span>';
         }
         if (form.classList.contains('apartment-addendum-form') && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
           form.querySelectorAll('button[name="addendum_status"]').forEach(statusButton => {
-            const isActive = statusButton.value === data.addendum_status;
+            const isActive = statusButton.value === 'signed'
+              ? data.addendum_status === 'signed'
+              : data.addendum_status !== 'signed';
             statusButton.classList.remove('btn-secondary', 'btn-outline-secondary', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success');
             if (statusButton.value === 'signed') {
               statusButton.classList.add(isActive ? 'btn-success' : 'btn-outline-success');
-            } else if (statusButton.value === 'needed') {
-              statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
             } else {
-              statusButton.classList.add(isActive ? 'btn-secondary' : 'btn-outline-secondary');
+              statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
             }
           });
-          const addendumSignedDateInput = form.querySelector('input[name="addendum_signed_date"]');
-          if (addendumSignedDateInput) {
-            addendumSignedDateInput.hidden = data.addendum_status !== 'signed';
-            if (data.addendum_signed_date) addendumSignedDateInput.value = data.addendum_signed_date;
-          }
         }
 
         const appStatusDisplay = document.querySelector('[data-apartment-app-status-display]');

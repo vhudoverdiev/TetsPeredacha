@@ -117,8 +117,9 @@ class ApartmentAppStatusTests(unittest.TestCase):
 
         page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
 
-        self.assertIn("Доп.Соглашение", page)
+        self.assertIn("Соглашение", page)
         self.assertIn("Не подписано", page)
+        self.assertNotIn("Дата подписания доп. соглашения", page)
 
     def test_manual_addendum_none_overrides_dop_agreement_auto_status(self):
         point = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)")
@@ -143,8 +144,9 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertEqual(apartment.addendum_status, "none")
         self.assertTrue(apartment.addendum_status_manual)
         page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
-        self.assertIn("Доп.Соглашение", page)
-        self.assertIn(">Нет<", page)
+        self.assertIn("Соглашение", page)
+        self.assertIn("Не подписано", page)
+        self.assertNotIn(">Нет<", page)
 
     def test_manual_addendum_signed_is_saved(self):
         response = self.client.post(
@@ -157,6 +159,9 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertEqual(apartment.addendum_status, "signed")
         self.assertEqual(apartment.addendum_signed_date, date(2026, 9, 24))
         self.assertTrue(apartment.addendum_status_manual)
+
+        page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
+        self.assertNotIn("Соглашение", page)
 
     def test_addendum_date_is_cleared_when_not_signed(self):
         self.apartment.addendum_status = "signed"
@@ -189,7 +194,7 @@ class ApartmentAppStatusTests(unittest.TestCase):
         db.session.commit()
 
         page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
-        self.assertNotIn("Изменить доп. соглашение", page)
+        self.assertNotIn("Соглашение", page)
 
         response = self.client.post(
             f"/apartments/{self.apartment.id}/addendum-status",
