@@ -32,6 +32,23 @@
     <article class="card content-card settings-card">
       <div class="card-body">
         <div class="settings-card-head">
+          <div class="settings-card-icon"><i class="bi bi-chat-dots"></i></div>
+          <div>
+            <h2 class="section-title mb-1">Сообщения</h2>
+          </div>
+        </div>
+        <label class="settings-switch-row mt-3" for="messenger-setting">
+          <span>
+            <b>Включить чат на сайте</b>
+          </span>
+          <input class="form-check-input settings-switch" id="messenger-setting" type="checkbox" name="enable_messenger" value="1" {% if enable_messenger %}checked{% endif %}>
+        </label>
+      </div>
+    </article>
+
+    <article class="card content-card settings-card">
+      <div class="card-body">
+        <div class="settings-card-head">
           <div class="settings-card-icon"><i class="bi bi-phone"></i></div>
           <div>
             <h2 class="section-title mb-1">Мобильная версия</h2>

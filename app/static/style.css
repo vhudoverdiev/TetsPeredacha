@@ -58465,3 +58465,55 @@ html body.app-body .dashboard-accepted-summary-grid b {
   font-weight: 950 !important;
 }
 
+/* v660: neutral accepted card and tighter floating buttons. */
+html body.app-body .dashboard-accepted-summary {
+  margin-top: .75rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+html body.app-body .dashboard-accepted-summary-title {
+  margin: 0 0 .55rem !important;
+  color: #111827 !important;
+  font-size: .9rem !important;
+  font-weight: 900 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-title i {
+  width: 1rem !important;
+  height: 1rem !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #8dd62c !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid {
+  grid-template-columns: 1fr !important;
+  gap: .65rem !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid div {
+  min-height: 4.25rem !important;
+  padding: .8rem .9rem !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: .9rem !important;
+  background: #ffffff !important;
+  box-shadow: 0 .75rem 1.6rem rgba(15, 23, 42, .035) !important;
+}
+
+html body.app-body .floating-messenger-corner {
+  bottom: calc(1.25rem + 42px + .35rem) !important;
+}
+
+html.desktop-like-pointer body.app-body .floating-messenger-corner {
+  bottom: calc(1.25rem + clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) + .35rem) !important;
+}
+
+@media (max-width: 767.98px) {
+  html body.app-body .floating-messenger-corner {
+    bottom: calc(1rem + 42px + .35rem) !important;
+  }
+}
+

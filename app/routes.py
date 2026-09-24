@@ -1139,7 +1139,7 @@ def object_creation_limit_message(user: User | None = None) -> str:
 
 def _messenger_is_available(user: User | None = None) -> bool:
     user = user or current_user
-    return bool(getattr(user, "is_authenticated", False))
+    return bool(getattr(user, "is_authenticated", False) and _setting_bool("enable_messenger", True))
 
 
 def _developer_user() -> User | None:
@@ -11335,6 +11335,7 @@ def site_settings():
         _set_setting_bool("mobile_version_under_development", request.form.get("mobile_version_under_development") == "1")
         _set_setting_bool("site_maintenance_mode", request.form.get("site_maintenance_mode") == "1")
         _set_setting_bool("two_factor_every_login", request.form.get("two_factor_every_login") == "1")
+        _set_setting_bool("enable_messenger", request.form.get("enable_messenger") == "1")
         allowed_section_keys = {choice["key"] for choice in SECTION_LOCK_CHOICES}
         _set_setting_csv("blocked_site_sections", [key for key in request.form.getlist("blocked_site_sections") if key in allowed_section_keys])
         db.session.commit()
@@ -11348,6 +11349,7 @@ def site_settings():
         mobile_version_under_development=_setting_bool("mobile_version_under_development"),
         site_maintenance_mode=_setting_bool("site_maintenance_mode"),
         two_factor_every_login=_setting_bool("two_factor_every_login"),
+        enable_messenger=_setting_bool("enable_messenger", True),
         blocked_site_sections=_setting_csv("blocked_site_sections"),
         section_lock_choices=SECTION_LOCK_CHOICES,
     )

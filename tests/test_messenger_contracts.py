@@ -5,6 +5,7 @@ from flask import g
 from config import Config
 from app import create_app, db, login_manager
 from app.models import (
+    AppSetting,
     ChatMessage,
     Project,
     ROLE_ADMIN,
@@ -76,6 +77,16 @@ class MessengerContractsTests(unittest.TestCase):
                 self._login(user, client)
                 response = client.get("/messenger/thread")
                 self.assertEqual(response.status_code, 200)
+
+    def test_messenger_can_be_disabled_from_site_settings(self):
+        db.session.add(AppSetting(key="enable_messenger", value="0"))
+        db.session.commit()
+
+        self._login(self.office, self.office_client)
+
+        response = self.office_client.get("/messenger/thread")
+
+        self.assertEqual(response.status_code, 403)
 
     def test_user_can_chat_with_developer_and_developer_sees_unread(self):
         self._login(self.office, self.office_client)
