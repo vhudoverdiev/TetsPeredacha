@@ -18,7 +18,7 @@ from werkzeug.exceptions import HTTPException
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_file, session, url_for, jsonify
 from flask_login import current_user, login_required
 from sqlalchemy import Integer, cast, distinct, func
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import selectinload
 from openpyxl import Workbook
 from openpyxl.cell.cell import MergedCell
@@ -3241,7 +3241,12 @@ def messenger_send():
         body=body[:5000],
     )
     db.session.add(message)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Failed to send messenger message")
+        return jsonify(ok=False, message="Не удалось отправить сообщение. Обновите страницу; если ошибка повторится, перезапустите приложение на сервере."), 500
     return jsonify(ok=True, message=_messenger_message_payload(message), unread_count=_messenger_unread_count())
 
 

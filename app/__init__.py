@@ -216,6 +216,8 @@ def create_app(config_class=Config):
         if request.endpoint == "auth.login" or request.path == "/login":
             session.pop("csrf_token", None)
             return redirect(url_for("auth.login"), code=303)
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or "application/json" in (request.headers.get("Accept") or ""):
+            return {"ok": False, "message": "Сессия устарела. Обновите страницу и отправьте сообщение еще раз."}, 400
         return error.get_response()
 
     @app.template_filter("msk_datetime")

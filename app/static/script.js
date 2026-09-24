@@ -597,6 +597,19 @@ const syncDesktopViewportLock = (options = {}) => {
     || document.querySelector('input[name="csrf_token"]')?.value
     || '';
 
+  const parseMessengerResponse = async response => {
+    const text = await response.text();
+    try {
+      return JSON.parse(text || '{}');
+    } catch (error) {
+      const plain = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      return {
+        ok: false,
+        message: plain || `Сервер вернул ошибку ${response.status}. Обновите страницу и попробуйте еще раз.`,
+      };
+    }
+  };
+
   const setUnread = count => {
     const value = Number(count || 0);
     openButton.classList.toggle('has-unread', value > 0);
@@ -731,7 +744,7 @@ const syncDesktopViewportLock = (options = {}) => {
         body: payload,
         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
       });
-      const data = await response.json();
+      const data = await parseMessengerResponse(response);
       if (!response.ok || !data.ok) throw new Error(data.message || 'Не удалось отправить сообщение.');
       input.value = '';
       await loadThread();
