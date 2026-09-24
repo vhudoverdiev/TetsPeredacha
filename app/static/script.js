@@ -3000,7 +3000,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       if (!form.checkValidity()) return;
 
-      const submitter = event.submitter || form.querySelector('button[type="submit"], button:not([type])');
+      const submitter = event.submitter || null;
       const previousHtml = submitter?.innerHTML || '';
       if (submitter) submitter.disabled = true;
 
@@ -3084,7 +3084,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
           const addendumSignedDateInput = form.querySelector('input[name="addendum_signed_date"]');
-          if (addendumSignedDateInput && data.addendum_signed_date) addendumSignedDateInput.value = data.addendum_signed_date;
+          if (addendumSignedDateInput) {
+            addendumSignedDateInput.hidden = data.addendum_status !== 'signed';
+            if (data.addendum_signed_date) addendumSignedDateInput.value = data.addendum_signed_date;
+          }
+        }
+
+        const appStatusDisplay = document.querySelector('[data-apartment-app-status-display]');
+        if (appStatusDisplay && Object.prototype.hasOwnProperty.call(data, 'app_status')) {
+          appStatusDisplay.innerHTML = data.app_status === 'no_remarks'
+            ? '<span class="status-pill status-pill-success">Без замечаний</span>'
+            : '<span class="status-pill status-pill-warning">Есть замечания</span>';
         }
 
         if (data.history_entry) {
@@ -3142,6 +3152,28 @@ document.addEventListener('DOMContentLoaded', () => {
     signedInput.addEventListener('change', () => {
       if (manualInput.value === '1') return;
       deadlineInput.value = addCalendarDays(signedInput.value, 60);
+    });
+  });
+
+  document.querySelectorAll('form[data-apartment-async="1"], form[data-app-deadline-auto-form]').forEach(form => {
+    let saveTimer = null;
+    const submitSoon = (delay = 120) => {
+      window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(() => {
+        if (typeof form.requestSubmit === 'function') {
+          form.requestSubmit();
+        } else {
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
+      }, delay);
+    };
+
+    form.querySelectorAll('input[type="date"], select').forEach(field => {
+      field.addEventListener('change', () => submitSoon());
+    });
+
+    form.querySelectorAll('textarea').forEach(field => {
+      field.addEventListener('blur', () => submitSoon(40));
     });
   });
 

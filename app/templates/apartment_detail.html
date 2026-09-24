@@ -86,7 +86,7 @@
           {% set can_edit_inspection_date = can_manage_inspection %}
           {% set can_reset_inspection = can_manage_inspection and row.inspection_status == 'Был' %}
           {% set can_reset_future_inspection_mobile = can_manage_inspection and row.inspection_status == 'Будет' %}
-          <div class="apartment-data-row apartment-data-row-with-control">
+          <div class="apartment-data-row apartment-data-row-with-control apartment-compact-control-row">
             <span>Осмотр</span>
             <b class="apartment-inspection-display" data-apartment-inspection-display>
               <span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span>
@@ -99,7 +99,6 @@
               <form method="post" action="{{ url_for('main.update_apartment_inspection_date', apartment_id=apartment.id) }}" class="apartment-inline-form apartment-inspection-date-form" data-apartment-async="1">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input class="form-control form-control-sm" type="date" id="inspection-date-{{ apartment.id }}" name="inspection_date" value="{{ row.inspection_date.isoformat() if row.inspection_date else '' }}" title="Дата осмотра">
-                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
               </form>
               {% if can_reset_inspection or can_reset_future_inspection_mobile %}
               <form method="post" action="{{ url_for('main.update_apartment_inspection_status', apartment_id=apartment.id) }}" class="apartment-inline-form">
@@ -123,18 +122,17 @@
 
           {% if row.mode == 'АПП' %}
           {% if current_user.role != 'viewer' %}
-          <form method="post" action="{{ url_for('main.update_apartment_app_status', apartment_id=apartment.id) }}" class="apartment-inline-stack" data-app-deadline-auto-form>
+          <form method="post" action="{{ url_for('main.update_apartment_app_status', apartment_id=apartment.id) }}" class="apartment-inline-stack" data-apartment-async="1" data-app-deadline-auto-form>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="app_deadline_manual" value="0" data-app-deadline-manual>
-            <div class="apartment-data-row apartment-data-row-with-control">
+            <div class="apartment-data-row apartment-data-row-with-control apartment-compact-control-row">
               <span>Дата АПП</span>
               <b data-apartment-app-signed-display>{{ row.app_signed_date|ru_date if row.app_signed_date else '—' }}</b>
               <div class="apartment-inline-controls">
                 <input class="form-control form-control-sm" type="date" name="app_signed_date" value="{{ row.app_signed_date.isoformat() if row.app_signed_date else '' }}" data-app-signed-date title="Дата АПП">
-                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
               </div>
             </div>
-            <div class="apartment-data-row apartment-data-row-with-control apartment-data-deadline-row">
+            <div class="apartment-data-row apartment-data-row-with-control apartment-data-deadline-row apartment-compact-control-row">
               <span>Срок устранения</span>
               <b class="apartment-deadline-display">
                 <span class="apartment-deadline-date">{{ row.remark_deadline_display }}</span>
@@ -144,24 +142,22 @@
               </b>
               <div class="apartment-inline-controls">
                 <input class="form-control form-control-sm" type="date" name="app_deadline_date" value="{{ row.remark_deadline.isoformat() if row.remark_deadline else '' }}" data-app-deadline-date title="Срок устранения">
-                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
               </div>
             </div>
-            <div class="apartment-data-row apartment-data-row-with-control">
+            <div class="apartment-data-row apartment-data-row-with-control apartment-compact-control-row">
               <span>Статус АПП</span>
               <b data-apartment-app-status-display>
                 {% if row.app_status == app_deadline_no_remarks %}
                   <span class="status-pill status-pill-success">Без замечаний</span>
                 {% else %}
-                  <span class="status-pill status-pill-warning">Нужен АВР</span>
+                  <span class="status-pill status-pill-warning">Есть замечания</span>
                 {% endif %}
               </b>
               <div class="apartment-inline-controls">
-                <input class="btn-check" type="radio" name="app_status" id="app-status-normal-{{ apartment.id }}" value="{{ app_deadline_normal }}" {% if row.app_status != app_deadline_no_remarks %}checked{% endif %}>
+                <input class="btn-check" type="radio" name="app_status" id="app-status-normal-{{ apartment.id }}" value="{{ app_deadline_normal }}" {% if row.app_status != app_deadline_no_remarks %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
                 <label class="app-status-option app-status-option-needed" for="app-status-normal-{{ apartment.id }}">Есть замечания</label>
-                <input class="btn-check" type="radio" name="app_status" id="app-status-no-remarks-{{ apartment.id }}" value="{{ app_deadline_no_remarks }}" {% if row.app_status == app_deadline_no_remarks %}checked{% endif %}>
+                <input class="btn-check" type="radio" name="app_status" id="app-status-no-remarks-{{ apartment.id }}" value="{{ app_deadline_no_remarks }}" {% if row.app_status == app_deadline_no_remarks %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
                 <label class="app-status-option app-status-option-no-remarks" for="app-status-no-remarks-{{ apartment.id }}">Без замечаний</label>
-                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
               </div>
             </div>
           </form>
@@ -185,7 +181,7 @@
               {% if row.app_status == app_deadline_no_remarks %}
                 <span class="status-pill status-pill-success">Без замечаний</span>
               {% else %}
-                <span class="status-pill status-pill-warning">Нужен АВР</span>
+                <span class="status-pill status-pill-warning">Есть замечания</span>
               {% endif %}
             </b>
           </div>
@@ -193,7 +189,7 @@
           {% endif %}
           {% if row.show_avr %}
           {% if current_user.role != 'viewer' %}
-          <form method="post" action="{{ url_for('main.update_apartment_avr_status', apartment_id=apartment.id) }}" class="apartment-data-row apartment-data-row-with-control apartment-inline-form apartment-avr-form" data-apartment-async="1">
+            <form method="post" action="{{ url_for('main.update_apartment_avr_status', apartment_id=apartment.id) }}" class="apartment-data-row apartment-data-row-with-control apartment-inline-form apartment-avr-form apartment-compact-control-row" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <span>АВР</span>
             <b data-apartment-avr-display>
@@ -224,7 +220,7 @@
           {% endif %}
           {% if row.mode == 'АПП' %}
             {% if current_user.role != 'viewer' %}
-            <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-data-row apartment-data-row-with-control apartment-inline-form apartment-addendum-form" data-apartment-async="1">
+            <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-data-row apartment-data-row-with-control apartment-inline-form apartment-addendum-form apartment-compact-control-row" data-apartment-async="1">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <span>Доп.Соглашение</span>
               <b data-apartment-addendum-display>
@@ -240,7 +236,7 @@
                 <button class="btn btn-sm {{ 'btn-secondary' if row.addendum_status == addendum_status_none else 'btn-outline-secondary' }}" type="submit" name="addendum_status" value="{{ addendum_status_none }}">Нет</button>
                 <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status == addendum_status_needed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
                 <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
-                <input class="form-control form-control-sm" type="date" name="addendum_signed_date" value="{{ row.addendum_signed_date.isoformat() if row.addendum_signed_date else today.isoformat() }}" title="Дата подписания доп. соглашения">
+                <input class="form-control form-control-sm" type="date" name="addendum_signed_date" value="{{ row.addendum_signed_date.isoformat() if row.addendum_signed_date else today.isoformat() }}" title="Дата подписания доп. соглашения" {% if row.addendum_status != addendum_status_signed %}hidden{% endif %}>
               </div>
             </form>
             {% else %}
@@ -271,13 +267,11 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий(передача)</label>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
-            <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
           </form>
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="inspection-note-{{ apartment.id }}">Комментарий(устранение замечаний)</label>
             <textarea class="form-control" id="inspection-note-{{ apartment.id }}" name="inspection_note" rows="3">{{ row.inspection_comment or '' }}</textarea>
-            <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
           </form>
           {% endif %}
           {% if row.po_status and current_user.role != 'office' %}

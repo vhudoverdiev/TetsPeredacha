@@ -124,7 +124,7 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
                 "app_deadline_status",
                 "normal",
                 "no_remarks",
-                "Статус АПП изменён: был «Нужен АВР», стал «Без замечаний».",
+                "Статус АПП изменён: был «Есть замечания», стал «Без замечаний».",
             ),
             (
                 "deadline_date",

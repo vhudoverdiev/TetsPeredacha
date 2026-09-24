@@ -58517,3 +58517,179 @@ html.desktop-like-pointer body.app-body .floating-messenger-corner {
   }
 }
 
+/* v661: compact apartment card controls with autosave. */
+html body.app-body .apartment-detail-page .apartment-data-list {
+  gap: .62rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-row,
+html body.app-body .apartment-detail-page .apartment-data-note,
+html body.app-body .apartment-detail-page .apartment-details-edit-form .apartment-data-row {
+  min-width: 0 !important;
+  padding: .68rem .78rem !important;
+  border-radius: .8rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-row > span,
+html body.app-body .apartment-detail-page .apartment-data-row > label,
+html body.app-body .apartment-detail-page .apartment-data-note > span {
+  min-width: 8.2rem !important;
+  max-width: 8.2rem !important;
+  color: #111827 !important;
+  font-size: .72rem !important;
+  font-weight: 950 !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-row > b,
+html body.app-body .apartment-detail-page .apartment-data-note > p {
+  min-width: 0 !important;
+  color: #111827 !important;
+  font-size: .86rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-compact-control-row,
+html body.app-body .apartment-detail-page form.apartment-compact-control-row {
+  display: grid !important;
+  grid-template-columns: minmax(7.2rem, 8.2rem) minmax(5.8rem, 1fr) minmax(10.2rem, auto) !important;
+  align-items: center !important;
+  column-gap: .65rem !important;
+  row-gap: .45rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-compact-control-row > span {
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inline-controls,
+html body.app-body .apartment-detail-page .apartment-inline-form {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: .42rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inline-controls .form-control,
+html body.app-body .apartment-detail-page .apartment-inline-form .form-control {
+  width: 9.45rem !important;
+  max-width: 100% !important;
+  min-height: 2.35rem !important;
+  padding: .42rem .62rem !important;
+  border-radius: .7rem !important;
+  font-size: .82rem !important;
+  font-weight: 750 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inline-controls .btn,
+html body.app-body .apartment-detail-page .apartment-inline-form .btn,
+html body.app-body .apartment-detail-page .app-status-option,
+html body.app-body .apartment-detail-page .inspection-option {
+  min-height: 2.25rem !important;
+  padding: .42rem .68rem !important;
+  border-radius: .7rem !important;
+  font-size: .8rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: min(100%, 20rem) !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls .btn {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-form input[name="addendum_signed_date"] {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-form input[name="addendum_signed_date"][hidden] {
+  display: none !important;
+}
+
+html body.app-body .apartment-detail-page .inspection-note-form {
+  padding: .72rem .78rem !important;
+  border-radius: .85rem !important;
+}
+
+html body.app-body .apartment-detail-page .inspection-note-form textarea.form-control {
+  min-height: 5rem !important;
+  border-radius: .75rem !important;
+  font-size: .88rem !important;
+}
+
+html body.app-body .apartment-detail-page .inspection-note-form::after {
+  content: "Сохраняется автоматически";
+  display: inline-flex;
+  margin-top: .35rem;
+  color: #667085;
+  font-size: .72rem;
+  font-weight: 750;
+}
+
+html body.app-body .apartment-detail-page .apartment-inspection-display {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: .35rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inline-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .62rem !important;
+}
+
+@media (max-width: 1399.98px) {
+  html body.app-body .apartment-detail-page .apartment-compact-control-row,
+  html body.app-body .apartment-detail-page form.apartment-compact-control-row {
+    grid-template-columns: minmax(6.4rem, 7.6rem) minmax(4.4rem, 1fr) !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-compact-control-row .apartment-inline-controls {
+    grid-column: 1 / -1 !important;
+    justify-content: flex-start !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  html body.app-body .apartment-detail-page .apartment-data-row > span,
+  html body.app-body .apartment-detail-page .apartment-data-row > label {
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-compact-control-row,
+  html body.app-body .apartment-detail-page form.apartment-compact-control-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-inline-controls,
+  html body.app-body .apartment-detail-page .apartment-inline-form {
+    justify-content: flex-start !important;
+  }
+}
+

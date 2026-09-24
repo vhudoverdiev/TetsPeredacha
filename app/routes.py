@@ -9136,7 +9136,7 @@ def _group_app_status(apartments: list[Apartment]) -> str:
 
 
 def _app_status_label(status: str | None) -> str:
-    return "Без замечаний" if status == APP_DEADLINE_NO_REMARKS else "Нужен АВР"
+    return "Без замечаний" if status == APP_DEADLINE_NO_REMARKS else "Есть замечания"
 
 
 def _group_app_deadline_status(apartments: list[Apartment]) -> str | None:
