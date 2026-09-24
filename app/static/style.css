@@ -58210,3 +58210,70 @@ html body.app-body a.account-back-button:active .bi::before {
   }
 }
 
+/* v656: message floating button is aligned above the help button on every page. */
+html body.app-body .floating-messenger-corner {
+  position: fixed !important;
+  right: 1.25rem !important;
+  bottom: calc(1.25rem + 42px + .75rem) !important;
+  z-index: 1052 !important;
+}
+
+html body.app-body .messenger-floating-btn {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  padding: 0 !important;
+  border-radius: 1rem !important;
+  border: 0 !important;
+  background: #111820 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, .18) !important;
+}
+
+html body.app-body .messenger-floating-btn i,
+html body.app-body .messenger-floating-btn i::before {
+  color: #ffffff !important;
+  font-size: 1.1rem !important;
+}
+
+html body.app-body .messenger-floating-btn:hover,
+html body.app-body .messenger-floating-btn:focus {
+  background: #111820 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+html body.app-body .messenger-floating-btn.has-unread {
+  background: #dc2626 !important;
+}
+
+html.desktop-like-pointer body.app-body .floating-messenger-corner {
+  right: 1.25rem !important;
+  bottom: calc(1.25rem + clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) + .75rem) !important;
+}
+
+html.desktop-like-pointer body.app-body .floating-messenger-corner .messenger-floating-btn {
+  width: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  height: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  min-width: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  min-height: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  max-width: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  max-height: clamp(28px, calc(24px + 18px * var(--desktop-stage-scale, 1)), 42px) !important;
+  border-radius: clamp(.78rem, calc(1rem * var(--desktop-stage-scale, 1)), 1rem) !important;
+}
+
+html.desktop-like-pointer body.app-body .floating-messenger-corner .messenger-floating-btn i,
+html.desktop-like-pointer body.app-body .floating-messenger-corner .messenger-floating-btn i::before {
+  font-size: clamp(.92rem, calc(.82rem + .36rem * var(--desktop-stage-scale, 1)), 1.18rem) !important;
+}
+
+@media (max-width: 767.98px) {
+  html body.app-body .floating-messenger-corner {
+    right: 1rem !important;
+    bottom: calc(1rem + 42px + .65rem) !important;
+  }
+}
+
