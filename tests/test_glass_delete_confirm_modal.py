@@ -45,7 +45,7 @@ class GlassDeleteConfirmModalTest(unittest.TestCase):
 
         self.assertIn("script.js') }}?v=v680-addendum-buttons", template)
         self.assertIn("/static/script.js?v=v680-addendum-buttons", worker)
-        self.assertIn("peredacha-static-v176-addendum-buttons", worker)
+        self.assertIn("peredacha-static-v177-inspection-row", worker)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v176-addendum-buttons';
+const STATIC_CACHE = 'peredacha-static-v177-inspection-row';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -13,7 +13,7 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/bootstrap.bundle.min.js?v=5.3.3',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
-  '/static/style.css?v=v680-addendum-buttons',
+  '/static/style.css?v=v681-inspection-row',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
   '/static/desktop-only.css?v=v76-objects-three-columns',
   '/static/script.js?v=v680-addendum-buttons',
