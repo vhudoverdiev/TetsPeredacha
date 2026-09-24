@@ -196,7 +196,7 @@
               {% if row.avr_status == avr_status_signed %}
                 <span class="badge-avr-signed">Подписан{% if row.avr_signed_date %} от {{ row.avr_signed_date|ru_date }}{% endif %}</span>
               {% else %}
-                <span class="badge-avr-needed">Нужен</span>
+                <span class="badge-avr-signed">Нужен</span>
               {% endif %}
             </b>
             <div class="apartment-inline-controls">
