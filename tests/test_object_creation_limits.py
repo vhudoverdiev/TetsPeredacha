@@ -107,3 +107,17 @@ class ObjectCreationLimitTests(unittest.TestCase):
         self.assertEqual(self._post_object("Первый объект").status_code, 302)
         self.assertEqual(self._post_object("Второй объект").status_code, 302)
         self.assertEqual(Project.query.count(), 2)
+
+    def test_only_developer_can_delete_object(self):
+        office = self._create_user("office-delete", ROLE_OFFICE)
+        project = Project(name="Нельзя удалить", created_by_id=office.id)
+        db.session.add(project)
+        db.session.commit()
+        self._login(office.username)
+
+        page = self.client.get("/objects").get_data(as_text=True)
+        self.assertIn(f"/objects/{project.id}/edit", page)
+        self.assertNotIn(f"/objects/{project.id}/delete/confirm", page)
+        self.assertEqual(self.client.get(f"/objects/{project.id}/delete/confirm").status_code, 403)
+        self.assertEqual(self.client.post(f"/objects/{project.id}/delete").status_code, 403)
+        self.assertIsNotNone(db.session.get(Project, project.id))

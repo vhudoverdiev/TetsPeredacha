@@ -82,7 +82,7 @@
         <div class="task-concession-panel">
           <h3 class="h6 mb-2">За какие замечания выданы отступные</h3>
           <p class="text-muted small mb-3">Отметьте существующие замечания квартиры. После сохранения они автоматически перейдут в статус “Отступные”.</p>
-          <div class="task-concession-empty text-muted small" data-concession-empty>Выберите квартиру, чтобы увидеть открытые замечания.</div>
+          <div class="task-concession-empty text-muted small" data-concession-empty>Выберите квартиру, чтобы увидеть замечания.</div>
           <div class="task-concession-task-list">
             {% for apartment_id, concession_tasks in (concession_candidates_by_apartment or {}).items() %}
               {% for task in concession_tasks %}
@@ -143,17 +143,18 @@
 
     <div class="task-concession-panel mt-4 d-none" data-concession-act-block>
       <h3 class="h6 mb-2">Пункты, за которые выданы отступные</h3>
-      <p class="text-muted small mb-3">Отметьте номера пунктов. Все открытые замечания по этим пунктам в выбранной квартире перейдут в статус “Отступные”.</p>
+      <p class="text-muted small mb-3">Отметьте пункты, которые добавляются в этом акте. Замечания по этим пунктам в выбранной квартире перейдут в статус “Отступные”.</p>
       <div class="task-concession-point-grid">
         {% for point in points %}
           {% if point.number != '26' %}
-          <label class="task-concession-point-option">
+          <label class="task-concession-point-option d-none" data-concession-act-point-option="{{ point.number }}">
             <input type="checkbox" name="concession_point_numbers" value="{{ point.number }}" {% if point.number in request.form.getlist('concession_point_numbers') %}checked{% endif %}>
             <span>{{ point.number }}</span>
           </label>
           {% endif %}
         {% endfor %}
       </div>
+      <div class="task-concession-empty text-muted small d-none" data-concession-act-empty>Нет других заполненных пунктов в этом акте.</div>
     </div>
 
     <div class="task-manual-po-mode mt-4">
@@ -361,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (visible) visibleCount += 1;
       });
       if (empty) {
-        empty.textContent = apartmentId ? 'По этой квартире нет открытых замечаний для отступных.' : 'Выберите квартиру, чтобы увидеть открытые замечания.';
+        empty.textContent = apartmentId ? 'По этой квартире нет замечаний для отступных.' : 'Выберите квартиру, чтобы увидеть замечания.';
         empty.classList.toggle('d-none', visibleCount > 0);
       }
     };
@@ -374,9 +375,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const tmcTextarea = document.querySelector('textarea[name="description_26"]');
   if (actBlock && tmcTextarea) {
     const syncActConcession = () => {
-      actBlock.classList.toggle('d-none', !tmcTextarea.value.trim());
+      const showBlock = Boolean(tmcTextarea.value.trim());
+      actBlock.classList.toggle('d-none', !showBlock);
+      let visibleCount = 0;
+      actBlock.querySelectorAll('[data-concession-act-point-option]').forEach(option => {
+        const pointNumber = option.dataset.concessionActPointOption;
+        const textarea = document.querySelector(`textarea[name="description_${pointNumber}"]`);
+        const visible = showBlock && Boolean(textarea?.value.trim());
+        option.classList.toggle('d-none', !visible);
+        const checkbox = option.querySelector('input[type="checkbox"]');
+        if (!visible && checkbox) checkbox.checked = false;
+        if (visible) visibleCount += 1;
+      });
+      actBlock.querySelector('[data-concession-act-empty]')?.classList.toggle('d-none', visibleCount > 0);
     };
-    tmcTextarea.addEventListener('input', syncActConcession);
+    document.querySelectorAll('textarea[name^="description_"]').forEach(textarea => {
+      textarea.addEventListener('input', syncActConcession);
+    });
     syncActConcession();
   }
 });

@@ -31,9 +31,11 @@
         <a class="object-action" href="{{ url_for('main.object_edit', project_id=project.id) }}" title="Редактировать объект">
           <i class="bi bi-pencil"></i>
         </a>
+        {% if current_user.role == 'admin' %}
         <a class="object-action object-action-danger" href="{{ url_for('main.object_delete_confirm', project_id=project.id) }}" title="Удалить объект">
           <i class="bi bi-trash"></i>
         </a>
+        {% endif %}
       </div>
       {% endif %}
       <div class="object-icon"><i class="bi bi-buildings"></i></div>

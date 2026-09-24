@@ -76,6 +76,7 @@ class TaskDeleteSyncConflictContractsTests(unittest.TestCase):
         response = self.client.post(f"/tasks/{task_id}/delete", follow_redirects=False)
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
         self.assertIsNone(db.session.get(Task, task_id))
         self.assertIsNone(db.session.get(SyncConflict, conflict_id))
 

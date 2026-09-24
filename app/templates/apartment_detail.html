@@ -214,28 +214,30 @@
           </form>
           {% endif %}
           {% endif %}
-          <div class="apartment-data-row">
-            <span>Доп.Соглашение</span>
-            <b data-apartment-addendum-display>
-              {% if row.addendum_status == addendum_status_signed %}
-                <span class="badge-avr-signed">Подписано</span>
-              {% elif row.addendum_status == addendum_status_needed %}
-                <span class="badge-avr-needed">Не подписано</span>
-              {% else %}
-                <span class="status-pill status-pill-muted">Нет</span>
-              {% endif %}
-            </b>
-          </div>
-          {% if current_user.role != 'viewer' %}
-          <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-avr-form apartment-addendum-form mb-3" data-apartment-async="1">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="form-label mb-0">Изменить доп. соглашение</label>
-            <div class="apartment-avr-actions">
-              <button class="btn btn-sm {{ 'btn-secondary' if row.addendum_status == addendum_status_none else 'btn-outline-secondary' }}" type="submit" name="addendum_status" value="{{ addendum_status_none }}">Нет</button>
-              <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status == addendum_status_needed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
-              <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
+          {% if row.mode == 'АПП' %}
+            <div class="apartment-data-row">
+              <span>Доп.Соглашение</span>
+              <b data-apartment-addendum-display>
+                {% if row.addendum_status == addendum_status_signed %}
+                  <span class="badge-avr-signed">Подписано</span>
+                {% elif row.addendum_status == addendum_status_needed %}
+                  <span class="badge-avr-needed">Не подписано</span>
+                {% else %}
+                  <span class="status-pill status-pill-muted">Нет</span>
+                {% endif %}
+              </b>
             </div>
-          </form>
+            {% if current_user.role != 'viewer' %}
+            <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-avr-form apartment-addendum-form mb-3" data-apartment-async="1">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <label class="form-label mb-0">Изменить доп. соглашение</label>
+              <div class="apartment-avr-actions">
+                <button class="btn btn-sm {{ 'btn-secondary' if row.addendum_status == addendum_status_none else 'btn-outline-secondary' }}" type="submit" name="addendum_status" value="{{ addendum_status_none }}">Нет</button>
+                <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status == addendum_status_needed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
+                <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
+              </div>
+            </form>
+            {% endif %}
           {% endif %}
           <div class="apartment-data-note">
             <span>Комментарий(передача)</span>

@@ -157,6 +157,30 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertEqual(apartment.addendum_status, "signed")
         self.assertTrue(apartment.addendum_status_manual)
 
+    def test_non_app_apartment_cannot_have_addendum(self):
+        self.apartment.is_app_mode = False
+        point = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)")
+        task = Task(
+            project=self.project,
+            apartment=self.apartment,
+            work_point=point,
+            source_uid="dop-non-app",
+            description="Выдать ТМЦ",
+            status=STATUS_NOT_STARTED,
+        )
+        db.session.add_all([point, task])
+        db.session.commit()
+
+        page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
+        self.assertNotIn("Изменить доп. соглашение", page)
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/addendum-status",
+            data={"addendum_status": "signed"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+
 
 if __name__ == "__main__":
     unittest.main()

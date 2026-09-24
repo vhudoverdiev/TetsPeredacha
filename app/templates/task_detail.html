@@ -120,13 +120,13 @@
             <button class="btn btn-sm btn-outline-danger problem-toggle-btn" type="button" data-problem-modal-title="Проблема">Проблема</button>
           </form>
           {% endif %}
+          {% if can_delete_task %}
+          <form method="post" action="{{ url_for('main.task_delete', task_id=task.id) }}" class="status-action-form task-detail-delete-form" data-confirm="Удалить это замечание? Это действие нельзя отменить.">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger task-detail-delete-btn" type="submit"><i class="bi bi-trash me-1"></i>Удалить</button>
+          </form>
+          {% endif %}
         </div>
-        {% if can_delete_task %}
-        <form method="post" action="{{ url_for('main.task_delete', task_id=task.id) }}" data-confirm="Удалить это замечание? Это действие нельзя отменить.">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button class="btn btn-outline-danger w-100 task-detail-delete-btn" type="submit"><i class="bi bi-trash me-2"></i>Удалить</button>
-        </form>
-        {% endif %}
         {% endif %}
       </div>
     </div>

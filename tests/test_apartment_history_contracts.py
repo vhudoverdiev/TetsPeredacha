@@ -2,6 +2,7 @@ import unittest
 
 from app import create_app, db, login_manager
 from app.models import Apartment, ChangeLog, Project, ROLE_ADMIN, User
+from app.routes import _build_change_history_entry
 from config import Config
 
 
@@ -110,6 +111,49 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
         )
         self.assertIn("apartment_inspection_status", self._change_field_names())
         self.assertIn("apartment_inspection_date", self._change_field_names())
+
+    def test_new_apartment_history_fields_are_rendered_in_russian(self):
+        cases = [
+            (
+                "addendum_status",
+                "needed",
+                "signed",
+                "Статус доп. соглашения изменён: был «Не подписано», стал «Подписано».",
+            ),
+            (
+                "app_deadline_status",
+                "normal",
+                "no_remarks",
+                "Статус АПП изменён: был «Нужен АВР», стал «Без замечаний».",
+            ),
+            (
+                "deadline_date",
+                "2026-09-16",
+                "2026-09-25",
+                "Дата подписания АПП изменена: была «16 сентября 2026», стала «25 сентября 2026».",
+            ),
+            (
+                "app_deadline_date",
+                "2026-11-15",
+                "2026-12-01",
+                "Срок устранения замечаний изменён: был «15 ноября 2026», стал «1 декабря 2026».",
+            ),
+        ]
+
+        for field_name, old_value, new_value, expected_summary in cases:
+            with self.subTest(field_name=field_name):
+                change = ChangeLog(
+                    action="apartment_field_update",
+                    field_name=field_name,
+                    old_value=old_value,
+                    new_value=new_value,
+                    user=self.user,
+                )
+                entry = _build_change_history_entry(change)
+                self.assertEqual(entry["summary"], expected_summary)
+                self.assertNotIn(field_name, entry["summary"])
+                self.assertNotIn(old_value, entry["summary"])
+                self.assertNotIn(new_value, entry["summary"])
 
 
 if __name__ == "__main__":

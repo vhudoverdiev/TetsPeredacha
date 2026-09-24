@@ -181,6 +181,28 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         concession_task = Task.query.filter(Task.description == "Выданы отступные по акту").one()
         self.assertEqual(concession_task.work_point.point_number, "26")
 
+    def test_manual_act_concession_can_mark_completed_tasks_as_concession(self):
+        self.old_task.status = STATUS_DONE
+        self.old_task.is_done = True
+        db.session.commit()
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "act",
+                "apartment_id": str(self.apartment.id),
+                "description_26": "Выданы отступные по выполненному",
+                "concession_point_numbers": ["16"],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        db.session.refresh(self.old_task)
+        self.assertEqual(self.old_task.status, STATUS_CONCESSION)
+
     def test_po_mode_keeps_identical_existing_remark_open(self):
         self._login()
 

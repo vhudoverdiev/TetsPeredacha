@@ -562,9 +562,15 @@ def _history_field_value(field_name: str | None, value: object, users_cache: dic
         return TASK_STATUSES.get(text, {}).get("label", text or "не задан")
     if field_name == "avr_status":
         return "Подписан" if text == AVR_STATUS_SIGNED else ("Нужен" if text == AVR_STATUS_NEEDED else (text or "не задан"))
-    if field_name == "avr_signed_date":
+    if field_name == "addendum_status":
+        return ADDENDUM_STATUS_LABELS.get(text, text or "не задано")
+    if field_name == "app_deadline_status":
+        return _app_status_label(text) if text else "не задано"
+    if field_name in {"apartment_mode", "mode"}:
+        return {"app": "АПП", "accepted": "АПП", "not_accepted": "не принята", "unsold": "не продана"}.get(text, text or "не задано")
+    if field_name in {"avr_signed_date", "deadline_date", "app_deadline_date", "remark_deadline_date", "apartment_inspection_date"}:
         parsed = _parse_history_date_value(value)
-        return format_ru_date(parsed) if parsed else "не задана"
+        return format_ru_date(parsed) if parsed else (text or "не задана")
     if field_name == "responsible_id":
         return _history_responsible_label(value, users_cache)
     if field_name in {"planned_date", "completed_date"}:
@@ -772,6 +778,36 @@ def _build_change_history_entry(change: ChangeLog, task: Task | None = None, use
                 "Дата подписания АВР изменена",
                 "была",
                 "стала",
+            ),
+            "deadline_date": (
+                "Синхронизация изменила дату подписания АПП",
+                "Дата подписания АПП изменена",
+                "была",
+                "стала",
+            ),
+            "app_deadline_date": (
+                "Синхронизация изменила срок устранения замечаний",
+                "Срок устранения замечаний изменён",
+                "был",
+                "стал",
+            ),
+            "remark_deadline_date": (
+                "Синхронизация изменила срок устранения замечаний",
+                "Срок устранения замечаний изменён",
+                "был",
+                "стал",
+            ),
+            "app_deadline_status": (
+                "Синхронизация изменила статус АПП",
+                "Статус АПП изменён",
+                "был",
+                "стал",
+            ),
+            "addendum_status": (
+                "Синхронизация изменила статус доп. соглашения",
+                "Статус доп. соглашения изменён",
+                "был",
+                "стал",
             ),
         }
         sync_prefix, user_prefix, old_word, new_word = apartment_field_summaries.get(
@@ -2094,7 +2130,7 @@ def object_edit(project_id: int):
 @bp.route("/objects/<int:project_id>/delete", methods=["POST"])
 @login_required
 def object_delete(project_id: int):
-    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     _record_simple_deletion(
@@ -2123,7 +2159,7 @@ def object_delete(project_id: int):
 @bp.route("/objects/<int:project_id>/delete/confirm", methods=["GET"])
 @login_required
 def object_delete_confirm(project_id: int):
-    if current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
+    if current_user.role != ROLE_ADMIN:
         abort(403)
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     return render_template("object_delete_confirm.html", project=project)
@@ -7218,7 +7254,6 @@ def _open_concession_candidate_tasks(*, project: Project, apartment: Apartment) 
             Task.project_id == project.id,
             Task.apartment_id.in_(apartment_ids),
             Task.is_archived.is_(False),
-            Task.status.notin_(list(DONE_STATUSES)),
             WorkPoint.point_number != "26",
         )
         .order_by(
@@ -8793,6 +8828,8 @@ def _group_has_dop_agreement_task(apartments: list[Apartment]) -> bool:
 
 
 def _group_addendum_status(apartments: list[Apartment]) -> str:
+    if _apartment_group_mode(apartments) != "АПП":
+        return ADDENDUM_STATUS_NONE
     manual_statuses = [
         apartment.addendum_status or ADDENDUM_STATUS_NONE
         for apartment in apartments
@@ -9646,6 +9683,9 @@ def update_apartment_details(apartment_id: int):
         item.finishing_type = finishing_type or None
         item.is_unsold = mode_value == "unsold"
         item.is_app_mode = mode_value == "app"
+        if mode_value != "app":
+            item.addendum_status = ADDENDUM_STATUS_NONE
+            item.addendum_status_manual = False
 
     new_mode = APARTMENT_DETAIL_MODE_LABELS[mode_value]
     history_changes = [
@@ -10040,6 +10080,8 @@ def update_apartment_addendum_status(apartment_id: int):
         if _is_visible_apartment_row(item) and _apartment_group_key(item) == group_key
     ]
     target_group = group or [apartment]
+    if _apartment_group_mode(target_group) != "АПП":
+        abort(400)
     old_status = _group_addendum_status(target_group)
     for item in target_group:
         item.addendum_status = status
@@ -10508,9 +10550,12 @@ def task_delete(task_id: int):
         .first()
         or abort(404)
     )
+    apartment_id = task.apartment_id
     _delete_task_with_relations(task, project.id)
     db.session.commit()
     flash("Замечание удалено", "success")
+    if apartment_id:
+        return redirect(url_for("main.apartment_detail", apartment_id=apartment_id))
     return _safe_redirect(request.form.get("next"), "main.task_list")
 
 

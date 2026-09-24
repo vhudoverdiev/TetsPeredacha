@@ -210,8 +210,10 @@
 {% endblock %}
 
 {% block floating_content %}
+{% if current_user.role in ['admin', 'manager'] %}
 <a class="po-notification-widget" href="{{ url_for('main.apartments', po='1') }}">
   <span>ПО</span>
   <b>{{ po_alert_count }}</b>
 </a>
+{% endif %}
 {% endblock %}
