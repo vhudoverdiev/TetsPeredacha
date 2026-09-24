@@ -570,6 +570,182 @@ const syncDesktopViewportLock = (options = {}) => {
   }
 })();
 
+(() => {
+  const panel = document.querySelector('[data-messenger-panel]');
+  const openButton = document.querySelector('[data-messenger-open]');
+  if (!panel || !openButton) return;
+
+  const closeButton = panel.querySelector('[data-messenger-close]');
+  const backdrop = document.querySelector('[data-messenger-backdrop]');
+  const messagesBox = panel.querySelector('[data-messenger-messages]');
+  const appealsBox = panel.querySelector('[data-messenger-appeals]');
+  const form = panel.querySelector('[data-messenger-form]');
+  const input = panel.querySelector('[data-messenger-input]');
+  const userSelect = panel.querySelector('[data-messenger-user-select]');
+  const unreadBadge = document.querySelector('[data-messenger-unread-count]');
+  let currentUserId = '';
+  let loading = false;
+
+  const escape = value => String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+  const csrfToken = () => form?.querySelector('input[name="csrf_token"]')?.value
+    || document.querySelector('input[name="csrf_token"]')?.value
+    || '';
+
+  const setUnread = count => {
+    const value = Number(count || 0);
+    openButton.classList.toggle('has-unread', value > 0);
+    if (!unreadBadge) return;
+    unreadBadge.textContent = String(value);
+    unreadBadge.hidden = value <= 0;
+  };
+
+  const renderMessages = messages => {
+    if (!messagesBox) return;
+    if (!messages?.length) {
+      messagesBox.innerHTML = '<div class="crm-messenger-empty">Сообщений пока нет. Напишите первым.</div>';
+      return;
+    }
+    messagesBox.innerHTML = messages.map(message => `
+      <div class="crm-messenger-message ${message.own ? 'is-own' : 'is-incoming'}">
+        <div class="crm-messenger-bubble">
+          <div class="crm-messenger-message-meta">${escape(message.sender)} · ${escape(message.created_at)}</div>
+          <div class="crm-messenger-message-body">${escape(message.body)}</div>
+        </div>
+      </div>
+    `).join('');
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+  };
+
+  const renderAppeals = appeals => {
+    if (!appealsBox) return;
+    if (!appeals?.length) {
+      appealsBox.innerHTML = '<div class="crm-messenger-empty">Ответов пока нет.</div>';
+      return;
+    }
+    appealsBox.innerHTML = appeals.map(item => `
+      <article class="crm-messenger-appeal ${item.read ? '' : 'is-unread'}">
+        <div class="crm-messenger-appeal-title">
+          <span>Обращение от ${escape(item.created_at)}</span>
+          ${item.read ? '' : '<b>новый ответ</b>'}
+        </div>
+        <p class="crm-messenger-appeal-question">${escape(item.message)}</p>
+        <div class="crm-messenger-appeal-reply">
+          <small>Ответ разработчика · ${escape(item.replied_at)}</small>
+          <div>${escape(item.reply)}</div>
+        </div>
+      </article>
+    `).join('');
+  };
+
+  const loadThread = async () => {
+    if (loading) return;
+    loading = true;
+    const query = currentUserId ? `?user_id=${encodeURIComponent(currentUserId)}` : '';
+    try {
+      const response = await fetch(`/messenger/thread${query}`, {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      });
+      if (!response.ok) throw new Error('Не удалось загрузить чат.');
+      const data = await response.json();
+      if (userSelect && data.users) {
+        const selected = currentUserId || userSelect.value;
+        userSelect.innerHTML = '<option value="">Выберите пользователя</option>'
+          + data.users.map(user => `<option value="${user.id}" ${String(user.id) === String(selected) ? 'selected' : ''}>${escape(user.name)}${user.unread ? ` · ${user.unread} новых` : ''}</option>`).join('');
+      }
+      if (data.developer?.name) {
+        const developerName = panel.querySelector('[data-messenger-developer-name]');
+        if (developerName) developerName.textContent = data.developer.name;
+      }
+      renderMessages(data.messages || []);
+      renderAppeals(data.error_replies || []);
+      setUnread(data.unread_count);
+    } catch (error) {
+      if (messagesBox) messagesBox.innerHTML = `<div class="crm-messenger-empty crm-messenger-error">${escape(error.message)}</div>`;
+    } finally {
+      loading = false;
+    }
+  };
+
+  const openPanel = () => {
+    panel.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    if (backdrop) backdrop.hidden = false;
+    document.documentElement.classList.add('crm-messenger-open');
+    loadThread();
+    setTimeout(() => input?.focus({ preventScroll: true }), 120);
+  };
+
+  const closePanel = () => {
+    panel.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    if (backdrop) backdrop.hidden = true;
+    document.documentElement.classList.remove('crm-messenger-open');
+  };
+
+  openButton.addEventListener('click', openPanel);
+  closeButton?.addEventListener('click', closePanel);
+  backdrop?.addEventListener('click', closePanel);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
+  });
+
+  userSelect?.addEventListener('change', () => {
+    currentUserId = userSelect.value;
+    loadThread();
+  });
+
+  panel.querySelectorAll('[data-messenger-tab]').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      const target = tab.dataset.messengerTab;
+      panel.querySelectorAll('[data-messenger-tab]').forEach(item => item.classList.toggle('active', item === tab));
+      panel.querySelectorAll('[data-messenger-view]').forEach(view => view.classList.toggle('active', view.dataset.messengerView === target));
+      if (target === 'appeals') {
+        await fetch('/messenger/error-replies/read', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken(), 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+        }).catch(() => {});
+        loadThread();
+      }
+    });
+  });
+
+  form?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const body = (input?.value || '').trim();
+    if (!body) return;
+    const payload = new URLSearchParams();
+    payload.set('csrf_token', csrfToken());
+    payload.set('body', body);
+    if (currentUserId) payload.set('user_id', currentUserId);
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton?.setAttribute('disabled', 'disabled');
+    try {
+      const response = await fetch('/messenger/send', {
+        method: 'POST',
+        body: payload,
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.message || 'Не удалось отправить сообщение.');
+      input.value = '';
+      await loadThread();
+    } catch (error) {
+      if (messagesBox) {
+        messagesBox.insertAdjacentHTML('beforeend', `<div class="crm-messenger-empty crm-messenger-error">${escape(error.message)}</div>`);
+      }
+    } finally {
+      submitButton?.removeAttribute('disabled');
+      input?.focus();
+    }
+  });
+})();
+
 window.addEventListener('load', () => {
   desktopViewportSyncUnlocked = true;
   syncDesktopViewportLock({ force: true });
@@ -2877,7 +3053,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addendumDisplay = document.querySelector('[data-apartment-addendum-display]');
         if (addendumDisplay && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
           addendumDisplay.innerHTML = data.addendum_status === 'signed'
-            ? '<span class="badge-avr-signed">Подписано</span>'
+            ? `<span class="badge-avr-signed">Подписано${data.addendum_signed_date_label ? ` от ${escapeHtml(data.addendum_signed_date_label)}` : ''}</span>`
             : (data.addendum_status === 'needed'
               ? '<span class="badge-avr-needed">Не подписано</span>'
               : '<span class="status-pill status-pill-muted">Нет</span>');
@@ -2894,6 +3070,8 @@ document.addEventListener('DOMContentLoaded', () => {
               statusButton.classList.add(isActive ? 'btn-secondary' : 'btn-outline-secondary');
             }
           });
+          const addendumSignedDateInput = form.querySelector('input[name="addendum_signed_date"]');
+          if (addendumSignedDateInput && data.addendum_signed_date) addendumSignedDateInput.value = data.addendum_signed_date;
         }
 
         if (data.history_entry) {

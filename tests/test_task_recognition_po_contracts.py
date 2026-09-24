@@ -328,6 +328,34 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         concession_task = Task.query.filter(Task.description == "Отступное из PDF").one()
         self.assertEqual(concession_task.work_point.point_number, "26")
 
+    def test_auto_recognition_requires_text_for_concession_row(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "act_count": "1",
+                "act_0_filename": "empty-concession.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "1",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_row_count": "2",
+                "act_0_row_0_active": "1",
+                "act_0_row_0_point": "26",
+                "act_0_row_0_description": "",
+                "act_0_row_1_active": "1",
+                "act_0_row_1_point": "10",
+                "act_0_row_1_description": "Эту строку не сохраняем пока пустое отступное",
+            },
+            follow_redirects=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Заполните поле Отступное (ТМЦ)".encode("utf-8"), response.data)
+        self.assertIsNone(Task.query.filter_by(description="Эту строку не сохраняем пока пустое отступное").one_or_none())
+
     def test_save_allows_mismatched_project_when_manually_verified(self):
         self._login()
 

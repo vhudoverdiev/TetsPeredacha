@@ -39,6 +39,7 @@ from app import csrf, db
 from app.forms import CommentForm, ProjectForm, TaskEditForm, UploadExcelForm, UserForm, UserPasswordForm
 from app.models import (
     Apartment,
+    ChatMessage,
     Contractor,
     MaterialRequest,
     MaterialRequestItem,
@@ -171,6 +172,7 @@ ADDENDUM_STATUS_LABELS = {
     ADDENDUM_STATUS_NEEDED: "Не подписано",
     ADDENDUM_STATUS_SIGNED: "Подписано",
 }
+MESSENGER_ALLOWED_ROLES = {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE}
 
 
 def _asc_nulls_last(column):
@@ -568,7 +570,7 @@ def _history_field_value(field_name: str | None, value: object, users_cache: dic
         return _app_status_label(text) if text else "не задано"
     if field_name in {"apartment_mode", "mode"}:
         return {"app": "АПП", "accepted": "АПП", "not_accepted": "не принята", "unsold": "не продана"}.get(text, text or "не задано")
-    if field_name in {"avr_signed_date", "deadline_date", "app_deadline_date", "remark_deadline_date", "apartment_inspection_date"}:
+    if field_name in {"avr_signed_date", "addendum_signed_date", "deadline_date", "app_deadline_date", "remark_deadline_date", "apartment_inspection_date"}:
         parsed = _parse_history_date_value(value)
         return format_ru_date(parsed) if parsed else (text or "не задана")
     if field_name == "responsible_id":
@@ -808,6 +810,12 @@ def _build_change_history_entry(change: ChangeLog, task: Task | None = None, use
                 "Статус доп. соглашения изменён",
                 "был",
                 "стал",
+            ),
+            "addendum_signed_date": (
+                "Синхронизация изменила дату подписания доп. соглашения",
+                "Дата подписания доп. соглашения изменена",
+                "была",
+                "стала",
             ),
         }
         sync_prefix, user_prefix, old_word, new_word = apartment_field_summaries.get(
@@ -1123,6 +1131,40 @@ def object_creation_limit_message(user: User | None = None) -> str:
         return "Можно добавить только 3 объекта в сутки."
     return "Можно добавить только 1 объект в сутки."
 
+
+def _messenger_is_available(user: User | None = None) -> bool:
+    user = user or current_user
+    return bool(getattr(user, "is_authenticated", False) and getattr(user, "role", None) in MESSENGER_ALLOWED_ROLES)
+
+
+def _developer_user() -> User | None:
+    candidates = User.query.filter(User.role == ROLE_ADMIN).order_by(User.id.asc()).all()
+    if not candidates:
+        return None
+    for user in candidates:
+        identity = f"{user.full_name or ''} {user.username or ''}".lower()
+        if "владимир" in identity and "худовердиев" in identity:
+            return user
+    return candidates[0]
+
+
+def _messenger_unread_count(user: User | None = None) -> int:
+    user = user or current_user
+    if not _messenger_is_available(user):
+        return 0
+    unread_messages = ChatMessage.query.filter(
+        ChatMessage.recipient_id == user.id,
+        ChatMessage.read_at.is_(None),
+    ).count()
+    if user.role == ROLE_ADMIN:
+        return unread_messages
+    unread_replies = SiteErrorReport.query.filter(
+        SiteErrorReport.user_id == user.id,
+        SiteErrorReport.developer_reply.isnot(None),
+        SiteErrorReport.user_reply_read_at.is_(None),
+    ).count()
+    return unread_messages + unread_replies
+
 @bp.app_context_processor
 def inject_globals():
     has_all_projects = current_user.is_authenticated and current_user.can_access_all_projects
@@ -1151,6 +1193,8 @@ def inject_globals():
         "current_project": current_project,
         "mobile_switch_projects": mobile_switch_projects,
         "new_site_errors_count": new_site_errors_count,
+        "messenger_available": _messenger_is_available(),
+        "messenger_unread_count": _messenger_unread_count(),
         "hide_documents_section": _setting_bool("hide_documents_section"),
         "mobile_version_under_development": _setting_bool("mobile_version_under_development"),
         "site_maintenance_mode": _setting_bool("site_maintenance_mode"),
@@ -2278,6 +2322,10 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
 
     allowed = {
         "main.report_error",
+        "main.messenger_thread",
+        "main.messenger_send",
+        "main.messenger_read",
+        "main.messenger_error_replies_read",
         "main.objects",
         "main.object_open",
         "main.dashboard",
@@ -2968,7 +3016,11 @@ def site_errors():
     if current_user.role != ROLE_ADMIN:
         abort(403)
     project = selected_project()
-    query = SiteErrorReport.query.options(selectinload(SiteErrorReport.user), selectinload(SiteErrorReport.project))
+    query = SiteErrorReport.query.options(
+        selectinload(SiteErrorReport.user),
+        selectinload(SiteErrorReport.project),
+        selectinload(SiteErrorReport.developer_reply_user),
+    )
     if project:
         query = query.filter(or_(SiteErrorReport.project_id == project.id, SiteErrorReport.project_id.is_(None)))
     status = request.args.get("status") or ""
@@ -3030,6 +3082,193 @@ def site_error_delete(report_id: int):
     db.session.commit()
     flash("Запись удалена. Действие можно отменить в логах удалений.", "success")
     return redirect(url_for("main.site_errors"))
+
+
+@bp.route("/site-errors/<int:report_id>/reply", methods=["POST"])
+@login_required
+def site_error_reply(report_id: int):
+    if current_user.role != ROLE_ADMIN:
+        abort(403)
+    report = db.session.get(SiteErrorReport, report_id) or abort(404)
+    project = selected_project()
+    if project and report.project_id not in {None, project.id}:
+        abort(404)
+    if report.kind != "user" or not report.user_id:
+        flash("Ответить можно только на обращение авторизованного пользователя.", "warning")
+        return redirect(request.referrer or url_for("main.site_errors"))
+    reply = (request.form.get("reply") or "").strip()
+    if not reply:
+        flash("Напишите ответ пользователю.", "warning")
+        return redirect(request.referrer or url_for("main.site_errors"))
+    report.developer_reply = reply[:5000]
+    report.developer_replied_at = utc_now()
+    report.developer_reply_user_id = current_user.id
+    report.user_reply_read_at = None
+    report.status = "closed"
+    db.session.commit()
+    flash("Ответ отправлен пользователю в мессенджер.", "success")
+    return redirect(request.referrer or url_for("main.site_errors", kind="user"))
+
+
+def _messenger_thread_partner() -> User | None:
+    if current_user.role == ROLE_ADMIN:
+        partner_id = request.args.get("user_id", type=int) or request.form.get("user_id", type=int)
+        if partner_id:
+            partner = db.session.get(User, partner_id)
+            if partner and partner.role in MESSENGER_ALLOWED_ROLES and partner.id != current_user.id:
+                return partner
+        return None
+    return _developer_user()
+
+
+def _messenger_message_payload(message: ChatMessage) -> dict:
+    return {
+        "id": message.id,
+        "body": message.body,
+        "created_at": format_ru_datetime(message.created_at),
+        "own": message.sender_id == current_user.id,
+        "sender": short_user_display_name(message.sender),
+        "read": bool(message.read_at),
+    }
+
+
+def _messenger_error_reply_payload(report: SiteErrorReport) -> dict:
+    return {
+        "id": report.id,
+        "message": report.message,
+        "reply": report.developer_reply,
+        "created_at": format_ru_datetime(report.created_at),
+        "replied_at": format_ru_datetime(report.developer_replied_at),
+        "page_url": report.page_url or "",
+        "read": bool(report.user_reply_read_at),
+    }
+
+
+@bp.route("/messenger/thread")
+@login_required
+def messenger_thread():
+    if not _messenger_is_available():
+        abort(403)
+    partner = _messenger_thread_partner()
+    project = selected_project()
+    if current_user.role == ROLE_ADMIN:
+        user_rows = (
+            User.query.filter(User.role.in_([ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE]))
+            .order_by(User.full_name.asc(), User.username.asc())
+            .all()
+        )
+        users = [
+            {
+                "id": user.id,
+                "name": short_user_display_name(user),
+                "role": ROLE_LABELS.get(user.role, user.role),
+                "unread": ChatMessage.query.filter(
+                    ChatMessage.sender_id == user.id,
+                    ChatMessage.recipient_id == current_user.id,
+                    ChatMessage.read_at.is_(None),
+                ).count(),
+            }
+            for user in user_rows
+        ]
+    else:
+        users = []
+
+    messages = []
+    if partner:
+        ChatMessage.query.filter(
+            ChatMessage.sender_id == partner.id,
+            ChatMessage.recipient_id == current_user.id,
+            ChatMessage.read_at.is_(None),
+        ).update({"read_at": utc_now()}, synchronize_session=False)
+        db.session.commit()
+        messages = (
+            ChatMessage.query.options(selectinload(ChatMessage.sender))
+            .filter(
+                or_(
+                    and_(ChatMessage.sender_id == current_user.id, ChatMessage.recipient_id == partner.id),
+                    and_(ChatMessage.sender_id == partner.id, ChatMessage.recipient_id == current_user.id),
+                )
+            )
+            .order_by(ChatMessage.created_at.asc(), ChatMessage.id.asc())
+            .limit(200)
+            .all()
+        )
+
+    error_replies = []
+    if current_user.role != ROLE_ADMIN:
+        error_replies = (
+            SiteErrorReport.query.filter(
+                SiteErrorReport.user_id == current_user.id,
+                SiteErrorReport.developer_reply.isnot(None),
+            )
+            .order_by(SiteErrorReport.developer_replied_at.desc(), SiteErrorReport.id.desc())
+            .limit(50)
+            .all()
+        )
+
+    return jsonify({
+        "ok": True,
+        "current_user": {"id": current_user.id, "role": current_user.role},
+        "developer": {"id": partner.id, "name": short_user_display_name(partner)} if partner else None,
+        "users": users,
+        "messages": [_messenger_message_payload(message) for message in messages],
+        "error_replies": [_messenger_error_reply_payload(report) for report in error_replies],
+        "unread_count": _messenger_unread_count(),
+        "project": project.name if project else "",
+    })
+
+
+@bp.route("/messenger/send", methods=["POST"])
+@login_required
+def messenger_send():
+    if not _messenger_is_available():
+        abort(403)
+    partner = _messenger_thread_partner()
+    if not partner:
+        return jsonify(ok=False, message="Выберите пользователя для сообщения."), 400
+    body = (request.form.get("body") or "").strip()
+    if not body:
+        return jsonify(ok=False, message="Напишите сообщение."), 400
+    project = selected_project()
+    message = ChatMessage(
+        project_id=project.id if project else None,
+        sender_id=current_user.id,
+        recipient_id=partner.id,
+        body=body[:5000],
+    )
+    db.session.add(message)
+    db.session.commit()
+    return jsonify(ok=True, message=_messenger_message_payload(message), unread_count=_messenger_unread_count())
+
+
+@bp.route("/messenger/read", methods=["POST"])
+@login_required
+def messenger_read():
+    if not _messenger_is_available():
+        abort(403)
+    partner = _messenger_thread_partner()
+    if partner:
+        ChatMessage.query.filter(
+            ChatMessage.sender_id == partner.id,
+            ChatMessage.recipient_id == current_user.id,
+            ChatMessage.read_at.is_(None),
+        ).update({"read_at": utc_now()}, synchronize_session=False)
+        db.session.commit()
+    return jsonify(ok=True, unread_count=_messenger_unread_count())
+
+
+@bp.route("/messenger/error-replies/read", methods=["POST"])
+@login_required
+def messenger_error_replies_read():
+    if not _messenger_is_available() or current_user.role == ROLE_ADMIN:
+        abort(403)
+    SiteErrorReport.query.filter(
+        SiteErrorReport.user_id == current_user.id,
+        SiteErrorReport.developer_reply.isnot(None),
+        SiteErrorReport.user_reply_read_at.is_(None),
+    ).update({"user_reply_read_at": utc_now()}, synchronize_session=False)
+    db.session.commit()
+    return jsonify(ok=True, unread_count=_messenger_unread_count())
 
 
 @bp.route("/developer/delete-logs")
@@ -7990,6 +8229,21 @@ def task_recognition():
                     act_filename = (request.form.get(f"act_{act_idx}_filename") or f"PDF-акт {act_idx + 1}").strip()
                     if act_filename and act_filename not in sync_log_source_names:
                         sync_log_source_names.append(act_filename)
+                    row_count = request.form.get(f"act_{act_idx}_row_count", type=int) or 0
+                    for row_idx in range(row_count):
+                        if request.form.get(f"act_{act_idx}_row_{row_idx}_active") != "1":
+                            continue
+                        point_number = (request.form.get(f"act_{act_idx}_row_{row_idx}_point") or "22").strip()
+                        text = (request.form.get(f"act_{act_idx}_row_{row_idx}_description") or "").strip()
+                        if point_number == "26" and not text:
+                            flash("Заполните поле Отступное (ТМЦ)", "warning")
+                            return render_template(
+                                "task_recognition.html",
+                                project=project,
+                                apartments=apartments,
+                                points=points,
+                                previews=previews,
+                            )
                 sync_log = _start_snapshot_sync_log(
                     project=project,
                     source_type="pdf_recognition",
@@ -8851,6 +9105,11 @@ def _group_addendum_status(apartments: list[Apartment]) -> str:
     return ADDENDUM_STATUS_NONE
 
 
+def _group_addendum_signed_date(apartments: list[Apartment]) -> date | None:
+    dates = [apartment.addendum_signed_date for apartment in apartments if apartment.addendum_signed_date]
+    return min(dates) if dates else None
+
+
 def _group_app_signed_date(apartments: list[Apartment]) -> date | None:
     dates = [apartment.deadline_date for apartment in apartments if apartment.deadline_date]
     return min(dates) if dates else None
@@ -9072,6 +9331,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "app_status_label": _app_status_label(app_status),
         "addendum_status": _group_addendum_status(apartments),
         "addendum_status_label": ADDENDUM_STATUS_LABELS.get(_group_addendum_status(apartments), "Нет"),
+        "addendum_signed_date": _group_addendum_signed_date(apartments),
         "avr_status": _group_avr_status(apartments),
         "avr_signed_date": _group_avr_signed_date(apartments),
         "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") == "apartment" and app_status != APP_DEADLINE_NO_REMARKS,
@@ -9291,6 +9551,10 @@ def _filtered_apartment_overview_rows(
         if app_status_filter == "accepted" and row.get("mode") != "АПП":
             continue
         if app_status_filter == "not_accepted" and row.get("mode") != "не принята":
+            continue
+        if avr_status_filter == "with_remarks" and (row.get("mode") != "АПП" or row.get("app_status") != APP_DEADLINE_NORMAL):
+            continue
+        if avr_status_filter == APP_DEADLINE_NO_REMARKS and (row.get("mode") != "АПП" or row.get("app_status") != APP_DEADLINE_NO_REMARKS):
             continue
         if avr_status_filter in {AVR_STATUS_NEEDED, AVR_STATUS_SIGNED} and (not row.get("show_avr") or row.get("avr_status") != avr_status_filter):
             continue
@@ -9685,6 +9949,7 @@ def update_apartment_details(apartment_id: int):
         item.is_app_mode = mode_value == "app"
         if mode_value != "app":
             item.addendum_status = ADDENDUM_STATUS_NONE
+            item.addendum_signed_date = None
             item.addendum_status_manual = False
 
     new_mode = APARTMENT_DETAIL_MODE_LABELS[mode_value]
@@ -10072,6 +10337,9 @@ def update_apartment_addendum_status(apartment_id: int):
     status = (request.form.get("addendum_status") or "").strip()
     if status not in {ADDENDUM_STATUS_NONE, ADDENDUM_STATUS_NEEDED, ADDENDUM_STATUS_SIGNED}:
         abort(400)
+    signed_date = parse_date(request.form.get("addendum_signed_date"))
+    if status == ADDENDUM_STATUS_SIGNED and signed_date is None:
+        signed_date = date.today()
 
     group_key = _apartment_group_key(apartment)
     group = [
@@ -10083,18 +10351,32 @@ def update_apartment_addendum_status(apartment_id: int):
     if _apartment_group_mode(target_group) != "АПП":
         abort(400)
     old_status = _group_addendum_status(target_group)
+    old_signed_date = _group_addendum_signed_date(target_group)
     for item in target_group:
         item.addendum_status = status
+        item.addendum_signed_date = signed_date if status == ADDENDUM_STATUS_SIGNED else None
         item.addendum_status_manual = True
     status_history_change = _log_apartment_field_change(target_group, "addendum_status", old_status, status)
+    date_history_change = _log_apartment_field_change(
+        target_group,
+        "addendum_signed_date",
+        old_signed_date.isoformat() if old_signed_date else "",
+        signed_date.isoformat() if signed_date and status == ADDENDUM_STATUS_SIGNED else "",
+    )
     db.session.commit()
     if _wants_json_response():
-        history_entry = _build_change_history_entry(status_history_change[0], task=status_history_change[1], users_cache={}) if status_history_change else None
+        history_entry = None
+        for history_change in (date_history_change, status_history_change):
+            if history_change:
+                history_entry = _build_change_history_entry(history_change[0], task=history_change[1], users_cache={})
+                break
         return jsonify({
             "ok": True,
             "message": "Статус доп. соглашения обновлен",
             "addendum_status": status,
             "addendum_status_label": ADDENDUM_STATUS_LABELS.get(status, status),
+            "addendum_signed_date": signed_date.isoformat() if signed_date and status == ADDENDUM_STATUS_SIGNED else "",
+            "addendum_signed_date_label": format_ru_date(signed_date) if signed_date and status == ADDENDUM_STATUS_SIGNED else "",
             "history_entry": history_entry,
         })
     flash("Статус доп. соглашения обновлен", "success")
@@ -11698,7 +11980,7 @@ def rollback_sync_log(log_id: int):
 
 def _parse_conflict_value_for_field(field_name: str | None, value: str | None):
     text = (value or "").strip()
-    if field_name in {"inspection_date", "reinspection_date", "deadline_date", "remark_deadline_date", "app_deadline_date", "avr_signed_date"}:
+    if field_name in {"inspection_date", "reinspection_date", "deadline_date", "remark_deadline_date", "app_deadline_date", "avr_signed_date", "addendum_signed_date"}:
         return parse_date(text)
     if field_name == "is_app_mode":
         return text.lower() in {"1", "true", "yes", "да", "апп"}
@@ -11730,6 +12012,7 @@ SYNC_CONFLICT_FIELD_LABELS = {
     "avr_status": "Статус АВР",
     "avr_signed_date": "Дата подписания АВР",
     "addendum_status": "Доп. соглашение",
+    "addendum_signed_date": "Дата подписания доп. соглашения",
     "comment": "Комментарий",
 }
 

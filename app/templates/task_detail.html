@@ -51,6 +51,12 @@
               {% endfor %}
             </div>
           </dd>
+          <dt class="col-sm-3">Статус</dt>
+          <dd class="col-sm-9">
+            <span class="status-pill {{ status_classes.get(task.status, 'status-pill-muted') }}">
+              {{ status_labels.get(task.status, task.status_label()) }}
+            </span>
+          </dd>
           <dt class="col-sm-3">Замечание</dt>
           <dd class="col-sm-9 task-text {% if task.is_done %}text-decoration-line-through{% endif %}">
             <div class="d-flex flex-wrap align-items-start gap-2 inline-editor-anchor task-detail-remark-anchor">

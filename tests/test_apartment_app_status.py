@@ -149,13 +149,30 @@ class ApartmentAppStatusTests(unittest.TestCase):
     def test_manual_addendum_signed_is_saved(self):
         response = self.client.post(
             f"/apartments/{self.apartment.id}/addendum-status",
-            data={"addendum_status": "signed"},
+            data={"addendum_status": "signed", "addendum_signed_date": "2026-09-24"},
         )
 
         self.assertEqual(response.status_code, 302)
         apartment = db.session.get(Apartment, self.apartment.id)
         self.assertEqual(apartment.addendum_status, "signed")
+        self.assertEqual(apartment.addendum_signed_date, date(2026, 9, 24))
         self.assertTrue(apartment.addendum_status_manual)
+
+    def test_addendum_date_is_cleared_when_not_signed(self):
+        self.apartment.addendum_status = "signed"
+        self.apartment.addendum_signed_date = date(2026, 9, 24)
+        self.apartment.addendum_status_manual = True
+        db.session.commit()
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/addendum-status",
+            data={"addendum_status": "needed", "addendum_signed_date": "2026-09-24"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        apartment = db.session.get(Apartment, self.apartment.id)
+        self.assertEqual(apartment.addendum_status, "needed")
+        self.assertIsNone(apartment.addendum_signed_date)
 
     def test_non_app_apartment_cannot_have_addendum(self):
         self.apartment.is_app_mode = False
@@ -180,6 +197,58 @@ class ApartmentAppStatusTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+    def test_apartments_filter_uses_app_and_avr_status_labels(self):
+        self.apartment.apartment_number = "1"
+        self.apartment.is_app_mode = True
+        self.apartment.app_deadline_status = APP_DEADLINE_NORMAL
+        self.apartment.avr_status = AVR_STATUS_NEEDED
+        no_remarks = Apartment(
+            project=self.project,
+            apartment_number="2",
+            is_app_mode=True,
+            app_deadline_status=APP_DEADLINE_NO_REMARKS,
+            avr_status=AVR_STATUS_NEEDED,
+        )
+        signed_avr = Apartment(
+            project=self.project,
+            apartment_number="3",
+            is_app_mode=True,
+            app_deadline_status=APP_DEADLINE_NORMAL,
+            avr_status=AVR_STATUS_SIGNED,
+            avr_signed_date=date(2026, 9, 24),
+        )
+        not_accepted = Apartment(project=self.project, apartment_number="4", is_app_mode=False)
+        db.session.add_all([no_remarks, signed_avr, not_accepted])
+        db.session.commit()
+
+        page = self.client.get("/apartments").get_data().decode("utf-8")
+        self.assertIn('name="avr_status"', page)
+        self.assertIn('value="with_remarks"', page)
+        self.assertIn(f'value="{APP_DEADLINE_NO_REMARKS}"', page)
+        self.assertIn(f'value="{AVR_STATUS_NEEDED}"', page)
+        self.assertIn(f'value="{AVR_STATUS_SIGNED}"', page)
+
+        with_remarks_page = self.client.get("/apartments?avr_status=with_remarks").get_data().decode("utf-8")
+        self.assertIn("/apartments/1?back=", with_remarks_page)
+        self.assertIn("/apartments/3?back=", with_remarks_page)
+        self.assertNotIn("/apartments/2?back=", with_remarks_page)
+        self.assertNotIn("/apartments/4?back=", with_remarks_page)
+
+        no_remarks_page = self.client.get(f"/apartments?avr_status={APP_DEADLINE_NO_REMARKS}").get_data().decode("utf-8")
+        self.assertIn("/apartments/2?back=", no_remarks_page)
+        self.assertNotIn("/apartments/1?back=", no_remarks_page)
+        self.assertNotIn("/apartments/3?back=", no_remarks_page)
+
+        needed_page = self.client.get(f"/apartments?avr_status={AVR_STATUS_NEEDED}").get_data().decode("utf-8")
+        self.assertIn("/apartments/1?back=", needed_page)
+        self.assertNotIn("/apartments/2?back=", needed_page)
+        self.assertNotIn("/apartments/3?back=", needed_page)
+
+        signed_page = self.client.get(f"/apartments?avr_status={AVR_STATUS_SIGNED}").get_data().decode("utf-8")
+        self.assertIn("/apartments/3?back=", signed_page)
+        self.assertNotIn("/apartments/1?back=", signed_page)
+        self.assertNotIn("/apartments/2?back=", signed_page)
 
 
 if __name__ == "__main__":

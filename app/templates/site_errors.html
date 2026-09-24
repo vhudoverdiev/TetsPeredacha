@@ -112,6 +112,20 @@
       </details>
       {% endif %}
 
+      {% if report.kind == 'user' and report.user %}
+      <form class="site-error-reply-form mt-3" method="post" action="{{ url_for('main.site_error_reply', report_id=report.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="form-label">Ответ пользователю</label>
+        <textarea class="form-control" name="reply" rows="3" placeholder="Напишите ответ, он появится у пользователя в мессенджере">{{ report.developer_reply or '' }}</textarea>
+        {% if report.developer_reply %}
+        <div class="site-error-reply-meta">Ответ отправлен {{ report.developer_replied_at|ru_datetime }}{% if report.developer_reply_user %} · {{ report.developer_reply_user.full_name or report.developer_reply_user.username }}{% endif %}</div>
+        {% endif %}
+        <button class="btn btn-sm site-error-action-btn site-error-action-btn-success mt-2" type="submit">
+          <i class="bi bi-reply-fill me-1"></i>{{ 'Обновить ответ' if report.developer_reply else 'Ответить' }}
+        </button>
+      </form>
+      {% endif %}
+
       <div class="site-error-actions mt-3">
         <form method="post" action="{{ url_for('main.site_error_close', report_id=report.id) }}" data-site-error-close-form="1" data-report-id="{{ report.id }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

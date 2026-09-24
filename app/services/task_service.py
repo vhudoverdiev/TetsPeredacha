@@ -2277,6 +2277,7 @@ def _premise_rows_from_query(query):
         Apartment.first_inspection_present,
         Apartment.first_inspection_date,
         Apartment.inspection_note,
+        Apartment.app_deadline_status,
     ).all()
 
 
@@ -2374,6 +2375,22 @@ def dashboard_stats(
         for rows in grouped_rows.values()
         if rows and _row_premise_type(rows[0]) == "apartment" and _group_is_accepted(rows)
     )
+    accepted_with_remarks = sum(
+        1
+        for rows in grouped_rows.values()
+        if rows
+        and _row_premise_type(rows[0]) == "apartment"
+        and _group_is_accepted(rows)
+        and not all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
+    )
+    accepted_no_remarks = sum(
+        1
+        for rows in grouped_rows.values()
+        if rows
+        and _row_premise_type(rows[0]) == "apartment"
+        and _group_is_accepted(rows)
+        and all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
+    )
     unsold_apartment_count = sum(
         1
         for rows in grouped_rows.values()
@@ -2416,6 +2433,8 @@ def dashboard_stats(
         "missing": Task.query.filter(Task.project_id == project_id, Task.is_missing_in_latest_sync.is_(True)).count() if project_id else Task.query.filter(Task.is_missing_in_latest_sync.is_(True)).count(),
         "percent": round((done / total_tasks * 100), 1) if total_tasks else 0,
         "accepted": accepted,
+        "accepted_with_remarks": accepted_with_remarks,
+        "accepted_no_remarks": accepted_no_remarks,
         "unsold": unsold,
         "unsold_apartment_count": unsold_apartment_count,
         "unsold_commercial_count": unsold_commercial_count,

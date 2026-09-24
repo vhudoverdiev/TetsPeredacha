@@ -35,11 +35,13 @@
         </select>
       </div>
       <div class="col-12 col-sm-6 col-lg-1">
-        <label class="form-label">АВР</label>
+        <label class="form-label">Фильтр</label>
         <select class="form-select" name="avr_status" data-force-custom-select>
           <option value="">Все</option>
-          <option value="{{ avr_status_needed }}" {% if args.get('avr_status') == avr_status_needed %}selected{% endif %}>Нужен</option>
-          <option value="{{ avr_status_signed }}" {% if args.get('avr_status') == avr_status_signed %}selected{% endif %}>Подписан</option>
+          <option value="with_remarks" {% if args.get('avr_status') == 'with_remarks' %}selected{% endif %}>С замечаниями</option>
+          <option value="{{ app_deadline_no_remarks }}" {% if args.get('avr_status') == app_deadline_no_remarks %}selected{% endif %}>Без замечаний</option>
+          <option value="{{ avr_status_needed }}" {% if args.get('avr_status') == avr_status_needed %}selected{% endif %}>Нужен АВР</option>
+          <option value="{{ avr_status_signed }}" {% if args.get('avr_status') == avr_status_signed %}selected{% endif %}>Подписан АВР</option>
         </select>
       </div>
       {% if current_user.role != 'office' %}

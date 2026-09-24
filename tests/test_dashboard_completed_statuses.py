@@ -21,6 +21,7 @@ from app.models import (
     WorkPoint,
 )
 from app.services.task_service import category_stats, dashboard_stats
+from app.services.task_service import APP_DEADLINE_NO_REMARKS
 from app.routes import _apartment_inspection_status
 
 
@@ -173,6 +174,15 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
         after = dashboard_stats(self.project.id)
         self.assertEqual(after["accepted"], 1)
         self.assertEqual(after["not_accepted"], 0)
+        self.assertEqual(after["accepted_with_remarks"], 1)
+        self.assertEqual(after["accepted_no_remarks"], 0)
+
+        self.apartment.app_deadline_status = APP_DEADLINE_NO_REMARKS
+        db.session.commit()
+
+        no_remarks = dashboard_stats(self.project.id)
+        self.assertEqual(no_remarks["accepted_with_remarks"], 0)
+        self.assertEqual(no_remarks["accepted_no_remarks"], 1)
 
     def test_apartment_detail_autosave_returns_json_without_redirect(self):
         response = self.client.post(

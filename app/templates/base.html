@@ -1489,6 +1489,69 @@
 {% endif %}
 
 {% block floating_content %}{% endblock %}
+{% if messenger_available %}
+<div class="floating-messenger-corner">
+  <button type="button" class="btn btn-sm messenger-floating-btn {% if messenger_unread_count %}has-unread{% endif %}" data-messenger-open title="Сообщения" aria-label="Сообщения">
+    <i class="bi bi-chat-dots-fill"></i>
+    {% if messenger_unread_count %}<span class="messenger-floating-count" data-messenger-unread-count>{{ messenger_unread_count }}</span>{% else %}<span class="messenger-floating-count" data-messenger-unread-count hidden>0</span>{% endif %}
+  </button>
+</div>
+<aside class="crm-messenger-panel" data-messenger-panel aria-hidden="true">
+  <div class="crm-messenger-shell">
+    <header class="crm-messenger-head">
+      <div>
+        <span class="crm-messenger-eyebrow">CRM Передача</span>
+        <h2>Сообщения</h2>
+      </div>
+      <button class="crm-messenger-close" type="button" data-messenger-close aria-label="Закрыть"><i class="bi bi-x-lg"></i></button>
+    </header>
+    <div class="crm-messenger-tabs" role="tablist">
+      <button class="crm-messenger-tab active" type="button" data-messenger-tab="chat"><i class="bi bi-chat-left-text"></i>Чат</button>
+      {% if current_user.role != 'admin' %}
+      <button class="crm-messenger-tab" type="button" data-messenger-tab="appeals"><i class="bi bi-life-preserver"></i>Обращения</button>
+      {% endif %}
+    </div>
+    <section class="crm-messenger-view active" data-messenger-view="chat">
+      {% if current_user.role == 'admin' %}
+      <div class="crm-messenger-user-picker" data-messenger-user-picker>
+        <label>Собеседник</label>
+        <select class="form-select form-select-sm" data-messenger-user-select>
+          <option value="">Выберите пользователя</option>
+        </select>
+      </div>
+      {% else %}
+      <div class="crm-messenger-developer-card">
+        <span class="crm-messenger-avatar">ВХ</span>
+        <div>
+          <b data-messenger-developer-name>Владимир Худовердиев</b>
+          <small>Разработчик</small>
+        </div>
+      </div>
+      {% endif %}
+      <div class="crm-messenger-messages" data-messenger-messages>
+        <div class="crm-messenger-empty">Откройте чат, чтобы увидеть сообщения.</div>
+      </div>
+      <form class="crm-messenger-form" data-messenger-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <textarea class="form-control" name="body" rows="2" placeholder="Напишите сообщение" data-messenger-input></textarea>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i><span>Отправить</span></button>
+      </form>
+    </section>
+    {% if current_user.role != 'admin' %}
+    <section class="crm-messenger-view" data-messenger-view="appeals">
+      <div class="crm-messenger-appeals-head">
+        <b>Ответы на обращения</b>
+        <small>Здесь появляются ответы разработчика на сообщения об ошибках</small>
+      </div>
+      <div class="crm-messenger-appeals" data-messenger-appeals>
+        <div class="crm-messenger-empty">Ответов пока нет.</div>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</aside>
+<div class="crm-messenger-backdrop" data-messenger-backdrop hidden></div>
+{% endif %}
 <div class="floating-error-corner">
   {{ report_error_button('report-error-floating') }}
 </div>

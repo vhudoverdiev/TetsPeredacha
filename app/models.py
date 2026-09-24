@@ -127,7 +127,7 @@ class User(UserMixin, TimestampMixin, db.Model):
 
     assigned_tasks = db.relationship("Task", back_populates="responsible", foreign_keys="Task.responsible_id")
     project = db.relationship("Project", foreign_keys=[project_id])
-    site_error_reports = db.relationship("SiteErrorReport", back_populates="user")
+    site_error_reports = db.relationship("SiteErrorReport", back_populates="user", foreign_keys="SiteErrorReport.user_id")
 
     @property
     def projects(self):
@@ -291,6 +291,7 @@ class Apartment(TimestampMixin, db.Model):
     avr_status = db.Column(db.String(30), default="needed", nullable=False, index=True)
     avr_signed_date = db.Column(db.Date, nullable=True)
     addendum_status = db.Column(db.String(30), default="none", nullable=False, index=True)
+    addendum_signed_date = db.Column(db.Date, nullable=True)
     addendum_status_manual = db.Column(db.Boolean, default=False, nullable=False, index=True)
     app_deadline_date = db.Column(db.Date, nullable=True)
     app_deadline_raw = db.Column(db.String(255), nullable=True)
@@ -786,9 +787,29 @@ class SiteErrorReport(TimestampMixin, db.Model):
     ip_address = db.Column(db.String(80), nullable=True, index=True)
     traceback_text = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(30), default="new", nullable=False, index=True)
+    developer_reply = db.Column(db.Text, nullable=True)
+    developer_replied_at = db.Column(db.DateTime, nullable=True)
+    developer_reply_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    user_reply_read_at = db.Column(db.DateTime, nullable=True)
 
     project = db.relationship("Project", back_populates="site_error_reports")
-    user = db.relationship("User", back_populates="site_error_reports")
+    user = db.relationship("User", back_populates="site_error_reports", foreign_keys=[user_id])
+    developer_reply_user = db.relationship("User", foreign_keys=[developer_reply_user_id])
+
+
+class ChatMessage(TimestampMixin, db.Model):
+    __tablename__ = "chat_messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=True, index=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    recipient_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    body = db.Column(db.Text, nullable=False)
+    read_at = db.Column(db.DateTime, nullable=True, index=True)
+
+    project = db.relationship("Project")
+    sender = db.relationship("User", foreign_keys=[sender_id])
+    recipient = db.relationship("User", foreign_keys=[recipient_id])
 
 
 class DeletionActionLog(TimestampMixin, db.Model):

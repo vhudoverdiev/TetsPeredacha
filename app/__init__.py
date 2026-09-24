@@ -371,6 +371,8 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN avr_signed_date DATE"))
                 if "addendum_status" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN addendum_status VARCHAR(30) NOT NULL DEFAULT 'none'"))
+                if "addendum_signed_date" not in apartment_columns:
+                    db.session.execute(text("ALTER TABLE apartments ADD COLUMN addendum_signed_date DATE"))
                 if "addendum_status_manual" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN addendum_status_manual BOOLEAN NOT NULL DEFAULT 0"))
                 if "app_deadline_date" not in apartment_columns:
@@ -379,6 +381,36 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN app_deadline_raw VARCHAR(255)"))
                 if "app_deadline_status" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN app_deadline_status VARCHAR(30) NOT NULL DEFAULT 'normal'"))
+                db.session.commit()
+
+            if "site_error_reports" in inspector.get_table_names():
+                site_error_columns = {column["name"] for column in inspector.get_columns("site_error_reports")}
+                if "developer_reply" not in site_error_columns:
+                    db.session.execute(text("ALTER TABLE site_error_reports ADD COLUMN developer_reply TEXT"))
+                if "developer_replied_at" not in site_error_columns:
+                    db.session.execute(text("ALTER TABLE site_error_reports ADD COLUMN developer_replied_at DATETIME"))
+                if "developer_reply_user_id" not in site_error_columns:
+                    db.session.execute(text("ALTER TABLE site_error_reports ADD COLUMN developer_reply_user_id INTEGER"))
+                if "user_reply_read_at" not in site_error_columns:
+                    db.session.execute(text("ALTER TABLE site_error_reports ADD COLUMN user_reply_read_at DATETIME"))
+                db.session.commit()
+
+            if "chat_messages" not in inspector.get_table_names():
+                db.session.execute(text(
+                    "CREATE TABLE chat_messages ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    "project_id INTEGER, "
+                    "sender_id INTEGER NOT NULL, "
+                    "recipient_id INTEGER NOT NULL, "
+                    "body TEXT NOT NULL, "
+                    "read_at DATETIME, "
+                    "created_at DATETIME NOT NULL, "
+                    "updated_at DATETIME NOT NULL)"
+                ))
+                db.session.execute(text("CREATE INDEX ix_chat_messages_project_id ON chat_messages (project_id)"))
+                db.session.execute(text("CREATE INDEX ix_chat_messages_sender_id ON chat_messages (sender_id)"))
+                db.session.execute(text("CREATE INDEX ix_chat_messages_recipient_id ON chat_messages (recipient_id)"))
+                db.session.execute(text("CREATE INDEX ix_chat_messages_read_at ON chat_messages (read_at)"))
                 db.session.commit()
 
             if "work_points" in inspector.get_table_names():

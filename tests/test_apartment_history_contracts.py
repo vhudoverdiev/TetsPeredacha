@@ -138,6 +138,12 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
                 "2026-12-01",
                 "Срок устранения замечаний изменён: был «15 ноября 2026», стал «1 декабря 2026».",
             ),
+            (
+                "addendum_signed_date",
+                "",
+                "2026-09-24",
+                "Дата подписания доп. соглашения изменена: была «не задана», стала «24 сентября 2026».",
+            ),
         ]
 
         for field_name, old_value, new_value, expected_summary in cases:
@@ -152,7 +158,8 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
                 entry = _build_change_history_entry(change)
                 self.assertEqual(entry["summary"], expected_summary)
                 self.assertNotIn(field_name, entry["summary"])
-                self.assertNotIn(old_value, entry["summary"])
+                if old_value:
+                    self.assertNotIn(old_value, entry["summary"])
                 self.assertNotIn(new_value, entry["summary"])
 
 
