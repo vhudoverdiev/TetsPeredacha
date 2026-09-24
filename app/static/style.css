@@ -58368,3 +58368,40 @@ html body.app-body .crm-messenger-bubble {
   }
 }
 
+/* v658: dashboard acceptance split lives in inspections card. */
+html body.app-body .dashboard-info-divider {
+  height: 1px !important;
+  margin: .85rem 0 .7rem !important;
+  background: linear-gradient(90deg, rgba(141, 214, 44, .42), rgba(226, 232, 240, .45)) !important;
+}
+
+html body.app-body .dashboard-info-subtitle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: .4rem !important;
+  margin: 0 0 .55rem !important;
+  color: #65ad22 !important;
+  font-size: .78rem !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0 !important;
+}
+
+html body.app-body .dashboard-info-subtitle::before {
+  content: "" !important;
+  width: .5rem !important;
+  height: .5rem !important;
+  border-radius: 999px !important;
+  background: #65ad22 !important;
+  box-shadow: 0 0 0 .22rem rgba(101, 173, 34, .14) !important;
+}
+
+html body.app-body .dashboard-line-list.dashboard-line-list-compact {
+  gap: .55rem !important;
+}
+
+html body.app-body .dashboard-line-list.dashboard-line-list-compact div {
+  min-height: 3.2rem !important;
+  padding: .62rem .75rem !important;
+}
+

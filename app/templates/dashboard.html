@@ -96,8 +96,6 @@
       <div class="dashboard-info-title"><i class="bi bi-clipboard-check"></i> Приемка</div>
       <div class="dashboard-line-list">
         <div><span>Принятых</span><b>{{ stats.accepted }}</b></div>
-        <div><span>Передано(с замечаниями)</span><b>{{ stats.accepted_with_remarks }}</b></div>
-        <div><span>Передано(без замечаний)</span><b>{{ stats.accepted_no_remarks }}</b></div>
         <div><span>Не проданных всего</span><b>{{ stats.unsold }}</b></div>
         <div><span>Квартир не продано</span><b>{{ stats.unsold_apartment_count }}</b></div>
         <div><span>Коммерции не продано</span><b>{{ stats.unsold_commercial_count }}</b></div>
@@ -110,6 +108,12 @@
       <div class="dashboard-line-list">
         <div><span>Были на осмотре</span><b>{{ stats.inspected }}</b></div>
         <div><span>Не были на осмотре</span><b>{{ stats.not_inspected }}</b></div>
+      </div>
+      <div class="dashboard-info-divider"></div>
+      <div class="dashboard-info-subtitle">Принято</div>
+      <div class="dashboard-line-list dashboard-line-list-compact">
+        <div><span>С замечаниями</span><b>{{ stats.accepted_with_remarks }}</b></div>
+        <div><span>Без замечаний</span><b>{{ stats.accepted_no_remarks }}</b></div>
       </div>
     </article>
 
