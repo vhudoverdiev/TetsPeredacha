@@ -935,7 +935,7 @@
 
       if ('serviceWorker' in navigator && window.isSecureContext) {
         navigator.serviceWorker
-          .register('/service-worker.js?v=v172-point-autosave-dop', { scope: '/', updateViaCache: 'none' })
+          .register('/service-worker.js?v=v173-pressed-state-guards', { scope: '/', updateViaCache: 'none' })
           .then(registration => registration.update().catch(() => {}))
           .catch(() => {});
       }

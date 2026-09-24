@@ -198,7 +198,7 @@ class FirefoxFrameBufferedNavigationTests(unittest.TestCase):
         ).group(1)
 
         self.assertEqual(worker_version, cache_version)
-        self.assertEqual(worker_version, "v172-point-autosave-dop")
+        self.assertEqual(worker_version, "v173-pressed-state-guards")
 
     def test_script_and_css_cache_busters_are_synchronized(self):
         script_version = re.search(

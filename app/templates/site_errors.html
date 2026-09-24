@@ -113,17 +113,26 @@
       {% endif %}
 
       {% if report.kind == 'user' and report.user %}
-      <form class="site-error-reply-form mt-3" method="post" action="{{ url_for('main.site_error_reply', report_id=report.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label class="form-label">Ответ пользователю</label>
-        <textarea class="form-control" name="reply" rows="3" placeholder="Напишите ответ, он появится у пользователя в мессенджере">{{ report.developer_reply or '' }}</textarea>
+      <div class="site-error-reply-shell mt-3" data-site-error-reply-shell>
         {% if report.developer_reply %}
+        <div class="site-error-reply-preview">
+          <small>Последний ответ пользователю</small>
+          <p>{{ report.developer_reply }}</p>
+        </div>
         <div class="site-error-reply-meta">Ответ отправлен {{ report.developer_replied_at|ru_datetime }}{% if report.developer_reply_user %} · {{ report.developer_reply_user.full_name or report.developer_reply_user.username }}{% endif %}</div>
         {% endif %}
-        <button class="btn btn-sm site-error-action-btn site-error-action-btn-success mt-2" type="submit">
-          <i class="bi bi-reply-fill me-1"></i>{{ 'Обновить ответ' if report.developer_reply else 'Ответить' }}
+        <button class="btn btn-sm site-error-action-btn site-error-action-btn-success site-error-reply-toggle" type="button" data-site-error-reply-toggle>
+          <i class="bi bi-reply-fill me-1"></i><span>{{ 'Изменить ответ' if report.developer_reply else 'Ответить' }}</span>
         </button>
-      </form>
+        <form class="site-error-reply-form mt-3 d-none" method="post" action="{{ url_for('main.site_error_reply', report_id=report.id) }}" data-site-error-reply-form>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label class="form-label">Ответ пользователю</label>
+          <textarea class="form-control" name="reply" rows="3" placeholder="Напишите ответ, он появится у пользователя в мессенджере">{{ report.developer_reply or '' }}</textarea>
+          <button class="btn btn-sm site-error-action-btn site-error-action-btn-success mt-2" type="submit">
+            <i class="bi bi-send-fill me-1"></i><span>Отправить</span>
+          </button>
+        </form>
+      </div>
       {% endif %}
 
       <div class="site-error-actions mt-3">
@@ -310,6 +319,21 @@ document.addEventListener('DOMContentLoaded', function () {
       selectShell.classList.remove('is-open');
       const button = selectShell.querySelector('.developer-select-button');
       if (button) button.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.querySelectorAll('[data-site-error-reply-toggle]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const shell = button.closest('[data-site-error-reply-shell]');
+      const form = shell ? shell.querySelector('[data-site-error-reply-form]') : null;
+      const textarea = form ? form.querySelector('textarea[name="reply"]') : null;
+      if (!form) return;
+      const shouldOpen = form.classList.contains('d-none');
+      form.classList.toggle('d-none', !shouldOpen);
+      button.classList.toggle('is-open', shouldOpen);
+      const label = button.querySelector('span');
+      if (label) label.textContent = shouldOpen ? 'Скрыть ответ' : (textarea && textarea.value.trim() ? 'Изменить ответ' : 'Ответить');
+      if (shouldOpen && textarea) textarea.focus();
     });
   });
 

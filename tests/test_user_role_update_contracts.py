@@ -3,7 +3,19 @@ from pathlib import Path
 
 from config import Config
 from app import create_app, db, login_manager
-from app.models import ROLE_ADMIN, ROLE_GLAZIER, ROLE_MANAGER, ROLE_OFFICE, ROLE_PAINTER, ROLE_SUPERVISOR, Project, SecurityEvent, User
+from app.models import (
+    ROLE_ADMIN,
+    ROLE_GLAZIER,
+    ROLE_MANAGER,
+    ROLE_OFFICE,
+    ROLE_PAINTER,
+    ROLE_SUPERVISOR,
+    ChatMessage,
+    Project,
+    SecurityEvent,
+    SiteErrorReport,
+    User,
+)
 
 
 class TestConfig(Config):
@@ -249,6 +261,44 @@ class UserRoleUpdateContractsTests(unittest.TestCase):
         detached_event = db.session.get(SecurityEvent, event_id)
         self.assertIsNotNone(detached_event)
         self.assertIsNone(detached_event.user_id)
+
+    def test_admin_can_delete_user_with_chat_messages_and_error_replies(self):
+        admin = self._user("admin-delete-chat", ROLE_ADMIN)
+        user = self._user("worker-delete-chat", ROLE_MANAGER)
+        message_from_user = ChatMessage(
+            project_id=self.project.id,
+            sender_id=user.id,
+            recipient_id=admin.id,
+            body="Нужно проверить",
+        )
+        message_to_user = ChatMessage(
+            project_id=self.project.id,
+            sender_id=admin.id,
+            recipient_id=user.id,
+            body="Проверяю",
+        )
+        report = SiteErrorReport(
+            kind="user",
+            message="Проверка удаления",
+            status="new",
+            user_id=user.id,
+            developer_reply="Ответ",
+            developer_reply_user_id=user.id,
+        )
+        db.session.add_all([message_from_user, message_to_user, report])
+        db.session.commit()
+        report_id = report.id
+        self._login(admin)
+
+        response = self.client.post(f"/users/{user.id}/delete", follow_redirects=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNone(db.session.get(User, user.id))
+        self.assertEqual(ChatMessage.query.count(), 0)
+        detached_report = db.session.get(SiteErrorReport, report_id)
+        self.assertIsNotNone(detached_report)
+        self.assertIsNone(detached_report.user_id)
+        self.assertIsNone(detached_report.developer_reply_user_id)
 
 
 if __name__ == "__main__":

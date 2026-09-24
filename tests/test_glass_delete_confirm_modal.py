@@ -45,7 +45,7 @@ class GlassDeleteConfirmModalTest(unittest.TestCase):
 
         self.assertIn("script.js') }}?v=v675-point-autosave-dop", template)
         self.assertIn("/static/script.js?v=v675-point-autosave-dop", worker)
-        self.assertIn("peredacha-static-v172-point-autosave-dop", worker)
+        self.assertIn("peredacha-static-v173-pressed-state-guards", worker)
 
 
 if __name__ == "__main__":

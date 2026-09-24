@@ -11733,6 +11733,10 @@ def user_delete(user_id: int):
     SyncConflict.query.filter_by(resolved_by_user_id=user.id).update({"resolved_by_user_id": None}, synchronize_session=False)
     ChangeLog.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
     SiteErrorReport.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
+    SiteErrorReport.query.filter_by(developer_reply_user_id=user.id).update({"developer_reply_user_id": None}, synchronize_session=False)
+    ChatMessage.query.filter(
+        or_(ChatMessage.sender_id == user.id, ChatMessage.recipient_id == user.id)
+    ).delete(synchronize_session=False)
     SiteVisit.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
     DeletionActionLog.query.filter_by(user_id=user.id).update({"user_id": None}, synchronize_session=False)
     DeletionActionLog.query.filter_by(undone_by_user_id=user.id).update({"undone_by_user_id": None}, synchronize_session=False)

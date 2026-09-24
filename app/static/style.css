@@ -4885,7 +4885,7 @@ code {
   color: var(--crm-muted);
   font-size: .78rem;
   font-weight: 800;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .apartment-data-row b,
@@ -58691,5 +58691,60 @@ html body.app-body .apartment-detail-page .apartment-inline-stack {
   html body.app-body .apartment-detail-page .apartment-inline-form {
     justify-content: flex-start !important;
   }
+}
+
+/* v662: developer replies open on demand and keep action icons readable. */
+html body.app-body .site-error-reply-shell {
+  margin-top: .85rem !important;
+}
+
+html body.app-body .site-error-reply-preview {
+  border: 1px solid rgba(141, 214, 44, .24) !important;
+  border-radius: .85rem !important;
+  background: linear-gradient(180deg, rgba(243, 250, 237, .72), rgba(255, 255, 255, .96)) !important;
+  padding: .72rem .82rem !important;
+  margin-bottom: .55rem !important;
+}
+
+html body.app-body .site-error-reply-preview small {
+  display: block !important;
+  margin-bottom: .3rem !important;
+  color: #65ad22 !important;
+  font-size: .72rem !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0 !important;
+}
+
+html body.app-body .site-error-reply-preview p {
+  margin: 0 !important;
+  color: #111827 !important;
+  font-size: .9rem !important;
+  line-height: 1.45 !important;
+  white-space: pre-wrap !important;
+}
+
+html body.app-body .site-error-reply-toggle {
+  margin-top: .45rem !important;
+}
+
+html body.app-body .site-error-reply-toggle.is-open {
+  background: #111820 !important;
+  box-shadow: 0 .7rem 1.3rem rgba(17, 24, 32, .14) !important;
+}
+
+html body.app-body .site-error-action-btn-success i,
+html body.app-body .site-error-action-btn-success i::before,
+html body.app-body .site-error-action-btn-success span {
+  color: #ffffff !important;
+}
+
+html body.app-body .site-error-reply-form.d-none {
+  display: none !important;
+}
+
+html body.app-body .site-error-reply-form textarea.form-control {
+  min-height: 5.5rem !important;
+  resize: vertical !important;
 }
 

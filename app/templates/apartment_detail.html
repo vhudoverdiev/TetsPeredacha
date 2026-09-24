@@ -76,8 +76,8 @@
             <span>Режим</span>
             <b>
               {% if row.mode == 'АПП' %}<span class="status-pill status-pill-success">АПП</span>
-              {% elif row.mode == 'не продана' %}<span class="status-pill status-pill-muted">не продана</span>
-              {% else %}<span class="status-pill status-pill-warning">не принята</span>{% endif %}
+              {% elif row.mode == 'не продана' %}<span class="status-pill status-pill-muted">Не продана</span>
+              {% else %}<span class="status-pill status-pill-warning">Не принята</span>{% endif %}
             </b>
           </div>
           {% endif %}
@@ -145,7 +145,7 @@
               </div>
             </div>
             <div class="apartment-data-row apartment-data-row-with-control apartment-compact-control-row">
-              <span>Статус АПП</span>
+              <span>АПП</span>
               <b data-apartment-app-status-display>
                 {% if row.app_status == app_deadline_no_remarks %}
                   <span class="status-pill status-pill-success">Без замечаний</span>
@@ -222,7 +222,7 @@
             {% if current_user.role != 'viewer' %}
             <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-data-row apartment-data-row-with-control apartment-inline-form apartment-addendum-form apartment-compact-control-row" data-apartment-async="1">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <span>Доп.Соглашение</span>
+              <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
                   <span class="badge-avr-signed">Подписано{% if row.addendum_signed_date %} от {{ row.addendum_signed_date|ru_date }}{% endif %}</span>
@@ -241,7 +241,7 @@
             </form>
             {% else %}
             <div class="apartment-data-row">
-              <span>Доп.Соглашение</span>
+              <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
                   <span class="badge-avr-signed">Подписано{% if row.addendum_signed_date %} от {{ row.addendum_signed_date|ru_date }}{% endif %}</span>
@@ -255,22 +255,22 @@
             {% endif %}
           {% endif %}
           <div class="apartment-data-note">
-            <span>Комментарий(передача)</span>
+            <span>Комментарий</span>
             <p data-apartment-comment-display>{{ row.manual_comment or '—' }}</p>
           </div>
           <div class="apartment-data-note">
-            <span>Комментарий(устранение замечаний)</span>
+            <span>Устранение</span>
             <p data-apartment-inspection-note-display>{{ row.inspection_comment or '—' }}</p>
           </div>
           {% if current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий(передача)</label>
+            <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий</label>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
           </form>
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="form-label" for="inspection-note-{{ apartment.id }}">Комментарий(устранение замечаний)</label>
+            <label class="form-label" for="inspection-note-{{ apartment.id }}">Устранение</label>
             <textarea class="form-control" id="inspection-note-{{ apartment.id }}" name="inspection_note" rows="3">{{ row.inspection_comment or '' }}</textarea>
           </form>
           {% endif %}
