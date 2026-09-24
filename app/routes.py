@@ -3115,7 +3115,7 @@ def _messenger_thread_partner() -> User | None:
         partner_id = request.args.get("user_id", type=int) or request.form.get("user_id", type=int)
         if partner_id:
             partner = db.session.get(User, partner_id)
-            if partner and partner.role in MESSENGER_ALLOWED_ROLES and partner.id != current_user.id:
+            if partner and partner.role != ROLE_ADMIN and partner.id != current_user.id and bool(partner.is_active):
                 return partner
         return None
     return _developer_user()
@@ -3153,7 +3153,11 @@ def messenger_thread():
     project = selected_project()
     if current_user.role == ROLE_ADMIN:
         user_rows = (
-            User.query.filter(User.role.in_([ROLE_MANAGER, ROLE_SUPERVISOR, ROLE_OFFICE]))
+            User.query.filter(
+                User.id != current_user.id,
+                User.role != ROLE_ADMIN,
+                User.is_active.is_(True),
+            )
             .order_by(User.full_name.asc(), User.username.asc())
             .all()
         )

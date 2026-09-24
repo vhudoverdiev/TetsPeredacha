@@ -58277,3 +58277,94 @@ html.desktop-like-pointer body.app-body .floating-messenger-corner .messenger-fl
   }
 }
 
+/* v657: compact messenger panel and calmer controls. */
+html body.app-body .crm-messenger-panel {
+  width: min(25.5rem, calc(100vw - 1rem)) !important;
+  padding: .75rem !important;
+}
+
+html body.app-body .crm-messenger-shell {
+  border-radius: 1rem !important;
+}
+
+html body.app-body .crm-messenger-head {
+  padding: .85rem 1rem .7rem !important;
+}
+
+html body.app-body .crm-messenger-eyebrow {
+  font-size: .66rem !important;
+}
+
+html body.app-body .crm-messenger-head h2 {
+  font-size: 1.1rem !important;
+}
+
+html body.app-body .crm-messenger-close {
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: .65rem !important;
+}
+
+html body.app-body .crm-messenger-tabs {
+  padding: .55rem .8rem !important;
+}
+
+html body.app-body .crm-messenger-tab {
+  min-height: 2.25rem !important;
+  padding: .42rem .65rem !important;
+  border-radius: .65rem !important;
+  font-size: .88rem !important;
+}
+
+html body.app-body .crm-messenger-view {
+  padding: 0 .8rem .8rem !important;
+}
+
+html body.app-body .crm-messenger-developer-card,
+html body.app-body .crm-messenger-user-picker {
+  border-radius: .8rem !important;
+  padding: .65rem !important;
+  margin-bottom: .6rem !important;
+}
+
+html body.app-body .crm-messenger-messages,
+html body.app-body .crm-messenger-appeals {
+  border-radius: .8rem !important;
+  padding: .65rem !important;
+}
+
+html body.app-body .crm-messenger-form {
+  grid-template-columns: 1fr auto !important;
+  gap: .5rem !important;
+  padding-top: .6rem !important;
+  align-items: stretch !important;
+}
+
+html body.app-body .crm-messenger-form textarea {
+  min-height: 3.1rem !important;
+  max-height: 5.5rem !important;
+  border-radius: .75rem !important;
+}
+
+html body.app-body .crm-messenger-form .btn {
+  width: auto !important;
+  min-width: 6.6rem !important;
+  min-height: 3.1rem !important;
+  padding: .45rem .75rem !important;
+  border-radius: .75rem !important;
+  font-size: .88rem !important;
+  box-shadow: 0 .55rem 1.2rem rgba(101, 173, 34, .18) !important;
+}
+
+html body.app-body .crm-messenger-bubble {
+  border-radius: .8rem !important;
+  padding: .58rem .7rem !important;
+}
+
+@media (max-width: 767.98px) {
+  html body.app-body .crm-messenger-panel {
+    width: 100vw !important;
+    padding: .5rem !important;
+  }
+}
+
