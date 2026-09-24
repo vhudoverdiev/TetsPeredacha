@@ -369,6 +369,10 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN avr_status VARCHAR(30) NOT NULL DEFAULT 'needed'"))
                 if "avr_signed_date" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN avr_signed_date DATE"))
+                if "addendum_status" not in apartment_columns:
+                    db.session.execute(text("ALTER TABLE apartments ADD COLUMN addendum_status VARCHAR(30) NOT NULL DEFAULT 'none'"))
+                if "addendum_status_manual" not in apartment_columns:
+                    db.session.execute(text("ALTER TABLE apartments ADD COLUMN addendum_status_manual BOOLEAN NOT NULL DEFAULT 0"))
                 if "app_deadline_date" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN app_deadline_date DATE"))
                 if "app_deadline_raw" not in apartment_columns:

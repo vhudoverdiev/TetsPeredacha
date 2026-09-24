@@ -143,6 +143,10 @@
           {% endif %}
 
           {% if row.mode == 'АПП' %}
+          <div class="apartment-data-row">
+            <span>Дата АПП</span>
+            <b data-apartment-app-signed-display>{{ row.app_signed_date|ru_date if row.app_signed_date else '—' }}</b>
+          </div>
           <div class="apartment-data-row apartment-data-deadline-row">
             <span>Срок устранения</span>
             <b class="apartment-deadline-display">
@@ -152,6 +156,40 @@
               {% endif %}
             </b>
           </div>
+          <div class="apartment-data-row">
+            <span>Статус АПП</span>
+            <b data-apartment-app-status-display>
+              {% if row.app_status == app_deadline_no_remarks %}
+                <span class="status-pill status-pill-success">Без замечаний</span>
+              {% else %}
+                <span class="status-pill status-pill-warning">Нужен АВР</span>
+              {% endif %}
+            </b>
+          </div>
+          {% if current_user.role != 'viewer' %}
+          <form method="post" action="{{ url_for('main.update_apartment_app_status', apartment_id=apartment.id) }}" class="apartment-app-form mb-3" data-app-deadline-auto-form>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="app_deadline_manual" value="0" data-app-deadline-manual>
+            <label class="form-label mb-0">Изменить АПП</label>
+            <div class="apartment-app-grid">
+              <label class="apartment-app-field">
+                <span>Дата АПП</span>
+                <input class="form-control form-control-sm" type="date" name="app_signed_date" value="{{ row.app_signed_date.isoformat() if row.app_signed_date else '' }}" data-app-signed-date>
+              </label>
+              <label class="apartment-app-field">
+                <span>Срок устранения</span>
+                <input class="form-control form-control-sm" type="date" name="app_deadline_date" value="{{ row.remark_deadline.isoformat() if row.remark_deadline else '' }}" data-app-deadline-date>
+              </label>
+            </div>
+            <div class="apartment-app-actions">
+              <input class="btn-check" type="radio" name="app_status" id="app-status-normal-{{ apartment.id }}" value="{{ app_deadline_normal }}" {% if row.app_status != app_deadline_no_remarks %}checked{% endif %}>
+              <label class="app-status-option app-status-option-needed" for="app-status-normal-{{ apartment.id }}">Нужен АВР</label>
+              <input class="btn-check" type="radio" name="app_status" id="app-status-no-remarks-{{ apartment.id }}" value="{{ app_deadline_no_remarks }}" {% if row.app_status == app_deadline_no_remarks %}checked{% endif %}>
+              <label class="app-status-option app-status-option-no-remarks" for="app-status-no-remarks-{{ apartment.id }}">Без замечаний</label>
+              <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+            </div>
+          </form>
+          {% endif %}
           {% endif %}
           {% if row.show_avr %}
           <div class="apartment-data-row">
@@ -175,6 +213,29 @@
             </div>
           </form>
           {% endif %}
+          {% endif %}
+          <div class="apartment-data-row">
+            <span>Доп.Соглашение</span>
+            <b data-apartment-addendum-display>
+              {% if row.addendum_status == addendum_status_signed %}
+                <span class="badge-avr-signed">Подписано</span>
+              {% elif row.addendum_status == addendum_status_needed %}
+                <span class="badge-avr-needed">Не подписано</span>
+              {% else %}
+                <span class="status-pill status-pill-muted">Нет</span>
+              {% endif %}
+            </b>
+          </div>
+          {% if current_user.role != 'viewer' %}
+          <form method="post" action="{{ url_for('main.update_apartment_addendum_status', apartment_id=apartment.id) }}" class="apartment-avr-form apartment-addendum-form mb-3" data-apartment-async="1">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="form-label mb-0">Изменить доп. соглашение</label>
+            <div class="apartment-avr-actions">
+              <button class="btn btn-sm {{ 'btn-secondary' if row.addendum_status == addendum_status_none else 'btn-outline-secondary' }}" type="submit" name="addendum_status" value="{{ addendum_status_none }}">Нет</button>
+              <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status == addendum_status_needed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
+              <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
+            </div>
+          </form>
           {% endif %}
           <div class="apartment-data-note">
             <span>Комментарий(передача)</span>

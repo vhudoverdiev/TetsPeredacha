@@ -290,6 +290,8 @@ class Apartment(TimestampMixin, db.Model):
     avr_archived_at = db.Column(db.DateTime, nullable=True)
     avr_status = db.Column(db.String(30), default="needed", nullable=False, index=True)
     avr_signed_date = db.Column(db.Date, nullable=True)
+    addendum_status = db.Column(db.String(30), default="none", nullable=False, index=True)
+    addendum_status_manual = db.Column(db.Boolean, default=False, nullable=False, index=True)
     app_deadline_date = db.Column(db.Date, nullable=True)
     app_deadline_raw = db.Column(db.String(255), nullable=True)
     app_deadline_status = db.Column(db.String(30), default="normal", nullable=False, index=True)
@@ -416,7 +418,7 @@ class Apartment(TimestampMixin, db.Model):
             return self.app_deadline_date
         if not self.is_app_mode:
             return None
-        base_date = self.inspection_date or self.first_inspection_date
+        base_date = self.deadline_date
         if not base_date:
             return None
         return base_date + timedelta(days=60)

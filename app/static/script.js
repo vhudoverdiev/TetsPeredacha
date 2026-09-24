@@ -2874,6 +2874,28 @@ document.addEventListener('DOMContentLoaded', () => {
           if (signedDateInput && data.avr_signed_date) signedDateInput.value = data.avr_signed_date;
         }
 
+        const addendumDisplay = document.querySelector('[data-apartment-addendum-display]');
+        if (addendumDisplay && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
+          addendumDisplay.innerHTML = data.addendum_status === 'signed'
+            ? '<span class="badge-avr-signed">Подписано</span>'
+            : (data.addendum_status === 'needed'
+              ? '<span class="badge-avr-needed">Не подписано</span>'
+              : '<span class="status-pill status-pill-muted">Нет</span>');
+        }
+        if (form.classList.contains('apartment-addendum-form') && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
+          form.querySelectorAll('button[name="addendum_status"]').forEach(statusButton => {
+            const isActive = statusButton.value === data.addendum_status;
+            statusButton.classList.remove('btn-secondary', 'btn-outline-secondary', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success');
+            if (statusButton.value === 'signed') {
+              statusButton.classList.add(isActive ? 'btn-success' : 'btn-outline-success');
+            } else if (statusButton.value === 'needed') {
+              statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
+            } else {
+              statusButton.classList.add(isActive ? 'btn-secondary' : 'btn-outline-secondary');
+            }
+          });
+        }
+
         if (data.history_entry) {
           const historyList = document.querySelector('[data-apartment-history-list]');
           const historyEmpty = document.querySelector('[data-apartment-history-empty]');
@@ -2906,6 +2928,29 @@ document.addEventListener('DOMContentLoaded', () => {
           submitter.innerHTML = previousHtml;
         }
       }
+    });
+  });
+
+  document.querySelectorAll('[data-app-deadline-auto-form]').forEach(form => {
+    const signedInput = form.querySelector('[data-app-signed-date]');
+    const deadlineInput = form.querySelector('[data-app-deadline-date]');
+    const manualInput = form.querySelector('[data-app-deadline-manual]');
+    if (!signedInput || !deadlineInput || !manualInput) return;
+
+    const addCalendarDays = (dateValue, days) => {
+      if (!dateValue) return '';
+      const parsed = new Date(`${dateValue}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) return '';
+      parsed.setDate(parsed.getDate() + days);
+      return parsed.toISOString().slice(0, 10);
+    };
+
+    deadlineInput.addEventListener('input', () => {
+      manualInput.value = '1';
+    });
+    signedInput.addEventListener('change', () => {
+      if (manualInput.value === '1') return;
+      deadlineInput.value = addCalendarDays(signedInput.value, 60);
     });
   });
 

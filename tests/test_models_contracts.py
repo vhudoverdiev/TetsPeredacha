@@ -116,7 +116,7 @@ class ApartmentAndTaskModelContractsTests(unittest.TestCase):
         today = date(2026, 7, 29)
         no_deadline = Apartment(app_deadline_raw="без замечаний")
         explicit = Apartment(app_deadline_date=date(2026, 8, 1))
-        derived = Apartment(is_app_mode=True, inspection_date=date(2026, 7, 1))
+        derived = Apartment(is_app_mode=True, deadline_date=date(2026, 7, 1))
 
         self.assertIn("срок", no_deadline.app_deadline_label().lower())
         self.assertEqual(explicit.app_deadline_label(), "01.08.2026")

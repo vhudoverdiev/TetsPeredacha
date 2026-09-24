@@ -139,6 +139,7 @@ from app.services.task_service import (
     set_setting,
     AVR_STATUS_NEEDED,
     AVR_STATUS_SIGNED,
+    APP_DEADLINE_NORMAL,
     APP_DEADLINE_EXPIRING,
     APP_DEADLINE_EXPIRED,
     APP_DEADLINE_NO_REMARKS,
@@ -161,6 +162,15 @@ from app.services.remark_format import remark_plain_text_html, remark_sentence_l
 from app.two_factor import generate_totp_secret, provisioning_uri, qr_svg_data_uri, verify_totp
 
 bp = Blueprint("main", __name__)
+
+ADDENDUM_STATUS_NONE = "none"
+ADDENDUM_STATUS_NEEDED = "needed"
+ADDENDUM_STATUS_SIGNED = "signed"
+ADDENDUM_STATUS_LABELS = {
+    ADDENDUM_STATUS_NONE: "Нет",
+    ADDENDUM_STATUS_NEEDED: "Не подписано",
+    ADDENDUM_STATUS_SIGNED: "Подписано",
+}
 
 
 def _asc_nulls_last(column):
@@ -258,7 +268,7 @@ SECTION_LOCK_CHOICES = [
         "endpoints": {
             "main.apartments", "main.apartments_export", "main.apartment_detail", "main.update_apartment_po_status",
             "main.update_apartment_inspection_status", "main.update_apartment_inspection_date", "main.update_apartment_inspection_note",
-            "main.update_apartment_comment", "main.update_apartment_avr_status", "main.update_apartment_details",
+            "main.update_apartment_comment", "main.update_apartment_avr_status", "main.update_apartment_app_status", "main.update_apartment_addendum_status", "main.update_apartment_details",
         },
     },
     {"key": "avr", "label": "АВР", "icon": "bi-file-earmark-check", "endpoints": {"main.avr"}},
@@ -2271,6 +2281,8 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
         "main.update_apartment_inspection_note",
         "main.update_apartment_comment",
         "main.update_apartment_avr_status",
+        "main.update_apartment_app_status",
+        "main.update_apartment_addendum_status",
         "main.update_apartment_details",
     }
     if current_user.role in {ROLE_ADMIN, ROLE_MANAGER, ROLE_SUPERVISOR}:
@@ -8770,6 +8782,53 @@ def _group_avr_signed_date(apartments: list[Apartment]) -> date | None:
     return min(dates) if dates else None
 
 
+def _group_has_dop_agreement_task(apartments: list[Apartment]) -> bool:
+    for apartment in apartments:
+        for task in apartment.tasks or []:
+            if task.is_archived:
+                continue
+            if is_dop_agreement_point(task.work_point):
+                return True
+    return False
+
+
+def _group_addendum_status(apartments: list[Apartment]) -> str:
+    manual_statuses = [
+        apartment.addendum_status or ADDENDUM_STATUS_NONE
+        for apartment in apartments
+        if getattr(apartment, "addendum_status_manual", False)
+    ]
+    if manual_statuses:
+        if ADDENDUM_STATUS_SIGNED in manual_statuses:
+            return ADDENDUM_STATUS_SIGNED
+        if ADDENDUM_STATUS_NEEDED in manual_statuses:
+            return ADDENDUM_STATUS_NEEDED
+        return ADDENDUM_STATUS_NONE
+    if _group_has_dop_agreement_task(apartments):
+        return ADDENDUM_STATUS_NEEDED
+    stored_statuses = [apartment.addendum_status or ADDENDUM_STATUS_NONE for apartment in apartments]
+    if ADDENDUM_STATUS_SIGNED in stored_statuses:
+        return ADDENDUM_STATUS_SIGNED
+    if ADDENDUM_STATUS_NEEDED in stored_statuses:
+        return ADDENDUM_STATUS_NEEDED
+    return ADDENDUM_STATUS_NONE
+
+
+def _group_app_signed_date(apartments: list[Apartment]) -> date | None:
+    dates = [apartment.deadline_date for apartment in apartments if apartment.deadline_date]
+    return min(dates) if dates else None
+
+
+def _group_app_status(apartments: list[Apartment]) -> str:
+    if apartments and all(apartment.app_deadline_status == APP_DEADLINE_NO_REMARKS for apartment in apartments):
+        return APP_DEADLINE_NO_REMARKS
+    return APP_DEADLINE_NORMAL
+
+
+def _app_status_label(status: str | None) -> str:
+    return "Без замечаний" if status == APP_DEADLINE_NO_REMARKS else "Нужен АВР"
+
+
 def _group_app_deadline_status(apartments: list[Apartment]) -> str | None:
     deadline = _group_remark_deadline(apartments)
     if not deadline:
@@ -8941,6 +9000,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
     percent = round((done / total * 100), 1) if total else (100 if mode == "АПП" else 0)
     remark_deadline = _group_remark_deadline(apartments)
     app_deadline_status = _group_app_deadline_status(apartments)
+    app_status = _group_app_status(apartments)
     return {
         "apartment": apartment,
         "premise_label": _premise_label(apartment),
@@ -8970,9 +9030,14 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "remark_deadline": remark_deadline,
         "remark_deadline_display": _group_app_deadline_display(apartments),
         "remark_deadline_status": _remark_deadline_status_for_group(apartments, remark_deadline, app_deadline_status),
+        "app_signed_date": _group_app_signed_date(apartments),
+        "app_status": app_status,
+        "app_status_label": _app_status_label(app_status),
+        "addendum_status": _group_addendum_status(apartments),
+        "addendum_status_label": ADDENDUM_STATUS_LABELS.get(_group_addendum_status(apartments), "Нет"),
         "avr_status": _group_avr_status(apartments),
         "avr_signed_date": _group_avr_signed_date(apartments),
-        "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") == "apartment",
+        "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") == "apartment" and app_status != APP_DEADLINE_NO_REMARKS,
         "po_status": _po_status_for_group(apartments, active_tasks),
         "has_ordered_glass": bool(ordered_glass),
         "has_replaced_glass": bool(replaced_glass),
@@ -9094,6 +9159,8 @@ def apartments():
         po_status_classes=PO_STATUS_CLASSES,
         avr_status_needed=AVR_STATUS_NEEDED,
         avr_status_signed=AVR_STATUS_SIGNED,
+        app_deadline_normal=APP_DEADLINE_NORMAL,
+        app_deadline_no_remarks=APP_DEADLINE_NO_REMARKS,
     )
 
 
@@ -9794,6 +9861,107 @@ def update_apartment_comment(apartment_id: int):
     return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
 
+@bp.route("/apartments/<int:apartment_id>/app-status", methods=["POST"])
+@login_required
+def update_apartment_app_status(apartment_id: int):
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+    if current_user.role == "viewer":
+        abort(403)
+    apartment = db.session.get(Apartment, apartment_id) or abort(404)
+    if apartment.project_id != project.id:
+        abort(404)
+
+    status = (request.form.get("app_status") or APP_DEADLINE_NORMAL).strip()
+    if status not in {APP_DEADLINE_NORMAL, APP_DEADLINE_NO_REMARKS}:
+        abort(400)
+    signed_date = parse_date(request.form.get("app_signed_date"))
+    posted_deadline = parse_date(request.form.get("app_deadline_date"))
+    deadline_manual = (request.form.get("app_deadline_manual") or "").strip() == "1"
+    calculated_deadline = signed_date + timedelta(days=60) if signed_date else None
+    deadline_date = posted_deadline if deadline_manual else calculated_deadline
+
+    group_key = _apartment_group_key(apartment)
+    group = [
+        item
+        for item in Apartment.query.filter(Apartment.project_id == project.id).all()
+        if _is_visible_apartment_row(item) and _apartment_group_key(item) == group_key
+    ]
+    target_group = group or [apartment]
+    old_overview = _build_apartment_overview(target_group, include_activity=False)
+    old_signed_date = old_overview.get("app_signed_date")
+    old_deadline = old_overview.get("remark_deadline")
+    old_status = old_overview.get("app_status")
+    old_avr_status = old_overview.get("avr_status")
+    old_avr_signed_date = old_overview.get("avr_signed_date")
+
+    for item in target_group:
+        item.is_app_mode = True
+        item.is_unsold = False
+        item.deadline_date = signed_date
+        if status == APP_DEADLINE_NO_REMARKS:
+            item.app_deadline_status = APP_DEADLINE_NO_REMARKS
+            item.app_deadline_date = None
+            item.remark_deadline_date = None
+            item.app_deadline_raw = "без замечаний"
+            item.avr_status = AVR_STATUS_NEEDED
+            item.avr_signed_date = None
+        else:
+            item.app_deadline_status = APP_DEADLINE_NORMAL
+            item.app_deadline_date = deadline_date
+            item.remark_deadline_date = deadline_date
+            item.app_deadline_raw = None
+            if item.avr_status != AVR_STATUS_SIGNED:
+                item.avr_status = AVR_STATUS_NEEDED
+
+    history_changes = [
+        _log_apartment_field_change(
+            target_group,
+            "deadline_date",
+            old_signed_date.isoformat() if old_signed_date else "",
+            signed_date.isoformat() if signed_date else "",
+        ),
+        _log_apartment_field_change(
+            target_group,
+            "app_deadline_date",
+            old_deadline.isoformat() if old_deadline else "",
+            deadline_date.isoformat() if deadline_date and status != APP_DEADLINE_NO_REMARKS else "",
+        ),
+        _log_apartment_field_change(target_group, "app_deadline_status", old_status, status),
+        _log_apartment_field_change(target_group, "avr_status", old_avr_status, _group_avr_status(target_group)),
+        _log_apartment_field_change(
+            target_group,
+            "avr_signed_date",
+            old_avr_signed_date.isoformat() if old_avr_signed_date else "",
+            _group_avr_signed_date(target_group).isoformat() if _group_avr_signed_date(target_group) else "",
+        ),
+    ]
+    db.session.commit()
+
+    history_entry = None
+    for history_change in history_changes:
+        if history_change:
+            history_entry = _build_change_history_entry(history_change[0], task=history_change[1], users_cache={})
+            break
+    message = "Данные АПП обновлены"
+    if _wants_json_response():
+        return jsonify({
+            "ok": True,
+            "message": message,
+            "app_status": status,
+            "app_status_label": _app_status_label(status),
+            "app_signed_date": signed_date.isoformat() if signed_date else "",
+            "app_signed_date_label": format_ru_date(signed_date) if signed_date else "—",
+            "app_deadline_date": deadline_date.isoformat() if deadline_date and status != APP_DEADLINE_NO_REMARKS else "",
+            "app_deadline_date_label": format_ru_date(deadline_date) if deadline_date and status != APP_DEADLINE_NO_REMARKS else "Нет срока",
+            "show_avr": status != APP_DEADLINE_NO_REMARKS,
+            "history_entry": history_entry,
+        })
+    flash(message, "success")
+    return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+
+
 @bp.route("/apartments/<int:apartment_id>/avr-status", methods=["POST"])
 @login_required
 def update_apartment_avr_status(apartment_id: int):
@@ -9847,6 +10015,47 @@ def update_apartment_avr_status(apartment_id: int):
             "history_entry": history_entry,
         })
     flash("Статус АВР обновлен", "success")
+    return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+
+
+@bp.route("/apartments/<int:apartment_id>/addendum-status", methods=["POST"])
+@login_required
+def update_apartment_addendum_status(apartment_id: int):
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+    if current_user.role == "viewer":
+        abort(403)
+    apartment = db.session.get(Apartment, apartment_id) or abort(404)
+    if apartment.project_id != project.id:
+        abort(404)
+    status = (request.form.get("addendum_status") or "").strip()
+    if status not in {ADDENDUM_STATUS_NONE, ADDENDUM_STATUS_NEEDED, ADDENDUM_STATUS_SIGNED}:
+        abort(400)
+
+    group_key = _apartment_group_key(apartment)
+    group = [
+        item
+        for item in Apartment.query.filter(Apartment.project_id == project.id).all()
+        if _is_visible_apartment_row(item) and _apartment_group_key(item) == group_key
+    ]
+    target_group = group or [apartment]
+    old_status = _group_addendum_status(target_group)
+    for item in target_group:
+        item.addendum_status = status
+        item.addendum_status_manual = True
+    status_history_change = _log_apartment_field_change(target_group, "addendum_status", old_status, status)
+    db.session.commit()
+    if _wants_json_response():
+        history_entry = _build_change_history_entry(status_history_change[0], task=status_history_change[1], users_cache={}) if status_history_change else None
+        return jsonify({
+            "ok": True,
+            "message": "Статус доп. соглашения обновлен",
+            "addendum_status": status,
+            "addendum_status_label": ADDENDUM_STATUS_LABELS.get(status, status),
+            "history_entry": history_entry,
+        })
+    flash("Статус доп. соглашения обновлен", "success")
     return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
 
@@ -9909,6 +10118,11 @@ def apartment_detail(apartment_id: int):
         po_status_classes=PO_STATUS_CLASSES,
         avr_status_needed=AVR_STATUS_NEEDED,
         avr_status_signed=AVR_STATUS_SIGNED,
+        app_deadline_normal=APP_DEADLINE_NORMAL,
+        app_deadline_no_remarks=APP_DEADLINE_NO_REMARKS,
+        addendum_status_none=ADDENDUM_STATUS_NONE,
+        addendum_status_needed=ADDENDUM_STATUS_NEEDED,
+        addendum_status_signed=ADDENDUM_STATUS_SIGNED,
     )
 
 
@@ -11443,7 +11657,7 @@ def _parse_conflict_value_for_field(field_name: str | None, value: str | None):
         return parse_date(text)
     if field_name == "is_app_mode":
         return text.lower() in {"1", "true", "yes", "да", "апп"}
-    if field_name in {"owner_name", "phone", "finishing_type", "entrance", "floor", "app_deadline_raw", "app_deadline_status", "avr_status", "comment", "inspection_note"}:
+    if field_name in {"owner_name", "phone", "finishing_type", "entrance", "floor", "app_deadline_raw", "app_deadline_status", "avr_status", "addendum_status", "comment", "inspection_note"}:
         return text or None
     return text or None
 
@@ -11470,6 +11684,7 @@ SYNC_CONFLICT_FIELD_LABELS = {
     "is_app_mode": "Режим АПП",
     "avr_status": "Статус АВР",
     "avr_signed_date": "Дата подписания АВР",
+    "addendum_status": "Доп. соглашение",
     "comment": "Комментарий",
 }
 
@@ -11480,6 +11695,7 @@ SYNC_CONFLICT_VALUE_LABELS = {
     "expired": "Срок истёк",
     "needed": "Требуется АВР",
     "signed": "АВР подписан",
+    "none": "Нет",
     "true": "Да",
     "false": "Нет",
     "yes": "Да",
@@ -11531,6 +11747,8 @@ def _sync_conflict_value_label(conflict: SyncConflict, value: str | None) -> str
         return task_status.get("label", text)
     if conflict.field_name == "is_app_mode":
         return "Да" if text.casefold() in {"1", "true", "yes", "да", "апп"} else "Нет"
+    if conflict.field_name == "addendum_status":
+        return ADDENDUM_STATUS_LABELS.get(text, text)
     translated = SYNC_CONFLICT_VALUE_LABELS.get(text.casefold())
     if translated:
         return translated
