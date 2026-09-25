@@ -198,7 +198,7 @@ class FirefoxFrameBufferedNavigationTests(unittest.TestCase):
         ).group(1)
 
         self.assertEqual(worker_version, cache_version)
-        self.assertEqual(worker_version, "v181-single-inspection")
+        self.assertEqual(worker_version, "v182-inspection-align")
 
     def test_script_and_css_cache_busters_are_synchronized(self):
         script_version = re.search(
@@ -232,7 +232,7 @@ class FirefoxFrameBufferedNavigationTests(unittest.TestCase):
         self.assertEqual(style_version, worker_style_version)
         self.assertEqual(script_version, "v683-single-inspection")
         self.assertEqual(css_version, "v76-objects-three-columns")
-        self.assertEqual(style_version, "v685-single-inspection")
+        self.assertEqual(style_version, "v686-inspection-align")
         self.assertEqual(mobile_css_version, "v88-remark-sentence-lines")
 
 

@@ -58874,6 +58874,16 @@ html body.app-body .apartment-detail-page .apartment-addendum-date-badge {
   white-space: nowrap !important;
 }
 
+/* v666: align inspection value with the other apartment date rows. */
+html body.app-body .apartment-detail-page .apartment-compact-control-row:has([data-apartment-inspection-display]) {
+  grid-template-columns: minmax(7.2rem, 8.2rem) minmax(7.1rem, 1fr) minmax(10.2rem, auto) !important;
+}
+
+html body.app-body .apartment-detail-page [data-apartment-inspection-display] {
+  min-width: 0 !important;
+  justify-self: start !important;
+}
+
 /* v665: final CRM polish for accepted stats, replies and apartment quick edits. */
 html body.app-body .dashboard-accepted-summary-title {
   margin: .75rem 0 .65rem !important;
