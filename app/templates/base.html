@@ -935,7 +935,7 @@
 
       if ('serviceWorker' in navigator && window.isSecureContext) {
         navigator.serviceWorker
-          .register('/service-worker.js?v=v183-avr-stack', { scope: '/', updateViaCache: 'none' })
+          .register('/service-worker.js?v=v184-deadline-hide', { scope: '/', updateViaCache: 'none' })
           .then(registration => registration.update().catch(() => {}))
           .catch(() => {});
       }
@@ -1622,6 +1622,6 @@
 </div>
 
 <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}?v=5.3.3"></script>
-  <script src="{{ url_for('static', filename='script.js') }}?v=v684-avr-stack"></script>
+  <script src="{{ url_for('static', filename='script.js') }}?v=v685-deadline-hide"></script>
 </body>
 </html>

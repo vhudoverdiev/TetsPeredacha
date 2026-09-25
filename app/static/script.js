@@ -3106,6 +3106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appDeadlineDisplay && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date_label')) {
           appDeadlineDisplay.textContent = data.app_deadline_date_label || 'Нет срока';
         }
+        const appDeadlineDateControl = document.querySelector('[data-app-deadline-date-control]');
+        if (appDeadlineDateControl && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date')) {
+          appDeadlineDateControl.hidden = !data.app_deadline_date;
+        }
 
         if (data.history_entry) {
           const historyList = document.querySelector('[data-apartment-history-list]');

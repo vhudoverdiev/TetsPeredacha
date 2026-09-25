@@ -11,7 +11,7 @@ class StaticCacheContractsTests(unittest.TestCase):
     def test_static_cache_versions_match_current_stylesheets(self):
         self.assertIn("style.css') }}?v=v687-avr-stack", BASE_TEMPLATE)
         self.assertIn("desktop-only.css') }}?v=v76-objects-three-columns", BASE_TEMPLATE)
-        self.assertIn("peredacha-static-v183-avr-stack", SERVICE_WORKER)
+        self.assertIn("peredacha-static-v184-deadline-hide", SERVICE_WORKER)
         self.assertIn("/static/style.css?v=v687-avr-stack", SERVICE_WORKER)
         self.assertIn("/static/desktop-only.css?v=v76-objects-three-columns", SERVICE_WORKER)
         self.assertNotIn("/static/desktop-only.css?v=v75-account-back-text", SERVICE_WORKER)

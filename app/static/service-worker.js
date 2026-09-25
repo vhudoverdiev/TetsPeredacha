@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v183-avr-stack';
+const STATIC_CACHE = 'peredacha-static-v184-deadline-hide';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -16,7 +16,7 @@ const STATIC_ASSETS = [
   '/static/style.css?v=v687-avr-stack',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
   '/static/desktop-only.css?v=v76-objects-three-columns',
-  '/static/script.js?v=v684-avr-stack',
+  '/static/script.js?v=v685-deadline-hide',
 ];
 
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3000;
