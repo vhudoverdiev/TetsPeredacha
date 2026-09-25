@@ -169,7 +169,7 @@ class ServiceWorkerWeakNetworkTests(unittest.TestCase):
         ).group(1)
 
         self.assertEqual(worker_version, cache_version)
-        self.assertEqual(worker_version, "v180-inspection-stack")
+        self.assertEqual(worker_version, "v181-single-inspection")
 
 
 if __name__ == "__main__":

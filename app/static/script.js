@@ -3039,7 +3039,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const labels = Array.isArray(data.inspection_date_labels) && data.inspection_date_labels.length
             ? data.inspection_date_labels.map(label => escapeHtml(label || '—'))
             : [escapeHtml(data.inspection_date_label || '—')];
-          const dateStack = `<span class="apartment-inspection-date-stack">${labels.map(label => `<span>${label}</span>`).join('')}</span>`;
+          const dateStackClass = labels.length === 1 ? 'apartment-inspection-date-stack is-single' : 'apartment-inspection-date-stack';
+          const dateStack = `<span class="${dateStackClass}">${labels.map(label => `<span>${label}</span>`).join('')}</span>`;
           inspectionDisplay.innerHTML = status
             ? `<span class="status-pill ${statusClass}">${status}</span>${dateStack}`
             : dateStack;

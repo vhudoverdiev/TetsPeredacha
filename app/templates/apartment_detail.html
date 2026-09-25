@@ -91,7 +91,7 @@
             <b class="apartment-inspection-display" data-apartment-inspection-display>
               <span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span>
               {% if row.inspection_displays %}
-              <span class="apartment-inspection-date-stack">
+              <span class="apartment-inspection-date-stack {% if row.inspection_displays|length == 1 %}is-single{% endif %}">
                 {% for inspection_label in row.inspection_displays %}
                 <span>{{ inspection_label }}</span>
                 {% endfor %}

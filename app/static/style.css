@@ -58853,6 +58853,15 @@ html body.app-body .apartment-detail-page .apartment-inspection-date-stack > spa
   white-space: nowrap !important;
 }
 
+html body.app-body .apartment-detail-page .apartment-inspection-date-stack.is-single {
+  flex-direction: row !important;
+  max-width: none !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inspection-date-stack.is-single > span {
+  white-space: nowrap !important;
+}
+
 html body.app-body .apartment-detail-page .apartment-addendum-date-badge {
   display: inline-flex !important;
   align-items: center !important;
