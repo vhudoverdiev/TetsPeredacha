@@ -169,7 +169,7 @@ class ServiceWorkerWeakNetworkTests(unittest.TestCase):
         ).group(1)
 
         self.assertEqual(worker_version, cache_version)
-        self.assertEqual(worker_version, "v178-apartment-finish")
+        self.assertEqual(worker_version, "v179-note-icon")
 
 
 if __name__ == "__main__":

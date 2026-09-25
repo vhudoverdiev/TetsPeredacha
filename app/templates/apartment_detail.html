@@ -259,15 +259,19 @@
           {% if current_user.role not in ['viewer', 'office'] %}
           <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий</label>
+            <div class="apartment-note-form-head">
+              <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий</label>
+              <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button title="Удалить комментарий" aria-label="Удалить комментарий"><i class="bi bi-trash"></i></button>
+            </div>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
-            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn mt-2" type="button" data-clear-note-button>Удалить комментарий</button>
           </form>
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label class="form-label" for="inspection-note-{{ apartment.id }}">Устранение</label>
+            <div class="apartment-note-form-head">
+              <label class="form-label" for="inspection-note-{{ apartment.id }}">Устранение</label>
+              <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button title="Удалить устранение" aria-label="Удалить устранение"><i class="bi bi-trash"></i></button>
+            </div>
             <textarea class="form-control" id="inspection-note-{{ apartment.id }}" name="inspection_note" rows="3">{{ row.inspection_comment or '' }}</textarea>
-            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn mt-2" type="button" data-clear-note-button>Удалить устранение</button>
           </form>
           {% endif %}
           {% if row.po_status and current_user.role != 'office' %}

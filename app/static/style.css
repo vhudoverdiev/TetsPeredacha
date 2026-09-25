@@ -58901,6 +58901,13 @@ html body.app-body .site-error-reply-toggle.is-open span {
 }
 
 html body.app-body .apartment-note-clear-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-width: 2.15rem !important;
+  padding: 0 !important;
   border-color: rgba(239, 68, 68, .38) !important;
   color: #dc2626 !important;
   background: #ffffff !important;
@@ -58912,4 +58919,16 @@ html body.app-body .apartment-note-clear-btn:focus-visible {
   color: #ffffff !important;
   background: #dc2626 !important;
   border-color: #dc2626 !important;
+}
+
+html body.app-body .apartment-note-form-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: .75rem !important;
+  margin-bottom: .4rem !important;
+}
+
+html body.app-body .apartment-note-form-head .form-label {
+  margin: 0 !important;
 }
