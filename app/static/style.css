@@ -58884,6 +58884,37 @@ html body.app-body .apartment-detail-page [data-apartment-inspection-display] {
   justify-self: start !important;
 }
 
+/* v667: stack AVR date field above status buttons, matching deadline control. */
+html body.app-body .apartment-detail-page .apartment-avr-form .apartment-inline-controls {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: .38rem !important;
+  width: 9.45rem !important;
+  max-width: 100% !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-avr-form .apartment-inline-controls .form-control {
+  width: 100% !important;
+  min-height: 2.35rem !important;
+  padding: .42rem .62rem !important;
+  font-size: .82rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-avr-status-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: .36rem !important;
+  width: 100% !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-avr-status-actions .btn {
+  width: 100% !important;
+  min-height: 2.15rem !important;
+  padding: .35rem .45rem !important;
+  font-size: .76rem !important;
+}
+
 /* v665: final CRM polish for accepted stats, replies and apartment quick edits. */
 html body.app-body .dashboard-accepted-summary-title {
   margin: .75rem 0 .65rem !important;

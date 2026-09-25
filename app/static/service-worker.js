@@ -1,4 +1,4 @@
-const STATIC_CACHE = 'peredacha-static-v182-inspection-align';
+const STATIC_CACHE = 'peredacha-static-v183-avr-stack';
 const STATIC_ASSETS = [
   '/static/site.webmanifest',
   '/static/brand-logo.png',
@@ -13,10 +13,10 @@ const STATIC_ASSETS = [
   '/static/vendor/bootstrap/bootstrap.bundle.min.js?v=5.3.3',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6',
   '/static/vendor/bootstrap/fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6',
-  '/static/style.css?v=v686-inspection-align',
+  '/static/style.css?v=v687-avr-stack',
   '/static/mobile-only.css?v=v88-remark-sentence-lines',
   '/static/desktop-only.css?v=v76-objects-three-columns',
-  '/static/script.js?v=v683-single-inspection',
+  '/static/script.js?v=v684-avr-stack',
 ];
 
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3000;

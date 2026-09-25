@@ -204,9 +204,11 @@
               {% endif %}
             </b>
             <div class="apartment-inline-controls">
-              <button class="btn btn-sm {{ 'btn-primary' if row.avr_status == avr_status_needed else 'btn-outline-primary' }}" type="submit" name="avr_status" value="{{ avr_status_needed }}">Нужен</button>
-              <button class="btn btn-sm {{ 'btn-success' if row.avr_status == avr_status_signed else 'btn-outline-success' }}" type="submit" name="avr_status" value="{{ avr_status_signed }}">Подписан</button>
               <input class="form-control form-control-sm" type="date" name="avr_signed_date" value="{{ row.avr_signed_date.isoformat() if row.avr_signed_date else today.isoformat() }}" title="Дата подписания АВР">
+              <div class="apartment-avr-status-actions">
+                <button class="btn btn-sm {{ 'btn-primary' if row.avr_status == avr_status_needed else 'btn-outline-primary' }}" type="submit" name="avr_status" value="{{ avr_status_needed }}">Нужен</button>
+                <button class="btn btn-sm {{ 'btn-primary' if row.avr_status == avr_status_signed else 'btn-outline-primary' }}" type="submit" name="avr_status" value="{{ avr_status_signed }}">Подписан</button>
+              </div>
             </div>
           </form>
           {% else %}

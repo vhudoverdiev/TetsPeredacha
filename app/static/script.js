@@ -3066,11 +3066,7 @@ document.addEventListener('DOMContentLoaded', () => {
           form.querySelectorAll('button[name="avr_status"]').forEach(statusButton => {
             const isActive = statusButton.value === data.avr_status;
             statusButton.classList.remove('btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success');
-            if (statusButton.value === 'signed') {
-              statusButton.classList.add(isActive ? 'btn-success' : 'btn-outline-success');
-            } else {
-              statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
-            }
+            statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
           });
           const signedDateInput = form.querySelector('input[name="avr_signed_date"]');
           if (signedDateInput && data.avr_signed_date) signedDateInput.value = data.avr_signed_date;
