@@ -58840,3 +58840,76 @@ html body.app-body .apartment-detail-page .apartment-compact-control-row:has([da
   font-size: .76rem !important;
 }
 
+/* v665: final CRM polish for accepted stats, replies and apartment quick edits. */
+html body.app-body .dashboard-accepted-summary-title {
+  margin: .75rem 0 .65rem !important;
+  color: #111827 !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-title i {
+  width: 1rem !important;
+  height: 1rem !important;
+  color: #8dd62c !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: .65rem !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid div {
+  min-height: 4.65rem !important;
+  padding: .85rem .95rem !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: .9rem !important;
+  background: #ffffff !important;
+  box-shadow: 0 .75rem 1.6rem rgba(15, 23, 42, .035) !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid span {
+  display: block !important;
+  color: #667085 !important;
+  font-size: .86rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-body .dashboard-accepted-summary-grid b {
+  display: block !important;
+  margin-top: .2rem !important;
+  color: #0f172a !important;
+  font-size: 1.25rem !important;
+  font-weight: 950 !important;
+  line-height: 1.05 !important;
+}
+
+html body.app-body .site-error-reply-toggle.is-open {
+  color: #111827 !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(148, 163, 184, .55) !important;
+  box-shadow: 0 .55rem 1.15rem rgba(15, 23, 42, .055) !important;
+}
+
+html body.app-body .site-error-reply-toggle.is-open i,
+html body.app-body .site-error-reply-toggle.is-open i::before,
+html body.app-body .site-error-reply-toggle.is-open span {
+  color: #111827 !important;
+}
+
+html body.app-body .apartment-note-clear-btn {
+  border-color: rgba(239, 68, 68, .38) !important;
+  color: #dc2626 !important;
+  background: #ffffff !important;
+  font-weight: 850 !important;
+}
+
+html body.app-body .apartment-note-clear-btn:hover,
+html body.app-body .apartment-note-clear-btn:focus-visible {
+  color: #ffffff !important;
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}

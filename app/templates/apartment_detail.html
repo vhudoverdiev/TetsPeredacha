@@ -90,8 +90,8 @@
             <span>Осмотр</span>
             <b class="apartment-inspection-display" data-apartment-inspection-display>
               <span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span>
-              {% if row.inspection_date %}
-              <span>{{ row.inspection_display }}</span>
+              {% if row.inspection_displays %}
+              <span>{{ row.inspection_displays|join(', ') }}</span>
               {% endif %}
             </b>
             {% if can_edit_inspection_date and row.inspection_date %}
@@ -194,9 +194,9 @@
             <span>АВР</span>
             <b data-apartment-avr-display>
               {% if row.avr_status == avr_status_signed %}
-                <span class="badge-avr-signed">Подписан{% if row.avr_signed_date %} от {{ row.avr_signed_date|ru_date }}{% endif %}</span>
+                <span class="badge-avr-signed">{{ row.avr_signed_date|ru_date if row.avr_signed_date else 'Подписан' }}</span>
               {% else %}
-                <span class="badge-avr-signed">Нужен</span>
+                <span class="badge-avr-needed">Нужен</span>
               {% endif %}
             </b>
             <div class="apartment-inline-controls">
@@ -210,7 +210,7 @@
             <span>АВР</span>
             <b data-apartment-avr-display>
               {% if row.avr_status == avr_status_signed %}
-                <span class="badge-avr-signed">Подписан{% if row.avr_signed_date %} от {{ row.avr_signed_date|ru_date }}{% endif %}</span>
+                <span class="badge-avr-signed">{{ row.avr_signed_date|ru_date if row.avr_signed_date else 'Подписан' }}</span>
               {% else %}
                 <span class="badge-avr-needed">Нужен</span>
               {% endif %}
@@ -225,7 +225,7 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed">Подписано</span>
+                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}
@@ -240,7 +240,7 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed">Подписано</span>
+                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}
@@ -261,11 +261,13 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий</label>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
+            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn mt-2" type="button" data-clear-note-button>Удалить комментарий</button>
           </form>
           <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label class="form-label" for="inspection-note-{{ apartment.id }}">Устранение</label>
             <textarea class="form-control" id="inspection-note-{{ apartment.id }}" name="inspection_note" rows="3">{{ row.inspection_comment or '' }}</textarea>
+            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn mt-2" type="button" data-clear-note-button>Удалить устранение</button>
           </form>
           {% endif %}
           {% if row.po_status and current_user.role != 'office' %}

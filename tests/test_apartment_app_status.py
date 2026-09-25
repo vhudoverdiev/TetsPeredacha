@@ -76,6 +76,22 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertEqual(apartment.app_deadline_date, date(2026, 12, 1))
         self.assertEqual(apartment.remark_deadline_date, date(2026, 12, 1))
 
+    def test_changed_deadline_is_manual_even_without_hidden_flag(self):
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/app-status",
+            data={
+                "app_status": APP_DEADLINE_NORMAL,
+                "app_signed_date": "2026-09-16",
+                "app_deadline_date": "2026-12-01",
+                "app_deadline_manual": "0",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        apartment = db.session.get(Apartment, self.apartment.id)
+        self.assertEqual(apartment.app_deadline_date, date(2026, 12, 1))
+        self.assertEqual(apartment.remark_deadline_date, date(2026, 12, 1))
+
     def test_no_remarks_hides_avr_section(self):
         self.apartment.avr_status = AVR_STATUS_SIGNED
         self.apartment.avr_signed_date = date(2026, 10, 1)
@@ -233,6 +249,7 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertIn(f'value="{APP_DEADLINE_NO_REMARKS}"', page)
         self.assertIn(f'value="{AVR_STATUS_NEEDED}"', page)
         self.assertIn(f'value="{AVR_STATUS_SIGNED}"', page)
+        self.assertIn('value="addendum"', page)
 
         with_remarks_page = self.client.get("/apartments?avr_status=with_remarks").get_data().decode("utf-8")
         self.assertIn("/apartments/1?back=", with_remarks_page)
@@ -254,6 +271,26 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertIn("/apartments/3?back=", signed_page)
         self.assertNotIn("/apartments/1?back=", signed_page)
         self.assertNotIn("/apartments/2?back=", signed_page)
+
+    def test_apartments_filter_can_show_addendum_rows(self):
+        point = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)")
+        addendum_apartment = Apartment(project=self.project, apartment_number="5", is_app_mode=True)
+        task = Task(
+            project=self.project,
+            apartment=addendum_apartment,
+            work_point=point,
+            source_uid="filter-addendum",
+            description="Выдать ТМЦ",
+            status=STATUS_NOT_STARTED,
+        )
+        ordinary_app = Apartment(project=self.project, apartment_number="6", is_app_mode=True)
+        db.session.add_all([point, addendum_apartment, task, ordinary_app])
+        db.session.commit()
+
+        page = self.client.get("/apartments?avr_status=addendum").get_data(as_text=True)
+
+        self.assertIn(f"/apartments/{addendum_apartment.id}?back=", page)
+        self.assertNotIn(f"/apartments/{ordinary_app.id}?back=", page)
 
 
 if __name__ == "__main__":

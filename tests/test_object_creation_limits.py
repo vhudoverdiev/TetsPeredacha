@@ -121,3 +121,19 @@ class ObjectCreationLimitTests(unittest.TestCase):
         self.assertEqual(self.client.get(f"/objects/{project.id}/delete/confirm").status_code, 403)
         self.assertEqual(self.client.post(f"/objects/{project.id}/delete").status_code, 403)
         self.assertIsNotNone(db.session.get(Project, project.id))
+
+    def test_object_card_hides_commercial_stats_when_project_has_no_commercial(self):
+        admin = self._create_user("admin-commercial-visibility", ROLE_ADMIN)
+        db.session.add_all([
+            Project(name="Без коммерций", has_apartments=True, has_commercial=False),
+            Project(name="С коммерциями", has_apartments=True, has_commercial=True),
+        ])
+        db.session.commit()
+        self._login(admin.username)
+
+        page = self.client.get("/objects").get_data(as_text=True)
+        no_commercial_card = page.split("Без коммерций", 1)[1].split("</article>", 1)[0]
+        commercial_card = page.split("С коммерциями", 1)[1].split("</article>", 1)[0]
+
+        self.assertNotIn("Коммерций:", no_commercial_card)
+        self.assertIn("Коммерций:", commercial_card)

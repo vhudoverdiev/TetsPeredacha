@@ -3055,7 +3055,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const avrDisplay = document.querySelector('[data-apartment-avr-display]');
         if (avrDisplay && Object.prototype.hasOwnProperty.call(data, 'avr_status')) {
           avrDisplay.innerHTML = data.avr_status === 'signed'
-            ? `<span class="badge-avr-signed">Подписан${data.avr_signed_date_label ? ` от ${escapeHtml(data.avr_signed_date_label)}` : ''}</span>`
+            ? `<span class="badge-avr-signed">${escapeHtml(data.avr_signed_date_label || 'Подписан')}</span>`
             : '<span class="badge-avr-needed">Нужен</span>';
         }
         if (form.classList.contains('apartment-avr-form') && Object.prototype.hasOwnProperty.call(data, 'avr_status')) {
@@ -3075,7 +3075,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addendumDisplay = document.querySelector('[data-apartment-addendum-display]');
         if (addendumDisplay && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
           addendumDisplay.innerHTML = data.addendum_status === 'signed'
-            ? '<span class="badge-avr-signed">Подписано</span>'
+            ? `<span class="badge-avr-signed">${escapeHtml(data.addendum_signed_date_label || 'Подписано')}</span>`
             : '<span class="badge-avr-needed">Не подписано</span>';
         }
         if (form.classList.contains('apartment-addendum-form') && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
@@ -3097,6 +3097,14 @@ document.addEventListener('DOMContentLoaded', () => {
           appStatusDisplay.innerHTML = data.app_status === 'no_remarks'
             ? '<span class="status-pill status-pill-success">Без замечаний</span>'
             : '<span class="status-pill status-pill-warning">Есть замечания</span>';
+        }
+        const appSignedDisplay = document.querySelector('[data-apartment-app-signed-display]');
+        if (appSignedDisplay && Object.prototype.hasOwnProperty.call(data, 'app_signed_date_label')) {
+          appSignedDisplay.textContent = data.app_signed_date_label || '—';
+        }
+        const appDeadlineDisplay = document.querySelector('.apartment-deadline-display .apartment-deadline-date');
+        if (appDeadlineDisplay && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date_label')) {
+          appDeadlineDisplay.textContent = data.app_deadline_date_label || 'Нет срока';
         }
 
         if (data.history_entry) {
@@ -3151,6 +3159,9 @@ document.addEventListener('DOMContentLoaded', () => {
     deadlineInput.addEventListener('input', () => {
       manualInput.value = '1';
     });
+    deadlineInput.addEventListener('change', () => {
+      manualInput.value = '1';
+    });
     signedInput.addEventListener('change', () => {
       if (manualInput.value === '1') return;
       deadlineInput.value = addCalendarDays(signedInput.value, 60);
@@ -3176,6 +3187,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.querySelectorAll('textarea').forEach(field => {
       field.addEventListener('blur', () => submitSoon(40));
+    });
+  });
+
+  document.querySelectorAll('[data-clear-note-button]').forEach(button => {
+    button.addEventListener('click', () => {
+      const form = button.closest('form');
+      const textarea = form ? form.querySelector('textarea') : null;
+      if (!form || !textarea) return;
+      textarea.value = '';
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit();
+      } else {
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
     });
   });
 

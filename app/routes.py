@@ -8989,6 +8989,21 @@ def _apartment_inspection_value(apartment: Apartment) -> date | datetime | None:
     return apartment.inspection_date or apartment.first_inspection_date
 
 
+def _apartment_inspection_values(apartment: Apartment) -> list[date | datetime]:
+    scheduled = _parse_inspection_schedule_marker(apartment.inspection_note)
+    if scheduled is not None:
+        return [scheduled]
+    values: list[date | datetime] = []
+    for value in (apartment.inspection_date, apartment.first_inspection_date, apartment.reinspection_date):
+        if value is not None:
+            values.append(value)
+    for match in re.finditer(r"Дополнительный осмотр:\s*(\d{2}\.\d{2}\.\d{4})", str(apartment.inspection_note or "")):
+        parsed = parse_date(match.group(1))
+        if parsed is not None:
+            values.append(parsed)
+    return values
+
+
 def _inspection_sort_datetime(value: date | datetime | None) -> datetime | None:
     if value is None:
         return None
@@ -9008,21 +9023,38 @@ def _format_inspection_display_value(value: date | datetime | None) -> str:
 def _apartment_inspection_date(apartments: list[Apartment]) -> date | None:
     dates: list[date] = []
     for apartment in apartments:
-        value = _apartment_inspection_value(apartment)
-        if isinstance(value, datetime):
-            dates.append(value.date())
-        elif isinstance(value, date):
-            dates.append(value)
+        for value in _apartment_inspection_values(apartment):
+            if isinstance(value, datetime):
+                dates.append(value.date())
+            elif isinstance(value, date):
+                dates.append(value)
     return min(dates) if dates else None
 
 
 def _apartment_inspection_display(apartments: list[Apartment]) -> str:
-    values = [_apartment_inspection_value(apartment) for apartment in apartments]
+    values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
     values = [value for value in values if value is not None]
     if not values:
         return "—"
     chosen = min(values, key=lambda value: _inspection_sort_datetime(value) or datetime.max)
     return _format_inspection_display_value(chosen)
+
+
+def _apartment_inspection_displays(apartments: list[Apartment]) -> list[str]:
+    values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
+    unique: dict[str, date | datetime] = {}
+    for value in values:
+        if value is None:
+            continue
+        label = _format_inspection_display_value(value)
+        unique.setdefault(label, value)
+    return [
+        label
+        for label, _value in sorted(
+            unique.items(),
+            key=lambda item: _inspection_sort_datetime(item[1]) or datetime.max,
+        )
+    ]
 
 
 def _apartment_inspection_status_class(status: str | None) -> str:
@@ -9154,7 +9186,7 @@ def _group_app_deadline_status(apartments: list[Apartment]) -> str | None:
 def _apartment_inspection_status(apartments: list[Apartment]) -> str | None:
     if apartments and any(_is_unsold_apartment(apartment) for apartment in apartments):
         return "не продана"
-    values = [_apartment_inspection_value(apartment) for apartment in apartments]
+    values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
     values = [value for value in values if value is not None]
     if values:
         nearest = min(values, key=lambda value: _inspection_sort_datetime(value) or datetime.max)
@@ -9323,6 +9355,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "manual_comment": _apartment_manual_comment(apartments),
         "inspection_date": _apartment_inspection_date(apartments),
         "inspection_display": _apartment_inspection_display(apartments),
+        "inspection_displays": _apartment_inspection_displays(apartments),
         "inspection_status": _apartment_inspection_status(apartments),
         "inspection_status_class": _apartment_inspection_status_class(_apartment_inspection_status(apartments)),
         "tasks": tasks,
@@ -9572,6 +9605,8 @@ def _filtered_apartment_overview_rows(
         if avr_status_filter == APP_DEADLINE_NO_REMARKS and (row.get("mode") != "АПП" or row.get("app_status") != APP_DEADLINE_NO_REMARKS):
             continue
         if avr_status_filter in {AVR_STATUS_NEEDED, AVR_STATUS_SIGNED} and (not row.get("show_avr") or row.get("avr_status") != avr_status_filter):
+            continue
+        if avr_status_filter == "addendum" and not row.get("has_addendum_task"):
             continue
         if po_status_filter and row.get("po_status") != po_status_filter:
             continue
@@ -10110,7 +10145,7 @@ def update_apartment_inspection_date(apartment_id: int):
             "ok": True,
             "message": message,
             "inspection_date": inspection_date.isoformat() if inspection_date else "",
-            "inspection_date_label": overview.get("inspection_display") or "—",
+            "inspection_date_label": ", ".join(overview.get("inspection_displays") or []) or "—",
             "inspection_status": overview.get("inspection_status") or "",
             "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
             "history_entry": history_entry,
@@ -10198,8 +10233,10 @@ def update_apartment_app_status(apartment_id: int):
         abort(400)
     signed_date = parse_date(request.form.get("app_signed_date"))
     posted_deadline = parse_date(request.form.get("app_deadline_date"))
-    deadline_manual = (request.form.get("app_deadline_manual") or "").strip() == "1"
     calculated_deadline = signed_date + timedelta(days=60) if signed_date else None
+    deadline_manual = (request.form.get("app_deadline_manual") or "").strip() == "1"
+    if posted_deadline and posted_deadline != calculated_deadline:
+        deadline_manual = True
     deadline_date = posted_deadline if deadline_manual else calculated_deadline
 
     group_key = _apartment_group_key(apartment)

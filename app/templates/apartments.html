@@ -42,6 +42,7 @@
           <option value="{{ app_deadline_no_remarks }}" {% if args.get('avr_status') == app_deadline_no_remarks %}selected{% endif %}>Без замечаний</option>
           <option value="{{ avr_status_needed }}" {% if args.get('avr_status') == avr_status_needed %}selected{% endif %}>Нужен АВР</option>
           <option value="{{ avr_status_signed }}" {% if args.get('avr_status') == avr_status_signed %}selected{% endif %}>Подписан АВР</option>
+          <option value="addendum" {% if args.get('avr_status') == 'addendum' %}selected{% endif %}>Соглашение</option>
         </select>
       </div>
       {% if current_user.role != 'office' %}
@@ -140,18 +141,14 @@
         <i class="bi bi-file-earmark-check"></i>
         АВР:
         {% if row.avr_status == avr_status_signed %}
-          <b class="badge-avr-signed">Подписан{% if row.avr_signed_date %} от {{ row.avr_signed_date|ru_date }}{% endif %}</b>
+          <b class="badge-avr-signed">{{ row.avr_signed_date|ru_date if row.avr_signed_date else 'Подписан' }}</b>
         {% else %}
           <b class="badge-avr-needed">Нужен</b>
         {% endif %}
       </span>
       {% endif %}
       <span><i class="bi bi-list-check"></i>Замечаний: {{ row.total }}</span>
-      {% if row.mode == 'АПП' %}
-        <span><i class="bi bi-chat-left-text"></i>Комментарий(передача): {{ row.manual_comment or '—' }}</span>
-      {% elif row.mode == 'не принята' %}
-        <span><i class="bi bi-chat-left-text"></i>Комментарий(устранение замечаний): {{ row.inspection_comment or '—' }}</span>
-      {% endif %}
+      <span><i class="bi bi-chat-left-text"></i>Комментарий: {{ row.manual_comment or '—' }}</span>
     </div>
     </a>
 
