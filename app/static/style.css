@@ -58840,6 +58840,31 @@ html body.app-body .apartment-detail-page .apartment-compact-control-row:has([da
   font-size: .76rem !important;
 }
 
+html body.app-body .apartment-detail-page .apartment-inspection-date-stack {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: .06rem !important;
+  min-width: 0 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inspection-date-stack > span {
+  display: block !important;
+  white-space: nowrap !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-date-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: 6.2rem !important;
+  min-height: 1.75rem !important;
+  padding: .2rem .48rem !important;
+  font-size: .72rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
 /* v665: final CRM polish for accepted stats, replies and apartment quick edits. */
 html body.app-body .dashboard-accepted-summary-title {
   margin: .75rem 0 .65rem !important;

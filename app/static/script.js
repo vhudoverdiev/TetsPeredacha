@@ -3036,10 +3036,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inspectionDisplay && Object.prototype.hasOwnProperty.call(data, 'inspection_date_label')) {
           const status = escapeHtml(data.inspection_status || '');
           const statusClass = escapeHtml(data.inspection_status_class || 'status-pill-muted');
-          const label = escapeHtml(data.inspection_date_label || '—');
+          const labels = Array.isArray(data.inspection_date_labels) && data.inspection_date_labels.length
+            ? data.inspection_date_labels.map(label => escapeHtml(label || '—'))
+            : [escapeHtml(data.inspection_date_label || '—')];
+          const dateStack = `<span class="apartment-inspection-date-stack">${labels.map(label => `<span>${label}</span>`).join('')}</span>`;
           inspectionDisplay.innerHTML = status
-            ? `<span class="status-pill ${statusClass}">${status}</span><span>${label}</span>`
-            : label;
+            ? `<span class="status-pill ${statusClass}">${status}</span>${dateStack}`
+            : dateStack;
         }
 
         const commentDisplay = document.querySelector('[data-apartment-comment-display]');

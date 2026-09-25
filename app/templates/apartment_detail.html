@@ -91,7 +91,11 @@
             <b class="apartment-inspection-display" data-apartment-inspection-display>
               <span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span>
               {% if row.inspection_displays %}
-              <span>{{ row.inspection_displays|join(', ') }}</span>
+              <span class="apartment-inspection-date-stack">
+                {% for inspection_label in row.inspection_displays %}
+                <span>{{ inspection_label }}</span>
+                {% endfor %}
+              </span>
               {% endif %}
             </b>
             {% if can_edit_inspection_date and row.inspection_date %}
@@ -225,7 +229,7 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
+                  <span class="badge-avr-signed apartment-addendum-date-badge">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}
@@ -240,7 +244,7 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
+                  <span class="badge-avr-signed apartment-addendum-date-badge">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}

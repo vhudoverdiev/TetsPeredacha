@@ -10146,6 +10146,7 @@ def update_apartment_inspection_date(apartment_id: int):
             "message": message,
             "inspection_date": inspection_date.isoformat() if inspection_date else "",
             "inspection_date_label": ", ".join(overview.get("inspection_displays") or []) or "—",
+            "inspection_date_labels": overview.get("inspection_displays") or [],
             "inspection_status": overview.get("inspection_status") or "",
             "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
             "history_entry": history_entry,
