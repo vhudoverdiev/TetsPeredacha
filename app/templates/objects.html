@@ -50,7 +50,7 @@
       </div>
       {% endif %}
       <div class="object-description object-description-spacer" aria-hidden="true"></div>
-      <div class="object-meta object-meta-stats">
+      <div class="object-meta object-meta-stats{% if not project.has_commercial %} object-meta-stats-no-commercial{% endif %}">
         <div class="object-stat-row"><span>Всего помещений:</span><b class="stat-badge stat-badge-white">{{ stats.premises }}</b></div>
         <div class="object-stat-row"><span>Квартир:</span><b class="stat-badge stat-badge-white">{{ stats.apartments }}</b></div>
         {% if project.has_commercial %}

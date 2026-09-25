@@ -16699,6 +16699,10 @@ body:has(.documents-standalone-layout)::-webkit-scrollbar,
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: .55rem !important;
 }
+.object-meta-stats-no-commercial {
+  margin-top: .55rem !important;
+  align-content: start !important;
+}
 .object-stat-row {
   min-height: 3.3rem !important;
   align-items: flex-start !important;

@@ -136,4 +136,6 @@ class ObjectCreationLimitTests(unittest.TestCase):
         commercial_card = page.split("С коммерциями", 1)[1].split("</article>", 1)[0]
 
         self.assertNotIn("Коммерций:", no_commercial_card)
+        self.assertIn("object-meta-stats-no-commercial", no_commercial_card)
         self.assertIn("Коммерций:", commercial_card)
+        self.assertNotIn("object-meta-stats-no-commercial", commercial_card)

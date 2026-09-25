@@ -169,7 +169,7 @@ class ServiceWorkerWeakNetworkTests(unittest.TestCase):
         ).group(1)
 
         self.assertEqual(worker_version, cache_version)
-        self.assertEqual(worker_version, "v184-deadline-hide")
+        self.assertEqual(worker_version, "v185-object-stats")
 
 
 if __name__ == "__main__":

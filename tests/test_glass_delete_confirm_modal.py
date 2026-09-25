@@ -45,7 +45,7 @@ class GlassDeleteConfirmModalTest(unittest.TestCase):
 
         self.assertIn("script.js') }}?v=v685-deadline-hide", template)
         self.assertIn("/static/script.js?v=v685-deadline-hide", worker)
-        self.assertIn("peredacha-static-v184-deadline-hide", worker)
+        self.assertIn("peredacha-static-v185-object-stats", worker)
 
 
 if __name__ == "__main__":
