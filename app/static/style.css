@@ -58540,8 +58540,7 @@ html body.app-body .apartment-detail-page .apartment-data-note > span {
   word-break: normal !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-data-row > b,
-html body.app-body .apartment-detail-page .apartment-data-note > p {
+html body.app-body .apartment-detail-page .apartment-data-row > b {
   min-width: 0 !important;
   color: #111827 !important;
   font-size: .86rem !important;
@@ -58550,6 +58549,36 @@ html body.app-body .apartment-detail-page .apartment-data-note > p {
   white-space: normal !important;
   overflow-wrap: anywhere !important;
   word-break: normal !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-note > p {
+  min-width: 0 !important;
+  color: #111827 !important;
+  font-size: .86rem !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-note-with-action {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  column-gap: .65rem !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-note-with-action > span {
+  grid-column: 1 / -1 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-note-with-action > p {
+  grid-column: 1 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-data-note-with-action > .apartment-note-clear-btn {
+  grid-column: 2 !important;
+  justify-self: end !important;
 }
 
 html body.app-body .apartment-detail-page .apartment-compact-control-row,
@@ -58601,14 +58630,27 @@ html body.app-body .apartment-detail-page .inspection-option {
 }
 
 html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  width: min(100%, 13.5rem) !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: .38rem !important;
+  width: 9.45rem !important;
+  max-width: 100% !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-inline-controls .btn {
+html body.app-body .apartment-detail-page .apartment-addendum-form button[name="addendum_status"] {
+  min-width: 0 !important;
+  padding-inline: .5rem !important;
+  font-size: .74rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-addendum-status-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: .36rem !important;
   width: 100% !important;
-  justify-content: center !important;
 }
 
 html body.app-body .apartment-detail-page :is(.apartment-avr-form, .apartment-addendum-form) .btn-outline-success:hover,
@@ -58629,15 +58671,6 @@ html body.app-body .apartment-detail-page .inspection-note-form textarea.form-co
   min-height: 5rem !important;
   border-radius: .75rem !important;
   font-size: .88rem !important;
-}
-
-html body.app-body .apartment-detail-page .inspection-note-form::after {
-  content: "Сохраняется автоматически";
-  display: inline-flex;
-  margin-top: .35rem;
-  color: #667085;
-  font-size: .72rem;
-  font-weight: 750;
 }
 
 html body.app-body .apartment-detail-page .apartment-inspection-display {
@@ -58876,6 +58909,11 @@ html body.app-body .apartment-detail-page .apartment-compact-control-row:has([da
 html body.app-body .apartment-detail-page [data-apartment-inspection-display] {
   min-width: 0 !important;
   justify-self: start !important;
+}
+
+/* v669: lower the inspection date picker so it sits visually centered in the row. */
+html body.app-body .apartment-detail-page .apartment-compact-control-row:has([data-apartment-inspection-display]) .apartment-inspection-date-form {
+  transform: translateY(.28rem) !important;
 }
 
 /* v667: stack AVR date field above status buttons, matching deadline control. */

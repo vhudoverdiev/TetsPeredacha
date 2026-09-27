@@ -427,7 +427,6 @@ class AccessRightsContractsTests(unittest.TestCase):
                 "mobile_version_under_development": "1",
                 "site_maintenance_mode": "1",
                 "two_factor_every_login": "1",
-                "enable_messenger": "1",
                 "blocked_site_sections": ["objects", "materials", "unknown"],
             },
             follow_redirects=False,
@@ -439,7 +438,7 @@ class AccessRightsContractsTests(unittest.TestCase):
         self.assertEqual(settings["mobile_version_under_development"], "1")
         self.assertEqual(settings["site_maintenance_mode"], "1")
         self.assertEqual(settings["two_factor_every_login"], "1")
-        self.assertEqual(settings["enable_messenger"], "1")
+        self.assertNotIn("enable_messenger", settings)
         self.assertEqual(settings["blocked_site_sections"], "materials,objects")
 
     def test_project_access_guard_returns_allowed_project_and_hides_forbidden_project(self):

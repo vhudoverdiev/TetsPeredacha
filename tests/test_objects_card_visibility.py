@@ -24,13 +24,13 @@ class ObjectsCardVisibilityTests(unittest.TestCase):
     def test_desktop_object_cards_stay_three_per_row_when_window_narrows(self):
         self.assertIn(
             "html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {\n"
-            "  grid-template-columns: repeat(3, minmax(16rem, 1fr)) !important;\n"
-            "  min-width: calc(48rem + 2.5rem) !important;",
+            "  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;\n"
+            "  min-width: 0 !important;",
             DESKTOP_CSS,
         )
         self.assertIn(
             "html.desktop-like-pointer body.app-body:has(.objects-page) .objects-page {\n"
-            "  overflow-x: auto !important;",
+            "  overflow-x: visible !important;",
             DESKTOP_CSS,
         )
         self.assertNotIn(

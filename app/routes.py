@@ -1139,8 +1139,7 @@ def object_creation_limit_message(user: User | None = None) -> str:
 
 
 def _messenger_is_available(user: User | None = None) -> bool:
-    user = user or current_user
-    return bool(getattr(user, "is_authenticated", False) and _setting_bool("enable_messenger", True))
+    return False
 
 
 def _developer_user() -> User | None:
@@ -3126,27 +3125,7 @@ def site_error_delete(report_id: int):
 @bp.route("/site-errors/<int:report_id>/reply", methods=["POST"])
 @login_required
 def site_error_reply(report_id: int):
-    if current_user.role != ROLE_ADMIN:
-        abort(403)
-    report = db.session.get(SiteErrorReport, report_id) or abort(404)
-    project = selected_project()
-    if project and report.project_id not in {None, project.id}:
-        abort(404)
-    if report.kind != "user" or not report.user_id:
-        flash("Ответить можно только на обращение авторизованного пользователя.", "warning")
-        return redirect(request.referrer or url_for("main.site_errors"))
-    reply = (request.form.get("reply") or "").strip()
-    if not reply:
-        flash("Напишите ответ пользователю.", "warning")
-        return redirect(request.referrer or url_for("main.site_errors"))
-    report.developer_reply = reply[:5000]
-    report.developer_replied_at = utc_now()
-    report.developer_reply_user_id = current_user.id
-    report.user_reply_read_at = None
-    report.status = "closed"
-    db.session.commit()
-    flash("Ответ отправлен пользователю в мессенджер.", "success")
-    return redirect(request.referrer or url_for("main.site_errors", kind="user"))
+    abort(404)
 
 
 def _messenger_thread_partner() -> User | None:
@@ -9642,6 +9621,10 @@ def _filtered_apartment_overview_rows(
             continue
         if avr_status_filter == "addendum" and not row.get("has_addendum_task"):
             continue
+        if avr_status_filter == "addendum_signed" and (not row.get("has_addendum_task") or row.get("addendum_status") != ADDENDUM_STATUS_SIGNED):
+            continue
+        if avr_status_filter == "addendum_not_signed" and (not row.get("has_addendum_task") or row.get("addendum_status") == ADDENDUM_STATUS_SIGNED):
+            continue
         if po_status_filter and row.get("po_status") != po_status_filter:
             continue
         if finishing_groups and not _apartment_row_matches_finishing_groups(row, finishing_groups):
@@ -11408,7 +11391,6 @@ def site_settings():
         _set_setting_bool("mobile_version_under_development", request.form.get("mobile_version_under_development") == "1")
         _set_setting_bool("site_maintenance_mode", request.form.get("site_maintenance_mode") == "1")
         _set_setting_bool("two_factor_every_login", request.form.get("two_factor_every_login") == "1")
-        _set_setting_bool("enable_messenger", request.form.get("enable_messenger") == "1")
         allowed_section_keys = {choice["key"] for choice in SECTION_LOCK_CHOICES}
         _set_setting_csv("blocked_site_sections", [key for key in request.form.getlist("blocked_site_sections") if key in allowed_section_keys])
         db.session.commit()
@@ -11422,7 +11404,6 @@ def site_settings():
         mobile_version_under_development=_setting_bool("mobile_version_under_development"),
         site_maintenance_mode=_setting_bool("site_maintenance_mode"),
         two_factor_every_login=_setting_bool("two_factor_every_login"),
-        enable_messenger=_setting_bool("enable_messenger", True),
         blocked_site_sections=_setting_csv("blocked_site_sections"),
         section_lock_choices=SECTION_LOCK_CHOICES,
     )

@@ -2079,15 +2079,15 @@ html.desktop-like-pointer body.app-body .apartments-page .apartments-grid .apart
   background-color: transparent !important;
 }
 
-/* v77: object selection cards keep three fixed columns on desktop-like windows. */
+/* v78: object selection cards keep three columns without nested page scrolling. */
 html.desktop-like-pointer body.app-body:has(.objects-page) .objects-page {
-  overflow-x: auto !important;
+  overflow-x: visible !important;
   scrollbar-gutter: stable both-edges;
 }
 
 html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {
-  grid-template-columns: repeat(3, minmax(16rem, 1fr)) !important;
-  min-width: calc(48rem + 2.5rem) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  min-width: 0 !important;
   align-items: stretch !important;
   justify-content: stretch !important;
   gap: 1.25rem !important;

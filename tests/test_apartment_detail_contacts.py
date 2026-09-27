@@ -9,6 +9,7 @@ MODELS = (ROOT / "app" / "models.py").read_text(encoding="utf-8")
 ROUTES = (ROOT / "app" / "routes.py").read_text(encoding="utf-8")
 APP_INIT = (ROOT / "app" / "__init__.py").read_text(encoding="utf-8")
 STYLE = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")
+SCRIPT = (ROOT / "app" / "static" / "script.js").read_text(encoding="utf-8")
 
 
 class ApartmentDetailContactsTests(unittest.TestCase):
@@ -49,6 +50,29 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertNotIn("row.mode == 'АПП' and current_user.role", TEMPLATE)
         self.assertNotIn("row.mode == 'не принята' and current_user.role", TEMPLATE)
 
+    def test_apartment_comment_display_controls_are_not_part_of_editor_header(self):
+        comment_display = TEMPLATE.split('data-apartment-comment-display', 1)[1].split("</div>", 1)[0]
+        note_display = TEMPLATE.split('data-apartment-inspection-note-display', 1)[1].split("</div>", 1)[0]
+        comment_form_head = TEMPLATE.split('for="apartment-comment-', 1)[1].split("</div>", 1)[0]
+        note_form_head = TEMPLATE.split('for="inspection-note-', 1)[1].split("</div>", 1)[0]
+
+        self.assertIn('data-clear-note-form="apartment-comment-form-{{ apartment.id }}"', comment_display)
+        self.assertIn("{% if not row.manual_comment %} hidden{% endif %}", comment_display)
+        self.assertIn('data-clear-note-form="inspection-note-form-{{ apartment.id }}"', note_display)
+        self.assertIn("{% if not row.inspection_comment %} hidden{% endif %}", note_display)
+        self.assertNotIn("data-clear-note-button", comment_form_head)
+        self.assertNotIn("data-clear-note-button", note_form_head)
+        self.assertIn('id="apartment-comment-form-{{ apartment.id }}"', TEMPLATE)
+        self.assertIn('id="inspection-note-form-{{ apartment.id }}"', TEMPLATE)
+
+    def test_apartment_comment_display_is_plain_and_has_no_autosave_caption(self):
+        note_rule = STYLE.split("html body.app-body .apartment-detail-page .apartment-data-note > p {", 1)[1].split("}", 1)[0]
+
+        self.assertIn("font-weight: 400 !important;", note_rule)
+        self.assertNotIn("Сохраняется автоматически", STYLE)
+        self.assertIn("syncApartmentNoteClearButton", SCRIPT)
+        self.assertIn("button.getAttribute('data-clear-note-form')", SCRIPT)
+
     def test_correction_comment_is_internal_crm_field(self):
         self.assertIn("correction_comment = db.Column(db.Text", MODELS)
         self.assertIn("ALTER TABLE apartments ADD COLUMN correction_comment TEXT", APP_INIT)
@@ -74,6 +98,51 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         )
         self.assertIn("border-color: var(--peredacha-action-green-hover) !important;", rule)
         self.assertNotIn("var(--peredacha-action-green-dark)", rule)
+
+    def test_inspection_date_picker_is_lowered_in_compact_row(self):
+        selector = (
+            "html body.app-body .apartment-detail-page "
+            ".apartment-compact-control-row:has([data-apartment-inspection-display]) "
+            ".apartment-inspection-date-form {"
+        )
+        start = STYLE.index(selector)
+        rule = STYLE[start:STYLE.index("}", start)]
+
+        self.assertIn("transform: translateY(.28rem) !important;", rule)
+
+    def test_app_dates_refresh_display_after_async_save(self):
+        self.assertIn("data-apartment-app-signed-display", TEMPLATE)
+        self.assertIn("data-apartment-app-deadline-display", TEMPLATE)
+        self.assertIn("document.querySelectorAll('[data-apartment-app-signed-display]')", SCRIPT)
+        self.assertIn("document.querySelectorAll('[data-apartment-app-deadline-display]')", SCRIPT)
+        self.assertIn("appDeadlineInput.value = data.app_deadline_date || '';", SCRIPT)
+
+    def test_avr_date_autosave_keeps_current_status_and_refreshes_display(self):
+        self.assertIn("form.classList.contains('apartment-avr-form')", SCRIPT)
+        self.assertIn('button[name="avr_status"].btn-primary', SCRIPT)
+        self.assertIn("formData.set('avr_status', activeAvrButton.value || '')", SCRIPT)
+        self.assertIn("document.querySelectorAll('[data-apartment-avr-display]')", SCRIPT)
+        self.assertIn("signedDateInput.value = data.avr_signed_date || '';", SCRIPT)
+
+    def test_addendum_status_buttons_keep_text_on_one_line(self):
+        selector = (
+            'html body.app-body .apartment-detail-page '
+            '.apartment-addendum-form button[name="addendum_status"]'
+        )
+        start = STYLE.index(selector)
+        rule = STYLE[start:STYLE.index("}", start)]
+
+        self.assertIn("font-size: .74rem !important;", rule)
+        self.assertIn("white-space: nowrap !important;", rule)
+
+    def test_addendum_row_matches_avr_date_control_pattern(self):
+        self.assertIn('name="addendum_signed_date"', TEMPLATE)
+        self.assertIn('class="apartment-addendum-status-actions"', TEMPLATE)
+        self.assertNotIn("apartment-addendum-date-badge", TEMPLATE)
+        self.assertIn("activeAddendumButton", SCRIPT)
+        self.assertIn("formData.set('addendum_status', activeAddendumButton.value || '')", SCRIPT)
+        self.assertIn("document.querySelectorAll('[data-apartment-addendum-display]')", SCRIPT)
+        self.assertIn("signedDateInput.value = data.addendum_signed_date || '';", SCRIPT)
 
 
 if __name__ == "__main__":

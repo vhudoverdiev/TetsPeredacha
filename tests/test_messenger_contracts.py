@@ -4,18 +4,7 @@ from flask import g
 
 from config import Config
 from app import create_app, db, login_manager
-from app.models import (
-    AppSetting,
-    ChatMessage,
-    Project,
-    ROLE_ADMIN,
-    ROLE_EXECUTOR,
-    ROLE_MANAGER,
-    ROLE_OFFICE,
-    ROLE_SUPERVISOR,
-    SiteErrorReport,
-    User,
-)
+from app.models import Project, ROLE_ADMIN, ROLE_EXECUTOR, ROLE_MANAGER, ROLE_OFFICE, ROLE_SUPERVISOR, SiteErrorReport, User
 
 
 class TestConfig(Config):
@@ -70,42 +59,15 @@ class MessengerContractsTests(unittest.TestCase):
             session["session_version"] = int(user.session_version or 0)
             session["current_project_id"] = self.project.id
 
-    def test_messenger_available_for_authenticated_roles(self):
+    def test_messenger_endpoints_are_removed_for_authenticated_roles(self):
         for user in (self.admin, self.manager, self.supervisor, self.office, self.worker):
             with self.subTest(role=user.role):
                 client = self.app.test_client()
                 self._login(user, client)
                 response = client.get("/messenger/thread")
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, 403)
 
-    def test_messenger_can_be_disabled_from_site_settings(self):
-        db.session.add(AppSetting(key="enable_messenger", value="0"))
-        db.session.commit()
-
-        self._login(self.office, self.office_client)
-
-        response = self.office_client.get("/messenger/thread")
-
-        self.assertEqual(response.status_code, 403)
-
-    def test_user_can_chat_with_developer_and_developer_sees_unread(self):
-        self._login(self.office, self.office_client)
-        response = self.office_client.post("/messenger/send", data={"body": "Нужна помощь"})
-
-        self.assertEqual(response.status_code, 200)
-        payload = response.get_json()
-        self.assertTrue(payload["ok"])
-        self.assertEqual(ChatMessage.query.count(), 1)
-
-        self._login(self.admin, self.admin_client)
-        thread = self.admin_client.get(f"/messenger/thread?user_id={self.office.id}").get_json()
-
-        self.assertEqual(thread["messages"][0]["body"], "Нужна помощь")
-        self.assertEqual(thread["messages"][0]["sender"], "Офис")
-        office_row = next(user for user in thread["users"] if user["id"] == self.office.id)
-        self.assertEqual(office_row["unread"], 1)
-
-    def test_developer_reply_to_error_report_appears_in_user_appeals(self):
+    def test_developer_reply_to_error_report_is_removed(self):
         report = SiteErrorReport(
             project=self.project,
             user=self.office,
@@ -124,20 +86,8 @@ class MessengerContractsTests(unittest.TestCase):
             follow_redirects=False,
         )
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
         db.session.refresh(report)
-        self.assertEqual(report.status, "closed")
-        self.assertEqual(report.developer_reply, "Проверил, теперь работает.")
+        self.assertEqual(report.status, "new")
+        self.assertIsNone(report.developer_reply)
         self.assertIsNone(report.user_reply_read_at)
-
-        self._login(self.office, self.office_client)
-        thread = self.office_client.get("/messenger/thread").get_json()
-
-        self.assertEqual(thread["error_replies"][0]["reply"], "Проверил, теперь работает.")
-        self.assertFalse(thread["error_replies"][0]["read"])
-        self.assertGreaterEqual(thread["unread_count"], 1)
-
-        read_response = self.office_client.post("/messenger/error-replies/read")
-        self.assertEqual(read_response.status_code, 200)
-        db.session.refresh(report)
-        self.assertIsNotNone(report.user_reply_read_at)

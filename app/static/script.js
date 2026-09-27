@@ -3018,6 +3018,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (submitter?.name) {
           formData.set(submitter.name, submitter.value ?? '');
         }
+        if (!formData.has('avr_status') && form.classList.contains('apartment-avr-form')) {
+          const activeAvrButton = form.querySelector('button[name="avr_status"].btn-primary');
+          if (activeAvrButton) formData.set('avr_status', activeAvrButton.value || '');
+        }
+        if (!formData.has('addendum_status') && form.classList.contains('apartment-addendum-form')) {
+          const activeAddendumButton = form.querySelector('button[name="addendum_status"].btn-success, button[name="addendum_status"].btn-primary');
+          if (activeAddendumButton) formData.set('addendum_status', activeAddendumButton.value || '');
+        }
         const response = await fetch(form.action, {
           method: 'POST',
           body: formData,
@@ -3046,21 +3054,31 @@ document.addEventListener('DOMContentLoaded', () => {
             : dateStack;
         }
 
+        const syncApartmentNoteClearButton = (selector, value) => {
+          const display = document.querySelector(selector);
+          const noteCard = display?.closest('.apartment-data-note');
+          const clearButton = noteCard?.querySelector('[data-clear-note-button]');
+          if (clearButton) clearButton.hidden = !(value || '').trim();
+        };
+
         const commentDisplay = document.querySelector('[data-apartment-comment-display]');
         if (commentDisplay && Object.prototype.hasOwnProperty.call(data, 'comment')) {
           commentDisplay.textContent = data.comment || '—';
+          syncApartmentNoteClearButton('[data-apartment-comment-display]', data.comment || '');
         }
 
         const inspectionNoteDisplay = document.querySelector('[data-apartment-inspection-note-display]');
         if (inspectionNoteDisplay && Object.prototype.hasOwnProperty.call(data, 'inspection_note')) {
           inspectionNoteDisplay.textContent = data.inspection_note || '—';
+          syncApartmentNoteClearButton('[data-apartment-inspection-note-display]', data.inspection_note || '');
         }
 
-        const avrDisplay = document.querySelector('[data-apartment-avr-display]');
-        if (avrDisplay && Object.prototype.hasOwnProperty.call(data, 'avr_status')) {
-          avrDisplay.innerHTML = data.avr_status === 'signed'
-            ? `<span class="badge-avr-signed">${escapeHtml(data.avr_signed_date_label || 'Подписан')}</span>`
-            : '<span class="badge-avr-needed">Нужен</span>';
+        if (Object.prototype.hasOwnProperty.call(data, 'avr_status')) {
+          document.querySelectorAll('[data-apartment-avr-display]').forEach(avrDisplay => {
+            avrDisplay.innerHTML = data.avr_status === 'signed'
+              ? `<span class="badge-avr-signed">${escapeHtml(data.avr_signed_date_label || 'Подписан')}</span>`
+              : '<span class="badge-avr-needed">Нужен</span>';
+          });
         }
         if (form.classList.contains('apartment-avr-form') && Object.prototype.hasOwnProperty.call(data, 'avr_status')) {
           form.querySelectorAll('button[name="avr_status"]').forEach(statusButton => {
@@ -3069,14 +3087,17 @@ document.addEventListener('DOMContentLoaded', () => {
             statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
           });
           const signedDateInput = form.querySelector('input[name="avr_signed_date"]');
-          if (signedDateInput && data.avr_signed_date) signedDateInput.value = data.avr_signed_date;
+          if (signedDateInput && Object.prototype.hasOwnProperty.call(data, 'avr_signed_date')) {
+            signedDateInput.value = data.avr_signed_date || '';
+          }
         }
 
-        const addendumDisplay = document.querySelector('[data-apartment-addendum-display]');
-        if (addendumDisplay && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
-          addendumDisplay.innerHTML = data.addendum_status === 'signed'
-            ? `<span class="badge-avr-signed">${escapeHtml(data.addendum_signed_date_label || 'Подписано')}</span>`
-            : '<span class="badge-avr-needed">Не подписано</span>';
+        if (Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
+          document.querySelectorAll('[data-apartment-addendum-display]').forEach(addendumDisplay => {
+            addendumDisplay.innerHTML = data.addendum_status === 'signed'
+              ? `<span class="badge-avr-signed">${escapeHtml(data.addendum_signed_date_label || 'Подписано')}</span>`
+              : '<span class="badge-avr-needed">Не подписано</span>';
+          });
         }
         if (form.classList.contains('apartment-addendum-form') && Object.prototype.hasOwnProperty.call(data, 'addendum_status')) {
           form.querySelectorAll('button[name="addendum_status"]').forEach(statusButton => {
@@ -3090,6 +3111,10 @@ document.addEventListener('DOMContentLoaded', () => {
               statusButton.classList.add(isActive ? 'btn-primary' : 'btn-outline-primary');
             }
           });
+          const signedDateInput = form.querySelector('input[name="addendum_signed_date"]');
+          if (signedDateInput && Object.prototype.hasOwnProperty.call(data, 'addendum_signed_date')) {
+            signedDateInput.value = data.addendum_signed_date || '';
+          }
         }
 
         const appStatusDisplay = document.querySelector('[data-apartment-app-status-display]');
@@ -3098,17 +3123,23 @@ document.addEventListener('DOMContentLoaded', () => {
             ? '<span class="status-pill status-pill-success">Без замечаний</span>'
             : '<span class="status-pill status-pill-warning">Есть замечания</span>';
         }
-        const appSignedDisplay = document.querySelector('[data-apartment-app-signed-display]');
-        if (appSignedDisplay && Object.prototype.hasOwnProperty.call(data, 'app_signed_date_label')) {
-          appSignedDisplay.textContent = data.app_signed_date_label || '—';
+        if (Object.prototype.hasOwnProperty.call(data, 'app_signed_date_label')) {
+          document.querySelectorAll('[data-apartment-app-signed-display]').forEach(appSignedDisplay => {
+            appSignedDisplay.textContent = data.app_signed_date_label || '—';
+          });
         }
-        const appDeadlineDisplay = document.querySelector('.apartment-deadline-display .apartment-deadline-date');
-        if (appDeadlineDisplay && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date_label')) {
-          appDeadlineDisplay.textContent = data.app_deadline_date_label || 'Нет срока';
+        if (Object.prototype.hasOwnProperty.call(data, 'app_deadline_date_label')) {
+          document.querySelectorAll('[data-apartment-app-deadline-display]').forEach(appDeadlineDisplay => {
+            appDeadlineDisplay.textContent = data.app_deadline_date_label || 'Нет срока';
+          });
         }
         const appDeadlineDateControl = document.querySelector('[data-app-deadline-date-control]');
         if (appDeadlineDateControl && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date')) {
           appDeadlineDateControl.hidden = !data.app_deadline_date;
+        }
+        const appDeadlineInput = form.querySelector('[data-app-deadline-date]');
+        if (appDeadlineInput && Object.prototype.hasOwnProperty.call(data, 'app_deadline_date')) {
+          appDeadlineInput.value = data.app_deadline_date || '';
         }
 
         if (data.history_entry) {
@@ -3196,7 +3227,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-clear-note-button]').forEach(button => {
     button.addEventListener('click', () => {
-      const form = button.closest('form');
+      const formId = button.getAttribute('data-clear-note-form');
+      const form = formId ? document.getElementById(formId) : button.closest('form');
       const textarea = form ? form.querySelector('textarea') : null;
       if (!form || !textarea) return;
       textarea.value = '';

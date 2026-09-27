@@ -43,6 +43,8 @@
           <option value="{{ avr_status_needed }}" {% if args.get('avr_status') == avr_status_needed %}selected{% endif %}>Нужен АВР</option>
           <option value="{{ avr_status_signed }}" {% if args.get('avr_status') == avr_status_signed %}selected{% endif %}>Подписан АВР</option>
           <option value="addendum" {% if args.get('avr_status') == 'addendum' %}selected{% endif %}>Соглашение</option>
+          <option value="addendum_signed" {% if args.get('avr_status') == 'addendum_signed' %}selected{% endif %}>Соглашение подписано</option>
+          <option value="addendum_not_signed" {% if args.get('avr_status') == 'addendum_not_signed' %}selected{% endif %}>Соглашение не подписано</option>
         </select>
       </div>
       {% if current_user.role != 'office' %}

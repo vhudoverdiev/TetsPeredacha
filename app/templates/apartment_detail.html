@@ -139,7 +139,7 @@
             <div class="apartment-data-row apartment-data-row-with-control apartment-data-deadline-row apartment-compact-control-row">
               <span>Срок устранения</span>
               <b class="apartment-deadline-display">
-                <span class="apartment-deadline-date">{{ row.remark_deadline_display }}</span>
+                <span class="apartment-deadline-date" data-apartment-app-deadline-display>{{ row.remark_deadline_display }}</span>
                 {% if row.remark_deadline_status %}
                   <span class="deadline-badge deadline-badge-{{ row.remark_deadline_status.class }} apartment-deadline-status ms-2">{{ row.remark_deadline_status.label }}</span>
                 {% endif %}
@@ -173,7 +173,7 @@
           <div class="apartment-data-row apartment-data-deadline-row">
             <span>Срок устранения</span>
             <b class="apartment-deadline-display">
-              <span class="apartment-deadline-date">{{ row.remark_deadline_display }}</span>
+              <span class="apartment-deadline-date" data-apartment-app-deadline-display>{{ row.remark_deadline_display }}</span>
               {% if row.remark_deadline_status %}
                 <span class="deadline-badge deadline-badge-{{ row.remark_deadline_status.class }} apartment-deadline-status ms-2">{{ row.remark_deadline_status.label }}</span>
               {% endif %}
@@ -231,14 +231,17 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed apartment-addendum-date-badge">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
+                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}
               </b>
               <div class="apartment-inline-controls">
-                <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status != addendum_status_signed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
-                <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
+                <input class="form-control form-control-sm" type="date" name="addendum_signed_date" value="{{ row.addendum_signed_date.isoformat() if row.addendum_signed_date else today.isoformat() }}" title="Дата подписания соглашения">
+                <div class="apartment-addendum-status-actions">
+                  <button class="btn btn-sm {{ 'btn-primary' if row.addendum_status != addendum_status_signed else 'btn-outline-primary' }}" type="submit" name="addendum_status" value="{{ addendum_status_needed }}">Не подписано</button>
+                  <button class="btn btn-sm {{ 'btn-success' if row.addendum_status == addendum_status_signed else 'btn-outline-success' }}" type="submit" name="addendum_status" value="{{ addendum_status_signed }}">Подписано</button>
+                </div>
               </div>
             </form>
             {% else %}
@@ -246,7 +249,7 @@
               <span>Соглашение</span>
               <b data-apartment-addendum-display>
                 {% if row.addendum_status == addendum_status_signed %}
-                  <span class="badge-avr-signed apartment-addendum-date-badge">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
+                  <span class="badge-avr-signed">{{ row.addendum_signed_date|ru_date if row.addendum_signed_date else 'Подписано' }}</span>
                 {% else %}
                   <span class="badge-avr-needed">Не подписано</span>
                 {% endif %}
@@ -254,28 +257,32 @@
             </div>
             {% endif %}
           {% endif %}
-          <div class="apartment-data-note">
+          <div class="apartment-data-note apartment-data-note-with-action">
             <span>Комментарий(передача)</span>
             <p data-apartment-comment-display>{{ row.manual_comment or '—' }}</p>
+            {% if current_user.role not in ['viewer', 'office'] %}
+            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button data-clear-note-form="apartment-comment-form-{{ apartment.id }}" title="Удалить комментарий" aria-label="Удалить комментарий"{% if not row.manual_comment %} hidden{% endif %}><i class="bi bi-trash"></i></button>
+            {% endif %}
           </div>
-          <div class="apartment-data-note">
+          <div class="apartment-data-note apartment-data-note-with-action">
             <span>Комментарий(устранение замечаний)</span>
             <p data-apartment-inspection-note-display>{{ row.inspection_comment or '—' }}</p>
+            {% if current_user.role not in ['viewer', 'office'] %}
+            <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button data-clear-note-form="inspection-note-form-{{ apartment.id }}" title="Удалить устранение" aria-label="Удалить устранение"{% if not row.inspection_comment %} hidden{% endif %}><i class="bi bi-trash"></i></button>
+            {% endif %}
           </div>
           {% if current_user.role not in ['viewer', 'office'] %}
-          <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
+          <form method="post" action="{{ url_for('main.update_apartment_comment', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1" id="apartment-comment-form-{{ apartment.id }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="apartment-note-form-head">
               <label class="form-label" for="apartment-comment-{{ apartment.id }}">Комментарий(передача)</label>
-              <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button title="Удалить комментарий" aria-label="Удалить комментарий"><i class="bi bi-trash"></i></button>
             </div>
             <textarea class="form-control" id="apartment-comment-{{ apartment.id }}" name="apartment_comment" rows="3" placeholder="Например: Собственник не подписывает АВР">{{ row.manual_comment or '' }}</textarea>
           </form>
-          <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1">
+          <form method="post" action="{{ url_for('main.update_apartment_inspection_note', apartment_id=apartment.id) }}" class="inspection-note-form" data-apartment-async="1" id="inspection-note-form-{{ apartment.id }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="apartment-note-form-head">
               <label class="form-label" for="inspection-note-{{ apartment.id }}">Комментарий(устранение замечаний)</label>
-              <button class="btn btn-sm btn-outline-danger apartment-note-clear-btn" type="button" data-clear-note-button title="Удалить устранение" aria-label="Удалить устранение"><i class="bi bi-trash"></i></button>
             </div>
             <textarea class="form-control" id="inspection-note-{{ apartment.id }}" name="inspection_note" rows="3">{{ row.inspection_comment or '' }}</textarea>
           </form>

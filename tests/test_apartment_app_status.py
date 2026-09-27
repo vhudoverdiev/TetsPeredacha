@@ -292,6 +292,36 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertIn(f"/apartments/{addendum_apartment.id}?back=", page)
         self.assertNotIn(f"/apartments/{ordinary_app.id}?back=", page)
 
+    def test_apartments_filter_can_split_signed_and_unsigned_addendum_rows(self):
+        point = WorkPoint(point_number="26", short_name="Отступное (ТМЦ)")
+        signed = Apartment(
+            project=self.project,
+            apartment_number="7",
+            is_app_mode=True,
+            addendum_status="signed",
+            addendum_signed_date=date(2026, 9, 24),
+            addendum_status_manual=True,
+        )
+        unsigned = Apartment(
+            project=self.project,
+            apartment_number="8",
+            is_app_mode=True,
+            addendum_status="needed",
+            addendum_status_manual=True,
+        )
+        signed_task = Task(project=self.project, apartment=signed, work_point=point, source_uid="signed-addendum", description="ДC", status=STATUS_NOT_STARTED)
+        unsigned_task = Task(project=self.project, apartment=unsigned, work_point=point, source_uid="unsigned-addendum", description="ДC", status=STATUS_NOT_STARTED)
+        db.session.add_all([point, signed, unsigned, signed_task, unsigned_task])
+        db.session.commit()
+
+        signed_page = self.client.get("/apartments?avr_status=addendum_signed").get_data(as_text=True)
+        unsigned_page = self.client.get("/apartments?avr_status=addendum_not_signed").get_data(as_text=True)
+
+        self.assertIn(f"/apartments/{signed.id}?back=", signed_page)
+        self.assertNotIn(f"/apartments/{unsigned.id}?back=", signed_page)
+        self.assertIn(f"/apartments/{unsigned.id}?back=", unsigned_page)
+        self.assertNotIn(f"/apartments/{signed.id}?back=", unsigned_page)
+
 
 if __name__ == "__main__":
     unittest.main()
