@@ -57,13 +57,15 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         note_form_head = TEMPLATE.split('for="inspection-note-', 1)[1].split("</div>", 1)[0]
 
         self.assertIn('data-clear-note-form="apartment-comment-form-{{ apartment.id }}"', comment_display)
-        self.assertIn("{% if not row.manual_comment %} hidden{% endif %}", comment_display)
+        self.assertIn("{% if not has_manual_comment %} hidden{% endif %}", comment_display)
         self.assertIn('data-clear-note-form="inspection-note-form-{{ apartment.id }}"', note_display)
-        self.assertIn("{% if not row.inspection_comment %} hidden{% endif %}", note_display)
+        self.assertIn("{% if not has_inspection_comment %} hidden{% endif %}", note_display)
         self.assertNotIn("data-clear-note-button", comment_form_head)
         self.assertNotIn("data-clear-note-button", note_form_head)
         self.assertIn('id="apartment-comment-form-{{ apartment.id }}"', TEMPLATE)
         self.assertIn('id="inspection-note-form-{{ apartment.id }}"', TEMPLATE)
+        self.assertIn("manual_comment_text not in ['-', '—']", TEMPLATE)
+        self.assertIn("inspection_comment_text not in ['-', '—']", TEMPLATE)
 
     def test_apartment_comment_display_is_plain_and_has_no_autosave_caption(self):
         note_rule = STYLE.split("html body.app-body .apartment-detail-page .apartment-data-note > p {", 1)[1].split("}", 1)[0]
@@ -72,6 +74,7 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertNotIn("Сохраняется автоматически", STYLE)
         self.assertIn("syncApartmentNoteClearButton", SCRIPT)
         self.assertIn("button.getAttribute('data-clear-note-form')", SCRIPT)
+        self.assertIn("normalizedValue === '-' || normalizedValue === '—'", SCRIPT)
 
     def test_correction_comment_is_internal_crm_field(self):
         self.assertIn("correction_comment = db.Column(db.Text", MODELS)
@@ -99,16 +102,27 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("border-color: var(--peredacha-action-green-hover) !important;", rule)
         self.assertNotIn("var(--peredacha-action-green-dark)", rule)
 
-    def test_inspection_date_picker_is_lowered_in_compact_row(self):
-        selector = (
+    def test_inspection_date_picker_stacks_above_reset_action(self):
+        controls_selector = (
             "html body.app-body .apartment-detail-page "
             ".apartment-compact-control-row:has([data-apartment-inspection-display]) "
-            ".apartment-inspection-date-form {"
+            ".apartment-inline-controls {"
         )
-        start = STYLE.index(selector)
-        rule = STYLE[start:STYLE.index("}", start)]
+        controls_start = STYLE.index(controls_selector)
+        controls_rule = STYLE[controls_start:STYLE.index("}", controls_start)]
+        input_selector = (
+            "html body.app-body .apartment-detail-page "
+            ".apartment-compact-control-row:has([data-apartment-inspection-display]) "
+            ".apartment-inspection-date-form .form-control {"
+        )
+        input_start = STYLE.index(input_selector)
+        input_rule = STYLE[input_start:STYLE.index("}", input_start)]
 
-        self.assertIn("transform: translateY(.28rem) !important;", rule)
+        self.assertIn("flex-direction: column !important;", controls_rule)
+        self.assertIn("justify-self: end !important;", controls_rule)
+        self.assertIn("width: 8.45rem !important;", controls_rule)
+        self.assertIn("font-size: .72rem !important;", input_rule)
+        self.assertIn("min-height: 2rem !important;", input_rule)
 
     def test_app_dates_refresh_display_after_async_save(self):
         self.assertIn("data-apartment-app-signed-display", TEMPLATE)

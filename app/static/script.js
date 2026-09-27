@@ -3058,7 +3058,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const display = document.querySelector(selector);
           const noteCard = display?.closest('.apartment-data-note');
           const clearButton = noteCard?.querySelector('[data-clear-note-button]');
-          if (clearButton) clearButton.hidden = !(value || '').trim();
+          const normalizedValue = (value || '').trim();
+          if (clearButton) clearButton.hidden = !normalizedValue || normalizedValue === '-' || normalizedValue === '—';
         };
 
         const commentDisplay = document.querySelector('[data-apartment-comment-display]');
