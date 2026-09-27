@@ -21,16 +21,26 @@ class ObjectsCardVisibilityTests(unittest.TestCase):
         self.assertNotIn("project.legal_address", description_block)
         self.assertNotIn("project.developer_director", description_block)
 
-    def test_desktop_object_cards_render_three_per_row(self):
+    def test_desktop_object_cards_stay_three_per_row_when_window_narrows(self):
         self.assertIn(
             "html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {\n"
-            "  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;",
+            "  grid-template-columns: repeat(3, minmax(16rem, 1fr)) !important;\n"
+            "  min-width: calc(48rem + 2.5rem) !important;",
             DESKTOP_CSS,
         )
         self.assertIn(
+            "html.desktop-like-pointer body.app-body:has(.objects-page) .objects-page {\n"
+            "  overflow-x: auto !important;",
+            DESKTOP_CSS,
+        )
+        self.assertNotIn(
             "@media (max-width: 1480px) {\n"
-            "  html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid {\n"
-            "    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;",
+            "  html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid",
+            DESKTOP_CSS,
+        )
+        self.assertNotIn(
+            "@media (max-width: 980px) {\n"
+            "  html.desktop-like-pointer body.app-body:has(.objects-page) .objects-grid",
             DESKTOP_CSS,
         )
 
