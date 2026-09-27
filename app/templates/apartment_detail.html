@@ -29,12 +29,18 @@
             <span>Помещение</span>
             <b>{{ apartment.detail_label() }}</b>
           </div>
+          {% if apartment.premise_type != 'commercial' and row.contract_number %}
+          <div class="apartment-data-row">
+            <span>По договору</span>
+            <b>{{ row.contract_number }}</b>
+          </div>
+          {% endif %}
           {% if current_user.role != 'viewer' %}
           <form method="post" action="{{ url_for('main.update_apartment_details', apartment_id=apartment.id) }}" class="apartment-details-edit-form mb-3" data-apartment-details-autosave="1">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="apartment-data-row apartment-data-edit-row">
               <label for="apartment-owner-{{ apartment.id }}">ФИО собственника</label>
-              <input class="form-control form-control-sm" id="apartment-owner-{{ apartment.id }}" name="owner_name" type="text" value="{{ row.owner_names|join('\n') if row.owner_names else '' }}" maxlength="255" autocomplete="name">
+              <textarea class="form-control form-control-sm apartment-owner-names-control" id="apartment-owner-{{ apartment.id }}" name="owner_name" rows="{{ [row.owner_names|length, 1]|max }}" maxlength="255" autocomplete="name">{{ row.owner_names|join('\n') if row.owner_names else '' }}</textarea>
             </div>
             <div class="apartment-data-row apartment-data-edit-row">
               <label for="apartment-phone-{{ apartment.id }}">Номер телефона</label>

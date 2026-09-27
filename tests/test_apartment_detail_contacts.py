@@ -19,6 +19,15 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("row.owner_names|join(', ') if row.owner_names else '—'", TEMPLATE)
         self.assertIn("row.phones|join(', ') if row.phones else '—'", TEMPLATE)
 
+    def test_detail_renders_contract_number_and_multiline_owner_editor(self):
+        self.assertIn('"contract_number": _apartment_contract_number(apartment)', ROUTES)
+        self.assertIn("def _apartment_contract_number(apartment: Apartment) -> str:", ROUTES)
+        self.assertIn("apartment.premise_type != 'commercial' and row.contract_number", TEMPLATE)
+        self.assertIn("<span>По договору</span>", TEMPLATE)
+        self.assertIn('class="form-control form-control-sm apartment-owner-names-control"', TEMPLATE)
+        self.assertIn("row.owner_names|join('\\n') if row.owner_names else ''", TEMPLATE)
+        self.assertIn(".apartment-owner-names-control", STYLE)
+
     def test_detail_fields_autosave_without_manual_save_button(self):
         self.assertIn('data-apartment-details-autosave="1"', TEMPLATE)
         self.assertIn("'X-Requested-With': 'XMLHttpRequest'", TEMPLATE)
@@ -130,6 +139,9 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("document.querySelectorAll('[data-apartment-app-signed-display]')", SCRIPT)
         self.assertIn("document.querySelectorAll('[data-apartment-app-deadline-display]')", SCRIPT)
         self.assertIn("appDeadlineInput.value = data.app_deadline_date || '';", SCRIPT)
+        self.assertIn("const formatRuDateValue = (dateValue) =>", SCRIPT)
+        self.assertIn("const syncAppDateDisplays = () =>", SCRIPT)
+        self.assertIn("formatRuDateValue(deadlineInput.value) || 'Нет срока'", SCRIPT)
 
     def test_avr_date_autosave_keeps_current_status_and_refreshes_display(self):
         self.assertIn("form.classList.contains('apartment-avr-form')", SCRIPT)
@@ -146,8 +158,19 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         start = STYLE.index(selector)
         rule = STYLE[start:STYLE.index("}", start)]
 
-        self.assertIn("font-size: .74rem !important;", rule)
+        self.assertIn("width: 100% !important;", rule)
+        self.assertIn("font-size: .68rem !important;", rule)
         self.assertIn("white-space: nowrap !important;", rule)
+        self.assertIn("overflow: hidden !important;", rule)
+
+    def test_hidden_note_clear_button_is_not_forced_visible(self):
+        self.assertIn("apartment-note-clear-btn", TEMPLATE)
+        self.assertIn("{% if not has_manual_comment %} hidden{% endif %}", TEMPLATE)
+        self.assertIn("{% if not has_inspection_comment %} hidden{% endif %}", TEMPLATE)
+        self.assertIn("html body.app-body .apartment-note-clear-btn[hidden]", STYLE)
+        start = STYLE.index("html body.app-body .apartment-note-clear-btn[hidden]")
+        rule = STYLE[start:STYLE.index("}", start)]
+        self.assertIn("display: none !important;", rule)
 
     def test_addendum_row_matches_avr_date_control_pattern(self):
         self.assertIn('name="addendum_signed_date"', TEMPLATE)

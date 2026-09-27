@@ -58562,6 +58562,12 @@ html body.app-body .apartment-detail-page .apartment-data-note > p {
   word-break: normal !important;
 }
 
+html body.app-body .apartment-detail-page .apartment-owner-names-control {
+  min-height: 2.45rem !important;
+  resize: vertical !important;
+  line-height: 1.35 !important;
+}
+
 html body.app-body .apartment-detail-page .apartment-data-note-with-action {
   grid-template-columns: minmax(0, 1fr) auto !important;
   align-items: center !important;
@@ -58640,10 +58646,13 @@ html body.app-body .apartment-detail-page .apartment-addendum-form .apartment-in
 
 html body.app-body .apartment-detail-page .apartment-addendum-form button[name="addendum_status"] {
   min-width: 0 !important;
-  padding-inline: .5rem !important;
-  font-size: .74rem !important;
+  width: 100% !important;
+  padding-inline: .34rem !important;
+  font-size: .68rem !important;
   line-height: 1 !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
 }
 
 html body.app-body .apartment-detail-page .apartment-addendum-status-actions {
@@ -59025,6 +59034,10 @@ html body.app-body .apartment-note-clear-btn {
   color: #dc2626 !important;
   background: #ffffff !important;
   font-weight: 850 !important;
+}
+
+html body.app-body .apartment-note-clear-btn[hidden] {
+  display: none !important;
 }
 
 html body.app-body .apartment-note-clear-btn:hover,

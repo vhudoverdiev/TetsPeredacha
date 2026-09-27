@@ -355,6 +355,8 @@ class Apartment(TimestampMixin, db.Model):
         number = self.display_number()
         if self.premise_type == "commercial":
             return self._commercial_label(number)
+        if self.premise_type == "storeroom":
+            return number if number.upper().startswith("КЛ") else f"КЛ{number}"
         return f"кв {number}"
 
     def full_label(self) -> str:
@@ -366,12 +368,16 @@ class Apartment(TimestampMixin, db.Model):
             if commercial_number:
                 return f"Коммерция {commercial_number}"
             return f"Коммерция {fallback}".strip()
+        if self.premise_type == "storeroom":
+            return number if number.upper().startswith("КЛ") else f"КЛ{number}"
         return f"кв {number}"
 
     def detail_label(self) -> str:
         number = self.display_number()
         if self.premise_type == "commercial":
             return self.full_label()
+        if self.premise_type == "storeroom":
+            return f"Кладовка {number if number.upper().startswith('КЛ') else f'КЛ{number}'}"
         return f"Квартира {number}"
 
     def _commercial_parts(self, number: str | None) -> tuple[str, str, str]:

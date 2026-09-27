@@ -56,6 +56,9 @@
         {% if project.has_commercial %}
         <div class="object-stat-row"><span>Коммерций:</span><b class="stat-badge stat-badge-white">{{ stats.commercial_count }}</b></div>
         {% endif %}
+        {% if project.has_storerooms %}
+        <div class="object-stat-row"><span>Кладовок:</span><b class="stat-badge stat-badge-white">{{ stats.storeroom_count }}</b></div>
+        {% endif %}
         <div class="object-stat-row"><span>Принятых — АПП:</span><b class="stat-badge stat-badge-success">{{ stats.transferred }}</b></div>
         <div class="object-stat-row"><span>Не принятых:</span><b class="stat-badge stat-badge-danger">{{ stats.not_transferred }}</b></div>
       </div>

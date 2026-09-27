@@ -3183,6 +3183,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const deadlineInput = form.querySelector('[data-app-deadline-date]');
     const manualInput = form.querySelector('[data-app-deadline-manual]');
     if (!signedInput || !deadlineInput || !manualInput) return;
+    const ruDateMonths = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря',
+    ];
 
     const addCalendarDays = (dateValue, days) => {
       if (!dateValue) return '';
@@ -3191,16 +3205,38 @@ document.addEventListener('DOMContentLoaded', () => {
       parsed.setDate(parsed.getDate() + days);
       return parsed.toISOString().slice(0, 10);
     };
+    const formatRuDateValue = (dateValue) => {
+      if (!dateValue) return '';
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateValue);
+      if (!match) return '';
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+      if (!year || month < 1 || month > 12 || day < 1 || day > 31) return '';
+      return `${day} ${ruDateMonths[month - 1]} ${year}`;
+    };
+    const updateTextDisplays = (selector, value) => {
+      document.querySelectorAll(selector).forEach(display => {
+        display.textContent = value;
+      });
+    };
+    const syncAppDateDisplays = () => {
+      updateTextDisplays('[data-apartment-app-signed-display]', formatRuDateValue(signedInput.value) || '—');
+      updateTextDisplays('[data-apartment-app-deadline-display]', formatRuDateValue(deadlineInput.value) || 'Нет срока');
+    };
 
     deadlineInput.addEventListener('input', () => {
       manualInput.value = '1';
+      syncAppDateDisplays();
     });
     deadlineInput.addEventListener('change', () => {
       manualInput.value = '1';
+      syncAppDateDisplays();
     });
     signedInput.addEventListener('change', () => {
       if (manualInput.value === '1') return;
       deadlineInput.value = addCalendarDays(signedInput.value, 60);
+      syncAppDateDisplays();
     });
   });
 

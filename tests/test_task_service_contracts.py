@@ -32,12 +32,15 @@ from app.services.task_service import (
     looks_like_apartment_identifier,
     normalize_apartment_number_cell,
     normalize_finishing_type,
+    normalize_storeroom_number,
     parse_date,
     parse_multi_premise_search,
     premise_matches_search,
     repair_completed_source_marker_statuses,
     select_primary_work_point_columns,
+    sync_rows,
     upsert_task_from_cell,
+    dashboard_stats,
 )
 from app.time_utils import utc_now
 
@@ -159,6 +162,10 @@ class TaskServicePureContractsTests(unittest.TestCase):
         self.assertEqual(apartment_number_from_construction("1-2-345"), "345")
         self.assertIsNone(apartment_number_from_construction("1-2-A"))
 
+    def test_storeroom_numbers_are_prefixed_with_kl(self):
+        self.assertEqual(normalize_storeroom_number("1"), "КЛ1")
+        self.assertEqual(normalize_storeroom_number("КЛ2"), "КЛ2")
+
 
 class TaskServiceDatabaseContractsTests(unittest.TestCase):
     def setUp(self):
@@ -216,6 +223,83 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertFalse(premise_matches_search(self.apartment, "commercial_pair", "12|2"))
         self.assertTrue(premise_matches_search(self.commercial, "commercial_pair", "15|2"))
         self.assertTrue(premise_matches_search(self.commercial, "premise_number_or_building", "2"))
+
+    def test_sync_rows_imports_storeroom_sheet_when_enabled(self):
+        self.project.has_storerooms = True
+        db.session.commit()
+        rows = [
+            ["Кв/№ пом", "Ф.И.О. собственника", "Телефон", "Отделка", "Пункт 10"],
+            ["1 корпус", None, None, None, None],
+            [1, "Иванов Иван", "7 900 000-00-01", None, "Замечание по кладовке"],
+        ]
+
+        result = sync_rows(rows, "Кладовки", project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 1)
+        storeroom = Apartment.query.filter_by(project_id=self.project.id, premise_type="storeroom").one()
+        self.assertEqual(storeroom.apartment_number, "КЛ1")
+        self.assertEqual(storeroom.construction_number, "КЛ1")
+        self.assertEqual(storeroom.label(), "КЛ1")
+        self.assertEqual(storeroom.detail_label(), "Кладовка КЛ1")
+        self.assertEqual(storeroom.tasks[0].description, "Замечание по кладовке")
+
+    def test_sync_rows_imports_storeroom_registry_without_remarks(self):
+        self.project.has_storerooms = True
+        db.session.commit()
+        rows = [
+            ["Факт/№ ДДУ", "Ф.И.О. Дольщиков", "Телефон", "Дата первичного осмотра"],
+            ["1 корпус", None, None, None],
+            [1, "Петров Пётр", "7 900 000-00-02", None],
+        ]
+
+        result = sync_rows(rows, "Кладовые", project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 0)
+        storeroom = Apartment.query.filter_by(project_id=self.project.id, premise_type="storeroom").one()
+        self.assertEqual(storeroom.apartment_number, "КЛ1")
+        self.assertEqual(storeroom.owner_name, "Петров Пётр")
+        self.assertEqual(storeroom.phone, "7 900 000-00-02")
+        self.assertEqual(storeroom.tasks, [])
+
+    def test_sync_rows_skips_storeroom_sheet_when_disabled(self):
+        self.project.has_storerooms = False
+        db.session.commit()
+        rows = [
+            ["Кв/№ пом", "Ф.И.О. собственника", "Телефон", "Отделка", "Пункт 10"],
+            [1, "Иванов Иван", "7 900 000-00-01", None, "Замечание по кладовке"],
+        ]
+
+        result = sync_rows(rows, "Кладовки", project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 0)
+        self.assertEqual(Apartment.query.filter_by(project_id=self.project.id, premise_type="storeroom").count(), 0)
+
+    def test_dashboard_stats_counts_storerooms_with_apartment_flow(self):
+        storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ1",
+            construction_number="КЛ1",
+            premise_type="storeroom",
+            is_app_mode=True,
+            first_inspection_present=True,
+        )
+        unsold_storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ2",
+            construction_number="КЛ2",
+            premise_type="storeroom",
+            owner_name="не продано",
+            is_unsold=True,
+        )
+        db.session.add_all([storeroom, unsold_storeroom])
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+
+        self.assertEqual(stats["storeroom_count"], 2)
+        self.assertEqual(stats["accepted"], 1)
+        self.assertEqual(stats["unsold_storeroom_count"], 1)
+        self.assertGreaterEqual(stats["apartments"], 4)
 
     def test_change_task_status_sets_and_clears_completed_date_contract(self):
         task = Task(

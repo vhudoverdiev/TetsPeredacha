@@ -1224,7 +1224,7 @@
   {% set mobile_title = 'АВР' %}
   {% set mobile_active = 'apartments' %}
 {% elif request.endpoint in ['main.apartments', 'main.apartment_detail'] %}
-  {% set mobile_title = 'Квартиры' %}
+  {% set mobile_title = 'Помещения' %}
   {% set mobile_active = 'apartments' %}
 {% elif request.endpoint in ['main.materials', 'main.material_request_new', 'main.material_writeoff_new', 'main.material_expense_export', 'main.material_manual_task_new', 'main.material_request_detail'] %}
   {% set mobile_title = 'Расход материалов' %}
@@ -1360,7 +1360,7 @@
         <i class="bi bi-person-gear"></i><span>Подрядчики</span>
       </a>
       <a class="sidebar-link {% if request.endpoint in ['main.apartments', 'main.apartment_detail'] %}active{% endif %}" href="{{ url_for('main.apartments') }}">
-        <i class="bi bi-buildings"></i><span>Квартиры</span>
+        <i class="bi bi-buildings"></i><span>Помещения</span>
       </a>
       <a class="sidebar-link {% if request.endpoint == 'main.avr' %}active{% endif %}" href="{{ url_for('main.avr') }}">
         <i class="bi bi-file-earmark-check"></i><span>АВР</span>

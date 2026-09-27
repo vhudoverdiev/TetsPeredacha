@@ -52,9 +52,9 @@ def _desc_nulls_last(column):
 
 
 APARTMENT_HEADERS = {
-    "apartment_number": ["квартира", "кв", "помещение", "номер квартиры"],
-    "construction_number": ["строительный", "строит", "стр. №", "строительный номер"],
-    "owner_name": ["собственник", "владелец", "фио"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры"],
+    "construction_number": ["строительный", "стр. №", "строительный номер"],
+    "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
     "finishing_type": ["отделка", "вид отделки"],
     "entrance": ["подъезд", "секция"],
@@ -85,9 +85,9 @@ IGNORED_POINT_HEADER_PARTS = [
 
 # Cyrillic aliases for matching real Excel headers.
 APARTMENT_HEADERS_RU = {
-    "apartment_number": ["квартира", "кв", "помещение", "номер квартиры"],
-    "construction_number": ["строительный", "строит", "стр. №", "строительный номер", "стр №", "стр.№"],
-    "owner_name": ["собственник", "владелец", "фио"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры"],
+    "construction_number": ["строительный", "стр. №", "строительный номер", "стр №", "стр.№"],
+    "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
     "finishing_type": ["отделка", "вид отделки"],
     "entrance": ["подъезд", "секция"],
@@ -825,6 +825,16 @@ def normalize_commercial_number(value: str | None) -> str | None:
     return normalized or text
 
 
+def normalize_storeroom_number(value: str | None) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if re.match(r"^кл\s*\d+", text, flags=re.IGNORECASE):
+        number = re.sub(r"^кл\s*", "", text, flags=re.IGNORECASE).strip()
+        return f"КЛ{number}" if number else text
+    return f"КЛ{text}"
+
+
 def apartment_number_from_construction(construction_number: str | None) -> str | None:
     if not construction_number:
         return None
@@ -1093,6 +1103,8 @@ def is_premise_section_marker(row: list[Any]) -> str | None:
         return "commercial"
     if first in {"квартиры", "квартира"} and len(values) <= 2:
         return "apartment"
+    if first in {"кладовки", "кладовка", "кладовые", "кладовая"} and len(values) <= 2:
+        return "storeroom"
     return None
 
 
@@ -1275,6 +1287,9 @@ def get_or_update_apartment(
         apartment_number = None
     if premise_type == "commercial":
         apartment_number = normalize_commercial_number(apartment_number)
+    if premise_type == "storeroom":
+        apartment_number = normalize_storeroom_number(apartment_number or construction_number or fallback_apartment_number)
+        construction_number = apartment_number
     apartment_number = apartment_number or apartment_number_from_construction(construction_number) or fallback_apartment_number
     sheet_part = normalize_text(sheet_name or "")
     building_part = normalize_text(building or "")
@@ -1810,13 +1825,21 @@ def sync_rows(
 
     sync_time = utc_now()
 
-    default_premise_type = "commercial" if "коммер" in (sheet_name or "").strip().lower() else "apartment"
+    normalized_sheet_name = normalize_text(sheet_name or "").replace("ё", "е")
+    if "коммер" in normalized_sheet_name:
+        default_premise_type = "commercial"
+    elif "клад" in normalized_sheet_name:
+        default_premise_type = "storeroom"
+    else:
+        default_premise_type = "apartment"
     premise_type = default_premise_type
     current_building: str | None = None
     commercial_numbers_in_building: set[str] = set()
     if premise_type == "commercial" and not getattr(project, "has_commercial", True):
         return result.as_dict() | {"seen_uids": set()}
     if premise_type == "apartment" and not getattr(project, "has_apartments", True):
+        return result.as_dict() | {"seen_uids": set()}
+    if premise_type == "storeroom" and not getattr(project, "has_storerooms", False):
         return result.as_dict() | {"seen_uids": set()}
 
     data_start = header_index + 1
@@ -1843,7 +1866,7 @@ def sync_rows(
             base_mapping = anchored_mapping
             base_indexes = set(base_mapping.values())
             point_columns = {idx: header for idx, header in point_columns.items() if idx not in base_indexes}
-    if not point_columns or (base_mapping.get("apartment_number") is None and base_mapping.get("construction_number") is None):
+    if base_mapping.get("apartment_number") is None and base_mapping.get("construction_number") is None:
         return result.as_dict() | {"seen_uids": set()}
 
     for row_zero_idx, row in enumerate(rows[data_start:], start=data_start + 1):
@@ -1871,6 +1894,8 @@ def sync_rows(
             continue
         if current_premise_type == "apartment" and not getattr(project, "has_apartments", True):
             continue
+        if current_premise_type == "storeroom" and not getattr(project, "has_storerooms", False):
+            continue
 
         raw_apartment_number = normalize_apartment_number_cell(value_at(row, base_mapping.get("apartment_number")))
         raw_construction_number = normalize_number_cell(value_at(row, base_mapping.get("construction_number")))
@@ -1882,6 +1907,9 @@ def sync_rows(
                 or is_service_premise_text(raw_apartment_number)
                 or (not construction_number_looks_valid and not apartment_number_looks_valid)
             ):
+                continue
+        if current_premise_type == "storeroom":
+            if not looks_like_apartment_identifier(raw_apartment_number or raw_construction_number):
                 continue
         if current_premise_type == "commercial":
             raw_apartment_number = normalize_commercial_number(raw_apartment_number)
@@ -2369,17 +2397,19 @@ def dashboard_stats(
     total_apartments = len(grouped_rows)
     apartment_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "apartment")
     commercial_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "commercial")
+    storeroom_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "storeroom")
+    app_like_premise_types = {"apartment", "storeroom"}
 
     accepted = sum(
         1
         for rows in grouped_rows.values()
-        if rows and _row_premise_type(rows[0]) == "apartment" and _group_is_accepted(rows)
+        if rows and _row_premise_type(rows[0]) in app_like_premise_types and _group_is_accepted(rows)
     )
     accepted_with_remarks = sum(
         1
         for rows in grouped_rows.values()
         if rows
-        and _row_premise_type(rows[0]) == "apartment"
+        and _row_premise_type(rows[0]) in app_like_premise_types
         and _group_is_accepted(rows)
         and not all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
     )
@@ -2387,7 +2417,7 @@ def dashboard_stats(
         1
         for rows in grouped_rows.values()
         if rows
-        and _row_premise_type(rows[0]) == "apartment"
+        and _row_premise_type(rows[0]) in app_like_premise_types
         and _group_is_accepted(rows)
         and all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
     )
@@ -2401,7 +2431,12 @@ def dashboard_stats(
         for rows in grouped_rows.values()
         if rows and _row_premise_type(rows[0]) == "commercial" and _group_is_unsold(rows)
     )
-    unsold = unsold_apartment_count + unsold_commercial_count
+    unsold_storeroom_count = sum(
+        1
+        for rows in grouped_rows.values()
+        if rows and _row_premise_type(rows[0]) == "storeroom" and _group_is_unsold(rows)
+    )
+    unsold = unsold_apartment_count + unsold_commercial_count + unsold_storeroom_count
     not_accepted = max(total_apartments - accepted - unsold, 0)
 
     inspection_rows = [rows for rows in grouped_rows.values() if not _group_is_unsold(rows)]
@@ -2425,6 +2460,7 @@ def dashboard_stats(
         "apartments": total_apartments,
         "apartment_count": apartment_count,
         "commercial_count": commercial_count,
+        "storeroom_count": storeroom_count,
         "tasks": total_tasks,
         "done": done,
         "not_done": total_tasks - done,
@@ -2438,6 +2474,7 @@ def dashboard_stats(
         "unsold": unsold,
         "unsold_apartment_count": unsold_apartment_count,
         "unsold_commercial_count": unsold_commercial_count,
+        "unsold_storeroom_count": unsold_storeroom_count,
         "not_accepted": not_accepted,
         "inspected": inspected,
         "not_inspected": not_inspected,

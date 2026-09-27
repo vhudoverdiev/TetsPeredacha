@@ -150,6 +150,51 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
                 self.assertIn("Номер телефона", html)
                 self.assertIn("+7 900 123-45-67", html)
 
+    def test_apartment_detail_renders_contract_number_for_apartments_only(self):
+        slash_number = Apartment(project=self.project, apartment_number="330", construction_number="330/1")
+        parenthesized_number = Apartment(project=self.project, apartment_number="10", construction_number="10(30)")
+        duplicated_number = Apartment(project=self.project, apartment_number="44")
+        commercial = Apartment(
+            project=self.project,
+            apartment_number="331",
+            construction_number="331/1",
+            premise_type="commercial",
+        )
+        db.session.add_all([slash_number, parenthesized_number, duplicated_number, commercial])
+        db.session.commit()
+
+        slash_html = self.client.get(f"/apartments/{slash_number.id}").get_data(as_text=True)
+        parenthesized_html = self.client.get(f"/apartments/{parenthesized_number.id}").get_data(as_text=True)
+        duplicated_html = self.client.get(f"/apartments/{duplicated_number.id}").get_data(as_text=True)
+        commercial_html = self.client.get(f"/apartments/{commercial.id}").get_data(as_text=True)
+
+        self.assertIn("<span>По договору</span>", slash_html)
+        self.assertIn("<b>1</b>", slash_html)
+        self.assertIn("<span>По договору</span>", parenthesized_html)
+        self.assertIn("<b>30</b>", parenthesized_html)
+        self.assertIn("<span>По договору</span>", duplicated_html)
+        self.assertIn("<b>44</b>", duplicated_html)
+        self.assertNotIn("<span>По договору</span>", commercial_html)
+
+    def test_apartment_owner_names_are_saved_and_rendered_by_lines(self):
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/details",
+            data={
+                "owner_name": "Иванов Иван\nПетров Пётр",
+                "phone": "+7 900 123-45-67",
+                "finishing_type": "Белая",
+                "mode": "not_accepted",
+            },
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        apartment = db.session.get(Apartment, self.apartment.id)
+        self.assertEqual(apartment.owner_name, "Иванов Иван\nПетров Пётр")
+        html = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
+        self.assertIn('class="form-control form-control-sm apartment-owner-names-control"', html)
+        self.assertIn("Иванов Иван\nПетров Пётр", html)
+
 
 if __name__ == "__main__":
     unittest.main()

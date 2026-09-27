@@ -3,7 +3,7 @@ from pathlib import Path
 
 from config import Config
 from app import create_app, db
-from app.models import Project, ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, User
+from app.models import Apartment, Project, ROLE_ADMIN, ROLE_MANAGER, ROLE_OFFICE, User
 
 
 class TestConfig(Config):
@@ -57,6 +57,7 @@ class ObjectCreationLimitTests(unittest.TestCase):
                 "developer_representative_phone": "",
                 "has_apartments": "y",
                 "has_commercial": "y",
+                "has_storerooms": "y",
             },
             follow_redirects=False,
         )
@@ -139,3 +140,39 @@ class ObjectCreationLimitTests(unittest.TestCase):
         self.assertIn("object-meta-stats-no-commercial", no_commercial_card)
         self.assertIn("Коммерций:", commercial_card)
         self.assertNotIn("object-meta-stats-no-commercial", commercial_card)
+
+    def test_object_form_can_enable_storerooms_and_card_shows_count(self):
+        admin = self._create_user("admin-storerooms", ROLE_ADMIN)
+        self._login(admin.username)
+
+        create_response = self.client.post(
+            "/objects/new",
+            data={
+                "name": "Объект с кладовками",
+                "address": "",
+                "technical_customer": "",
+                "developer_name": "",
+                "inn_kpp": "",
+                "ogrn": "",
+                "legal_address": "",
+                "developer_director": "",
+                "developer_representative": "",
+                "developer_representative_phone": "",
+                "has_apartments": "y",
+                "has_storerooms": "y",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(create_response.status_code, 302)
+        project = Project.query.filter_by(name="Объект с кладовками").one()
+        self.assertTrue(project.has_storerooms)
+        self.assertFalse(project.has_commercial)
+
+        db.session.add(Apartment(project=project, apartment_number="КЛ1", construction_number="КЛ1", premise_type="storeroom"))
+        db.session.commit()
+
+        page = self.client.get("/objects").get_data(as_text=True)
+        card = page.split("Объект с кладовками", 1)[1].split("</article>", 1)[0]
+        self.assertIn("Кладовок:", card)
+        self.assertIn(">1</b>", card)

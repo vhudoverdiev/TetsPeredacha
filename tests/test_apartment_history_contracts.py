@@ -1,4 +1,5 @@
 import unittest
+from datetime import date, timedelta
 
 from app import create_app, db, login_manager
 from app.models import Apartment, ChangeLog, Project, ROLE_ADMIN, User
@@ -111,6 +112,20 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
         )
         self.assertIn("apartment_inspection_status", self._change_field_names())
         self.assertIn("apartment_inspection_date", self._change_field_names())
+
+    def test_future_inspection_date_returns_planned_status(self):
+        future_date = date.today() + timedelta(days=7)
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": future_date.isoformat()},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertEqual(payload["inspection_status"], "Будет")
+        self.assertEqual(payload["inspection_status_class"], "status-pill-warning")
 
     def test_new_apartment_history_fields_are_rendered_in_russian(self):
         cases = [

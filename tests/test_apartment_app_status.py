@@ -59,6 +59,9 @@ class ApartmentAppStatusTests(unittest.TestCase):
         self.assertEqual(apartment.app_deadline_status, APP_DEADLINE_NORMAL)
         self.assertEqual(apartment.avr_status, AVR_STATUS_NEEDED)
 
+        page = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
+        self.assertIn("15 ноября 2026", page)
+
     def test_manual_deadline_overrides_calculated_deadline(self):
         response = self.client.post(
             f"/apartments/{self.apartment.id}/app-status",

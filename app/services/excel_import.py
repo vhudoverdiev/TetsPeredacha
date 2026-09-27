@@ -229,10 +229,10 @@ def _rows_look_like_remark_sheet(rows: list[list[Any]]) -> bool:
                     indexed_points[col_idx] = f"{value}. {header}"
         if indexed_points:
             point_columns = indexed_points
-    if not point_columns:
-        return False
-    point_columns = select_primary_work_point_columns(headers, point_columns)
-    anchored_mapping = map_base_columns(headers, anchor_before_col=min(point_columns))
+    if point_columns:
+        point_columns = select_primary_work_point_columns(headers, point_columns)
+    anchor_col = min(point_columns) if point_columns else None
+    anchored_mapping = map_base_columns(headers, anchor_before_col=anchor_col)
     if anchored_mapping.get("apartment_number") is None and anchored_mapping.get("construction_number") is None:
         return False
     if data_start < len(rows) and is_index_number_row(rows[data_start]):
@@ -247,10 +247,10 @@ def _rows_look_like_remark_sheet(rows: list[list[Any]]) -> bool:
         construction_number = normalize_number_cell(value_at(row, anchored_mapping.get("construction_number")))
         if looks_like_apartment_identifier(apartment_number) or looks_like_apartment_identifier(construction_number):
             has_valid_premise_row = True
-        if any(str(value_at(row, col_idx) or "").strip() for col_idx in point_columns):
+        if point_columns and any(str(value_at(row, col_idx) or "").strip() for col_idx in point_columns):
             return True
     # A newly prepared project workbook can legitimately contain apartments
-    # and all required work-point columns before the first remark is entered.
+    # and storerooms before the first remark is entered.
     return has_valid_premise_row
 
 

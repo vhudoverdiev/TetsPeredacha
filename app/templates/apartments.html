@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Квартиры{% endblock %}
+{% block title %}Помещения{% endblock %}
 {% block content %}
 {% set selected_finishing_groups = args.getlist('finishing_group') %}
 <div class="apartments-page" data-ajax-pagination-page="apartments">
 <div class="page-head apartments-page-head">
   <div>
-    <h1 class="page-title">Квартиры</h1>
+    <h1 class="page-title">Помещения</h1>
     <p class="page-subtitle">Данные, замечания, комментарии и история изменений.</p>
   </div>
   <a class="btn btn-success" href="{{ url_for('main.apartments_export', **export_args) }}" data-ajax-pagination-sync="apartments-export"><i class="bi bi-file-earmark-excel me-2"></i>Скачать Excel</a>
@@ -84,7 +84,7 @@
 </div>
 
 <div class="d-flex align-items-center justify-content-between mb-3 apartments-page-summary">
-  <div class="text-muted">Найдено квартир / помещений: <b>{{ total_count }}</b></div>
+  <div class="text-muted">Найдено помещений: <b>{{ total_count }}</b></div>
 </div>
 
 {% if mobile_total_pages > 1 %}
@@ -190,7 +190,7 @@
     </div>
   </article>
   {% else %}
-  <div class="card content-card"><div class="card-body text-muted">{% if args.get('q') %}По поиску "{{ args.get('q') }}" ничего не найдено{% else %}Квартир по этому фильтру нет.{% endif %}</div></div>
+  <div class="card content-card"><div class="card-body text-muted">{% if args.get('q') %}По поиску "{{ args.get('q') }}" ничего не найдено{% else %}Помещений по этому фильтру нет.{% endif %}</div></div>
   {% endfor %}
 </div>
 

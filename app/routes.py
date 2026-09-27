@@ -270,7 +270,7 @@ SECTION_LOCK_CHOICES = [
     },
     {
         "key": "apartments",
-        "label": "Квартиры",
+        "label": "Помещения",
         "icon": "bi-building",
         "endpoints": {
             "main.apartments", "main.apartments_export", "main.apartment_detail", "main.update_apartment_po_status",
@@ -2096,6 +2096,7 @@ def project_stats(project: Project) -> dict[str, int]:
         "done": int(stats.get("done") or 0),
         "apartments": int(stats.get("apartment_count") or 0),
         "commercial_count": int(stats.get("commercial_count") or 0),
+        "storeroom_count": int(stats.get("storeroom_count") or 0),
         "premises": int(stats.get("apartments") or 0),
         "transferred": int(stats.get("accepted") or 0),
         "not_transferred": int(stats.get("not_accepted") or 0),
@@ -2133,11 +2134,8 @@ def object_new():
         if not can_create_object_today(current_user):
             flash(object_creation_limit_message(current_user), "warning")
             return redirect(url_for("main.objects"))
-        if form.has_storerooms.data:
-            flash("Кладовки пока нельзя добавить: раздел находится в разработке.", "warning")
-            return render_template("object_form.html", form=form, form_title="Добавить объект", submit_label="Создать объект")
-        if not (form.has_apartments.data or form.has_commercial.data):
-            flash("Выберите хотя бы один тип помещений: квартиры или коммерции.", "warning")
+        if not (form.has_apartments.data or form.has_commercial.data or form.has_storerooms.data):
+            flash("Выберите хотя бы один тип помещений: квартиры, коммерции или кладовки.", "warning")
             return render_template("object_form.html", form=form, form_title="Добавить объект", submit_label="Создать объект")
         project = Project(
             name=form.name.data.strip(),
@@ -2152,7 +2150,7 @@ def object_new():
             developer_representative_phone=form.developer_representative_phone.data.strip() if form.developer_representative_phone.data else None,
             has_apartments=bool(form.has_apartments.data),
             has_commercial=bool(form.has_commercial.data),
-            has_storerooms=False,
+            has_storerooms=bool(form.has_storerooms.data),
             created_by_id=current_user.id,
         )
         db.session.add(project)
@@ -2171,11 +2169,8 @@ def object_edit(project_id: int):
     project = _abort_if_project_forbidden(db.session.get(Project, project_id) or abort(404))
     form = ProjectForm(obj=project)
     if form.validate_on_submit():
-        if form.has_storerooms.data:
-            flash("Кладовки пока нельзя добавить: раздел находится в разработке.", "warning")
-            return render_template("object_form.html", form=form, form_title="Редактировать объект", submit_label="Сохранить")
-        if not (form.has_apartments.data or form.has_commercial.data):
-            flash("Выберите хотя бы один тип помещений: квартиры или коммерции.", "warning")
+        if not (form.has_apartments.data or form.has_commercial.data or form.has_storerooms.data):
+            flash("Выберите хотя бы один тип помещений: квартиры, коммерции или кладовки.", "warning")
             return render_template("object_form.html", form=form, form_title="Редактировать объект", submit_label="Сохранить")
         project.name = form.name.data.strip()
         project.address = form.address.data.strip() if form.address.data else None
@@ -2189,7 +2184,7 @@ def object_edit(project_id: int):
         project.developer_representative_phone = form.developer_representative_phone.data.strip() if form.developer_representative_phone.data else None
         project.has_apartments = bool(form.has_apartments.data)
         project.has_commercial = bool(form.has_commercial.data)
-        project.has_storerooms = False
+        project.has_storerooms = bool(form.has_storerooms.data)
         db.session.commit()
         flash("Объект обновлён", "success")
         return redirect(url_for("main.objects"))
@@ -9111,7 +9106,7 @@ def _app_deadline_display(apartment: Apartment) -> str:
 def _group_app_deadline_display(apartments: list[Apartment]) -> str:
     deadline = _group_remark_deadline(apartments)
     if deadline:
-        return deadline.strftime("%d.%m.%Y")
+        return format_ru_date(deadline)
     for apartment in apartments:
         raw = str(getattr(apartment, "app_deadline_raw", None) or "").strip()
         if raw and not Apartment._is_no_deadline_text(raw):
@@ -9205,7 +9200,9 @@ def _apartment_inspection_status(apartments: list[Apartment]) -> str | None:
         nearest = min(values, key=lambda value: _inspection_sort_datetime(value) or datetime.max)
         nearest_dt = _inspection_sort_datetime(nearest)
         if nearest_dt is not None:
-            return "Будет" if nearest_dt >= datetime.now() else "Был"
+            if isinstance(nearest, datetime):
+                return "Будет" if nearest_dt >= datetime.now() else "Был"
+            return "Будет" if nearest_dt.date() >= date.today() else "Был"
     if any(apartment.first_inspection_present for apartment in apartments):
         return "Был"
     return "Не был"
@@ -9216,7 +9213,36 @@ def _is_app_inspection_locked(apartments: list[Apartment]) -> bool:
 
 
 def _premise_label(apartment: Apartment) -> str:
-    return "Комм" if (apartment.premise_type or "apartment") == "commercial" else "кв"
+    premise_type = apartment.premise_type or "apartment"
+    if premise_type == "commercial":
+        return "Комм"
+    if premise_type == "storeroom":
+        return "КЛ"
+    return "кв"
+
+
+def _apartment_contract_number(apartment: Apartment) -> str:
+    if (apartment.premise_type or "apartment") == "commercial":
+        return ""
+    candidates = [
+        str(apartment.apartment_number or "").strip(),
+        str(apartment.construction_number or "").strip(),
+    ]
+    for value in candidates:
+        match = re.search(r"\(([^()]+)\)", value)
+        if match:
+            number = match.group(1).strip()
+            if number:
+                return number
+    for value in candidates:
+        if value.count("/") == 1:
+            right_part = value.rsplit("/", 1)[1].strip()
+            if right_part:
+                return right_part
+    display_number = apartment.display_number(fallback_to_id=False).strip()
+    if display_number:
+        return display_number
+    return candidates[0] or candidates[1]
 
 
 def _floor_from_construction_number(value: str | None) -> str:
@@ -9359,6 +9385,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
     return {
         "apartment": apartment,
         "premise_label": _premise_label(apartment),
+        "contract_number": _apartment_contract_number(apartment),
         "apartments": apartments,
         "group_count": len(apartments),
         "owner_names": _apartment_group_contact_values(apartments, "owner_name"),
@@ -9395,7 +9422,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "has_addendum_task": _group_has_dop_agreement_task(apartments),
         "avr_status": _group_avr_status(apartments),
         "avr_signed_date": _group_avr_signed_date(apartments),
-        "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") == "apartment" and app_status != APP_DEADLINE_NO_REMARKS,
+        "show_avr": mode == "АПП" and (apartment.premise_type or "apartment") in {"apartment", "storeroom"} and app_status != APP_DEADLINE_NO_REMARKS,
         "po_status": _po_status_for_group(apartments, active_tasks),
         "has_ordered_glass": bool(ordered_glass),
         "has_replaced_glass": bool(replaced_glass),
@@ -9693,7 +9720,7 @@ def apartments_export():
     rows, _premise_selectors, _po_only = _filtered_apartment_overview_rows(project.id, request.args)
     wb = Workbook()
     ws = wb.active
-    ws.title = "Квартиры"
+    ws.title = "Помещения"
     ws.append([
         "Помещение",
         "Отделка",
