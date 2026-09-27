@@ -347,7 +347,8 @@ SECTION_LOCK_CHOICES = [
         "icon": "bi-sliders",
         "endpoints": {
             "main.upload_excel", "main.sync_google", "main.sync_logs", "main.sync_log_details", "main.delete_sync_log",
-            "main.rollback_sync_log", "main.sync_conflicts", "main.resolve_conflict",
+            "main.rollback_sync_log",
+            "main.sync_conflicts", "main.resolve_conflict",
             "main.resolve_conflicts_bulk", "main.mapping_settings",
         },
     },
@@ -1433,7 +1434,11 @@ def enforce_role_access():
     ):
         return _deny_or_redirect()
 
-    if current_user.role in OFFICE_MANAGER_ROLES and locked_section and locked_section["key"] == "service":
+    if (
+        current_user.role in OFFICE_MANAGER_ROLES
+        and locked_section
+        and locked_section["key"] == "service"
+    ):
         abort(403)
 
     if _setting_bool("site_maintenance_mode") and current_user.role != ROLE_ADMIN and current_user.role not in OFFICE_MANAGER_ROLES:
@@ -1442,7 +1447,23 @@ def enforce_role_access():
     if current_user.role == ROLE_OFFICE and endpoint in OFFICE_FORBIDDEN_ENDPOINTS:
         return _deny_or_redirect()
 
-    if _is_mobile_phone_request():
+    is_mobile_phone = _is_mobile_phone_request()
+    if (
+        is_mobile_phone
+        and _setting_bool("mobile_version_under_development")
+        and current_user.role != ROLE_ADMIN
+        and endpoint not in _mobile_under_development_allowed_endpoints()
+    ):
+        if request.method in {"GET", "HEAD", "OPTIONS"}:
+            return _maintenance_response(
+                title="Мобильная версия в разработке",
+                message="Мобильная версия временно в разработке",
+                subtitle="Мы обновляем мобильный интерфейс. Пожалуйста, откройте сайт с компьютера или попробуйте позже.",
+                hint="Доступ к настройкам и аккаунту остаётся открытым для администратора.",
+            )
+        abort(403)
+
+    if is_mobile_phone:
         if endpoint not in _mobile_phone_allowed_endpoints():
             if request.method in {"GET", "HEAD", "OPTIONS"}:
                 return redirect(url_for(_mobile_phone_home_endpoint()))
@@ -2382,7 +2403,20 @@ def _mobile_phone_allowed_endpoints() -> set[str]:
             "main.assignment_manual_task_new",
             "main.assignment_issued_employee_export",
         })
+    if current_user.role == ROLE_ADMIN:
+        allowed.add("main.site_settings")
     return allowed
+
+
+def _mobile_under_development_allowed_endpoints() -> set[str]:
+    return {
+        "main.account",
+        "main.account_password",
+        "main.report_error",
+        "main.service_worker",
+        "main.service_worker_reset",
+        "main.site_settings",
+    } | MESSENGER_ENDPOINTS
 
 
 def _visit_status_tone(status_code: int | None) -> str:
@@ -11897,14 +11931,14 @@ def _sync_log_conflicts(log: SyncLog, project_id: int) -> list[SyncConflict]:
 @bp.route("/sync-logs/<int:log_id>/details")
 @login_required
 def sync_log_details(log_id: int):
-    if current_user.role != ROLE_ADMIN:
-        abort(403)
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
     log = db.session.get(SyncLog, log_id) or abort(404)
     if not log.project_id or log.project_id != project.id:
         abort(404)
+    if current_user.role != ROLE_ADMIN:
+        abort(403)
 
     after_payload, exact_snapshot = _sync_log_after_payload(log, project.id)
     apartments = {
@@ -11981,14 +12015,14 @@ def sync_log_details(log_id: int):
 @bp.route("/sync-logs/<int:log_id>/delete", methods=["POST"])
 @login_required
 def delete_sync_log(log_id: int):
-    if current_user.role != ROLE_ADMIN:
-        abort(403)
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
     log = db.session.get(SyncLog, log_id) or abort(404)
     if not log.project_id or log.project_id != project.id:
         abort(404)
+    if current_user.role != ROLE_ADMIN:
+        abort(403)
     delete_from = log.started_at
     if not log.rolled_back_at:
         ok, message = apply_sync_rollback(log)
@@ -12021,14 +12055,14 @@ def delete_sync_log(log_id: int):
 @bp.route("/sync-logs/<int:log_id>/rollback", methods=["POST"])
 @login_required
 def rollback_sync_log(log_id: int):
-    if current_user.role != ROLE_ADMIN:
-        abort(403)
     project = selected_project()
     if project is None:
         return redirect(url_for("main.objects"))
     log = db.session.get(SyncLog, log_id) or abort(404)
     if not log.project_id or log.project_id != project.id:
         abort(404)
+    if current_user.role != ROLE_ADMIN:
+        abort(403)
     ok, message = apply_sync_rollback(log)
     if ok:
         _refresh_sync_dashboard_settings(project.id)

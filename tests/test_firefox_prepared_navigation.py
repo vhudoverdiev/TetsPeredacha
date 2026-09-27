@@ -172,9 +172,9 @@ class FirefoxFrameBufferedNavigationTests(unittest.TestCase):
             self.shared_css,
         )
         self.assertIn(".site-page-loader", self.shared_css)
-        firefox_css = self.shared_css[
-            self.shared_css.index("/* v629: Firefox on desktop")
-        :]
+        firefox_css_start = self.shared_css.index("/* v629: Firefox on desktop")
+        firefox_css_end = self.shared_css.index("/* v638:", firefox_css_start)
+        firefox_css = self.shared_css[firefox_css_start:firefox_css_end]
         self.assertIn("animation: none !important", firefox_css)
         self.assertIn("opacity: 1 !important", firefox_css)
         self.assertIn("transform: none !important", firefox_css)

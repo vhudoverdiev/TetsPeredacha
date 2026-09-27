@@ -64,6 +64,15 @@ class AccountInlineContactsTests(unittest.TestCase):
         self.assertNotIn("<h2>Пароль</h2>", password_template)
         self.assertNotIn("account-card-title account-password-title", password_template)
 
+    def test_mobile_account_hides_password_change_entrypoint(self):
+        mobile_css = (ROOT / "app" / "static" / "mobile-only.css").read_text(encoding="utf-8")
+
+        self.assertIn("body.app-body:has(.account-page) .account-password-panel", mobile_css)
+        selector_start = mobile_css.index("body.app-body:has(.account-page) .account-password-panel")
+        rule_end = mobile_css.index("}", selector_start)
+        rule = mobile_css[selector_start:rule_end]
+        self.assertIn("display: none !important;", rule)
+
     def test_password_account_back_link_uses_plain_black_text_style(self):
         password_template = (ROOT / "app" / "templates" / "account_password.html").read_text(encoding="utf-8")
         style = (ROOT / "app" / "static" / "style.css").read_text(encoding="utf-8")

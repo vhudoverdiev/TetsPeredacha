@@ -11,7 +11,7 @@ from flask_wtf.csrf import CSRFError
 from flask_compress import Compress
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from sqlalchemy import event, inspect, text
+from sqlalchemy import inspect, text
 from datetime import date, datetime, timedelta
 
 from app.time_utils import to_moscow_datetime
@@ -70,31 +70,12 @@ def _is_flask_push_cli_invocation() -> bool:
     return executable.startswith("flask") and "push" in argv[1:]
 
 
-def _configure_sqlite_connection_pragmas(app) -> None:
-    uri = (app.config.get("SQLALCHEMY_DATABASE_URI") or "").lower()
-    if not uri.startswith("sqlite:"):
-        return
-
-    timeout_seconds = int(app.config.get("SQLITE_BUSY_TIMEOUT_SECONDS", 30) or 30)
-    busy_timeout_ms = max(1, timeout_seconds) * 1000
-    is_memory_database = uri in {"sqlite://", "sqlite:///:memory:"} or ":memory:" in uri
-
-    @event.listens_for(db.engine, "connect")
-    def _set_sqlite_pragmas(dbapi_connection, _connection_record):
-        cursor = dbapi_connection.cursor()
-        try:
-            cursor.execute(f"PRAGMA busy_timeout={busy_timeout_ms}")
-            if not is_memory_database:
-                cursor.execute("PRAGMA journal_mode=WAL")
-                cursor.execute("PRAGMA synchronous=NORMAL")
-        except Exception:
-            pass
-        finally:
-            cursor.close()
-
-
 def _is_mysql_database_uri(uri: str) -> bool:
     return uri.startswith("mysql:") or uri.startswith("mysql+")
+
+
+def _is_sqlite_database_uri(uri: str) -> bool:
+    return uri.startswith("sqlite:")
 
 
 def _ensure_mysql_utf8mb4() -> None:
@@ -133,6 +114,16 @@ def create_app(config_class=Config):
         raise RuntimeError(
             "SECRET_KEY must be set to a strong, unique value in the environment."
         )
+
+    uri = (app.config.get("SQLALCHEMY_DATABASE_URI") or "").lower()
+    allow_sqlite_runtime = bool(app.config.get("ALLOW_SQLITE_RUNTIME"))
+    if not app.config.get("TESTING") and not _is_flask_push_cli_invocation():
+        if not uri:
+            raise RuntimeError("DATABASE_URL must be set to a MariaDB connection string.")
+        if _is_sqlite_database_uri(uri) and not allow_sqlite_runtime:
+            raise RuntimeError("SQLite DATABASE_URL is not supported. Use a MariaDB DATABASE_URL.")
+        if not _is_sqlite_database_uri(uri) and not _is_mysql_database_uri(uri):
+            raise RuntimeError("Only MariaDB DATABASE_URL values are supported.")
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -252,15 +243,13 @@ def create_app(config_class=Config):
 
     with app.app_context():
         uri = (app.config.get("SQLALCHEMY_DATABASE_URI") or "").lower()
-        if uri.startswith("sqlite:"):
-            _configure_sqlite_connection_pragmas(app)
-            # create_all is idempotent for SQLite and ensures new tables appear.
+        if _is_sqlite_database_uri(uri):
             db.create_all()
         elif _is_mysql_database_uri(uri):
             db.create_all()
             _ensure_mysql_utf8mb4()
 
-        if uri.startswith("sqlite:") or _is_mysql_database_uri(uri):
+        if _is_mysql_database_uri(uri):
             inspector = inspect(db.engine)
             if "projects" in inspector.get_table_names():
                 project_columns = {column["name"] for column in inspector.get_columns("projects")}

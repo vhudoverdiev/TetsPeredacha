@@ -24,7 +24,7 @@ Current project stack:
 - Gunicorn;
 - Nginx;
 - Let's Encrypt HTTPS;
-- SQLite in the current test stage, with MariaDB recommended for production.
+- MariaDB.
 
 Current test server configuration:
 

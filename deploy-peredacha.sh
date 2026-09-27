@@ -49,14 +49,7 @@ REMOTE_COMMIT="$(git rev-parse "origin/$BRANCH")"
 echo "Локальная версия: $LOCAL_COMMIT"
 echo "Версия GitHub:    $REMOTE_COMMIT"
 
-echo "=== Делаю бэкап важных данных ==="
-if [ -f "$PROJECT_DIR/instance/crm.sqlite" ]; then
-  cp "$PROJECT_DIR/instance/crm.sqlite" "$BACKUP_DIR/crm_${DATE_TAG}.sqlite"
-  echo "Бэкап базы: $BACKUP_DIR/crm_${DATE_TAG}.sqlite"
-else
-  echo "База crm.sqlite пока не найдена, пропускаю бэкап базы."
-fi
-
+echo "=== Делаю бэкап важных файлов приложения ==="
 if [ -f "$PROJECT_DIR/.env" ]; then
   cp "$PROJECT_DIR/.env" "$BACKUP_DIR/env_${DATE_TAG}.bak"
   echo "Бэкап .env: $BACKUP_DIR/env_${DATE_TAG}.bak"
@@ -65,13 +58,10 @@ fi
 echo "=== Останавливаю сайт ==="
 systemctl stop "$SERVICE_NAME" || true
 
-echo "=== Удаляю временные SQLite-файлы после остановки сайта ==="
-find "$PROJECT_DIR/instance" -maxdepth 1 -type f \( -name '*.sqlite-shm' -o -name '*.sqlite-wal' \) -delete 2>/dev/null || true
-
 echo "=== Загружаю новую версию с GitHub ==="
 git reset --hard "origin/$BRANCH"
 
-echo "=== Удаляю мусор, но сохраняю .env, базу, uploads, exports и venv ==="
+echo "=== Удаляю мусор, но сохраняю .env, instance, uploads, exports и venv ==="
 git clean -fd \
   -e .env \
   -e instance/ \

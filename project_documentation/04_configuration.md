@@ -42,7 +42,6 @@ Important security-related settings:
 Files and folders that must not be shared publicly:
 
 - `.env`;
-- `instance/*.sqlite`;
 - uploaded user files;
 - generated exports;
 - private service account JSON files;

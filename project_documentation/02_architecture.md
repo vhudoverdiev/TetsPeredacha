@@ -27,7 +27,7 @@ Main source folders:
 - `migrations/` - Alembic/Flask-Migrate files;
 - `uploads/` - uploaded files, ignored by Git except `.gitkeep`;
 - `exports/` - generated export files, ignored by Git except `.gitkeep`;
-- `instance/` - local database/runtime files, ignored by Git.
+- `instance/` - local runtime files, ignored by Git.
 
 Main data entities:
 

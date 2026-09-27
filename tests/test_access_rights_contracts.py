@@ -397,6 +397,51 @@ class AccessRightsContractsTests(unittest.TestCase):
         with self.assertRaises(Forbidden):
             self._guard(manager, "main.users", method="POST", mobile=True)
 
+    def test_mobile_under_development_setting_blocks_phone_access(self):
+        manager = self._user(role=ROLE_MANAGER, username="mobile-dev-manager", project=self.project)
+        admin = self._user(role=ROLE_ADMIN, username="mobile-dev-admin")
+        db.session.add(AppSetting(key="mobile_version_under_development", value="1"))
+        db.session.commit()
+
+        response = self._guard(manager, "main.dashboard", mobile=True)
+        self.assertIsInstance(response, tuple)
+        self.assertEqual(response[1], 503)
+        with self.assertRaises(Forbidden):
+            self._guard(manager, "main.update_task", method="POST", mobile=True)
+        self.assertIsNone(self._guard(manager, "main.account", mobile=True))
+        self.assertIsNone(self._guard(admin, "main.site_settings", mobile=True))
+        self.assertIsNone(self._guard(admin, "main.dashboard", mobile=True))
+
+    def test_site_settings_post_persists_all_toggles_and_section_locks(self):
+        admin = self._user(role=ROLE_ADMIN, username="settings-save-admin")
+        client = self.app.test_client()
+        with client.session_transaction() as session_data:
+            session_data["_user_id"] = str(admin.id)
+            session_data["_fresh"] = True
+            session_data["session_version"] = int(admin.session_version or 0)
+
+        response = client.post(
+            "/settings",
+            data={
+                "hide_documents_section": "1",
+                "mobile_version_under_development": "1",
+                "site_maintenance_mode": "1",
+                "two_factor_every_login": "1",
+                "enable_messenger": "1",
+                "blocked_site_sections": ["objects", "materials", "unknown"],
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        settings = {row.key: row.value for row in AppSetting.query.all()}
+        self.assertEqual(settings["hide_documents_section"], "1")
+        self.assertEqual(settings["mobile_version_under_development"], "1")
+        self.assertEqual(settings["site_maintenance_mode"], "1")
+        self.assertEqual(settings["two_factor_every_login"], "1")
+        self.assertEqual(settings["enable_messenger"], "1")
+        self.assertEqual(settings["blocked_site_sections"], "materials,objects")
+
     def test_project_access_guard_returns_allowed_project_and_hides_forbidden_project(self):
         scoped = self._user(role=ROLE_MANAGER, username="project-scoped", project=self.project)
         admin = self._user(role=ROLE_ADMIN, username="project-admin")

@@ -148,7 +148,8 @@
       </span>
       {% endif %}
       <span><i class="bi bi-list-check"></i>Замечаний: {{ row.total }}</span>
-      <span><i class="bi bi-chat-left-text"></i>Комментарий: {{ row.manual_comment or '—' }}</span>
+      <span><i class="bi bi-chat-left-text"></i>Комментарий(передача): {{ row.manual_comment or '—' }}</span>
+      <span><i class="bi bi-chat-left-text"></i>Комментарий(устранение замечаний): {{ row.inspection_comment or '—' }}</span>
     </div>
     </a>
 

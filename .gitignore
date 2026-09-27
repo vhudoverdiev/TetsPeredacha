@@ -9,8 +9,6 @@ env/
 
 # Flask / local
 .env
-instance/*.sqlite
-instance/*.db
 
 # Uploads / generated files
 uploads/*
