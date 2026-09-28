@@ -147,6 +147,26 @@ class ExcelImportContractsTests(unittest.TestCase):
         self.assertEqual(preview["active_sheet"], "Remarks")
         self.assertEqual(len(preview["rows"]), 1)
 
+    def test_workbook_sheet_detection_keeps_parking_and_commercial_registry_sheets(self):
+        workbook = Workbook()
+        apartments = workbook.active
+        apartments.title = "Квартиры"
+        apartments.append(["№ кв", "Ф.И.О. Дольщиков", "Телефон"])
+        apartments.append([1, "Apartment Owner", "+7999"])
+        parking = workbook.create_sheet("Паркинг")
+        parking.append(["№ паркинга", "Ф.И.О. Дольщиков", "Телефон"])
+        parking.append([1, "Parking Owner", "+7998"])
+        commercial = workbook.create_sheet("Коммерция")
+        commercial.append(["№ ком.\nпомещения", "Ф.И.О. Дольщиков", "Телефон"])
+        commercial.append([1, "Commercial Owner", "+7997"])
+        path = self._save_workbook("premise-detection.xlsx", workbook)
+
+        sheets = workbook_sheets_to_rows_with_strikes(path)
+        info = inspect_remarks_workbook(path)
+
+        self.assertEqual([sheet[0] for sheet in sheets], ["Квартиры", "Паркинг", "Коммерция"])
+        self.assertEqual(info["matched_sheets"], ["Квартиры", "Паркинг", "Коммерция"])
+
 
 if __name__ == "__main__":
     unittest.main()

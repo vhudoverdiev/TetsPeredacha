@@ -216,6 +216,7 @@ class Project(TimestampMixin, db.Model):
     has_apartments = db.Column(db.Boolean, default=True, nullable=False)
     has_commercial = db.Column(db.Boolean, default=True, nullable=False)
     has_storerooms = db.Column(db.Boolean, default=False, nullable=False)
+    has_parking = db.Column(db.Boolean, default=False, nullable=False)
     created_by_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id", name="fk_projects_created_by_id_users", use_alter=True),
@@ -357,6 +358,8 @@ class Apartment(TimestampMixin, db.Model):
             return self._commercial_label(number)
         if self.premise_type == "storeroom":
             return number if number.upper().startswith("КЛ") else f"КЛ{number}"
+        if self.premise_type == "parking":
+            return number if number.upper().startswith("П") else f"П{number}"
         return f"кв {number}"
 
     def full_label(self) -> str:
@@ -370,6 +373,8 @@ class Apartment(TimestampMixin, db.Model):
             return f"Коммерция {fallback}".strip()
         if self.premise_type == "storeroom":
             return number if number.upper().startswith("КЛ") else f"КЛ{number}"
+        if self.premise_type == "parking":
+            return number if number.upper().startswith("П") else f"П{number}"
         return f"кв {number}"
 
     def detail_label(self) -> str:
@@ -378,6 +383,8 @@ class Apartment(TimestampMixin, db.Model):
             return self.full_label()
         if self.premise_type == "storeroom":
             return f"Кладовка {number if number.upper().startswith('КЛ') else f'КЛ{number}'}"
+        if self.premise_type == "parking":
+            return f"Парковка {number if number.upper().startswith('П') else f'П{number}'}"
         return f"Квартира {number}"
 
     def _commercial_parts(self, number: str | None) -> tuple[str, str, str]:

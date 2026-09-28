@@ -22,6 +22,7 @@ from app.services.task_service import (
     normalize_apartment_number_cell,
     normalize_number_cell,
     normalize_header_row,
+    normalize_text,
     select_primary_work_point_columns,
     set_setting,
     sync_rows,
@@ -168,7 +169,7 @@ def workbook_sheets_to_rows_with_strikes(path: Path) -> list[tuple[str, list[lis
                 if _is_orange_unsold_fill(cell):
                     orange.add((r_idx, c_idx))
             rows.append(out_row)
-        if any(any(str(value or "").strip() for value in row) for row in rows) and _rows_look_like_remark_sheet(rows):
+        if any(any(str(value or "").strip() for value in row) for row in rows) and _worksheet_looks_importable(ws.title, rows):
             result.append((ws.title, rows, struck, orange))
     if result:
         return result
@@ -254,6 +255,27 @@ def _rows_look_like_remark_sheet(rows: list[list[Any]]) -> bool:
     return has_valid_premise_row
 
 
+def _worksheet_looks_importable(sheet_name: str | None, rows: list[list[Any]]) -> bool:
+    if _rows_look_like_remark_sheet(rows):
+        return True
+    normalized_sheet_name = normalize_text(sheet_name or "").replace("ё", "е")
+    if not any(
+        marker in normalized_sheet_name
+        for marker in ("квартир", "коммер", "клад", "паркинг", "парков", "машиномест")
+    ):
+        return False
+    first_non_empty = next((row for row in rows if any(str(value or "").strip() for value in row)), [])
+    headers = normalize_header_row(first_non_empty)
+    base_mapping = map_base_columns(headers)
+    if base_mapping.get("apartment_number") is None:
+        return False
+    data_start = rows.index(first_non_empty) + 1 if first_non_empty in rows else 1
+    for row in rows[data_start:]:
+        if looks_like_apartment_identifier(normalize_apartment_number_cell(value_at(row, base_mapping.get("apartment_number")))):
+            return True
+    return False
+
+
 def inspect_remarks_workbook(path: Path) -> dict[str, Any]:
     wb = load_workbook(path, data_only=True)
     matched_sheets: list[str] = []
@@ -261,7 +283,7 @@ def inspect_remarks_workbook(path: Path) -> dict[str, Any]:
         rows = [[cell.value for cell in row] for row in ws.iter_rows()]
         if not any(any(str(value or "").strip() for value in row) for row in rows):
             continue
-        if _rows_look_like_remark_sheet(rows):
+        if _worksheet_looks_importable(ws.title, rows):
             matched_sheets.append(ws.title)
     return {
         "ok": bool(matched_sheets),

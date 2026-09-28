@@ -58,6 +58,7 @@ class ObjectCreationLimitTests(unittest.TestCase):
                 "has_apartments": "y",
                 "has_commercial": "y",
                 "has_storerooms": "y",
+                "has_parking": "y",
             },
             follow_redirects=False,
         )
@@ -175,4 +176,40 @@ class ObjectCreationLimitTests(unittest.TestCase):
         page = self.client.get("/objects").get_data(as_text=True)
         card = page.split("Объект с кладовками", 1)[1].split("</article>", 1)[0]
         self.assertIn("Кладовок:", card)
+        self.assertIn(">1</b>", card)
+
+    def test_object_form_can_enable_parking_and_card_shows_count(self):
+        admin = self._create_user("admin-parking", ROLE_ADMIN)
+        self._login(admin.username)
+
+        create_response = self.client.post(
+            "/objects/new",
+            data={
+                "name": "Объект с парковками",
+                "address": "",
+                "technical_customer": "",
+                "developer_name": "",
+                "inn_kpp": "",
+                "ogrn": "",
+                "legal_address": "",
+                "developer_director": "",
+                "developer_representative": "",
+                "developer_representative_phone": "",
+                "has_apartments": "y",
+                "has_parking": "y",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(create_response.status_code, 302)
+        project = Project.query.filter_by(name="Объект с парковками").one()
+        self.assertTrue(project.has_parking)
+        self.assertFalse(project.has_commercial)
+
+        db.session.add(Apartment(project=project, apartment_number="П1", construction_number="П1", premise_type="parking"))
+        db.session.commit()
+
+        page = self.client.get("/objects").get_data(as_text=True)
+        card = page.split("Объект с парковками", 1)[1].split("</article>", 1)[0]
+        self.assertIn("Парковок:", card)
         self.assertIn(">1</b>", card)

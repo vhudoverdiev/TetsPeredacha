@@ -43,6 +43,7 @@ class ProjectForm(FlaskForm):
     has_apartments = BooleanField("Квартиры", default=True)
     has_commercial = BooleanField("Коммерции", default=True)
     has_storerooms = BooleanField("Кладовки", default=False)
+    has_parking = BooleanField("Парковки", default=False)
     submit = SubmitField("Создать объект")
 
 

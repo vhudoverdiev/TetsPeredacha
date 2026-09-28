@@ -133,6 +133,17 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("font-size: .72rem !important;", input_rule)
         self.assertIn("min-height: 2rem !important;", input_rule)
 
+    def test_desktop_apartment_date_rows_do_not_collapse_when_window_narrows(self):
+        override_start = STYLE.index("/* v671: keep apartment date/action rows in the same desktop layout")
+        override = STYLE[override_start:]
+
+        self.assertIn("@media (min-width: 768px)", override)
+        self.assertIn("grid-template-columns: minmax(7.2rem, 8.2rem) minmax(7.1rem, 1fr) minmax(9.7rem, auto) !important;", override)
+        self.assertIn("grid-column: auto !important;", override)
+        self.assertIn("max-width: 9.7rem !important;", override)
+        self.assertIn("grid-template-columns: minmax(5.05rem, 1.22fr) minmax(4.1rem, .95fr) !important;", override)
+        self.assertIn("font-size: .62rem !important;", override)
+
     def test_app_dates_refresh_display_after_async_save(self):
         self.assertIn("data-apartment-app-signed-display", TEMPLATE)
         self.assertIn("data-apartment-app-deadline-display", TEMPLATE)

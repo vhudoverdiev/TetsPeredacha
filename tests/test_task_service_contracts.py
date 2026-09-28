@@ -32,6 +32,7 @@ from app.services.task_service import (
     looks_like_apartment_identifier,
     normalize_apartment_number_cell,
     normalize_finishing_type,
+    normalize_parking_number,
     normalize_storeroom_number,
     parse_date,
     parse_multi_premise_search,
@@ -166,6 +167,10 @@ class TaskServicePureContractsTests(unittest.TestCase):
         self.assertEqual(normalize_storeroom_number("1"), "КЛ1")
         self.assertEqual(normalize_storeroom_number("КЛ2"), "КЛ2")
 
+    def test_parking_numbers_are_prefixed_with_p(self):
+        self.assertEqual(normalize_parking_number("1"), "П1")
+        self.assertEqual(normalize_parking_number("П2"), "П2")
+
 
 class TaskServiceDatabaseContractsTests(unittest.TestCase):
     def setUp(self):
@@ -274,6 +279,39 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertEqual(result["created_count"], 0)
         self.assertEqual(Apartment.query.filter_by(project_id=self.project.id, premise_type="storeroom").count(), 0)
 
+    def test_sync_rows_imports_parking_sheet_when_enabled(self):
+        self.project.has_parking = True
+        db.session.commit()
+        rows = [
+            ["№ паркинг", "Ф.И.О. Дольщиков", "Телефон", "Дата первичного осмотра"],
+            [1, "Сидоров Семён", "7 900 000-00-03", None],
+        ]
+
+        result = sync_rows(rows, "Паркинг", project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 0)
+        parking = Apartment.query.filter_by(project_id=self.project.id, premise_type="parking").one()
+        self.assertEqual(parking.apartment_number, "П1")
+        self.assertEqual(parking.construction_number, "П1")
+        self.assertEqual(parking.label(), "П1")
+        self.assertEqual(parking.detail_label(), "Парковка П1")
+        self.assertEqual(parking.owner_name, "Сидоров Семён")
+        self.assertEqual(parking.phone, "7 900 000-00-03")
+        self.assertEqual(parking.tasks, [])
+
+    def test_sync_rows_skips_parking_sheet_when_disabled(self):
+        self.project.has_parking = False
+        db.session.commit()
+        rows = [
+            ["№ паркинг", "Ф.И.О. Дольщиков", "Телефон"],
+            [1, "Сидоров Семён", "7 900 000-00-03"],
+        ]
+
+        result = sync_rows(rows, "Паркинг", project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 0)
+        self.assertEqual(Apartment.query.filter_by(project_id=self.project.id, premise_type="parking").count(), 0)
+
     def test_dashboard_stats_counts_storerooms_with_apartment_flow(self):
         storeroom = Apartment(
             project=self.project,
@@ -299,6 +337,33 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertEqual(stats["storeroom_count"], 2)
         self.assertEqual(stats["accepted"], 1)
         self.assertEqual(stats["unsold_storeroom_count"], 1)
+        self.assertGreaterEqual(stats["apartments"], 4)
+
+    def test_dashboard_stats_counts_parking_with_apartment_flow(self):
+        parking = Apartment(
+            project=self.project,
+            apartment_number="П1",
+            construction_number="П1",
+            premise_type="parking",
+            is_app_mode=True,
+            first_inspection_present=True,
+        )
+        unsold_parking = Apartment(
+            project=self.project,
+            apartment_number="П2",
+            construction_number="П2",
+            premise_type="parking",
+            owner_name="не продано",
+            is_unsold=True,
+        )
+        db.session.add_all([parking, unsold_parking])
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+
+        self.assertEqual(stats["parking_count"], 2)
+        self.assertEqual(stats["accepted"], 1)
+        self.assertEqual(stats["unsold_parking_count"], 1)
         self.assertGreaterEqual(stats["apartments"], 4)
 
     def test_change_task_status_sets_and_clears_completed_date_contract(self):

@@ -52,7 +52,7 @@ def _desc_nulls_last(column):
 
 
 APARTMENT_HEADERS = {
-    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
     "construction_number": ["строительный", "стр. №", "строительный номер"],
     "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
@@ -85,7 +85,7 @@ IGNORED_POINT_HEADER_PARTS = [
 
 # Cyrillic aliases for matching real Excel headers.
 APARTMENT_HEADERS_RU = {
-    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
     "construction_number": ["строительный", "стр. №", "строительный номер", "стр №", "стр.№"],
     "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
@@ -835,6 +835,16 @@ def normalize_storeroom_number(value: str | None) -> str | None:
     return f"КЛ{text}"
 
 
+def normalize_parking_number(value: str | None) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if re.match(r"^п\s*\d+", text, flags=re.IGNORECASE):
+        number = re.sub(r"^п\s*", "", text, flags=re.IGNORECASE).strip()
+        return f"П{number}" if number else text
+    return f"П{text}"
+
+
 def apartment_number_from_construction(construction_number: str | None) -> str | None:
     if not construction_number:
         return None
@@ -1105,6 +1115,8 @@ def is_premise_section_marker(row: list[Any]) -> str | None:
         return "apartment"
     if first in {"кладовки", "кладовка", "кладовые", "кладовая"} and len(values) <= 2:
         return "storeroom"
+    if first in {"паркинг", "парковки", "парковка", "машиноместа", "машиноместо"} and len(values) <= 2:
+        return "parking"
     return None
 
 
@@ -1289,6 +1301,9 @@ def get_or_update_apartment(
         apartment_number = normalize_commercial_number(apartment_number)
     if premise_type == "storeroom":
         apartment_number = normalize_storeroom_number(apartment_number or construction_number or fallback_apartment_number)
+        construction_number = apartment_number
+    if premise_type == "parking":
+        apartment_number = normalize_parking_number(apartment_number or construction_number or fallback_apartment_number)
         construction_number = apartment_number
     apartment_number = apartment_number or apartment_number_from_construction(construction_number) or fallback_apartment_number
     sheet_part = normalize_text(sheet_name or "")
@@ -1830,6 +1845,8 @@ def sync_rows(
         default_premise_type = "commercial"
     elif "клад" in normalized_sheet_name:
         default_premise_type = "storeroom"
+    elif "паркинг" in normalized_sheet_name or "парков" in normalized_sheet_name or "машиномест" in normalized_sheet_name:
+        default_premise_type = "parking"
     else:
         default_premise_type = "apartment"
     premise_type = default_premise_type
@@ -1840,6 +1857,8 @@ def sync_rows(
     if premise_type == "apartment" and not getattr(project, "has_apartments", True):
         return result.as_dict() | {"seen_uids": set()}
     if premise_type == "storeroom" and not getattr(project, "has_storerooms", False):
+        return result.as_dict() | {"seen_uids": set()}
+    if premise_type == "parking" and not getattr(project, "has_parking", False):
         return result.as_dict() | {"seen_uids": set()}
 
     data_start = header_index + 1
@@ -1896,6 +1915,8 @@ def sync_rows(
             continue
         if current_premise_type == "storeroom" and not getattr(project, "has_storerooms", False):
             continue
+        if current_premise_type == "parking" and not getattr(project, "has_parking", False):
+            continue
 
         raw_apartment_number = normalize_apartment_number_cell(value_at(row, base_mapping.get("apartment_number")))
         raw_construction_number = normalize_number_cell(value_at(row, base_mapping.get("construction_number")))
@@ -1909,6 +1930,9 @@ def sync_rows(
             ):
                 continue
         if current_premise_type == "storeroom":
+            if not looks_like_apartment_identifier(raw_apartment_number or raw_construction_number):
+                continue
+        if current_premise_type == "parking":
             if not looks_like_apartment_identifier(raw_apartment_number or raw_construction_number):
                 continue
         if current_premise_type == "commercial":
@@ -2398,7 +2422,8 @@ def dashboard_stats(
     apartment_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "apartment")
     commercial_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "commercial")
     storeroom_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "storeroom")
-    app_like_premise_types = {"apartment", "storeroom"}
+    parking_count = sum(1 for rows in grouped_rows.values() if rows and _row_premise_type(rows[0]) == "parking")
+    app_like_premise_types = {"apartment", "storeroom", "parking"}
 
     accepted = sum(
         1
@@ -2436,7 +2461,12 @@ def dashboard_stats(
         for rows in grouped_rows.values()
         if rows and _row_premise_type(rows[0]) == "storeroom" and _group_is_unsold(rows)
     )
-    unsold = unsold_apartment_count + unsold_commercial_count + unsold_storeroom_count
+    unsold_parking_count = sum(
+        1
+        for rows in grouped_rows.values()
+        if rows and _row_premise_type(rows[0]) == "parking" and _group_is_unsold(rows)
+    )
+    unsold = unsold_apartment_count + unsold_commercial_count + unsold_storeroom_count + unsold_parking_count
     not_accepted = max(total_apartments - accepted - unsold, 0)
 
     inspection_rows = [rows for rows in grouped_rows.values() if not _group_is_unsold(rows)]
@@ -2461,6 +2491,7 @@ def dashboard_stats(
         "apartment_count": apartment_count,
         "commercial_count": commercial_count,
         "storeroom_count": storeroom_count,
+        "parking_count": parking_count,
         "tasks": total_tasks,
         "done": done,
         "not_done": total_tasks - done,
@@ -2475,6 +2506,7 @@ def dashboard_stats(
         "unsold_apartment_count": unsold_apartment_count,
         "unsold_commercial_count": unsold_commercial_count,
         "unsold_storeroom_count": unsold_storeroom_count,
+        "unsold_parking_count": unsold_parking_count,
         "not_accepted": not_accepted,
         "inspected": inspected,
         "not_inspected": not_inspected,

@@ -250,6 +250,19 @@ def _excel_premise_label(apartment: Apartment | None) -> str:
     return _normalize_report_export_text(apartment.label())
 
 
+def _excel_premise_type_label(apartment: Apartment | None) -> str:
+    if apartment is None:
+        return ""
+    premise_type = apartment.premise_type or "apartment"
+    if premise_type == "commercial":
+        return "Коммерция"
+    if premise_type == "storeroom":
+        return "Кладовка"
+    if premise_type == "parking":
+        return "Парковка"
+    return "Квартира"
+
+
 def _excel_commercial_label(number: str | None, building: str | None = None) -> str:
     text = str(number or "").strip()
     text = re.sub(r"^коммерци[яи]\s*", "", text, flags=re.IGNORECASE).strip()
@@ -951,7 +964,7 @@ def export_glass_measurements_excel(rows: Iterable[dict], filename_prefix: str =
         ws.append([
             _excel_premise_label(apartment) if apartment else "",
             getattr(apartment, "building", "") or "",
-            "Коммерция" if apartment and apartment.premise_type == "commercial" else "Квартира",
+            _excel_premise_type_label(apartment),
             (task.description or task.source_cell_value or "") if task else "",
             task.work_point.display_name if task and task.work_point else "",
             row.get("status_label") or (measurement.status_label() if measurement else "Без замера"),

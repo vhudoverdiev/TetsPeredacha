@@ -58962,6 +58962,47 @@ html body.app-body .apartment-detail-page .apartment-avr-status-actions .btn {
   font-size: .76rem !important;
 }
 
+/* v671: keep apartment date/action rows in the same desktop layout when the
+   browser is narrowed; mobile still switches at its own breakpoint. */
+@media (min-width: 768px) {
+  html body.app-body .apartment-detail-page .apartment-compact-control-row,
+  html body.app-body .apartment-detail-page form.apartment-compact-control-row,
+  html body.app-body .apartment-detail-page .apartment-compact-control-row:has([data-apartment-inspection-display]) {
+    grid-template-columns: minmax(7.2rem, 8.2rem) minmax(7.1rem, 1fr) minmax(9.7rem, auto) !important;
+    align-items: center !important;
+    column-gap: .65rem !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-compact-control-row .apartment-inline-controls,
+  html body.app-body .apartment-detail-page .apartment-compact-control-row .apartment-inline-form {
+    grid-column: auto !important;
+    justify-self: end !important;
+    justify-content: flex-end !important;
+  }
+
+  html body.app-body .apartment-detail-page :is(.apartment-avr-form, .apartment-addendum-form) .apartment-inline-controls,
+  html body.app-body .apartment-detail-page .apartment-compact-control-row:has([data-apartment-inspection-display]) .apartment-inline-controls {
+    width: 9.7rem !important;
+    max-width: 9.7rem !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-addendum-status-actions {
+    grid-template-columns: minmax(5.05rem, 1.22fr) minmax(4.1rem, .95fr) !important;
+    gap: .28rem !important;
+  }
+
+  html body.app-body .apartment-detail-page .apartment-addendum-form button[name="addendum_status"] {
+    min-height: 2.15rem !important;
+    padding-inline: .24rem !important;
+    font-size: .62rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+  }
+}
+
 /* v665: final CRM polish for accepted stats, replies and apartment quick edits. */
 html body.app-body .dashboard-accepted-summary-title {
   margin: .75rem 0 .65rem !important;
