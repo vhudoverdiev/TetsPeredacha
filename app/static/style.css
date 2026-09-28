@@ -59247,6 +59247,10 @@ html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-info-title
   font-weight: 500 !important;
 }
 
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-info-title.dashboard-soft-section-title {
+  font-weight: 500 !important;
+}
+
 @media (max-width: 767.98px) {
   html.mobile-viewport body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span,
   html.adaptive-mobile-viewport body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span,

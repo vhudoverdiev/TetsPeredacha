@@ -241,7 +241,7 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
                 html = response.get_data(as_text=True)
                 inspection_card = re.search(
                     r'<article class="dashboard-info-card">\s*'
-                    r'<div class="dashboard-info-title"><i class="bi bi-eye"></i>.*?</article>',
+                    r'<div class="dashboard-info-title[^"]*"><i class="bi bi-eye"></i>.*?</article>',
                     html,
                     re.DOTALL,
                 )
