@@ -59190,12 +59190,16 @@ html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-t
   letter-spacing: 0 !important;
 }
 
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-type:empty {
+  display: none !important;
+}
+
 html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span {
   display: block !important;
-  color: #667085 !important;
+  color: #6b7280 !important;
   font-size: .86rem !important;
-  font-weight: 850 !important;
-  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  line-height: normal !important;
 }
 
 html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid b {
@@ -59205,4 +59209,32 @@ html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-s
   font-size: 1.25rem !important;
   font-weight: 950 !important;
   line-height: 1.05 !important;
+}
+
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-info-title.dashboard-accepted-summary-title {
+  margin: .75rem 0 .65rem !important;
+  color: #111827 !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-info-title.dashboard-accepted-summary-title i {
+  width: auto !important;
+  height: auto !important;
+  border-radius: inherit !important;
+}
+
+@media (max-width: 767.98px) {
+  html.mobile-viewport body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span,
+  html.adaptive-mobile-viewport body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span,
+  html.touch-app-device body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span {
+    display: block !important;
+    margin-bottom: .24rem !important;
+    color: #748096 !important;
+    -webkit-text-fill-color: #748096 !important;
+    font-size: .74rem !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+  }
 }

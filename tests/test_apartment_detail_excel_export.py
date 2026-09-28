@@ -150,40 +150,63 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
                 self.assertIn("Номер телефона", html)
                 self.assertIn("+7 900 123-45-67", html)
 
-    def test_apartment_detail_renders_contract_number_for_apartments_only(self):
+    def test_apartment_detail_renders_contract_number_for_every_premise_type(self):
         slash_number = Apartment(project=self.project, apartment_number="330", construction_number="330/1")
         parenthesized_number = Apartment(project=self.project, apartment_number="10", construction_number="10(30)")
         duplicated_number = Apartment(project=self.project, apartment_number="44")
         manual_number = Apartment(project=self.project, apartment_number="45", contract_number="77")
-        parking = Apartment(project=self.project, apartment_number="П1", construction_number="П1", premise_type="parking", contract_number="1")
+        float_number = Apartment(project=self.project, apartment_number="1", construction_number="1", contract_number="1.0")
+        parking = Apartment(project=self.project, apartment_number="П2", construction_number="П2", premise_type="parking", contract_number="П2.0")
+        storeroom = Apartment(project=self.project, apartment_number="КЛ154", construction_number="КЛ154", premise_type="storeroom", contract_number="КЛ1")
         commercial = Apartment(
             project=self.project,
             apartment_number="331",
             construction_number="331/1",
             premise_type="commercial",
         )
-        db.session.add_all([slash_number, parenthesized_number, duplicated_number, manual_number, parking, commercial])
+        db.session.add_all([slash_number, parenthesized_number, duplicated_number, manual_number, float_number, parking, storeroom, commercial])
         db.session.commit()
 
         slash_html = self.client.get(f"/apartments/{slash_number.id}").get_data(as_text=True)
         parenthesized_html = self.client.get(f"/apartments/{parenthesized_number.id}").get_data(as_text=True)
         duplicated_html = self.client.get(f"/apartments/{duplicated_number.id}").get_data(as_text=True)
         manual_html = self.client.get(f"/apartments/{manual_number.id}").get_data(as_text=True)
+        float_html = self.client.get(f"/apartments/{float_number.id}").get_data(as_text=True)
         parking_html = self.client.get(f"/apartments/{parking.id}").get_data(as_text=True)
+        storeroom_html = self.client.get(f"/apartments/{storeroom.id}").get_data(as_text=True)
         commercial_html = self.client.get(f"/apartments/{commercial.id}").get_data(as_text=True)
 
-        self.assertIn("<span>По договору</span>", slash_html)
-        self.assertIn("<b>Квартира 1</b>", slash_html)
-        self.assertIn("<span>По договору</span>", parenthesized_html)
-        self.assertIn("<b>Квартира 30</b>", parenthesized_html)
-        self.assertIn("<span>По договору</span>", duplicated_html)
-        self.assertIn("<b>Квартира 44</b>", duplicated_html)
+        self.assertIn('name="contract_number"', slash_html)
+        self.assertIn('value="1"', slash_html)
+        self.assertIn('name="contract_number"', parenthesized_html)
+        self.assertIn('value="30"', parenthesized_html)
         self.assertIn('name="contract_number"', duplicated_html)
-        self.assertIn("<span>По договору</span>", manual_html)
-        self.assertIn("<b>Квартира 77</b>", manual_html)
-        self.assertIn("<span>По договору</span>", parking_html)
-        self.assertIn("<b>Парковка П1</b>", parking_html)
-        self.assertNotIn("<span>По договору</span>", commercial_html)
+        self.assertIn('value="44"', duplicated_html)
+        self.assertIn('name="contract_number"', duplicated_html)
+        self.assertIn('value="77"', manual_html)
+        self.assertIn('value="1"', float_html)
+        self.assertNotIn('value="1.0"', float_html)
+        self.assertIn('value="2"', parking_html)
+        self.assertNotIn('value="2.0"', parking_html)
+        self.assertNotIn("П2.0", parking_html)
+        self.assertIn("<h1 class=\"page-title\">Кладовка 154</h1>", storeroom_html)
+        self.assertIn('value="1"', storeroom_html)
+        self.assertNotIn("Кладовка КЛ", storeroom_html)
+        self.assertIn('name="contract_number"', commercial_html)
+        self.assertIn('value="331"', commercial_html)
+
+    def test_apartments_list_orders_apartments_before_storerooms(self):
+        apartment = Apartment(project=self.project, apartment_number="330", premise_type="apartment")
+        storeroom = Apartment(project=self.project, apartment_number="КЛ154", premise_type="storeroom")
+        db.session.add_all([storeroom, apartment])
+        db.session.commit()
+
+        html = self.client.get("/apartments").get_data(as_text=True)
+
+        self.assertIn("Кладовка 154", html)
+        self.assertNotIn("КЛ154</div>", html)
+        self.assertLess(html.index("кв 42"), html.index("Кладовка 154"))
+        self.assertLess(html.index("кв 330"), html.index("Кладовка 154"))
 
     def test_apartment_owner_names_are_saved_and_rendered_by_lines(self):
         response = self.client.post(

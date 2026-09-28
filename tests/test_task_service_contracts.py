@@ -167,16 +167,21 @@ class TaskServicePureContractsTests(unittest.TestCase):
     def test_storeroom_numbers_are_prefixed_with_kl(self):
         self.assertEqual(normalize_storeroom_number("1"), "КЛ1")
         self.assertEqual(normalize_storeroom_number("КЛ2"), "КЛ2")
+        self.assertEqual(normalize_storeroom_number("1.0"), "КЛ1")
+        self.assertEqual(normalize_storeroom_number("КЛ2.0"), "КЛ2")
 
     def test_parking_numbers_are_prefixed_with_p(self):
         self.assertEqual(normalize_parking_number("1"), "П1")
         self.assertEqual(normalize_parking_number("П2"), "П2")
+        self.assertEqual(normalize_parking_number("2.0"), "П2")
+        self.assertEqual(normalize_parking_number("П2.0"), "П2")
 
     def test_contract_number_prefers_parentheses_or_slash_and_falls_back_to_plain_number(self):
         self.assertEqual(contract_number_from_premise_identity("1(10)"), "10")
         self.assertEqual(contract_number_from_premise_identity("10/1"), "1")
         self.assertEqual(contract_number_from_premise_identity("330", "330/1"), "1")
         self.assertEqual(contract_number_from_premise_identity("330"), "330")
+        self.assertEqual(contract_number_from_premise_identity("1.0"), "1")
 
 
 class TaskServiceDatabaseContractsTests(unittest.TestCase):
@@ -252,7 +257,7 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertEqual(storeroom.apartment_number, "КЛ1")
         self.assertEqual(storeroom.construction_number, "КЛ1")
         self.assertEqual(storeroom.label(), "КЛ1")
-        self.assertEqual(storeroom.detail_label(), "Кладовка КЛ1")
+        self.assertEqual(storeroom.detail_label(), "Кладовка 1")
         self.assertEqual(storeroom.tasks[0].description, "Замечание по кладовке")
 
     def test_sync_rows_imports_storeroom_registry_without_remarks(self):

@@ -66,6 +66,10 @@ class ApartmentOverviewContractsTests(unittest.TestCase):
 
     def test_sort_keys_order_numeric_apartments_and_done_tasks_last(self):
         self.assertLess(apartment_sort_key(Apartment(apartment_number="9")), apartment_sort_key(Apartment(apartment_number="10")))
+        self.assertLess(
+            apartment_sort_key(Apartment(apartment_number="330", premise_type="apartment")),
+            apartment_sort_key(Apartment(apartment_number="КЛ154", premise_type="storeroom")),
+        )
 
         open_floor = Task(work_point=self.floor_point, description="B", is_done=False)
         done_wall = Task(work_point=self.wall_point, description="A", is_done=True)

@@ -773,6 +773,9 @@ def normalize_number_cell(value: Any) -> str | None:
             return str(int(value))
         return str(value).strip()
     text = str(value).strip()
+    decimal_integer = re.fullmatch(r"(\d+)\.0+", text)
+    if decimal_integer:
+        return decimal_integer.group(1)
     return text or None
 
 
@@ -826,21 +829,23 @@ def normalize_commercial_number(value: str | None) -> str | None:
 
 
 def normalize_storeroom_number(value: str | None) -> str | None:
-    text = str(value or "").strip()
+    text = normalize_number_cell(value)
     if not text:
         return None
     if re.match(r"^кл\s*\d+", text, flags=re.IGNORECASE):
         number = re.sub(r"^кл\s*", "", text, flags=re.IGNORECASE).strip()
+        number = normalize_number_cell(number) or number
         return f"КЛ{number}" if number else text
     return f"КЛ{text}"
 
 
 def normalize_parking_number(value: str | None) -> str | None:
-    text = str(value or "").strip()
+    text = normalize_number_cell(value)
     if not text:
         return None
     if re.match(r"^п\s*\d+", text, flags=re.IGNORECASE):
         number = re.sub(r"^п\s*", "", text, flags=re.IGNORECASE).strip()
+        number = normalize_number_cell(number) or number
         return f"П{number}" if number else text
     return f"П{text}"
 
@@ -848,7 +853,7 @@ def normalize_parking_number(value: str | None) -> str | None:
 def contract_number_from_premise_identity(*values: str | None) -> str | None:
     fallback_number: str | None = None
     for value in values:
-        text = str(value or "").strip()
+        text = normalize_number_cell(value)
         if not text:
             continue
         match = re.search(r"\(([^()]+)\)", text)
@@ -1369,8 +1374,8 @@ def get_or_update_apartment(
 
     apartment.premise_type = premise_type or "apartment"
     apartment.building = building or apartment.building
-    if (apartment.premise_type or "apartment") != "commercial" and not str(apartment.contract_number or "").strip():
-        apartment.contract_number = contract_number_from_premise_identity(apartment_number, construction_number)
+    if not str(apartment.contract_number or "").strip():
+        apartment.contract_number = normalize_number_cell(apartment_number) if apartment.premise_type == "commercial" else contract_number_from_premise_identity(apartment_number, construction_number)
 
     owner_name = str(value_at(row, base_mapping.get("owner_name")) or "").strip() or None
     owner_has_real_name = bool(owner_name and not is_unsold_owner_name(owner_name))

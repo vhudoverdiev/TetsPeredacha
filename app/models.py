@@ -353,6 +353,13 @@ class Apartment(TimestampMixin, db.Model):
                 return text
         return f"ID {self.id}" if fallback_to_id else ""
 
+    @staticmethod
+    def _number_without_prefix(number: str, prefix: str) -> str:
+        text = str(number or "").strip()
+        pattern = rf"^{re.escape(prefix)}\s*"
+        cleaned = re.sub(pattern, "", text, flags=re.IGNORECASE).strip()
+        return cleaned or text
+
     def label(self) -> str:
         number = self.display_number()
         if self.premise_type == "commercial":
@@ -383,7 +390,7 @@ class Apartment(TimestampMixin, db.Model):
         if self.premise_type == "commercial":
             return self.full_label()
         if self.premise_type == "storeroom":
-            return f"Кладовка {number if number.upper().startswith('КЛ') else f'КЛ{number}'}"
+            return f"Кладовка {self._number_without_prefix(number, 'КЛ')}"
         if self.premise_type == "parking":
             return f"Парковка {number if number.upper().startswith('П') else f'П{number}'}"
         return f"Квартира {number}"

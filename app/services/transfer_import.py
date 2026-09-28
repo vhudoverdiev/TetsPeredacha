@@ -462,8 +462,8 @@ def sync_transfer_statistics(path: Path, project_name: str) -> dict[str, int]:
                     apartment.building = current_building
                 elif premise_type in {"storeroom", "parking"}:
                     apartment.construction_number = apartment_number
-                if not is_commercial_sheet and not str(apartment.contract_number or "").strip():
-                    apartment.contract_number = contract_number_from_premise_identity(str(raw_number or ""), apartment_number)
+                if not str(apartment.contract_number or "").strip():
+                    apartment.contract_number = apartment_number if is_commercial_sheet else contract_number_from_premise_identity(str(raw_number or ""), apartment_number)
                 if source_row_id:
                     apartment.source_row_id = source_row_id
                 apartment.owner_name = owner_name

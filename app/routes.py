@@ -132,6 +132,7 @@ from app.services.task_service import (
     is_apartment_unsold,
     is_unsold_owner_name,
     looks_like_apartment_identifier,
+    normalize_number_cell,
     parse_multi_premise_search,
     parse_date,
     premise_matches_search,
@@ -8639,6 +8640,28 @@ def _apartment_number_sort_value(value: str | None):
     return (1, 0, text.lower())
 
 
+def _premise_type_sort_rank(apartment: Apartment | None) -> int:
+    premise_type = (getattr(apartment, "premise_type", None) or "apartment").strip()
+    return {
+        "apartment": 0,
+        "commercial": 1,
+        "storeroom": 2,
+        "parking": 3,
+    }.get(premise_type, 4)
+
+
+def _apartment_sort_value(apartment: Apartment | None):
+    if apartment is None:
+        return (9, (1, 0, ""), "", "")
+    label = apartment.label() if hasattr(apartment, "label") else (apartment.apartment_number or apartment.construction_number or "")
+    return (
+        _premise_type_sort_rank(apartment),
+        _apartment_number_sort_value(apartment.apartment_number or apartment.construction_number),
+        str(apartment.building or "").strip().lower(),
+        str(label or "").strip().lower(),
+    )
+
+
 def _task_apartment_sort_value(task: Task):
     apartment = getattr(task, "apartment", None)
     done_rank = 1 if getattr(task, "is_done", False) else 0
@@ -8647,9 +8670,7 @@ def _task_apartment_sort_value(task: Task):
     return (
         done_rank,
         0,
-        0 if (apartment.premise_type or "apartment") != "commercial" else 1,
-        _apartment_number_sort_value(apartment.apartment_number or apartment.construction_number),
-        str(apartment.building or "").strip().lower(),
+        *_apartment_sort_value(apartment),
         str(task.work_point.point_number if task.work_point else "").strip(),
         int(task.id or 0),
     )
@@ -8661,9 +8682,7 @@ def _task_apartment_sort_value_no_done(task: Task):
         return (1, 1, (1, 0, ""), "", "", 0)
     return (
         0,
-        0 if (apartment.premise_type or "apartment") != "commercial" else 1,
-        _apartment_number_sort_value(apartment.apartment_number or apartment.construction_number),
-        str(apartment.building or "").strip().lower(),
+        *_apartment_sort_value(apartment),
         str(task.work_point.point_number if task.work_point else "").strip(),
         int(task.id or 0),
     )
@@ -9228,24 +9247,29 @@ def _premise_label(apartment: Apartment) -> str:
 
 def _apartment_contract_number(apartment: Apartment) -> str:
     premise_type = apartment.premise_type or "apartment"
-    if premise_type == "commercial":
-        return ""
     stored_contract_number = str(getattr(apartment, "contract_number", "") or "").strip()
     candidates = [
         str(apartment.apartment_number or "").strip(),
         str(apartment.construction_number or "").strip(),
     ]
     def format_contract_number(number: str) -> str:
+        number = normalize_number_cell(number) or number
+        if premise_type == "commercial":
+            return number
         if premise_type == "storeroom":
-            normalized = number if number.upper().startswith("КЛ") else f"КЛ{number}"
+            normalized = Apartment._number_without_prefix(number, "КЛ")
+            normalized = normalize_number_cell(normalized) or normalized
             return f"Кладовка {normalized}"
         if premise_type == "parking":
-            normalized = number if number.upper().startswith("П") else f"П{number}"
+            normalized = Apartment._number_without_prefix(number, "П")
+            normalized = normalize_number_cell(normalized) or normalized
             return f"Парковка {normalized}"
         return f"Квартира {number}"
 
     if stored_contract_number:
         return format_contract_number(stored_contract_number)
+    if premise_type == "commercial":
+        return format_contract_number(candidates[0]) if candidates and candidates[0] else ""
     for value in candidates:
         match = re.search(r"\(([^()]+)\)", value)
         if match:
@@ -9261,6 +9285,29 @@ def _apartment_contract_number(apartment: Apartment) -> str:
         if value:
             return format_contract_number(value)
     return ""
+
+
+def _apartment_contract_input_value(apartment: Apartment) -> str:
+    stored_contract_number = str(getattr(apartment, "contract_number", "") or "").strip()
+    if stored_contract_number:
+        number = normalize_number_cell(stored_contract_number) or stored_contract_number
+    elif (apartment.premise_type or "apartment") == "commercial":
+        number = normalize_number_cell(apartment.apartment_number) or str(apartment.apartment_number or "").strip()
+    else:
+        display_number = _apartment_contract_number(apartment)
+        for prefix in ("Квартира ", "Кладовка ", "Парковка "):
+            if display_number.startswith(prefix):
+                number = display_number[len(prefix):].strip()
+                break
+        else:
+            number = display_number.strip()
+    if (apartment.premise_type or "apartment") == "parking":
+        number = Apartment._number_without_prefix(number, "П")
+        return normalize_number_cell(number) or number
+    if (apartment.premise_type or "apartment") == "storeroom":
+        number = Apartment._number_without_prefix(number, "КЛ")
+        return normalize_number_cell(number) or number
+    return number
 
 
 def _floor_from_construction_number(value: str | None) -> str:
@@ -9313,11 +9360,7 @@ def _contractor_apartment_options(project_id: int) -> list[dict]:
             "floor": str(representative.floor or "").strip(),
             "finishing_type": str(representative.finishing_type or "").strip(),
             "number": re.sub(r"\D+", "", str(representative.apartment_number or representative.construction_number or "").strip()),
-            "_sort_key": (
-                0 if (representative.premise_type or "apartment") == "apartment" else 1,
-                _apartment_number_sort_value(representative.apartment_number or representative.construction_number),
-                str(representative.building or "").strip().lower(),
-            ),
+            "_sort_key": _apartment_sort_value(representative),
         })
     options.sort(key=lambda option: option["_sort_key"])
     return options
@@ -9404,6 +9447,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "apartment": apartment,
         "premise_label": _premise_label(apartment),
         "contract_number": _apartment_contract_number(apartment),
+        "contract_number_input": _apartment_contract_input_value(apartment),
         "apartments": apartments,
         "group_count": len(apartments),
         "owner_names": _apartment_group_contact_values(apartments, "owner_name"),
@@ -9502,9 +9546,7 @@ def apartments():
 
     if not has_active_filters:
         groups = _group_project_apartments(project.id, include_activity=False)
-        groups.sort(key=lambda group: _apartment_number_sort_value(
-            _pick_apartment_representative(group).display_number(fallback_to_id=False)
-        ))
+        groups.sort(key=lambda group: _apartment_sort_value(_pick_apartment_representative(group)))
         total_count = len(groups)
         mobile_total_pages = max(1, (total_count + per_page - 1) // per_page)
         mobile_page = min(mobile_page, mobile_total_pages)
@@ -9692,14 +9734,14 @@ def _filtered_apartment_overview_rows(
                     len(premise_selectors),
                 ),
                 _inspection_sort_rank(row, inspection_order),
-                _apartment_number_sort_value(row["apartment"].display_number(fallback_to_id=False)),
+                _apartment_sort_value(row["apartment"]),
             )
         )
     else:
         rows.sort(
             key=lambda row: (
                 _inspection_sort_rank(row, inspection_order),
-                _apartment_number_sort_value(row["apartment"].display_number(fallback_to_id=False)),
+                _apartment_sort_value(row["apartment"]),
             )
         )
     return rows, premise_selectors, po_only
