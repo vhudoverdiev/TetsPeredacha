@@ -84,9 +84,15 @@
       <div class="dashboard-big-number">{{ stats.apartments }}</div>
       <div class="dashboard-mini-stats dashboard-mini-stats-two">
         <div><span>Квартиры</span><b>{{ stats.apartment_count }}</b></div>
+        {% if project.has_commercial %}
         <div><span>Коммерции</span><b>{{ stats.commercial_count }}</b></div>
+        {% endif %}
+        {% if project.has_storerooms %}
         <div><span>Кладовки</span><b>{{ stats.storeroom_count }}</b></div>
+        {% endif %}
+        {% if project.has_parking %}
         <div><span>Парковки</span><b>{{ stats.parking_count }}</b></div>
+        {% endif %}
         <div><span>Чистовые</span><b>{{ stats.clean_apartments }}</b></div>
         <div><span>Белые</span><b>{{ stats.white_apartments }}</b></div>
       </div>
@@ -100,10 +106,16 @@
         <div><span>Принятых</span><b>{{ stats.accepted }}</b></div>
         <div><span>Не проданных всего</span><b>{{ stats.unsold }}</b></div>
         <div><span>Квартир не продано</span><b>{{ stats.unsold_apartment_count }}</b></div>
+        {% if project.has_commercial %}
         <div><span>Коммерции не продано</span><b>{{ stats.unsold_commercial_count }}</b></div>
+        {% endif %}
+        {% if project.has_storerooms %}
         <div><span>Кладовки не продано</span><b>{{ stats.unsold_storeroom_count }}</b></div>
+        {% endif %}
+        {% if project.has_parking %}
         <div><span>Парковки не продано</span><b>{{ stats.unsold_parking_count }}</b></div>
-        <div><span>Не принятых</span><b>{{ stats.not_accepted }}</b></div>
+        {% endif %}
+        <div><span>Не принятых всего</span><b>{{ stats.not_accepted }}</b></div>
       </div>
     </article>
 
@@ -126,6 +138,7 @@
               <div><span>Квартир без замечаний</span><b>{{ stats.accepted_no_remarks_apartment }}</b></div>
             </div>
           </section>
+          {% if project.has_storerooms %}
           <section class="dashboard-accepted-type">
             <h3>Кладовки</h3>
             <div class="dashboard-accepted-summary-grid">
@@ -133,6 +146,8 @@
               <div><span>Кладовок без замечаний</span><b>{{ stats.accepted_no_remarks_storeroom }}</b></div>
             </div>
           </section>
+          {% endif %}
+          {% if project.has_parking %}
           <section class="dashboard-accepted-type">
             <h3>Парковки</h3>
             <div class="dashboard-accepted-summary-grid">
@@ -140,6 +155,8 @@
               <div><span>Парковок без замечаний</span><b>{{ stats.accepted_no_remarks_parking }}</b></div>
             </div>
           </section>
+          {% endif %}
+          {% if project.has_commercial %}
           <section class="dashboard-accepted-type">
             <h3>Коммерция</h3>
             <div class="dashboard-accepted-summary-grid">
@@ -147,6 +164,7 @@
               <div><span>Коммерций без замечаний</span><b>{{ stats.accepted_no_remarks_commercial }}</b></div>
             </div>
           </section>
+          {% endif %}
         </div>
       </div>
     </article>

@@ -59179,3 +59179,30 @@ html.desktop-like-pointer body.app-body:has(.objects-page) .object-meta-stats-no
     display: none !important;
   }
 }
+
+/* v672: align dashboard accepted type headings with metric cards. */
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-type h3 {
+  margin: 0 0 .42rem .95rem !important;
+  color: #111827 !important;
+  font-size: .86rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+}
+
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid span {
+  display: block !important;
+  color: #667085 !important;
+  font-size: .86rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+html body.app-body:has(.dashboard-page.dashboard-redesign) .dashboard-accepted-summary-grid b {
+  display: block !important;
+  margin-top: .2rem !important;
+  color: #0f172a !important;
+  font-size: 1.25rem !important;
+  font-weight: 950 !important;
+  line-height: 1.05 !important;
+}

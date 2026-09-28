@@ -269,6 +269,21 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         self.assertIn("принято - 1, ждёт - 1, не продано - 1", html)
         self.assertNotIn("принято - 2, ждёт - 2, не продано - 2", html)
 
+    def test_dashboard_hides_disabled_extra_premise_type_blocks(self):
+        self.project.has_storerooms = False
+        self.project.has_parking = False
+        db.session.commit()
+
+        response = self.client.get("/", headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Не принятых всего", html)
+        self.assertNotIn("Кладовок", html)
+        self.assertNotIn("Кладовки не продано", html)
+        self.assertNotIn("Парковок", html)
+        self.assertNotIn("Парковки не продано", html)
+
     def test_transfer_sync_imports_parking_storerooms_and_uses_first_slash_number(self):
         self.project.has_parking = True
         self.project.has_storerooms = True
