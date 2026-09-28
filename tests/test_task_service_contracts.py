@@ -81,6 +81,10 @@ class TaskServicePureContractsTests(unittest.TestCase):
         self.assertEqual(detect_search_mode("кв 15"), ("premise_number", "15"))
         self.assertEqual(detect_search_mode("к15/к2"), ("commercial_pair", "15|2"))
         self.assertEqual(detect_search_mode("к 2"), ("premise_number_or_building", "2"))
+        self.assertEqual(detect_search_mode("кл"), ("premise_type", "storeroom"))
+        self.assertEqual(detect_search_mode("кл1"), ("typed_premise_number", "storeroom|1"))
+        self.assertEqual(detect_search_mode("п"), ("premise_type", "parking"))
+        self.assertEqual(detect_search_mode("п 1"), ("typed_premise_number", "parking|1"))
         self.assertEqual(detect_search_mode("owner text"), ("text", "owner text"))
 
     def test_multi_premise_search_preserves_order_deduplicates_and_returns_tail(self):
@@ -240,6 +244,14 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertFalse(premise_matches_search(self.apartment, "commercial_pair", "12|2"))
         self.assertTrue(premise_matches_search(self.commercial, "commercial_pair", "15|2"))
         self.assertTrue(premise_matches_search(self.commercial, "premise_number_or_building", "2"))
+        storeroom = Apartment(project=self.project, apartment_number="КЛ1", premise_type="storeroom")
+        parking = Apartment(project=self.project, apartment_number="П1", premise_type="parking")
+        self.assertTrue(premise_matches_search(storeroom, "premise_type", "storeroom"))
+        self.assertTrue(premise_matches_search(storeroom, "typed_premise_number", "storeroom|1"))
+        self.assertFalse(premise_matches_search(self.apartment, "premise_type", "storeroom"))
+        self.assertTrue(premise_matches_search(parking, "premise_type", "parking"))
+        self.assertTrue(premise_matches_search(parking, "typed_premise_number", "parking|1"))
+        self.assertFalse(premise_matches_search(storeroom, "premise_type", "parking"))
 
     def test_sync_rows_imports_storeroom_sheet_when_enabled(self):
         self.project.has_storerooms = True

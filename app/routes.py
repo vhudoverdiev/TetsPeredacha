@@ -5618,7 +5618,7 @@ def _filter_glass_rows(tasks: list[Task], q: str = "", status: str = "", point: 
         if premise_selectors and not any(premise_matches_selector(task.apartment, selector) for selector in premise_selectors):
             continue
         if needle:
-            if search_mode in {"premise_number", "premise_number_or_building", "commercial_pair", "construction_number"}:
+            if search_mode in {"premise_number", "premise_number_or_building", "commercial_pair", "construction_number", "premise_type", "typed_premise_number"}:
                 if premise_selectors:
                     pass
                 elif not premise_matches_search(task.apartment, search_mode, search_value):
@@ -9288,26 +9288,29 @@ def _apartment_contract_number(apartment: Apartment) -> str:
 
 
 def _apartment_contract_input_value(apartment: Apartment) -> str:
-    stored_contract_number = str(getattr(apartment, "contract_number", "") or "").strip()
-    if stored_contract_number:
-        number = normalize_number_cell(stored_contract_number) or stored_contract_number
-    elif (apartment.premise_type or "apartment") == "commercial":
-        number = normalize_number_cell(apartment.apartment_number) or str(apartment.apartment_number or "").strip()
-    else:
-        display_number = _apartment_contract_number(apartment)
-        for prefix in ("Квартира ", "Кладовка ", "Парковка "):
-            if display_number.startswith(prefix):
-                number = display_number[len(prefix):].strip()
-                break
-        else:
-            number = display_number.strip()
-    if (apartment.premise_type or "apartment") == "parking":
-        number = Apartment._number_without_prefix(number, "П")
-        return normalize_number_cell(number) or number
-    if (apartment.premise_type or "apartment") == "storeroom":
-        number = Apartment._number_without_prefix(number, "КЛ")
-        return normalize_number_cell(number) or number
-    return number
+    return _apartment_contract_number(apartment)
+
+
+def _normalize_apartment_contract_form_value(apartment: Apartment, value: str | None) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    premise_type = apartment.premise_type or "apartment"
+    lowered = text.lower().replace("ё", "е")
+    prefixes = {
+        "apartment": ("квартира", "кв."),
+        "storeroom": ("кладовка", "кладовая", "кл."),
+        "parking": ("парковка", "паркинг", "п."),
+    }.get(premise_type, ())
+    for prefix in prefixes:
+        if lowered.startswith(prefix):
+            text = text[len(prefix):].strip()
+            break
+    if premise_type == "parking":
+        text = Apartment._number_without_prefix(text, "П")
+    elif premise_type == "storeroom":
+        text = Apartment._number_without_prefix(text, "КЛ")
+    return normalize_number_cell(text) or text
 
 
 def _floor_from_construction_number(value: str | None) -> str:
@@ -9686,7 +9689,7 @@ def _filtered_apartment_overview_rows(
                     haystack = _apartment_overview_search_haystack(row)
                     if needle not in haystack:
                         continue
-            elif search_mode in {"premise_number", "premise_number_or_building", "commercial_pair", "construction_number"}:
+            elif search_mode in {"premise_number", "premise_number_or_building", "commercial_pair", "construction_number", "premise_type", "typed_premise_number"}:
                 if not any(premise_matches_search(item, search_mode, search_value) for item in row["apartments"]):
                     continue
             else:
@@ -10080,7 +10083,7 @@ def update_apartment_details(apartment_id: int):
 
     owner_name = str(request.form.get("owner_name") or "").strip()
     phone = str(request.form.get("phone") or "").strip()
-    contract_number = str(request.form.get("contract_number") or "").strip()
+    contract_number = _normalize_apartment_contract_form_value(apartment, request.form.get("contract_number"))
     finishing_type = str(request.form.get("finishing_type") or "").strip()
     mode_value = str(request.form.get("mode") or "").strip()
     if mode_value not in APARTMENT_DETAIL_MODE_LABELS:

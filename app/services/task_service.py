@@ -158,11 +158,17 @@ PREMISE_PAIR_QUERY_RE = re.compile(
 )
 PREMISE_QUERY_RE = re.compile(r"\b(кв|квартира|к|комм|коммерция|помещение|пом)\D{0,12}(\d+)\b", re.IGNORECASE)
 PREMISE_SUFFIX_QUERY_RE = re.compile(r"\b(\d+)\s*(?:к|кв|комм)\b", re.IGNORECASE)
+TYPED_PREMISE_QUERY_RE = re.compile(
+    r"\b(кл|кладовка|кладовая|п|парковка|паркинг|машиноместо)\.?\s*(\d*)\b",
+    re.IGNORECASE,
+)
 PREMISE_SEARCH_MODES = {
     "construction_number",
     "commercial_pair",
     "premise_number",
     "premise_number_or_building",
+    "premise_type",
+    "typed_premise_number",
 }
 LEADING_MULTI_PREMISE_RE = re.compile(
     r"""
@@ -173,6 +179,8 @@ LEADING_MULTI_PREMISE_RE = re.compile(
         (?:кв|к|комм|коммерция|помещение|пом)?\s*\d+\s*/\s*(?:к|корпус)?\s*\d+
         |
         (?:кв|квартира|к|комм|коммерция|помещение|пом)\D{0,12}\d+
+        |
+        (?:кл|кладовка|кладовая|п|парковка|паркинг|машиноместо)\.?(?=\s*\d|$)\s*\d*
         |
         \d+\s*(?:к|кв|комм)
         |
@@ -196,6 +204,13 @@ def detect_search_mode(query: str | None) -> tuple[str, str]:
         return "commercial_pair", f"{match.group(1)}|{match.group(2)}"
     if text.isdigit():
         return "premise_number", text
+    match = TYPED_PREMISE_QUERY_RE.fullmatch(normalized)
+    if match:
+        prefix, number = match.group(1), match.group(2)
+        premise_type = "parking" if prefix in {"п", "парковка", "паркинг", "машиноместо"} else "storeroom"
+        if number:
+            return "typed_premise_number", f"{premise_type}|{number}"
+        return "premise_type", premise_type
     match = PREMISE_QUERY_RE.search(normalized)
     if match:
         prefix, number = match.group(1), match.group(2)
@@ -289,6 +304,24 @@ def premise_selector_clause(selector: tuple[str, str]):
             Apartment.apartment_number == value,
             and_(Apartment.premise_type == "commercial", Apartment.building == value),
         )
+    if mode == "premise_type":
+        return Apartment.premise_type == value
+    if mode == "typed_premise_number":
+        premise_type, _, number = str(value).partition("|")
+        if premise_type == "storeroom":
+            normalized_number = normalize_storeroom_number(number)
+        elif premise_type == "parking":
+            normalized_number = normalize_parking_number(number)
+        else:
+            normalized_number = normalize_number_cell(number)
+        return and_(
+            Apartment.premise_type == premise_type,
+            or_(
+                Apartment.apartment_number == normalized_number,
+                Apartment.construction_number == normalized_number,
+                Apartment.contract_number == normalize_number_cell(number),
+            ),
+        )
     if mode == "premise_number":
         return Apartment.apartment_number == value
     return None
@@ -311,6 +344,25 @@ def premise_matches_search(apartment: Apartment | None, mode: str, value: str | 
         if str(apartment.apartment_number or "").strip() == value:
             return True
         return (apartment.premise_type or "apartment") == "commercial" and str(apartment.building or "").strip() == value
+    if mode == "premise_type":
+        return (apartment.premise_type or "apartment") == value
+    if mode == "typed_premise_number":
+        premise_type, _, number = value.partition("|")
+        if (apartment.premise_type or "apartment") != premise_type:
+            return False
+        if premise_type == "storeroom":
+            normalized_number = normalize_storeroom_number(number)
+        elif premise_type == "parking":
+            normalized_number = normalize_parking_number(number)
+        else:
+            normalized_number = normalize_number_cell(number)
+        plain_number = normalize_number_cell(number) or number
+        values = {
+            str(apartment.apartment_number or "").strip(),
+            str(apartment.construction_number or "").strip(),
+            str(apartment.contract_number or "").strip(),
+        }
+        return normalized_number in values or plain_number in values
     return premise_matches_number(apartment, value)
 
 
@@ -2190,6 +2242,10 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
                 )
             elif search_mode == "premise_number":
                 query = query.filter(Apartment.apartment_number == search_value)
+            elif search_mode in {"premise_type", "typed_premise_number"}:
+                clause = premise_selector_clause((search_mode, search_value))
+                if clause is not None:
+                    query = query.filter(clause)
             else:
                 query = query.filter(task_row_text_search_clause(search_value))
 

@@ -177,20 +177,20 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
         commercial_html = self.client.get(f"/apartments/{commercial.id}").get_data(as_text=True)
 
         self.assertIn('name="contract_number"', slash_html)
-        self.assertIn('value="1"', slash_html)
+        self.assertIn('value="Квартира 1"', slash_html)
         self.assertIn('name="contract_number"', parenthesized_html)
-        self.assertIn('value="30"', parenthesized_html)
+        self.assertIn('value="Квартира 30"', parenthesized_html)
         self.assertIn('name="contract_number"', duplicated_html)
-        self.assertIn('value="44"', duplicated_html)
+        self.assertIn('value="Квартира 44"', duplicated_html)
         self.assertIn('name="contract_number"', duplicated_html)
-        self.assertIn('value="77"', manual_html)
-        self.assertIn('value="1"', float_html)
+        self.assertIn('value="Квартира 77"', manual_html)
+        self.assertIn('value="Квартира 1"', float_html)
         self.assertNotIn('value="1.0"', float_html)
-        self.assertIn('value="2"', parking_html)
+        self.assertIn('value="Парковка 2"', parking_html)
         self.assertNotIn('value="2.0"', parking_html)
         self.assertNotIn("П2.0", parking_html)
         self.assertIn("<h1 class=\"page-title\">Кладовка 154</h1>", storeroom_html)
-        self.assertIn('value="1"', storeroom_html)
+        self.assertIn('value="Кладовка 1"', storeroom_html)
         self.assertNotIn("Кладовка КЛ", storeroom_html)
         self.assertIn('name="contract_number"', commercial_html)
         self.assertIn('value="331"', commercial_html)
@@ -214,7 +214,7 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
             data={
                 "owner_name": "Иванов Иван\nПетров Пётр",
                 "phone": "+7 900 123-45-67",
-                "contract_number": "88",
+                "contract_number": "Квартира 88",
                 "finishing_type": "Белая",
                 "mode": "not_accepted",
             },
@@ -229,7 +229,7 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
         self.assertIn('class="form-control form-control-sm apartment-owner-names-control"', html)
         self.assertIn("Иванов Иван\nПетров Пётр", html)
         self.assertIn('name="contract_number"', html)
-        self.assertIn('value="88"', html)
+        self.assertIn('value="Квартира 88"', html)
 
 
 if __name__ == "__main__":
