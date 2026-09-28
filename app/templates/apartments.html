@@ -108,7 +108,7 @@
     <a class="apartment-card-link" href="{{ url_for('main.apartment_detail', apartment_id=apartment.id, back=request.full_path) }}">
     <div class="apartment-card-top">
       <div>
-        <div class="apartment-card-label apartment-card-full-label">{{ apartment.detail_label() if apartment.premise_type == 'storeroom' else apartment.label() }}</div>
+        <div class="apartment-card-label apartment-card-full-label">{{ apartment.label()|replace('КЛ', 'КЛ ', 1) if apartment.premise_type == 'storeroom' else apartment.label() }}</div>
       </div>
       {% if row.mode == 'АПП' %}
         <span class="status-pill status-pill-success">АПП</span>
