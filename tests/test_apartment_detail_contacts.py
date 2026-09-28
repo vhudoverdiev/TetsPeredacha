@@ -24,6 +24,8 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("def _apartment_contract_number(apartment: Apartment) -> str:", ROUTES)
         self.assertIn("apartment.premise_type != 'commercial' and row.contract_number", TEMPLATE)
         self.assertIn("<span>По договору</span>", TEMPLATE)
+        self.assertIn('name="contract_number"', TEMPLATE)
+        self.assertIn('[name="owner_name"], [name="phone"], [name="contract_number"], [name="finishing_type"], [name="mode"]', TEMPLATE)
         self.assertIn('class="form-control form-control-sm apartment-owner-names-control"', TEMPLATE)
         self.assertIn("row.owner_names|join('\\n') if row.owner_names else ''", TEMPLATE)
         self.assertIn(".apartment-owner-names-control", STYLE)

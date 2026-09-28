@@ -17,6 +17,7 @@ APARTMENT_FIELDS = [
     "project_id",
     "apartment_number",
     "construction_number",
+    "contract_number",
     "owner_name",
     "is_unsold",
     "phone",

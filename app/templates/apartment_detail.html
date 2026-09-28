@@ -4,7 +4,7 @@
 <div class="apartment-detail-page" data-ajax-pagination-page="apartment-history">
 {% set status_labels = {'not_started': 'не выполнено', 'done': 'выполнено', 'finishers': 'чистовики', 'contractor': 'подрядчик', 'guarantee': 'гарантия', 'concession': 'отступные', 'problem': 'проблема'} %}
 {% set status_classes = {'not_started': 'status-pill-muted', 'done': 'status-pill-success', 'finishers': 'status-pill-info', 'contractor': 'status-pill-warning', 'guarantee': 'status-pill-primary', 'concession': 'status-pill-muted', 'problem': 'status-pill-danger'} %}
-{% set field_labels = {'status': 'Статус', 'comment': 'Комментарий', 'description': 'Текст замечания', 'responsible_id': 'Исполнитель', 'planned_date': 'Плановая дата', 'is_missing_in_latest_sync': 'Отсутствует в последней синхронизации', 'owner_name': 'ФИО собственника', 'phone': 'Номер телефона', 'finishing_type': 'Отделка', 'apartment_mode': 'Режим'} %}
+{% set field_labels = {'status': 'Статус', 'comment': 'Комментарий', 'description': 'Текст замечания', 'responsible_id': 'Исполнитель', 'planned_date': 'Плановая дата', 'is_missing_in_latest_sync': 'Отсутствует в последней синхронизации', 'owner_name': 'ФИО собственника', 'phone': 'Номер телефона', 'contract_number': 'По договору', 'finishing_type': 'Отделка', 'apartment_mode': 'Режим'} %}
 
 <div class="page-head apartment-detail-head">
   <div>
@@ -46,6 +46,14 @@
               <label for="apartment-phone-{{ apartment.id }}">Номер телефона</label>
               <input class="form-control form-control-sm" id="apartment-phone-{{ apartment.id }}" name="phone" type="text" value="{{ row.phones|join('\n') if row.phones else '' }}" maxlength="255" autocomplete="tel">
             </div>
+            {% if apartment.premise_type != 'commercial' %}
+            <div class="apartment-data-row apartment-data-edit-row">
+              <label for="apartment-contract-{{ apartment.id }}">По договору</label>
+              <input class="form-control form-control-sm" id="apartment-contract-{{ apartment.id }}" name="contract_number" type="text" value="{{ apartment.contract_number or '' }}" maxlength="80" inputmode="text">
+            </div>
+            {% else %}
+            <input type="hidden" name="contract_number" value="{{ apartment.contract_number or '' }}">
+            {% endif %}
             {% if apartment.premise_type != 'commercial' %}
             <div class="apartment-data-row apartment-data-edit-row">
               <label for="apartment-finishing-{{ apartment.id }}">Отделка</label>
@@ -484,7 +492,7 @@
 
     const ownerInput = form.querySelector('[name="owner_name"]');
     const modeSelect = form.querySelector('[name="mode"]');
-    const fields = Array.from(form.querySelectorAll('[name="owner_name"], [name="phone"], [name="finishing_type"], [name="mode"]'));
+    const fields = Array.from(form.querySelectorAll('[name="owner_name"], [name="phone"], [name="contract_number"], [name="finishing_type"], [name="mode"]'));
     const saveUrl = form.getAttribute('action') || window.location.href;
     let debounceTimer = null;
     let saving = false;

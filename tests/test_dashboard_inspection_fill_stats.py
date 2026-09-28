@@ -136,7 +136,7 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         workbook.save(path)
         return path
 
-    def _workbook_with_unsupported_middle_sheet(self) -> Path:
+    def _workbook_with_extra_premise_sheets(self) -> Path:
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = "Квартиры"
@@ -152,10 +152,30 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         sheet.append(["310/1", "Owner 310", "+7999", "Белая", None, None, None])
 
         parking = workbook.create_sheet("Паркинг")
-        parking.append(["№ паркинга", "Ф.И.О. Дольщиков", "Телефон"])
-        parking.append([1, "Parking Owner", "+7999"])
+        parking.append([
+            "№ паркинга",
+            "Ф.И.О. Дольщиков",
+            "Телефон",
+            "Вид отделки",
+            "Запись",
+            "Дата первичного осмотра",
+            "Дата подписания АПП",
+        ])
+        parking.append([1, "Parking Owner", "+7998", "Без отделки", None, None, None])
 
-        path = Path(self.tempdir.name) / "transfer-with-parking.xlsx"
+        storerooms = workbook.create_sheet("Кладовки")
+        storerooms.append([
+            "№ кладовки",
+            "Ф.И.О. Дольщиков",
+            "Телефон",
+            "Вид отделки",
+            "Запись",
+            "Дата первичного осмотра",
+            "Дата подписания АПП",
+        ])
+        storerooms.append([2, "Storeroom Owner", "+7997", "Без отделки", None, None, None])
+
+        path = Path(self.tempdir.name) / "transfer-with-extra-premises.xlsx"
         workbook.save(path)
         return path
 
@@ -249,12 +269,28 @@ class DashboardInspectionFillStatsTests(unittest.TestCase):
         self.assertIn("принято - 1, ждёт - 1, не продано - 1", html)
         self.assertNotIn("принято - 2, ждёт - 2, не продано - 2", html)
 
-    def test_transfer_sync_skips_unsupported_sheets_and_uses_first_slash_number(self):
-        result = sync_transfer_statistics(self._workbook_with_unsupported_middle_sheet(), project_name=self.project.name)
+    def test_transfer_sync_imports_parking_storerooms_and_uses_first_slash_number(self):
+        self.project.has_parking = True
+        self.project.has_storerooms = True
+        db.session.commit()
 
-        self.assertEqual(result["created_count"], 1)
-        apartment = Apartment.query.one()
+        result = sync_transfer_statistics(self._workbook_with_extra_premise_sheets(), project_name=self.project.name)
+
+        self.assertEqual(result["created_count"], 3)
+        apartment = Apartment.query.filter_by(premise_type="apartment").one()
         self.assertEqual(apartment.apartment_number, "310")
+        parking = Apartment.query.filter_by(premise_type="parking").one()
+        self.assertEqual(parking.apartment_number, "П1")
+        self.assertEqual(parking.construction_number, "П1")
+        self.assertEqual(parking.owner_name, "Parking Owner")
+        storeroom = Apartment.query.filter_by(premise_type="storeroom").one()
+        self.assertEqual(storeroom.apartment_number, "КЛ2")
+        self.assertEqual(storeroom.construction_number, "КЛ2")
+        self.assertEqual(storeroom.owner_name, "Storeroom Owner")
+        stats = dashboard_stats(self.project.id)
+        self.assertEqual(stats["apartment_count"], 1)
+        self.assertEqual(stats["parking_count"], 1)
+        self.assertEqual(stats["storeroom_count"], 1)
 
 
 if __name__ == "__main__":

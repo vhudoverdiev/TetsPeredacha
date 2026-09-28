@@ -9230,6 +9230,7 @@ def _apartment_contract_number(apartment: Apartment) -> str:
     premise_type = apartment.premise_type or "apartment"
     if premise_type == "commercial":
         return ""
+    stored_contract_number = str(getattr(apartment, "contract_number", "") or "").strip()
     candidates = [
         str(apartment.apartment_number or "").strip(),
         str(apartment.construction_number or "").strip(),
@@ -9243,6 +9244,8 @@ def _apartment_contract_number(apartment: Apartment) -> str:
             return f"Парковка {normalized}"
         return f"Квартира {number}"
 
+    if stored_contract_number:
+        return format_contract_number(stored_contract_number)
     for value in candidates:
         match = re.search(r"\(([^()]+)\)", value)
         if match:
@@ -9254,11 +9257,10 @@ def _apartment_contract_number(apartment: Apartment) -> str:
             right_part = value.rsplit("/", 1)[1].strip()
             if right_part:
                 return format_contract_number(right_part)
-    display_number = apartment.display_number(fallback_to_id=False).strip()
-    if display_number:
-        return format_contract_number(display_number)
-    fallback = candidates[0] or candidates[1]
-    return format_contract_number(fallback) if fallback else ""
+    for value in candidates:
+        if value:
+            return format_contract_number(value)
+    return ""
 
 
 def _floor_from_construction_number(value: str | None) -> str:
@@ -10030,22 +10032,24 @@ def update_apartment_details(apartment_id: int):
     old_overview = _build_apartment_overview(target_group, include_activity=False)
     old_owner = "\n".join(old_overview.get("owner_names") or [])
     old_phone = "\n".join(old_overview.get("phones") or [])
+    old_contract_number = str(_pick_apartment_representative(target_group).contract_number or "").strip()
     old_finish = str(_pick_apartment_representative(target_group).finishing_type or "").strip()
     old_mode = old_overview.get("mode") or ""
 
     owner_name = str(request.form.get("owner_name") or "").strip()
     phone = str(request.form.get("phone") or "").strip()
+    contract_number = str(request.form.get("contract_number") or "").strip()
     finishing_type = str(request.form.get("finishing_type") or "").strip()
     mode_value = str(request.form.get("mode") or "").strip()
     if mode_value not in APARTMENT_DETAIL_MODE_LABELS:
         abort(400)
-    if any(len(value) > 255 for value in (owner_name, phone, finishing_type)):
+    if any(len(value) > 255 for value in (owner_name, phone, finishing_type)) or len(contract_number) > 80:
         if _wants_json_response():
             return jsonify({
                 "ok": False,
-                "message": "ФИО, телефон и отделка не должны превышать 255 символов.",
+                "message": "ФИО, телефон и отделка не должны превышать 255 символов, номер по договору — 80 символов.",
             }), 400
-        flash("ФИО, телефон и отделка не должны превышать 255 символов.", "warning")
+        flash("ФИО, телефон и отделка не должны превышать 255 символов, номер по договору — 80 символов.", "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
 
     if mode_value != "unsold" and is_unsold_owner_name(owner_name):
@@ -10054,6 +10058,7 @@ def update_apartment_details(apartment_id: int):
     for item in target_group:
         item.owner_name = None if mode_value == "unsold" else (owner_name or None)
         item.phone = phone or None
+        item.contract_number = contract_number or None
         item.finishing_type = finishing_type or None
         item.is_unsold = mode_value == "unsold"
         item.is_app_mode = mode_value == "app"
@@ -10066,6 +10071,7 @@ def update_apartment_details(apartment_id: int):
     history_changes = [
         _log_apartment_field_change(target_group, "owner_name", old_owner, owner_name),
         _log_apartment_field_change(target_group, "phone", old_phone, phone),
+        _log_apartment_field_change(target_group, "contract_number", old_contract_number, contract_number),
         _log_apartment_field_change(target_group, "finishing_type", old_finish, finishing_type),
         _log_apartment_field_change(target_group, "apartment_mode", old_mode, new_mode),
     ]
@@ -10080,6 +10086,7 @@ def update_apartment_details(apartment_id: int):
             "mode": new_mode,
             "owner_name": owner_name,
             "phone": phone,
+            "contract_number": contract_number,
             "finishing_type": finishing_type,
         })
     flash("Данные помещения обновлены." if changed_count else "Данные помещения не изменились.", "success")
@@ -12101,7 +12108,7 @@ def _parse_conflict_value_for_field(field_name: str | None, value: str | None):
         return parse_date(text)
     if field_name == "is_app_mode":
         return text.lower() in {"1", "true", "yes", "да", "апп"}
-    if field_name in {"owner_name", "phone", "finishing_type", "entrance", "floor", "app_deadline_raw", "app_deadline_status", "avr_status", "addendum_status", "comment", "inspection_note"}:
+    if field_name in {"owner_name", "phone", "contract_number", "finishing_type", "entrance", "floor", "app_deadline_raw", "app_deadline_status", "avr_status", "addendum_status", "comment", "inspection_note"}:
         return text or None
     return text or None
 
@@ -12112,6 +12119,7 @@ SYNC_CONFLICT_FIELD_LABELS = {
     "source_cell_value": "Текст замечания",
     "description": "Текст замечания",
     "owner_name": "Собственник",
+    "contract_number": "По договору",
     "is_unsold": "Статус продажи",
     "phone": "Телефон",
     "finishing_type": "Вид отделки",

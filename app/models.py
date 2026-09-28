@@ -268,6 +268,7 @@ class Apartment(TimestampMixin, db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False, index=True)
     apartment_number = db.Column(db.String(80), nullable=True, index=True)
     construction_number = db.Column(db.String(80), nullable=True, index=True)
+    contract_number = db.Column(db.String(80), nullable=True)
     owner_name = db.Column(db.String(180), nullable=True, index=True)
     is_unsold = db.Column(db.Boolean, default=False, nullable=False, index=True)
     phone = db.Column(db.String(100), nullable=True, index=True)

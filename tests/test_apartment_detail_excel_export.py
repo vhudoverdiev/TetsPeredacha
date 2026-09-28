@@ -154,19 +154,21 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
         slash_number = Apartment(project=self.project, apartment_number="330", construction_number="330/1")
         parenthesized_number = Apartment(project=self.project, apartment_number="10", construction_number="10(30)")
         duplicated_number = Apartment(project=self.project, apartment_number="44")
-        parking = Apartment(project=self.project, apartment_number="П1", construction_number="П1", premise_type="parking")
+        manual_number = Apartment(project=self.project, apartment_number="45", contract_number="77")
+        parking = Apartment(project=self.project, apartment_number="П1", construction_number="П1", premise_type="parking", contract_number="1")
         commercial = Apartment(
             project=self.project,
             apartment_number="331",
             construction_number="331/1",
             premise_type="commercial",
         )
-        db.session.add_all([slash_number, parenthesized_number, duplicated_number, parking, commercial])
+        db.session.add_all([slash_number, parenthesized_number, duplicated_number, manual_number, parking, commercial])
         db.session.commit()
 
         slash_html = self.client.get(f"/apartments/{slash_number.id}").get_data(as_text=True)
         parenthesized_html = self.client.get(f"/apartments/{parenthesized_number.id}").get_data(as_text=True)
         duplicated_html = self.client.get(f"/apartments/{duplicated_number.id}").get_data(as_text=True)
+        manual_html = self.client.get(f"/apartments/{manual_number.id}").get_data(as_text=True)
         parking_html = self.client.get(f"/apartments/{parking.id}").get_data(as_text=True)
         commercial_html = self.client.get(f"/apartments/{commercial.id}").get_data(as_text=True)
 
@@ -176,6 +178,9 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
         self.assertIn("<b>Квартира 30</b>", parenthesized_html)
         self.assertIn("<span>По договору</span>", duplicated_html)
         self.assertIn("<b>Квартира 44</b>", duplicated_html)
+        self.assertIn('name="contract_number"', duplicated_html)
+        self.assertIn("<span>По договору</span>", manual_html)
+        self.assertIn("<b>Квартира 77</b>", manual_html)
         self.assertIn("<span>По договору</span>", parking_html)
         self.assertIn("<b>Парковка П1</b>", parking_html)
         self.assertNotIn("<span>По договору</span>", commercial_html)
@@ -186,6 +191,7 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
             data={
                 "owner_name": "Иванов Иван\nПетров Пётр",
                 "phone": "+7 900 123-45-67",
+                "contract_number": "88",
                 "finishing_type": "Белая",
                 "mode": "not_accepted",
             },
@@ -195,9 +201,12 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         apartment = db.session.get(Apartment, self.apartment.id)
         self.assertEqual(apartment.owner_name, "Иванов Иван\nПетров Пётр")
+        self.assertEqual(apartment.contract_number, "88")
         html = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
         self.assertIn('class="form-control form-control-sm apartment-owner-names-control"', html)
         self.assertIn("Иванов Иван\nПетров Пётр", html)
+        self.assertIn('name="contract_number"', html)
+        self.assertIn('value="88"', html)
 
 
 if __name__ == "__main__":

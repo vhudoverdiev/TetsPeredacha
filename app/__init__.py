@@ -356,6 +356,8 @@ def create_app(config_class=Config):
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN po_status_manual BOOLEAN NOT NULL DEFAULT 0"))
                 if "premise_type" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN premise_type VARCHAR(30) NOT NULL DEFAULT 'apartment'"))
+                if "contract_number" not in apartment_columns:
+                    db.session.execute(text("ALTER TABLE apartments ADD COLUMN contract_number VARCHAR(80)"))
                 if "building" not in apartment_columns:
                     db.session.execute(text("ALTER TABLE apartments ADD COLUMN building VARCHAR(50)"))
                 if "avr_status" not in apartment_columns:

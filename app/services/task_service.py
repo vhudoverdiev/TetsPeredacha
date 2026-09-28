@@ -845,6 +845,26 @@ def normalize_parking_number(value: str | None) -> str | None:
     return f"П{text}"
 
 
+def contract_number_from_premise_identity(*values: str | None) -> str | None:
+    fallback_number: str | None = None
+    for value in values:
+        text = str(value or "").strip()
+        if not text:
+            continue
+        match = re.search(r"\(([^()]+)\)", text)
+        if match:
+            number = match.group(1).strip()
+            if number:
+                return number
+        if text.count("/") == 1:
+            right_part = text.rsplit("/", 1)[1].strip()
+            if right_part:
+                return right_part
+        if fallback_number is None:
+            fallback_number = text
+    return fallback_number
+
+
 def apartment_number_from_construction(construction_number: str | None) -> str | None:
     if not construction_number:
         return None
@@ -1349,6 +1369,8 @@ def get_or_update_apartment(
 
     apartment.premise_type = premise_type or "apartment"
     apartment.building = building or apartment.building
+    if (apartment.premise_type or "apartment") != "commercial" and not str(apartment.contract_number or "").strip():
+        apartment.contract_number = contract_number_from_premise_identity(apartment_number, construction_number)
 
     owner_name = str(value_at(row, base_mapping.get("owner_name")) or "").strip() or None
     owner_has_real_name = bool(owner_name and not is_unsold_owner_name(owner_name))
@@ -2430,22 +2452,30 @@ def dashboard_stats(
         for rows in grouped_rows.values()
         if rows and _row_premise_type(rows[0]) in app_like_premise_types and _group_is_accepted(rows)
     )
-    accepted_with_remarks = sum(
-        1
-        for rows in grouped_rows.values()
-        if rows
-        and _row_premise_type(rows[0]) in app_like_premise_types
-        and _group_is_accepted(rows)
-        and not all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
-    )
-    accepted_no_remarks = sum(
-        1
-        for rows in grouped_rows.values()
-        if rows
-        and _row_premise_type(rows[0]) in app_like_premise_types
-        and _group_is_accepted(rows)
-        and all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
-    )
+    accepted_with_remarks_by_type = {
+        premise_type: sum(
+            1
+            for rows in grouped_rows.values()
+            if rows
+            and _row_premise_type(rows[0]) == premise_type
+            and _group_is_accepted(rows)
+            and not all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
+        )
+        for premise_type in ("apartment", "commercial", "storeroom", "parking")
+    }
+    accepted_no_remarks_by_type = {
+        premise_type: sum(
+            1
+            for rows in grouped_rows.values()
+            if rows
+            and _row_premise_type(rows[0]) == premise_type
+            and _group_is_accepted(rows)
+            and all(getattr(row, "app_deadline_status", None) == APP_DEADLINE_NO_REMARKS for row in rows)
+        )
+        for premise_type in ("apartment", "commercial", "storeroom", "parking")
+    }
+    accepted_with_remarks = accepted_with_remarks_by_type["apartment"]
+    accepted_no_remarks = accepted_no_remarks_by_type["apartment"]
     unsold_apartment_count = sum(
         1
         for rows in grouped_rows.values()
@@ -2502,6 +2532,14 @@ def dashboard_stats(
         "accepted": accepted,
         "accepted_with_remarks": accepted_with_remarks,
         "accepted_no_remarks": accepted_no_remarks,
+        "accepted_with_remarks_apartment": accepted_with_remarks_by_type["apartment"],
+        "accepted_no_remarks_apartment": accepted_no_remarks_by_type["apartment"],
+        "accepted_with_remarks_commercial": accepted_with_remarks_by_type["commercial"],
+        "accepted_no_remarks_commercial": accepted_no_remarks_by_type["commercial"],
+        "accepted_with_remarks_storeroom": accepted_with_remarks_by_type["storeroom"],
+        "accepted_no_remarks_storeroom": accepted_no_remarks_by_type["storeroom"],
+        "accepted_with_remarks_parking": accepted_with_remarks_by_type["parking"],
+        "accepted_no_remarks_parking": accepted_no_remarks_by_type["parking"],
         "unsold": unsold,
         "unsold_apartment_count": unsold_apartment_count,
         "unsold_commercial_count": unsold_commercial_count,

@@ -118,9 +118,35 @@
           <i class="bi bi-check2-circle"></i>
           <span>Принято</span>
         </div>
-        <div class="dashboard-accepted-summary-grid">
-          <div><span>С замечаниями</span><b>{{ stats.accepted_with_remarks }}</b></div>
-          <div><span>Без замечаний</span><b>{{ stats.accepted_no_remarks }}</b></div>
+        <div class="dashboard-accepted-types">
+          <section class="dashboard-accepted-type">
+            <h3>Квартиры</h3>
+            <div class="dashboard-accepted-summary-grid">
+              <div><span>Квартир с замечаниями</span><b>{{ stats.accepted_with_remarks_apartment }}</b></div>
+              <div><span>Квартир без замечаний</span><b>{{ stats.accepted_no_remarks_apartment }}</b></div>
+            </div>
+          </section>
+          <section class="dashboard-accepted-type">
+            <h3>Кладовки</h3>
+            <div class="dashboard-accepted-summary-grid">
+              <div><span>Кладовок с замечаниями</span><b>{{ stats.accepted_with_remarks_storeroom }}</b></div>
+              <div><span>Кладовок без замечаний</span><b>{{ stats.accepted_no_remarks_storeroom }}</b></div>
+            </div>
+          </section>
+          <section class="dashboard-accepted-type">
+            <h3>Парковки</h3>
+            <div class="dashboard-accepted-summary-grid">
+              <div><span>Парковок с замечаниями</span><b>{{ stats.accepted_with_remarks_parking }}</b></div>
+              <div><span>Парковок без замечаний</span><b>{{ stats.accepted_no_remarks_parking }}</b></div>
+            </div>
+          </section>
+          <section class="dashboard-accepted-type">
+            <h3>Коммерция</h3>
+            <div class="dashboard-accepted-summary-grid">
+              <div><span>Коммерций с замечаниями</span><b>{{ stats.accepted_with_remarks_commercial }}</b></div>
+              <div><span>Коммерций без замечаний</span><b>{{ stats.accepted_no_remarks_commercial }}</b></div>
+            </div>
+          </section>
         </div>
       </div>
     </article>

@@ -24,6 +24,7 @@ from app.services.task_service import (
     apartment_number_from_construction,
     build_task_query,
     change_task_status,
+    contract_number_from_premise_identity,
     detect_search_mode,
     detect_status_marker,
     get_multi_param_values,
@@ -170,6 +171,12 @@ class TaskServicePureContractsTests(unittest.TestCase):
     def test_parking_numbers_are_prefixed_with_p(self):
         self.assertEqual(normalize_parking_number("1"), "П1")
         self.assertEqual(normalize_parking_number("П2"), "П2")
+
+    def test_contract_number_prefers_parentheses_or_slash_and_falls_back_to_plain_number(self):
+        self.assertEqual(contract_number_from_premise_identity("1(10)"), "10")
+        self.assertEqual(contract_number_from_premise_identity("10/1"), "1")
+        self.assertEqual(contract_number_from_premise_identity("330", "330/1"), "1")
+        self.assertEqual(contract_number_from_premise_identity("330"), "330")
 
 
 class TaskServiceDatabaseContractsTests(unittest.TestCase):
@@ -365,6 +372,33 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertEqual(stats["accepted"], 1)
         self.assertEqual(stats["unsold_parking_count"], 1)
         self.assertGreaterEqual(stats["apartments"], 4)
+
+    def test_dashboard_accepted_remark_split_is_separate_for_each_premise_type(self):
+        rows = [
+            Apartment(project=self.project, apartment_number="101", premise_type="apartment", is_app_mode=True, app_deadline_status=APP_DEADLINE_NORMAL),
+            Apartment(project=self.project, apartment_number="102", premise_type="apartment", is_app_mode=True, app_deadline_status=APP_DEADLINE_NO_REMARKS),
+            Apartment(project=self.project, apartment_number="КЛ1", premise_type="storeroom", is_app_mode=True, app_deadline_status=APP_DEADLINE_NORMAL),
+            Apartment(project=self.project, apartment_number="КЛ2", premise_type="storeroom", is_app_mode=True, app_deadline_status=APP_DEADLINE_NO_REMARKS),
+            Apartment(project=self.project, apartment_number="П1", premise_type="parking", is_app_mode=True, app_deadline_status=APP_DEADLINE_NORMAL),
+            Apartment(project=self.project, apartment_number="П2", premise_type="parking", is_app_mode=True, app_deadline_status=APP_DEADLINE_NO_REMARKS),
+            Apartment(project=self.project, apartment_number="К1", premise_type="commercial", is_app_mode=True, app_deadline_status=APP_DEADLINE_NORMAL),
+            Apartment(project=self.project, apartment_number="К2", premise_type="commercial", is_app_mode=True, app_deadline_status=APP_DEADLINE_NO_REMARKS),
+        ]
+        db.session.add_all(rows)
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+
+        self.assertEqual(stats["accepted_with_remarks"], 1)
+        self.assertEqual(stats["accepted_no_remarks"], 1)
+        self.assertEqual(stats["accepted_with_remarks_apartment"], 1)
+        self.assertEqual(stats["accepted_no_remarks_apartment"], 1)
+        self.assertEqual(stats["accepted_with_remarks_storeroom"], 1)
+        self.assertEqual(stats["accepted_no_remarks_storeroom"], 1)
+        self.assertEqual(stats["accepted_with_remarks_parking"], 1)
+        self.assertEqual(stats["accepted_no_remarks_parking"], 1)
+        self.assertEqual(stats["accepted_with_remarks_commercial"], 1)
+        self.assertEqual(stats["accepted_no_remarks_commercial"], 1)
 
     def test_change_task_status_sets_and_clears_completed_date_contract(self):
         task = Task(
