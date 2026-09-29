@@ -7974,8 +7974,52 @@ def task_new():
                     continue
                 prepared_entries.append((point_number, text))
             if not prepared_entries:
-                db.session.rollback()
-                flash("Заполните хотя бы одно замечание по пункту", "warning")
+                if not po_mode:
+                    db.session.rollback()
+                    flash(
+                        "Вероятнее всего вам нужно нажать кнопку ПО, чтобы добавить акт без замечаний.",
+                        "warning",
+                    )
+                else:
+                    apartment_label = apartment.full_label() if apartment.premise_type == "commercial" else apartment.label()
+                    sync_log = _start_snapshot_sync_log(
+                        project=project,
+                        source_type="manual_act",
+                        source_name=f"Ручной акт / {apartment_label}",
+                    )
+                    try:
+                        target_group = _apartment_group_for_project(apartment, project.id)
+                        _apply_inspection_date_to_group(target_group, inspection_date)
+                        completed_previous_count = _complete_previous_po_tasks_for_apartment_group(
+                            project=project,
+                            apartment=apartment,
+                        )
+                        for item in target_group:
+                            item.is_app_mode = True
+                            item.is_unsold = False
+                            item.app_deadline_status = APP_DEADLINE_NO_REMARKS
+                            item.app_deadline_date = None
+                            item.remark_deadline_date = None
+                            item.app_deadline_raw = "без замечаний"
+                            item.avr_status = AVR_STATUS_NEEDED
+                            item.avr_signed_date = None
+                        db.session.commit()
+                        _finish_snapshot_sync_log(sync_log, created_count=0, missing_count=0)
+                        message = "Акт без замечаний обработан"
+                        if completed_previous_count:
+                            message += f". Переведено в выполнено: {completed_previous_count}"
+                        flash(message, "success")
+                        return redirect(url_for("main.apartment_detail", apartment_id=apartment.id))
+                    except Exception as exc:
+                        db.session.rollback()
+                        _finish_snapshot_sync_log(
+                            sync_log,
+                            created_count=0,
+                            missing_count=0,
+                            status="error",
+                            error_message=str(exc),
+                        )
+                        raise
             elif (
                 not po_mode
                 and len(prepared_entries) >= 3
@@ -9087,6 +9131,72 @@ def _apartment_inspection_displays(apartments: list[Apartment]) -> list[str]:
     ]
 
 
+def _apartment_inspection_items(apartments: list[Apartment]) -> list[dict[str, str]]:
+    values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
+    unique: dict[str, date | datetime] = {}
+    for value in values:
+        if value is None:
+            continue
+        label = _format_inspection_display_value(value)
+        unique.setdefault(label, value)
+    items: list[dict[str, str]] = []
+    for label, value in sorted(unique.items(), key=lambda item: _inspection_sort_datetime(item[1]) or datetime.max):
+        if isinstance(value, datetime):
+            raw_value = value.date().isoformat()
+        else:
+            raw_value = value.isoformat()
+        items.append({"label": label, "value": raw_value})
+    return items
+
+
+def _add_apartment_inspection_date(apartment: Apartment, inspection_date: date) -> bool:
+    existing_dates = {
+        value.date() if isinstance(value, datetime) else value
+        for value in _apartment_inspection_values(apartment)
+        if value is not None
+    }
+    if inspection_date in existing_dates:
+        return False
+    if apartment.inspection_date is None:
+        apartment.inspection_date = inspection_date
+    elif apartment.first_inspection_date is None:
+        apartment.first_inspection_date = inspection_date
+    elif apartment.reinspection_date is None:
+        apartment.reinspection_date = inspection_date
+    else:
+        note = str(apartment.inspection_note or "").strip()
+        line = f"Дополнительный осмотр: {inspection_date.strftime('%d.%m.%Y')}"
+        apartment.inspection_note = f"{note}\n{line}".strip() if note else line
+    if apartment.first_inspection_date is None:
+        apartment.first_inspection_date = inspection_date
+    apartment.first_inspection_present = True
+    apartment.inspection_date_backup = apartment.inspection_date or apartment.first_inspection_date or inspection_date
+    return True
+
+
+def _remove_apartment_inspection_date(apartment: Apartment, inspection_date: date) -> bool:
+    changed = False
+    for field_name in ("inspection_date", "first_inspection_date", "reinspection_date"):
+        value = getattr(apartment, field_name)
+        if value == inspection_date:
+            setattr(apartment, field_name, None)
+            changed = True
+    note = str(apartment.inspection_note or "")
+    if note:
+        pattern = re.compile(
+            rf"^\s*Дополнительный осмотр:\s*{re.escape(inspection_date.strftime('%d.%m.%Y'))}\s*$",
+            re.MULTILINE,
+        )
+        next_note, removed_count = pattern.subn("", note)
+        if removed_count:
+            lines = [line.strip() for line in next_note.splitlines() if line.strip()]
+            apartment.inspection_note = "\n".join(lines) or None
+            changed = True
+    if not _apartment_inspection_values(apartment):
+        apartment.first_inspection_present = False
+    return changed
+
+
 def _apartment_inspection_status_class(status: str | None) -> str:
     if status == "Будет":
         return "status-pill-warning"
@@ -9461,6 +9571,7 @@ def _build_apartment_overview(apartment_or_group, include_activity: bool = True)
         "inspection_date": _apartment_inspection_date(apartments),
         "inspection_display": _apartment_inspection_display(apartments),
         "inspection_displays": _apartment_inspection_displays(apartments),
+        "inspection_items": _apartment_inspection_items(apartments),
         "inspection_status": _apartment_inspection_status(apartments),
         "inspection_status_class": _apartment_inspection_status_class(_apartment_inspection_status(apartments)),
         "tasks": tasks,
@@ -10225,6 +10336,12 @@ def update_apartment_inspection_date(apartment_id: int):
         abort(404)
 
     inspection_date = parse_date(request.form.get("inspection_date"))
+    if inspection_date is None:
+        message = "Выберите дату осмотра"
+        if _wants_json_response():
+            return jsonify({"ok": False, "message": message}), 400
+        flash(message, "warning")
+        return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
     group_key = _apartment_group_key(apartment)
     group = [
         item
@@ -10238,18 +10355,16 @@ def update_apartment_inspection_date(apartment_id: int):
             return jsonify({"ok": False, "message": message}), 400
         flash(message, "warning")
         return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
-    old_date_label = _apartment_inspection_display(target_group)
+    old_date_label = ", ".join(_apartment_inspection_displays(target_group)) or "—"
+    added_count = 0
     for item in target_group:
-        item.inspection_date = inspection_date
-        item.first_inspection_date = inspection_date
-        item.first_inspection_present = inspection_date is not None
-        if inspection_date is not None:
-            item.inspection_date_backup = inspection_date
-    new_date_label = _apartment_inspection_display(target_group)
+        if _add_apartment_inspection_date(item, inspection_date):
+            added_count += 1
+    new_date_label = ", ".join(_apartment_inspection_displays(target_group)) or "—"
     history_change = _log_apartment_field_change(target_group, "apartment_inspection_date", old_date_label, new_date_label)
     db.session.commit()
 
-    message = "Дата осмотра обновлена" if inspection_date else "Дата осмотра очищена"
+    message = "Дата осмотра добавлена" if added_count else "Такая дата осмотра уже есть"
     if _wants_json_response():
         overview = _build_apartment_overview(target_group)
         history_entry = _build_change_history_entry(history_change[0], task=history_change[1]) if history_change else None
@@ -10257,6 +10372,62 @@ def update_apartment_inspection_date(apartment_id: int):
             "ok": True,
             "message": message,
             "inspection_date": inspection_date.isoformat() if inspection_date else "",
+            "inspection_date_label": ", ".join(overview.get("inspection_displays") or []) or "—",
+            "inspection_date_labels": overview.get("inspection_displays") or [],
+            "inspection_status": overview.get("inspection_status") or "",
+            "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
+            "history_entry": history_entry,
+        })
+    flash(message, "success")
+    return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+
+
+@bp.route("/apartments/<int:apartment_id>/inspection-date/delete", methods=["POST"])
+@login_required
+def delete_apartment_inspection_date(apartment_id: int):
+    project = selected_project()
+    if project is None:
+        return redirect(url_for("main.objects"))
+    if current_user.role == "viewer":
+        abort(403)
+    apartment = db.session.get(Apartment, apartment_id) or abort(404)
+    if apartment.project_id != project.id:
+        abort(404)
+
+    inspection_date = parse_date(request.form.get("inspection_date"))
+    if inspection_date is None:
+        abort(400)
+    group_key = _apartment_group_key(apartment)
+    group = [
+        item
+        for item in Apartment.query.filter(Apartment.project_id == project.id).all()
+        if _is_visible_apartment_row(item) and _apartment_group_key(item) == group_key
+    ]
+    target_group = group or [apartment]
+    if _is_app_inspection_locked(target_group):
+        message = "В режиме АПП осмотр с датой изменить нельзя"
+        if _wants_json_response():
+            return jsonify({"ok": False, "message": message}), 400
+        flash(message, "warning")
+        return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
+
+    old_date_label = ", ".join(_apartment_inspection_displays(target_group)) or "—"
+    removed_count = 0
+    for item in target_group:
+        if _remove_apartment_inspection_date(item, inspection_date):
+            removed_count += 1
+    new_date_label = ", ".join(_apartment_inspection_displays(target_group)) or "—"
+    history_change = _log_apartment_field_change(target_group, "apartment_inspection_date", old_date_label, new_date_label)
+    db.session.commit()
+
+    message = "Дата осмотра удалена" if removed_count else "Дата осмотра уже удалена"
+    if _wants_json_response():
+        overview = _build_apartment_overview(target_group)
+        history_entry = _build_change_history_entry(history_change[0], task=history_change[1]) if history_change else None
+        return jsonify({
+            "ok": True,
+            "message": message,
+            "inspection_date": overview.get("inspection_date").isoformat() if overview.get("inspection_date") else "",
             "inspection_date_label": ", ".join(overview.get("inspection_displays") or []) or "—",
             "inspection_date_labels": overview.get("inspection_displays") or [],
             "inspection_status": overview.get("inspection_status") or "",

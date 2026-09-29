@@ -14,6 +14,7 @@ from app.models import (
     User,
     WorkPoint,
 )
+from app.services.task_service import APP_DEADLINE_NO_REMARKS
 
 
 class TestConfig(Config):
@@ -520,6 +521,65 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(Task.query.filter(Task.description == "Старое замечание").count(), 1)
         new_task = Task.query.filter(Task.description == "Новое по вентиляции").one()
         self.assertEqual(new_task.status, STATUS_NOT_STARTED)
+
+    def test_manual_act_with_one_filled_point_is_saved(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "act",
+                "apartment_id": str(self.apartment.id),
+                "description_10": "Единственное замечание из акта",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
+        task = Task.query.filter(Task.description == "Единственное замечание из акта").one()
+        self.assertEqual(task.work_point.point_number, "10")
+        self.assertEqual(task.status, STATUS_NOT_STARTED)
+
+    def test_manual_act_without_rows_warns_to_enable_po(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "act",
+                "apartment_id": str(self.apartment.id),
+            },
+            follow_redirects=True,
+        )
+
+        html = response.get_data(as_text=True)
+        self.assertIn("Вероятнее всего вам нужно нажать кнопку ПО", html)
+        self.assertEqual(Task.query.count(), 1)
+
+    def test_manual_act_po_without_rows_marks_apartment_no_remarks_and_completes_old_tasks(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/new",
+            data={
+                "add_mode": "manual",
+                "manual_kind": "act",
+                "apartment_id": str(self.apartment.id),
+                "po_mode": "1",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
+        db.session.refresh(self.apartment)
+        db.session.refresh(self.old_task)
+        self.assertEqual(self.apartment.app_deadline_status, APP_DEADLINE_NO_REMARKS)
+        self.assertEqual(self.old_task.status, STATUS_DONE)
+        self.assertTrue(self.old_task.is_done)
 
     def test_manual_act_warns_to_enable_po_for_three_points_when_existing_remarks_exist(self):
         self._login()

@@ -99,19 +99,28 @@
             <span>Осмотр</span>
             <b class="apartment-inspection-display" data-apartment-inspection-display>
               <span class="status-pill {{ row.inspection_status_class }}">{{ row.inspection_status }}</span>
-              {% if row.inspection_displays %}
-              <span class="apartment-inspection-date-stack {% if row.inspection_displays|length == 1 %}is-single{% endif %}">
-                {% for inspection_label in row.inspection_displays %}
-                <span>{{ inspection_label }}</span>
+              {% if row.inspection_items %}
+              <span class="apartment-inspection-date-stack {% if row.inspection_items|length == 1 %}is-single{% endif %}">
+                {% for inspection_item in row.inspection_items %}
+                <span class="apartment-inspection-date-item">
+                  <span>{{ inspection_item.label }}</span>
+                  {% if can_edit_inspection_date %}
+                  <form method="post" action="{{ url_for('main.delete_apartment_inspection_date', apartment_id=apartment.id) }}" class="apartment-inspection-date-delete-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="inspection_date" value="{{ inspection_item.value }}">
+                    <button class="btn btn-sm btn-outline-danger apartment-inspection-date-delete-btn" type="submit" title="Удалить дату осмотра" aria-label="Удалить дату осмотра {{ inspection_item.label }}"><i class="bi bi-trash"></i></button>
+                  </form>
+                  {% endif %}
+                </span>
                 {% endfor %}
               </span>
               {% endif %}
             </b>
-            {% if can_edit_inspection_date and row.inspection_date %}
+            {% if can_edit_inspection_date %}
             <div class="apartment-inline-controls">
-              <form method="post" action="{{ url_for('main.update_apartment_inspection_date', apartment_id=apartment.id) }}" class="apartment-inline-form apartment-inspection-date-form" data-apartment-async="1">
+              <form method="post" action="{{ url_for('main.update_apartment_inspection_date', apartment_id=apartment.id) }}" class="apartment-inline-form apartment-inspection-date-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input class="form-control form-control-sm" type="date" id="inspection-date-{{ apartment.id }}" name="inspection_date" value="{{ row.inspection_date.isoformat() if row.inspection_date else '' }}" title="Дата осмотра">
+                <input class="form-control form-control-sm" type="date" id="inspection-date-{{ apartment.id }}" name="inspection_date" value="" title="Добавить дату осмотра" required>
               </form>
               {% if can_reset_inspection or can_reset_future_inspection_mobile %}
               <form method="post" action="{{ url_for('main.update_apartment_inspection_status', apartment_id=apartment.id) }}" class="apartment-inline-form">
@@ -121,14 +130,6 @@
               </form>
               {% endif %}
             </div>
-            {% elif can_edit_inspection_date %}
-            <form method="post" action="{{ url_for('main.update_apartment_inspection_status', apartment_id=apartment.id) }}" class="apartment-inline-controls apartment-inline-form">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <input class="btn-check" type="radio" name="inspection_status" id="inspection-detail-was-{{ apartment.id }}" value="was" {% if row.inspection_status == 'Был' %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
-              <label class="inspection-option inspection-option-was" for="inspection-detail-was-{{ apartment.id }}">Был</label>
-              <input class="btn-check" type="radio" name="inspection_status" id="inspection-detail-not-was-{{ apartment.id }}" value="not_was" {% if row.inspection_status != 'Был' %}checked{% endif %} onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()">
-              <label class="inspection-option inspection-option-not-was" for="inspection-detail-not-was-{{ apartment.id }}">Не был</label>
-            </form>
             {% endif %}
           </div>
           {% endif %}

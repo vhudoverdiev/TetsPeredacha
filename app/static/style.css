@@ -58914,22 +58914,37 @@ html body.app-body .apartment-detail-page .apartment-inspection-date-stack {
   display: inline-flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  gap: .06rem !important;
+  gap: .18rem !important;
   min-width: 0 !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-inspection-date-stack > span {
-  display: block !important;
+html body.app-body .apartment-detail-page .apartment-inspection-date-stack > span,
+html body.app-body .apartment-detail-page .apartment-inspection-date-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: .32rem !important;
   white-space: nowrap !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-inspection-date-stack.is-single {
-  flex-direction: row !important;
-  max-width: none !important;
+html body.app-body .apartment-detail-page .apartment-inspection-date-delete-form {
+  display: inline-flex !important;
+  margin: 0 !important;
 }
 
-html body.app-body .apartment-detail-page .apartment-inspection-date-stack.is-single > span {
-  white-space: nowrap !important;
+html body.app-body .apartment-detail-page .apartment-inspection-date-delete-btn {
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: .45rem !important;
+  line-height: 1 !important;
+}
+
+html body.app-body .apartment-detail-page .apartment-inspection-date-delete-btn i {
+  font-size: .78rem !important;
 }
 
 html body.app-body .apartment-detail-page .apartment-addendum-date-badge {

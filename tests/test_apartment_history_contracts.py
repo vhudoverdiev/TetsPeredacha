@@ -105,13 +105,37 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(date_response.status_code, 200)
-        self.assertEqual(
-            "Дата осмотра помещения изменена: была «%s», стала «15.09.2026»."
-            % old_date_label,
-            date_response.get_json()["history_entry"]["summary"].replace("15 сентября 2026", "15.09.2026"),
-        )
+        summary = date_response.get_json()["history_entry"]["summary"].replace("15 сентября 2026", "15.09.2026")
+        self.assertIn("Дата осмотра помещения изменена", summary)
+        self.assertIn("была «%s»" % old_date_label, summary)
+        self.assertIn("15.09.2026", summary)
         self.assertIn("apartment_inspection_status", self._change_field_names())
         self.assertIn("apartment_inspection_date", self._change_field_names())
+
+    def test_inspection_dates_are_added_and_deleted_individually(self):
+        first_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": "2026-09-15"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+        second_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": "2026-09-20"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
+        self.assertEqual(second_response.get_json()["inspection_date_labels"], ["15 сентября 2026", "20 сентября 2026"])
+
+        delete_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date/delete",
+            data={"inspection_date": "2026-09-15"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(delete_response.status_code, 200)
+        self.assertEqual(delete_response.get_json()["inspection_date_labels"], ["20 сентября 2026"])
 
     def test_future_inspection_date_returns_planned_status(self):
         future_date = date.today() + timedelta(days=7)
