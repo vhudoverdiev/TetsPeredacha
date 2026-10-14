@@ -39,7 +39,6 @@ class ProjectForm(FlaskForm):
     developer_representative = StringField("Представитель Застройщика", validators=[Optional(), Length(max=255)])
     developer_representative_phone = StringField("Номер телефона", validators=[Optional(), Length(max=80)])
     description = TextAreaField("Описание", validators=[Optional(), Length(max=2000)])
-    google_sheet_id = StringField("Google Sheet ID", validators=[Optional(), Length(max=255)])
     has_apartments = BooleanField("Квартиры", default=True)
     has_commercial = BooleanField("Коммерции", default=True)
     has_storerooms = BooleanField("Кладовки", default=False)

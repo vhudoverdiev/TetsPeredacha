@@ -203,11 +203,11 @@ class ApartmentDetailExcelExportTests(unittest.TestCase):
 
         html = self.client.get("/apartments").get_data(as_text=True)
 
-        self.assertIn("КЛ 154", html)
+        self.assertIn("кл 154", html)
         self.assertNotIn("Кладовка 154", html)
         self.assertNotIn("КЛ154</div>", html)
-        self.assertLess(html.index("кв 42"), html.index("КЛ 154"))
-        self.assertLess(html.index("кв 330"), html.index("КЛ 154"))
+        self.assertLess(html.index("кв 42"), html.index("кл 154"))
+        self.assertLess(html.index("кв 330"), html.index("кл 154"))
 
     def test_apartment_owner_names_are_saved_and_rendered_by_lines(self):
         response = self.client.post(

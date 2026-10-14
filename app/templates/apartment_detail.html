@@ -118,15 +118,20 @@
             </b>
             {% if can_edit_inspection_date %}
             <div class="apartment-inline-controls">
+              {% if row.inspection_items|length < 5 %}
               <form method="post" action="{{ url_for('main.update_apartment_inspection_date', apartment_id=apartment.id) }}" class="apartment-inline-form apartment-inspection-date-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input class="form-control form-control-sm" type="date" id="inspection-date-{{ apartment.id }}" name="inspection_date" value="" title="Добавить дату осмотра" required>
+                <button class="btn btn-sm btn-outline-primary apartment-inspection-action-btn" type="submit">Добавить</button>
               </form>
+              {% else %}
+              <span class="text-muted small">Добавлено 5 из 5 осмотров</span>
+              {% endif %}
               {% if can_reset_inspection or can_reset_future_inspection_mobile %}
               <form method="post" action="{{ url_for('main.update_apartment_inspection_status', apartment_id=apartment.id) }}" class="apartment-inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="inspection_status" value="not_was">
-                <button class="btn btn-outline-success btn-sm apartment-inspection-reset-btn" type="submit">Не был</button>
+                <button class="btn btn-outline-primary btn-sm apartment-inspection-action-btn apartment-inspection-reset-btn" type="submit">Не был</button>
               </form>
               {% endif %}
             </div>
@@ -374,18 +379,20 @@
             <div class="apartment-task-status-mobile">
               <span class="status-pill {{ status_classes.get(task.status, 'status-pill-muted') }} apartment-task-status-current-mobile">{{ task.status_label() }}</span>
               {% if current_user.role != 'viewer' %}
-              <div class="apartment-task-actions actions-cell" data-current-status="{{ task.status }}">
+              <div class="apartment-task-actions actions-cell{% if task.status != 'problem' %} has-delete-action{% endif %}" data-current-status="{{ task.status }}">
                 <form method="post" action="{{ url_for('main.quick_status', task_id=task.id, status='not_started' if is_returnable_status else 'done') }}" class="apartment-task-action-form status-action-form binary-status-toggle-form" data-status-action="{{ 'not_started' if is_returnable_status else 'done' }}" data-binary-status-toggle data-is-done="{{ '1' if is_returnable_status else '0' }}" data-done-url="{{ url_for('main.quick_status', task_id=task.id, status='done') }}" data-not-started-url="{{ url_for('main.quick_status', task_id=task.id, status='not_started') }}" data-done-label="Выполнено" data-not-done-label="Не выполнено"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm {{ 'btn-outline-secondary' if is_returnable_status else 'btn-outline-success' }} apartment-task-action-btn" type="submit" data-binary-status-toggle-button><span data-binary-status-toggle-label>{{ 'Не выполнено' if is_returnable_status else 'Выполнено' }}</span></button></form>
                 <form method="post" action="{{ url_for('main.quick_status', task_id=task.id, status='finishers') }}" class="apartment-task-action-form status-action-form {% if task.status == 'finishers' %}d-none{% endif %}" data-status-action="finishers"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-info apartment-task-action-btn task-stage-action-btn" type="submit">Чистовики</button></form>
                 <form method="post" action="{{ url_for('main.quick_status', task_id=task.id, status='guarantee') }}" class="apartment-task-action-form status-action-form {% if task.status == 'guarantee' %}d-none{% endif %}" data-status-action="guarantee"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-info apartment-task-action-btn task-stage-action-btn guarantee-gray-button" type="submit">Гарантия</button></form>
                 <form method="post" action="{{ url_for('main.quick_status', task_id=task.id, status='concession') }}" class="apartment-task-action-form status-action-form {% if task.status == 'concession' %}d-none{% endif %}" data-status-action="concession"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-warning apartment-task-action-btn" type="submit">Отступные</button></form>
                 <form method="post" action="{{ url_for('main.quick_status', task_id=task.id, status='problem') }}" class="apartment-task-action-form apartment-task-action-form-problem status-action-form problem-action-form problem-action-form-inline {% if task.status == 'problem' %}d-none{% endif %}" data-status-action="problem"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger problem-toggle-btn apartment-task-action-btn" type="button" data-problem-modal-title="Проблема">Проблема</button></form>
+                {% if task.status != 'problem' %}
+                <form method="post" action="{{ url_for('main.task_delete', task_id=task.id) }}" class="apartment-task-delete-mobile-form" data-confirm="Удалить это замечание? Это действие нельзя отменить.">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="next" value="{{ request.full_path }}">
+                  <button class="btn btn-outline-danger apartment-task-delete-mobile-btn" type="submit"><i class="bi bi-trash me-2" aria-hidden="true"></i>Удалить</button>
+                </form>
+                {% endif %}
               </div>
-              <form method="post" action="{{ url_for('main.task_delete', task_id=task.id) }}" class="apartment-task-delete-mobile-form" data-confirm="Удалить это замечание? Это действие нельзя отменить.">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="next" value="{{ request.full_path }}">
-                <button class="btn btn-outline-danger apartment-task-delete-mobile-btn" type="submit"><i class="bi bi-trash me-2" aria-hidden="true"></i>Удалить</button>
-              </form>
               {% endif %}
             </div>
             <div class="apartment-task-meta">

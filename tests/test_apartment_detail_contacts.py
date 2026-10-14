@@ -137,6 +137,51 @@ class ApartmentDetailContactsTests(unittest.TestCase):
         self.assertIn("font-size: .72rem !important;", input_rule)
         self.assertIn("min-height: 2rem !important;", input_rule)
 
+    def test_mobile_inspection_controls_fill_card_width_without_right_column_offset(self):
+        marker = "/* Keep apartment inspection controls inside the mobile detail card. */"
+        self.assertIn(marker, STYLE)
+        start = STYLE.index(marker)
+        end = STYLE.index("/* v667:", start)
+        mobile_rules = STYLE[start:end]
+
+        self.assertIn("grid-template-columns: minmax(0, 1fr) !important;", mobile_rules)
+        self.assertIn("justify-items: stretch !important;", mobile_rules)
+        self.assertIn("grid-template-columns: minmax(0, 1fr) auto !important;", mobile_rules)
+        self.assertIn(".apartment-inspection-reset-btn {", mobile_rules)
+        self.assertIn("min-height: 2.75rem !important;", mobile_rules)
+
+    def test_inspection_dates_stack_and_controls_align_in_value_column(self):
+        controls_selector = (
+            "html body.app-body .apartment-detail-page "
+            ".apartment-compact-control-row:has([data-apartment-inspection-display]) .apartment-inline-controls {"
+        )
+        controls_start = STYLE.rindex(controls_selector)
+        controls_rule = STYLE[controls_start:STYLE.index("}", controls_start)]
+        date_stack_start = STYLE.rindex("html body.app-body .apartment-detail-page .apartment-inspection-date-stack {")
+        date_stack_rule = STYLE[date_stack_start:STYLE.index("}", date_stack_start)]
+
+        self.assertIn("[data-apartment-inspection-display] > span:not(.status-pill):not(.apartment-inspection-date-stack)", STYLE)
+        self.assertIn("margin: 0 !important;", controls_rule)
+        self.assertIn("width: 100% !important;", controls_rule)
+        self.assertIn("flex-direction: column !important;", date_stack_rule)
+        self.assertIn("display: grid !important;", date_stack_rule)
+        self.assertIn("grid-template-columns: minmax(0, max-content) !important;", date_stack_rule)
+        self.assertIn("row-gap: .5rem !important;", date_stack_rule)
+        self.assertIn("width: 100% !important;", STYLE[STYLE.rindex("@media (max-width: 767.98px)"):])
+
+    def test_mobile_delete_action_sits_next_to_problem_with_matching_dimensions(self):
+        self.assertIn('class="apartment-task-actions actions-cell{% if task.status != \'problem\' %} has-delete-action{% endif %}"', TEMPLATE)
+        self.assertIn('class="apartment-task-delete-mobile-form"', TEMPLATE)
+        self.assertIn("{% if task.status != 'problem' %}", TEMPLATE)
+
+        action_grid = STYLE[STYLE.index(".apartment-task-actions {"):STYLE.index(".apartment-task-actions {") + 2200]
+        self.assertIn(".apartment-task-actions.has-delete-action .apartment-task-action-form-problem", action_grid)
+        self.assertIn("grid-column: 1 !important;", action_grid)
+        self.assertIn(".apartment-task-actions.has-delete-action .apartment-task-delete-mobile-form", action_grid)
+        self.assertIn("grid-column: 2 !important;", action_grid)
+        self.assertIn(".apartment-task-delete-mobile-btn", action_grid)
+        self.assertIn("min-height: 2.66rem !important;", action_grid)
+
     def test_desktop_apartment_date_rows_do_not_collapse_when_window_narrows(self):
         override_start = STYLE.index("/* v671: keep apartment date/action rows in the same desktop layout")
         override = STYLE[override_start:]

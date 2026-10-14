@@ -212,7 +212,6 @@ class Project(TimestampMixin, db.Model):
     developer_representative = db.Column(db.String(255), nullable=True)
     developer_representative_phone = db.Column(db.String(80), nullable=True)
     description = db.Column(db.Text, nullable=True)
-    google_sheet_id = db.Column(db.String(255), nullable=True)
     has_apartments = db.Column(db.Boolean, default=True, nullable=False)
     has_commercial = db.Column(db.Boolean, default=True, nullable=False)
     has_storerooms = db.Column(db.Boolean, default=False, nullable=False)
@@ -365,7 +364,7 @@ class Apartment(TimestampMixin, db.Model):
         if self.premise_type == "commercial":
             return self._commercial_label(number)
         if self.premise_type == "storeroom":
-            return number if number.upper().startswith("КЛ") else f"КЛ{number}"
+            return f"кл {self._number_without_prefix(number, 'КЛ')}"
         if self.premise_type == "parking":
             return number if number.upper().startswith("П") else f"П{number}"
         return f"кв {number}"
@@ -380,7 +379,7 @@ class Apartment(TimestampMixin, db.Model):
                 return f"Коммерция {commercial_number}"
             return f"Коммерция {fallback}".strip()
         if self.premise_type == "storeroom":
-            return number if number.upper().startswith("КЛ") else f"КЛ{number}"
+            return f"кл {self._number_without_prefix(number, 'КЛ')}"
         if self.premise_type == "parking":
             return number if number.upper().startswith("П") else f"П{number}"
         return f"кв {number}"

@@ -1,9 +1,13 @@
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from app import create_app, db, login_manager
 from app.models import Apartment, ChangeLog, Project, ROLE_ADMIN, User
-from app.routes import _build_change_history_entry
+from app.routes import (
+    _apartment_inspection_displays,
+    _build_change_history_entry,
+    _format_inspection_display_value,
+)
 from config import Config
 
 
@@ -59,6 +63,14 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
             change.field_name
             for change in ChangeLog.query.filter_by(action="apartment_field_update").all()
         }
+
+    def test_past_inspection_datetime_hides_time_but_future_keeps_it(self):
+        past = datetime.now().replace(second=0, microsecond=0) - timedelta(minutes=1)
+        future = datetime.now().replace(second=0, microsecond=0) + timedelta(minutes=1)
+
+        self.assertEqual(_format_inspection_display_value(date(2026, 10, 13)), "13.10.2026")
+        self.assertEqual(_format_inspection_display_value(past), past.strftime("%d.%m.%Y"))
+        self.assertEqual(_format_inspection_display_value(future), future.strftime("%d.%m.%Y %H:%M"))
 
     def test_detail_fields_are_logged_and_rendered_with_specific_history_labels(self):
         response = self.client.post(
@@ -126,7 +138,26 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
 
         self.assertEqual(first_response.status_code, 200)
         self.assertEqual(second_response.status_code, 200)
-        self.assertEqual(second_response.get_json()["inspection_date_labels"], ["15 сентября 2026", "20 сентября 2026"])
+        second_payload = second_response.get_json()
+        self.assertEqual(second_payload["inspection_date_labels"], ["15.09.2026", "20.09.2026"])
+        self.assertEqual(
+            second_payload["inspection_items"],
+            [
+                {"label": "15.09.2026", "value": "2026-09-15"},
+                {"label": "20.09.2026", "value": "2026-09-20"},
+            ],
+        )
+        self.assertEqual(second_payload["inspection_max"], 5)
+        self.assertEqual(second_payload["inspection_delete_url"], f"/apartments/{self.apartment.id}/inspection-date/delete")
+        detail_html = self.client.get(f"/apartments/{self.apartment.id}").get_data(as_text=True)
+        date_picker_position = detail_html.index('name="inspection_date"')
+        add_button_position = detail_html.index(">Добавить</button>", date_picker_position)
+        reset_button_position = detail_html.index(">Не был</button>", add_button_position)
+        self.assertLess(date_picker_position, add_button_position)
+        self.assertLess(add_button_position, reset_button_position)
+        self.assertIn('class="apartment-inline-form apartment-inspection-date-form"', detail_html)
+        self.assertNotIn('class="apartment-inline-form apartment-inspection-date-form" data-apartment-async="1"', detail_html)
+        self.assertIn("apartment-inspection-action-btn apartment-inspection-reset-btn", detail_html)
 
         delete_response = self.client.post(
             f"/apartments/{self.apartment.id}/inspection-date/delete",
@@ -135,7 +166,97 @@ class ApartmentHistoryContractsTests(unittest.TestCase):
         )
 
         self.assertEqual(delete_response.status_code, 200)
-        self.assertEqual(delete_response.get_json()["inspection_date_labels"], ["20 сентября 2026"])
+        self.assertEqual(delete_response.get_json()["inspection_date_labels"], ["20.09.2026"])
+
+    def test_inspection_date_form_uses_full_page_post(self):
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": "2026-09-15"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(_apartment_inspection_displays([self.apartment]), ["15.09.2026"])
+
+    def test_inspection_dates_allow_five_and_reject_the_sixth(self):
+        for day in range(1, 6):
+            response = self.client.post(
+                f"/apartments/{self.apartment.id}/inspection-date",
+                data={"inspection_date": f"2026-09-{day:02d}"},
+                headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+            )
+            self.assertEqual(response.status_code, 200)
+
+        overflow = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": "2026-09-06"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(overflow.status_code, 400)
+        self.assertIn("не более 5", overflow.get_json()["message"])
+        self.assertEqual(len(_apartment_inspection_displays([self.apartment])), 5)
+
+    def test_schedule_and_additional_dates_display_and_can_be_deleted(self):
+        self.apartment.inspection_note = "__inspection_schedule__:2026-09-15T10:30:00"
+        db.session.commit()
+
+        add_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date",
+            data={"inspection_date": "2026-09-20"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(add_response.status_code, 200)
+        self.assertEqual(add_response.get_json()["inspection_date_labels"], ["15.09.2026", "20.09.2026"])
+        delete_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date/delete",
+            data={"inspection_date": "2026-09-15"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+        self.assertEqual(delete_response.status_code, 200)
+        self.assertEqual(delete_response.get_json()["inspection_date_labels"], ["20.09.2026"])
+
+    def test_not_was_clears_all_inspection_dates_and_schedule_marker(self):
+        self.apartment.inspection_date = date(2026, 9, 15)
+        self.apartment.first_inspection_date = date(2026, 9, 15)
+        self.apartment.reinspection_date = date(2026, 9, 20)
+        self.apartment.inspection_note = "__inspection_schedule__:2026-09-25T10:30:00\nДополнительный осмотр: 30.09.2026"
+        self.apartment.first_inspection_present = True
+        db.session.commit()
+
+        response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-status",
+            data={"inspection_status": "not_was"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["inspection_status"], "Не был")
+        self.assertEqual(_apartment_inspection_displays([self.apartment]), [])
+        self.assertIn("__inspection_dates_backup__:", self.apartment.inspection_note)
+
+        restore_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-status",
+            data={"inspection_status": "was"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+
+        self.assertEqual(restore_response.status_code, 200)
+        self.assertEqual(restore_response.get_json()["inspection_status"], "Был")
+        self.assertEqual(
+            _apartment_inspection_displays([self.apartment]),
+            ["15.09.2026", "20.09.2026", "25.09.2026", "30.09.2026"],
+        )
+        delete_response = self.client.post(
+            f"/apartments/{self.apartment.id}/inspection-date/delete",
+            data={"inspection_date": "2026-09-20"},
+            headers={"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"},
+        )
+        self.assertEqual(delete_response.status_code, 200)
+        self.assertEqual(
+            delete_response.get_json()["inspection_date_labels"],
+            ["15.09.2026", "25.09.2026", "30.09.2026"],
+        )
 
     def test_future_inspection_date_returns_planned_status(self):
         future_date = date.today() + timedelta(days=7)

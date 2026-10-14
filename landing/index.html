@@ -147,7 +147,7 @@
             <div class="tablet-shell">
               <span class="tablet-camera"></span>
               <div class="tablet-screen">
-                  <img src="assets/crm-dashboard-laptop.jpg?v=20260709-2346" alt="Интерфейс CRM Передача">
+                  <img src="assets/crm-dashboard-laptop.jpg?v=20260709-2346" alt="Интерфейс CRM Передача" decoding="async" fetchpriority="high">
               </div>
             </div>
           </div>
@@ -221,6 +221,8 @@
                   class="founder-photo"
                   src="assets/developer-photo-vladimir.jpg"
                   alt="Владимир Худовердиев, автор проекта Передача"
+                  loading="lazy"
+                  decoding="async"
                 >
               </div>
             </div>
@@ -378,12 +380,15 @@
         scaleStage.style.removeProperty("--landing-mobile-top-offset");
         scaleShell.style.height = (scaleStage.scrollHeight * scale) + "px";
       }
+      var landingViewportSyncFrame = 0;
       function scheduleLandingViewportSync() {
-        syncLandingViewport();
-        window.requestAnimationFrame(syncLandingViewport);
-        window.setTimeout(syncLandingViewport, 60);
-        window.setTimeout(syncLandingViewport, 180);
-        window.setTimeout(syncLandingViewport, 360);
+        if (landingViewportSyncFrame) {
+          return;
+        }
+        landingViewportSyncFrame = window.requestAnimationFrame(function () {
+          landingViewportSyncFrame = 0;
+          syncLandingViewport();
+        });
       }
       function resetLandingLoader(immediate) {
         crmNavigationPending = false;
@@ -477,7 +482,6 @@
       }, { passive: true });
       window.addEventListener("resize", scheduleLandingViewportSync, { passive: true });
       window.visualViewport && window.visualViewport.addEventListener("resize", scheduleLandingViewportSync, { passive: true });
-      window.visualViewport && window.visualViewport.addEventListener("scroll", scheduleLandingViewportSync, { passive: true });
       if (document.fonts && typeof document.fonts.ready === "object" && typeof document.fonts.ready.then === "function") {
         document.fonts.ready.then(scheduleLandingViewportSync);
       }
@@ -485,7 +489,7 @@
       resetLandingLoader(true);
       syncLandscapeLockState();
       tryLockPortraitOrientation();
-      scheduleLandingViewportSync();
+      syncLandingViewport();
     })();
   </script>
 </body>

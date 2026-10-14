@@ -139,6 +139,31 @@ class TaskRecognitionPoContractsTests(unittest.TestCase):
         self.assertEqual(new_task.status, STATUS_NOT_STARTED)
         self.assertEqual(new_task.work_point.point_number, "16")
 
+    def test_pdf_act_date_is_saved_even_when_act_has_no_remark_rows(self):
+        self._login()
+
+        response = self.client.post(
+            "/tasks/recognition",
+            data={
+                "action": "save",
+                "confirm_import": "1",
+                "po_mode": "0",
+                "act_count": "1",
+                "act_0_filename": "act-no-remarks.pdf",
+                "act_0_template_ok": "1",
+                "act_0_project_ok": "1",
+                "act_0_apartment_id": str(self.apartment.id),
+                "act_0_inspection_date": "2026-09-18",
+                "act_0_row_count": "0",
+            },
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, f"/apartments/{self.apartment.id}")
+        db.session.refresh(self.apartment)
+        self.assertEqual(self.apartment.inspection_date.isoformat(), "2026-09-18")
+
     def test_manual_single_concession_marks_selected_existing_tasks_as_concession(self):
         self._login()
 

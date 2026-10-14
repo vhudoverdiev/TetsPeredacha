@@ -286,7 +286,6 @@ class AccessRightsContractsTests(unittest.TestCase):
             "main.site_errors",
             "main.developer_statistics",
             "main.upload_excel",
-            "main.sync_google",
             "main.sync_logs",
             "main.mapping_settings",
             "main.export_source_with_strikes",
@@ -299,7 +298,6 @@ class AccessRightsContractsTests(unittest.TestCase):
 
         for endpoint in (
             "main.upload_excel",
-            "main.sync_google",
             "main.sync_logs",
             "main.sync_log_details",
             "main.delete_sync_log",

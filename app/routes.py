@@ -17,7 +17,7 @@ from werkzeug.exceptions import HTTPException
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_file, session, url_for, jsonify
 from flask_login import current_user, login_required
-from sqlalchemy import Integer, cast, distinct, func
+from sqlalchemy import Integer, case, cast, distinct, func
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import selectinload
 from openpyxl import Workbook
@@ -26,6 +26,8 @@ from openpyxl.styles import Border, Font, PatternFill, Alignment, Side
 from openpyxl.utils import get_column_letter
 
 EXCEL_HEADER_FILL_COLOR = "FFE2F0D9"
+MAX_APARTMENT_INSPECTIONS = 5
+INSPECTION_DATES_BACKUP_PREFIX = "__inspection_dates_backup__:"
 EXCEL_DOWNLOAD_BORDER = Border(
     left=Side(style="thin", color="000000"),
     right=Side(style="thin", color="000000"),
@@ -115,7 +117,6 @@ from app.services.contractor_claim_docx import build_contractor_claim_docx
 from app.services.excel_export import _excel_premise_label, _safe_filename_part, auto_adjust_row_heights, build_export_path, export_glass_measurements_excel, export_remark_tasks_excel, export_report_tasks_excel, export_simple_tasks_excel, export_source_excel_reconstructed, export_source_excel_with_strikes, export_tasks_to_excel, resolve_source_excel_with_strikes_path
 from app.services.pdf_export import export_assignment_worker_pdf, export_table_pdf, export_tasks_pdf
 from app.services.excel_import import inspect_remarks_workbook, mark_stale_running_sync_logs, preview_excel, save_upload, sync_excel_file
-from app.services.google_sheets_sync import sync_google_sheets, update_task_strike_in_google_sheet
 from app.services.mapping_service import ensure_default_categories, is_dop_agreement_point, update_category_points
 from app.services.pdf_recognition import is_no_remark_text, recognize_pdf_act
 from app.services.transfer_import import _is_app_mode, _parse_app_date, inspect_transfer_workbook, sync_transfer_statistics
@@ -347,7 +348,7 @@ SECTION_LOCK_CHOICES = [
         "label": "Импорт, синхронизация и распределение",
         "icon": "bi-sliders",
         "endpoints": {
-            "main.upload_excel", "main.sync_google", "main.sync_logs", "main.sync_log_details", "main.delete_sync_log",
+            "main.upload_excel", "main.sync_logs", "main.sync_log_details", "main.delete_sync_log",
             "main.rollback_sync_log",
             "main.sync_conflicts", "main.resolve_conflict",
             "main.resolve_conflicts_bulk", "main.mapping_settings",
@@ -386,26 +387,6 @@ def _section_lock_choice_for_endpoint(endpoint: str | None):
     return None
 
 
-def _future_features():
-    return [
-        {
-            "icon": "bi-file-earmark-text",
-            "title": "Быстрое редактирование и генерация документов",
-            "text": "АПП, дополнительные соглашения и другие формы можно будет быстро подготовить, отредактировать и отправить на подписание.",
-        },
-        {
-            "icon": "bi-house-add",
-            "title": "Добавление объектов с кладовками",
-            "text": "Структура объектов станет шире: можно будет добавлять и вести кладовые помещения вместе с квартирами и коммерцией.",
-        },
-        {
-            "icon": "bi-box-seam",
-            "title": "Учёт затраченного материала",
-            "text": "По каждой задаче появится понятная отчётность: какие материалы были использованы, в каком объёме и кем.",
-        },
-    ]
-
-
 def _documents_under_development_response():
     return render_template(
         "under_development.html",
@@ -430,7 +411,6 @@ def _maintenance_response(
         message=message,
         subtitle=subtitle,
         hint=hint,
-        future_features=_future_features(),
     ), 503
 
 
@@ -1187,7 +1167,8 @@ def inject_globals():
     new_site_errors_count = 0
     if current_user.is_authenticated and current_user.role == ROLE_ADMIN:
         error_query = SiteErrorReport.query.filter(SiteErrorReport.status == "new")
-        if current_project:
+        developer_endpoint = (request.endpoint or "").startswith("main.developer_") or (request.endpoint or "").startswith("main.site_error")
+        if current_project and not developer_endpoint:
             error_query = error_query.filter(or_(SiteErrorReport.project_id == current_project.id, SiteErrorReport.project_id.is_(None)))
         new_site_errors_count = error_query.count()
     return {
@@ -2273,27 +2254,6 @@ def dashboard_legacy():
     return dashboard()
 
 
-@bp.route("/sync/google", methods=["POST"])
-@login_required
-def sync_google():
-    if not can_manage_sync(current_user):
-        abort(403)
-    project = selected_project()
-    if project is None:
-        return redirect(url_for("main.objects"))
-    try:
-        result = sync_google_sheets(project_name=project.name, spreadsheet_id_override=project.google_sheet_id)
-        pending_conflicts = _project_pending_conflicts_query(project.id).count()
-        flash(
-            f"Добавлено новых - {result.get('created_count', 0)} , несостыковок - {pending_conflicts}",
-            "success",
-        )
-    except Exception as exc:
-        current_app.logger.exception("Google Sheets sync failed")
-        flash(f"Ошибка синхронизации Google Sheets: {exc}", "danger")
-    return redirect(url_for("main.dashboard"))
-
-
 @bp.route("/report-error", methods=["POST"])
 def report_error():
     if hit_rate_limit("report-error", 6, 300):
@@ -2687,11 +2647,11 @@ def _developer_statistics_filters() -> dict:
     allowed_days = [7, 14, 30]
     max_period_days = max(allowed_days)
     try:
-        days = int(request.args.get("days") or 7)
+        days = int(request.args.get("days") or 30)
     except (TypeError, ValueError):
-        days = 7
+        days = 30
     if days not in allowed_days:
-        days = 7
+        days = 30
     today = date.today()
     period_end_date = parse_date(request.args.get("end_date")) or parse_date(request.args.get("date")) or today
     period_start_date = parse_date(request.args.get("start_date"))
@@ -2757,7 +2717,7 @@ def _apply_site_visit_filters(query, *, project, range_start, range_end, scope, 
 
 
 def _build_developer_statistics_context() -> dict:
-    project = selected_project()
+    project = None
     filters = _developer_statistics_filters()
     period_start_date = filters["period_start_date"]
     period_end_date = filters["period_end_date"]
@@ -3052,14 +3012,12 @@ def analytics_tab_open():
 def site_errors():
     if current_user.role != ROLE_ADMIN:
         abort(403)
-    project = selected_project()
+    project = None
     query = SiteErrorReport.query.options(
         selectinload(SiteErrorReport.user),
         selectinload(SiteErrorReport.project),
         selectinload(SiteErrorReport.developer_reply_user),
     )
-    if project:
-        query = query.filter(or_(SiteErrorReport.project_id == project.id, SiteErrorReport.project_id.is_(None)))
     status = request.args.get("status") or ""
     kind = request.args.get("kind") or ""
     if status:
@@ -3076,9 +3034,6 @@ def site_error_close(report_id: int):
     if current_user.role != ROLE_ADMIN:
         abort(403)
     report = db.session.get(SiteErrorReport, report_id) or abort(404)
-    project = selected_project()
-    if project and report.project_id not in {None, project.id}:
-        abort(404)
     report.status = "closed" if report.status != "closed" else "new"
     db.session.commit()
     if _wants_json_response():
@@ -3093,9 +3048,6 @@ def site_error_delete(report_id: int):
     if current_user.role != ROLE_ADMIN:
         abort(403)
     report = db.session.get(SiteErrorReport, report_id) or abort(404)
-    project = selected_project()
-    if project and report.project_id not in {None, project.id}:
-        abort(404)
     snapshot = {
         "kind": report.kind,
         "message": report.message,
@@ -3302,14 +3254,12 @@ def messenger_error_replies_read():
 def developer_delete_logs():
     if current_user.role != ROLE_ADMIN:
         abort(403)
-    project = selected_project()
+    project = None
     query = DeletionActionLog.query.options(
         selectinload(DeletionActionLog.user),
         selectinload(DeletionActionLog.project),
         selectinload(DeletionActionLog.undone_by),
     )
-    if project:
-        query = query.filter(or_(DeletionActionLog.project_id == project.id, DeletionActionLog.project_id.is_(None)))
     logs = query.order_by(DeletionActionLog.created_at.desc(), DeletionActionLog.id.desc()).limit(300).all()
     return render_template("developer_delete_logs.html", logs=logs, project=project)
 
@@ -3487,9 +3437,6 @@ def developer_delete_log_undo(log_id: int):
     if current_user.role != ROLE_ADMIN:
         abort(403)
     log = db.session.get(DeletionActionLog, log_id) or abort(404)
-    project = selected_project()
-    if project and log.project_id not in {None, project.id}:
-        abort(404)
     if log.is_undone:
         flash("Это действие уже отменено.", "info")
         return redirect(request.referrer or url_for("main.developer_delete_logs"))
@@ -3965,7 +3912,7 @@ def _premise_options_from_apartments(apartments: list[Apartment]) -> list[dict]:
             "label": apartment.label(),
             "finish": apartment.finishing_type or "",
             "_sort_key": (
-                0 if (apartment.premise_type or "apartment") == "commercial" else 1,
+                _premise_type_sort_rank(apartment),
                 _apartment_number_sort_value(apartment.apartment_number or apartment.construction_number),
                 str(apartment.building or "").strip().lower(),
                 str(apartment.label() or "").strip().lower(),
@@ -4203,7 +4150,7 @@ def _export_tasks_from_request(query_args: dict, project_id: int, category_id: i
             .join(Apartment)
             .join(WorkPoint)
             .filter(Task.project_id == project_id, Task.id.in_(task_ids))
-            .order_by(Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), WorkPoint.point_number.asc(), Task.id.asc())
+            .order_by(_premise_type_sort_expression(), Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), WorkPoint.point_number.asc(), Task.id.asc())
         )
     desktop_premise_ids = _desktop_excel_selection_premise_ids(
         request.args,
@@ -5128,7 +5075,7 @@ def assignments_report():
     )
     if user_id:
         query = query.filter(Task.responsible_id == user_id)
-    tasks = query.order_by(User.full_name.asc(), Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()).all()
+    tasks = query.order_by(User.full_name.asc(), _premise_type_sort_expression(), Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()).all()
     grouped = []
     for user in users:
         user_tasks = [task for task in tasks if task.responsible_id == user.id]
@@ -5183,7 +5130,7 @@ def assignments_report_worker_pdf(user_id: int):
             )
         )
         .join(Apartment)
-        .order_by(Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), Task.id.asc())
+        .order_by(_premise_type_sort_expression(), Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), Task.id.asc())
         .all()
     )
     worker_name = user.full_name or user.username or f"worker_{user.id}"
@@ -5211,7 +5158,7 @@ def my_tasks():
             and_(Task.status == STATUS_DONE, func.date(Task.completed_date) == today_value.isoformat()),
         )
     )
-    tasks = query.outerjoin(Apartment).order_by(Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), Task.updated_at.desc()).all()
+    tasks = query.outerjoin(Apartment).order_by(_premise_type_sort_expression(), Task.is_done.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), Task.updated_at.desc()).all()
     counters = {
         "done": sum(1 for task in tasks if task.status == STATUS_DONE),
         "left": sum(1 for task in tasks if task.status != STATUS_DONE),
@@ -5439,7 +5386,7 @@ def _all_project_tasks(
     if filters:
         query = query.filter(or_(*filters))
     return (
-        query.order_by(Apartment.premise_type.asc(), Apartment.building.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), WorkPoint.point_number.asc(), Task.id.asc())
+        query.order_by(_premise_type_sort_expression(), Apartment.building.asc(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), WorkPoint.point_number.asc(), Task.id.asc())
         .limit(3000)
         .all()
     )
@@ -7376,14 +7323,7 @@ def _project_apartment_options(project_id: int) -> list[Apartment]:
         if _is_visible_apartment_row(apartment):
             grouped.setdefault(_apartment_group_key(apartment), []).append(apartment)
     apartments = [_pick_apartment_representative(group) for group in grouped.values()]
-    return sorted(
-        apartments,
-        key=lambda apartment: (
-            apartment.premise_type == "commercial",
-            _apartment_number_sort_value(apartment.display_number(fallback_to_id=False)),
-            apartment.building or "",
-        ),
-    )
+    return sorted(apartments, key=_apartment_sort_value)
 
 
 def _project_work_point_options() -> list[WorkPoint]:
@@ -7439,33 +7379,27 @@ def _apartment_group_for_project(apartment: Apartment, project_id: int) -> list[
     return group or [apartment]
 
 
-def _apply_inspection_date_to_group(apartments: list[Apartment], inspection_date: date | None) -> None:
-    if not inspection_date:
-        return
-    formatted = inspection_date.strftime("%d.%m.%Y")
+def _apply_inspection_date_to_group(apartments: list[Apartment], inspection_date: date | None) -> bool:
+    if not inspection_date or not apartments:
+        return False
+    existing_dates = {
+        value.date() if isinstance(value, datetime) else value
+        for item in apartments
+        for value in (
+            _apartment_inspection_values(item)
+            + ([] if item.first_inspection_present else _inspection_dates_from_backup(item.inspection_note))
+        )
+    }
+    if inspection_date in existing_dates:
+        for item in apartments:
+            item.first_inspection_present = True
+        return False
+    if len(existing_dates) >= MAX_APARTMENT_INSPECTIONS:
+        return False
+    changed = False
     for item in apartments:
-        existing_dates = {value for value in (item.inspection_date, item.first_inspection_date, item.reinspection_date) if value}
-        if inspection_date in existing_dates:
-            item.first_inspection_present = True
-            continue
-        if not item.inspection_date and not item.first_inspection_date:
-            item.inspection_date = inspection_date
-            item.first_inspection_date = inspection_date
-            item.first_inspection_present = True
-            continue
-        if not item.first_inspection_date:
-            item.first_inspection_date = inspection_date
-            item.first_inspection_present = True
-            continue
-        if not item.reinspection_date:
-            item.reinspection_date = inspection_date
-            item.first_inspection_present = True
-            continue
-        note = str(item.inspection_note or "").strip()
-        extra_line = f"Дополнительный осмотр: {formatted}"
-        if extra_line not in note:
-            item.inspection_note = f"{note}\n{extra_line}".strip()
-        item.first_inspection_present = True
+        changed = _add_apartment_inspection_date(item, inspection_date) or changed
+    return changed
 
 
 def _complete_previous_po_tasks_for_apartment_group(
@@ -7966,6 +7900,7 @@ def task_new():
             duplicate_count = 0
             completed_previous_count = 0
             concession_updated_count = 0
+            inspection_date_updated = False
             prepared_entries: list[tuple[str, str]] = []
             for point in points:
                 point_number = point["number"]
@@ -7989,7 +7924,7 @@ def task_new():
                     )
                     try:
                         target_group = _apartment_group_for_project(apartment, project.id)
-                        _apply_inspection_date_to_group(target_group, inspection_date)
+                        inspection_date_updated = _apply_inspection_date_to_group(target_group, inspection_date)
                         completed_previous_count = _complete_previous_po_tasks_for_apartment_group(
                             project=project,
                             apartment=apartment,
@@ -8061,7 +7996,7 @@ def task_new():
                         )
 
                     target_group = _apartment_group_for_project(apartment, project.id)
-                    _apply_inspection_date_to_group(target_group, inspection_date)
+                    inspection_date_updated = _apply_inspection_date_to_group(target_group, inspection_date)
                     if po_mode:
                         duplicate_task_ids: set[int] = set()
                         entries_to_create: list[tuple[str, str]] = []
@@ -8123,7 +8058,7 @@ def task_new():
                             point_numbers=selected_concession_points,
                         )
 
-                    if created_count or conflict_count or completed_previous_count or concession_updated_count:
+                    if created_count or conflict_count or completed_previous_count or concession_updated_count or inspection_date_updated:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,
@@ -8292,6 +8227,8 @@ def task_recognition():
                 blocked_count = 0
                 completed_previous_count = 0
                 concession_updated_count = 0
+                inspection_date_updated = False
+                inspection_date_limit_count = 0
                 target_apartment_id: int | None = None
                 duplicate_act_names: list[str] = []
                 sync_log_source_names: list[str] = []
@@ -8380,9 +8317,25 @@ def task_recognition():
                                 points=points,
                                 previews=previews,
                             )
+                        if inspection_date:
+                            target_group = _apartment_group_for_project(apartment, project.id)
+                            group_dates = {
+                                value.date() if isinstance(value, datetime) else value
+                                for item in target_group
+                                for value in (
+                                    _apartment_inspection_values(item)
+                                    + ([] if item.first_inspection_present else _inspection_dates_from_backup(item.inspection_note))
+                                )
+                            }
+                            date_already_present = inspection_date in group_dates
+                            was_added = _apply_inspection_date_to_group(target_group, inspection_date)
+                            inspection_date_updated = was_added or date_already_present or inspection_date_updated
+                            if not was_added and not date_already_present and len(group_dates) >= MAX_APARTMENT_INSPECTIONS:
+                                inspection_date_limit_count += 1
+                            if was_added or date_already_present:
+                                target_apartment_id = apartment.id
                         if prepared_rows:
                             target_apartment_id = apartment.id
-                            _apply_inspection_date_to_group(_apartment_group_for_project(apartment, project.id), inspection_date)
                             if po_mode:
                                 completed_previous_count += _complete_previous_po_tasks_for_apartment_group(
                                     project=project,
@@ -8442,7 +8395,7 @@ def task_recognition():
                             message += f". Актов пропущено: {blocked_count}"
                         flash(message, "warning")
                         return redirect(url_for("main.sync_conflicts"))
-                    if created_count or conflict_count or completed_previous_count or concession_updated_count:
+                    if created_count or conflict_count or completed_previous_count or concession_updated_count or inspection_date_updated:
                         db.session.commit()
                         _finish_snapshot_sync_log(
                             sync_log,
@@ -8458,10 +8411,17 @@ def task_recognition():
                             message += f". Переведено в отступные: {concession_updated_count}"
                         if blocked_count:
                             message += f". Актов пропущено: {blocked_count}"
+                        if inspection_date_limit_count:
+                            message += f". Не добавлена дата осмотра: достигнут лимит {MAX_APARTMENT_INSPECTIONS} дат"
                         flash(message, "success")
                         if target_apartment_id:
                             return redirect(url_for("main.apartment_detail", apartment_id=target_apartment_id))
                         return redirect(url_for("main.task_recognition"))
+                    if inspection_date_limit_count:
+                        db.session.commit()
+                        _finish_snapshot_sync_log(sync_log, created_count=0, missing_count=0)
+                        flash(f"Замечания не добавлены: достигнут лимит {MAX_APARTMENT_INSPECTIONS} дат осмотра", "warning")
+                        return redirect(url_for("main.apartment_detail", apartment_id=apartment.id))
                     if duplicate_act_names:
                         db.session.rollback()
                         _finish_snapshot_sync_log(sync_log)
@@ -8692,6 +8652,17 @@ def _premise_type_sort_rank(apartment: Apartment | None) -> int:
         "storeroom": 2,
         "parking": 3,
     }.get(premise_type, 4)
+
+
+def _premise_type_sort_expression():
+    return case(
+        (Apartment.premise_type.is_(None), 0),
+        (Apartment.premise_type == "apartment", 0),
+        (Apartment.premise_type == "commercial", 1),
+        (Apartment.premise_type == "storeroom", 2),
+        (Apartment.premise_type == "parking", 3),
+        else_=4,
+    )
 
 
 def _apartment_sort_value(apartment: Apartment | None):
@@ -9042,7 +9013,7 @@ def _parse_inspection_schedule_marker(note: str | None) -> date | datetime | Non
     prefix = "__inspection_schedule__:"
     if not text.startswith(prefix):
         return None
-    payload = text[len(prefix):].strip()
+    payload = text[len(prefix):].splitlines()[0].strip()
     if not payload:
         return None
     for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
@@ -9057,17 +9028,13 @@ def _parse_inspection_schedule_marker(note: str | None) -> date | datetime | Non
 
 
 def _apartment_inspection_value(apartment: Apartment) -> date | datetime | None:
-    scheduled = _parse_inspection_schedule_marker(apartment.inspection_note)
-    if scheduled is not None:
-        return scheduled
-    return apartment.inspection_date or apartment.first_inspection_date
+    values = _apartment_inspection_values(apartment)
+    return min(values, key=lambda value: _inspection_sort_datetime(value) or datetime.max) if values else None
 
 
 def _apartment_inspection_values(apartment: Apartment) -> list[date | datetime]:
     scheduled = _parse_inspection_schedule_marker(apartment.inspection_note)
-    if scheduled is not None:
-        return [scheduled]
-    values: list[date | datetime] = []
+    values: list[date | datetime] = [scheduled] if scheduled is not None else []
     for value in (apartment.inspection_date, apartment.first_inspection_date, apartment.reinspection_date):
         if value is not None:
             values.append(value)
@@ -9075,7 +9042,70 @@ def _apartment_inspection_values(apartment: Apartment) -> list[date | datetime]:
         parsed = parse_date(match.group(1))
         if parsed is not None:
             values.append(parsed)
-    return values
+    if apartment.first_inspection_present:
+        values.extend(_inspection_dates_from_backup(apartment.inspection_note))
+    unique: dict[date, date | datetime] = {}
+    for value in values:
+        calendar_date = value.date() if isinstance(value, datetime) else value
+        unique.setdefault(calendar_date, value)
+    return sorted(unique.values(), key=lambda value: _inspection_sort_datetime(value) or datetime.max)
+
+
+def _inspection_dates_from_backup(note: str | None) -> list[date | datetime]:
+    prefix = INSPECTION_DATES_BACKUP_PREFIX
+    for line in str(note or "").splitlines():
+        payload = line.strip()
+        if not payload.startswith(prefix):
+            continue
+        try:
+            raw_values = json.loads(payload[len(prefix):])
+        except (TypeError, ValueError):
+            return []
+        if not isinstance(raw_values, list):
+            return []
+        values: list[date | datetime] = []
+        for raw_value in raw_values[:MAX_APARTMENT_INSPECTIONS]:
+            if not isinstance(raw_value, str):
+                continue
+            try:
+                parsed_datetime = datetime.fromisoformat(raw_value)
+            except ValueError:
+                parsed_date = parse_date(raw_value)
+                if parsed_date is not None:
+                    values.append(parsed_date)
+            else:
+                values.append(parsed_datetime if "T" in raw_value or " " in raw_value else parsed_datetime.date())
+        return values
+    return []
+
+
+def _set_inspection_dates_backup(note: str | None, values: list[date | datetime]) -> str | None:
+    retained = [
+        line.strip()
+        for line in str(note or "").splitlines()
+        if line.strip() and not line.strip().startswith(INSPECTION_DATES_BACKUP_PREFIX)
+    ]
+    unique: dict[date, date | datetime] = {}
+    for value in values:
+        calendar_date = value.date() if isinstance(value, datetime) else value
+        if calendar_date not in unique or isinstance(value, datetime):
+            unique[calendar_date] = value
+    ordered_values = sorted(unique.values(), key=lambda value: _inspection_sort_datetime(value) or datetime.max)
+    if ordered_values:
+        payload = [value.isoformat() for value in ordered_values[:MAX_APARTMENT_INSPECTIONS]]
+        retained.append(INSPECTION_DATES_BACKUP_PREFIX + json.dumps(payload, ensure_ascii=False))
+    return "\n".join(retained) or None
+
+
+def _remove_inspection_schedule_and_extra_dates(note: str | None) -> str | None:
+    retained = []
+    for line in str(note or "").splitlines():
+        if line.strip().startswith("__inspection_schedule__:"):
+            continue
+        if re.fullmatch(r"\s*Дополнительный осмотр:\s*\d{2}\.\d{2}\.\d{4}\s*", line):
+            continue
+        retained.append(line.strip())
+    return "\n".join(line for line in retained if line) or None
 
 
 def _inspection_sort_datetime(value: date | datetime | None) -> datetime | None:
@@ -9090,8 +9120,10 @@ def _format_inspection_display_value(value: date | datetime | None) -> str:
     if value is None:
         return "—"
     if isinstance(value, datetime):
+        if value < datetime.now():
+            return value.strftime("%d.%m.%Y")
         return value.strftime("%d.%m.%Y %H:%M")
-    return format_ru_date(value)
+    return value.strftime("%d.%m.%Y")
 
 
 def _apartment_inspection_date(apartments: list[Apartment]) -> date | None:
@@ -9116,31 +9148,34 @@ def _apartment_inspection_display(apartments: list[Apartment]) -> str:
 
 def _apartment_inspection_displays(apartments: list[Apartment]) -> list[str]:
     values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
-    unique: dict[str, date | datetime] = {}
+    unique: dict[date, date | datetime] = {}
     for value in values:
         if value is None:
             continue
-        label = _format_inspection_display_value(value)
-        unique.setdefault(label, value)
+        calendar_date = value.date() if isinstance(value, datetime) else value
+        if calendar_date not in unique or isinstance(value, datetime):
+            unique[calendar_date] = value
     return [
-        label
-        for label, _value in sorted(
-            unique.items(),
-            key=lambda item: _inspection_sort_datetime(item[1]) or datetime.max,
+        _format_inspection_display_value(value)
+        for value in sorted(
+            unique.values(),
+            key=lambda value: _inspection_sort_datetime(value) or datetime.max,
         )
     ]
 
 
 def _apartment_inspection_items(apartments: list[Apartment]) -> list[dict[str, str]]:
     values = [value for apartment in apartments for value in _apartment_inspection_values(apartment)]
-    unique: dict[str, date | datetime] = {}
+    unique: dict[date, date | datetime] = {}
     for value in values:
         if value is None:
             continue
-        label = _format_inspection_display_value(value)
-        unique.setdefault(label, value)
+        calendar_date = value.date() if isinstance(value, datetime) else value
+        if calendar_date not in unique or isinstance(value, datetime):
+            unique[calendar_date] = value
     items: list[dict[str, str]] = []
-    for label, value in sorted(unique.items(), key=lambda item: _inspection_sort_datetime(item[1]) or datetime.max):
+    for value in sorted(unique.values(), key=lambda value: _inspection_sort_datetime(value) or datetime.max):
+        label = _format_inspection_display_value(value)
         if isinstance(value, datetime):
             raw_value = value.date().isoformat()
         else:
@@ -9152,10 +9187,16 @@ def _apartment_inspection_items(apartments: list[Apartment]) -> list[dict[str, s
 def _add_apartment_inspection_date(apartment: Apartment, inspection_date: date) -> bool:
     existing_dates = {
         value.date() if isinstance(value, datetime) else value
-        for value in _apartment_inspection_values(apartment)
+        for value in (
+            _apartment_inspection_values(apartment)
+            + ([] if apartment.first_inspection_present else _inspection_dates_from_backup(apartment.inspection_note))
+        )
         if value is not None
     }
     if inspection_date in existing_dates:
+        apartment.first_inspection_present = True
+        return False
+    if len(existing_dates) >= MAX_APARTMENT_INSPECTIONS:
         return False
     if apartment.inspection_date is None:
         apartment.inspection_date = inspection_date
@@ -9166,7 +9207,8 @@ def _add_apartment_inspection_date(apartment: Apartment, inspection_date: date) 
     else:
         note = str(apartment.inspection_note or "").strip()
         line = f"Дополнительный осмотр: {inspection_date.strftime('%d.%m.%Y')}"
-        apartment.inspection_note = f"{note}\n{line}".strip() if note else line
+        if line not in note:
+            apartment.inspection_note = f"{note}\n{line}".strip() if note else line
     if apartment.first_inspection_date is None:
         apartment.first_inspection_date = inspection_date
     apartment.first_inspection_present = True
@@ -9183,15 +9225,30 @@ def _remove_apartment_inspection_date(apartment: Apartment, inspection_date: dat
             changed = True
     note = str(apartment.inspection_note or "")
     if note:
-        pattern = re.compile(
-            rf"^\s*Дополнительный осмотр:\s*{re.escape(inspection_date.strftime('%d.%m.%Y'))}\s*$",
-            re.MULTILINE,
-        )
-        next_note, removed_count = pattern.subn("", note)
-        if removed_count:
-            lines = [line.strip() for line in next_note.splitlines() if line.strip()]
-            apartment.inspection_note = "\n".join(lines) or None
-            changed = True
+        target_extra_line = f"Дополнительный осмотр: {inspection_date.strftime('%d.%m.%Y')}"
+        lines = note.splitlines()
+        next_lines: list[str] = []
+        for line in lines:
+            if line.strip() == target_extra_line:
+                changed = True
+                continue
+            marker_date = _parse_inspection_schedule_marker(line)
+            marker_day = marker_date.date() if isinstance(marker_date, datetime) else marker_date
+            if marker_day == inspection_date:
+                changed = True
+                continue
+            next_lines.append(line)
+        if changed:
+            apartment.inspection_note = "\n".join(line.strip() for line in next_lines if line.strip()) or None
+    backup_values = _inspection_dates_from_backup(apartment.inspection_note)
+    retained_backup_values = [
+        value
+        for value in backup_values
+        if (value.date() if isinstance(value, datetime) else value) != inspection_date
+    ]
+    if len(retained_backup_values) != len(backup_values):
+        apartment.inspection_note = _set_inspection_dates_backup(apartment.inspection_note, retained_backup_values)
+        changed = True
     if not _apartment_inspection_values(apartment):
         apartment.first_inspection_present = False
     return changed
@@ -10282,6 +10339,8 @@ def update_apartment_inspection_status(apartment_id: int):
             item.first_inspection_present = False
             item.first_inspection_date = None
             item.inspection_date = None
+            item.reinspection_date = None
+            item.inspection_note = _remove_inspection_schedule_and_extra_dates(item.inspection_note)
         _log_apartment_field_change(target_group, "apartment_inspection_status", old_status, _apartment_inspection_status(target_group) or "")
         db.session.commit()
         flash("У непроданной квартиры осмотр фиксируется автоматически: Не был", "info")
@@ -10289,21 +10348,30 @@ def update_apartment_inspection_status(apartment_id: int):
 
     was_present = status == "was"
     for item in target_group:
-        item.first_inspection_present = was_present
         if was_present:
-            restored_date = item.inspection_date or item.first_inspection_date or item.inspection_date_backup
+            item.first_inspection_present = True
+            restored_date = _apartment_inspection_date([item]) or item.inspection_date_backup
             item.first_inspection_date = restored_date or date.today()
             item.inspection_date = restored_date or item.first_inspection_date
             item.inspection_date_backup = item.inspection_date
         else:
-            previous_date = item.inspection_date or item.first_inspection_date
+            previous_values = _apartment_inspection_values(item)
+            previous_date = min(
+                previous_values,
+                key=lambda value: _inspection_sort_datetime(value) or datetime.max,
+            ) if previous_values else item.inspection_date_backup
             if previous_date:
-                item.inspection_date_backup = previous_date
+                item.inspection_date_backup = previous_date.date() if isinstance(previous_date, datetime) else previous_date
+            item.inspection_note = _set_inspection_dates_backup(
+                _remove_inspection_schedule_and_extra_dates(item.inspection_note),
+                previous_values or ([previous_date] if previous_date else []),
+            )
+            item.first_inspection_present = False
             item.inspection_date = None
             item.first_inspection_date = None
+            item.reinspection_date = None
+            item.inspection_note = _remove_inspection_schedule_and_extra_dates(item.inspection_note)
             item.first_inspection_present = False
-            if _parse_inspection_schedule_marker(item.inspection_note):
-                item.inspection_note = None
     new_status = _apartment_inspection_status(target_group) or ""
     history_change = _log_apartment_field_change(target_group, "apartment_inspection_status", old_status, new_status)
     db.session.commit()
@@ -10360,6 +10428,18 @@ def update_apartment_inspection_date(apartment_id: int):
     for item in target_group:
         if _add_apartment_inspection_date(item, inspection_date):
             added_count += 1
+    if not added_count and all(
+        inspection_date not in {
+            value.date() if isinstance(value, datetime) else value
+            for value in _apartment_inspection_values(item)
+        }
+        for item in target_group
+    ):
+        message = f"Можно добавить не более {MAX_APARTMENT_INSPECTIONS} дат осмотра"
+        if _wants_json_response():
+            return jsonify({"ok": False, "message": message}), 400
+        flash(message, "warning")
+        return redirect(request.referrer or url_for("main.apartment_detail", apartment_id=apartment.id))
     new_date_label = ", ".join(_apartment_inspection_displays(target_group)) or "—"
     history_change = _log_apartment_field_change(target_group, "apartment_inspection_date", old_date_label, new_date_label)
     db.session.commit()
@@ -10374,6 +10454,9 @@ def update_apartment_inspection_date(apartment_id: int):
             "inspection_date": inspection_date.isoformat() if inspection_date else "",
             "inspection_date_label": ", ".join(overview.get("inspection_displays") or []) or "—",
             "inspection_date_labels": overview.get("inspection_displays") or [],
+            "inspection_items": overview.get("inspection_items") or [],
+            "inspection_delete_url": url_for("main.delete_apartment_inspection_date", apartment_id=apartment.id),
+            "inspection_max": MAX_APARTMENT_INSPECTIONS,
             "inspection_status": overview.get("inspection_status") or "",
             "inspection_status_class": overview.get("inspection_status_class") or "status-pill-muted",
             "history_entry": history_entry,
@@ -10950,7 +11033,7 @@ def work_report_export():
 
 def _apartment_task_groups(query):
     rows = []
-    for apartment in query.order_by(cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()).all():
+    for apartment in query.order_by(_premise_type_sort_expression(), cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc()).all():
         tasks = [task for task in apartment.tasks if not task.is_archived]
         visible = [task for task in tasks if task.work_point and task.work_point.point_number in VISIBLE_WORK_POINT_NUMBERS]
         done = [task for task in visible if task.is_done]
@@ -11364,14 +11447,6 @@ def quick_status(task_id: int, status: str):
         if problem_comment:
             task.comment = problem_comment
     change_task_status(task, status, user_id=current_user.id)
-    if request.form.get("sync_google_format") == "1":
-        try:
-            update_task_strike_in_google_sheet(task)
-        except Exception as exc:
-            if wants_json:
-                return jsonify({"ok": False, "message": f"Статус сохранён, но зачёркивание в Google Sheets не применилось: {exc}"}), 500
-            flash(f"Статус сохранён, но зачёркивание в Google Sheets не применилось: {exc}", "warning")
-            return redirect(request.referrer or url_for("main.task_list"))
     if wants_json:
         history_change = (
             ChangeLog.query
@@ -12198,7 +12273,7 @@ def sync_log_details(log_id: int):
         task_id for (task_id,) in db.session.query(Task.id).filter(Task.project_id == project.id).all()
     }
 
-    if log.source_type in {"excel", "google_sheets"}:
+    if log.source_type == "excel":
         task_rows = [
             item for item in (after_payload.get("tasks") or [])
             if isinstance(item, dict) and item.get("is_missing_in_latest_sync")

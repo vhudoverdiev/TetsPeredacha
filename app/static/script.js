@@ -3041,7 +3041,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const inspectionDisplay = document.querySelector('[data-apartment-inspection-display]');
-        if (inspectionDisplay && Object.prototype.hasOwnProperty.call(data, 'inspection_date_label')) {
+        if (inspectionDisplay && Object.prototype.hasOwnProperty.call(data, 'inspection_date_label') && form.classList.contains('apartment-inspection-date-form')) {
+          const statusText = data.inspection_status || '';
+          const statusClass = ['status-pill-success', 'status-pill-warning', 'status-pill-muted', 'status-pill-danger'].includes(data.inspection_status_class)
+            ? data.inspection_status_class
+            : 'status-pill-muted';
+          const fragments = [];
+          if (statusText) {
+            const status = document.createElement('span');
+            status.className = `status-pill ${statusClass}`;
+            status.textContent = statusText;
+            fragments.push(status);
+          }
+          const inspectionItems = Array.isArray(data.inspection_items) ? data.inspection_items : [];
+          if (inspectionItems.length) {
+            const dateStack = document.createElement('span');
+            dateStack.className = `apartment-inspection-date-stack${inspectionItems.length === 1 ? ' is-single' : ''}`;
+            inspectionItems.forEach(item => {
+              if (!item || !item.value || !item.label) return;
+              const dateItem = document.createElement('span');
+              dateItem.className = 'apartment-inspection-date-item';
+              const label = document.createElement('span');
+              label.textContent = item.label;
+              dateItem.append(label);
+
+              const deleteForm = document.createElement('form');
+              deleteForm.method = 'post';
+              deleteForm.action = data.inspection_delete_url || '';
+              deleteForm.className = 'apartment-inspection-date-delete-form';
+              const csrf = document.createElement('input');
+              csrf.type = 'hidden';
+              csrf.name = 'csrf_token';
+              csrf.value = form.querySelector('input[name="csrf_token"]')?.value || '';
+              const dateValue = document.createElement('input');
+              dateValue.type = 'hidden';
+              dateValue.name = 'inspection_date';
+              dateValue.value = item.value;
+              const removeButton = document.createElement('button');
+              removeButton.type = 'submit';
+              removeButton.className = 'btn btn-sm btn-outline-danger apartment-inspection-date-delete-btn';
+              removeButton.title = 'Удалить дату осмотра';
+              removeButton.setAttribute('aria-label', `Удалить дату осмотра ${item.label}`);
+              const icon = document.createElement('i');
+              icon.className = 'bi bi-trash';
+              icon.setAttribute('aria-hidden', 'true');
+              removeButton.append(icon);
+              deleteForm.append(csrf, dateValue, removeButton);
+              dateItem.append(deleteForm);
+              dateStack.append(dateItem);
+            });
+            fragments.push(dateStack);
+          }
+          inspectionDisplay.replaceChildren(...fragments);
+
+          const maxInspections = Number(data.inspection_max) || 5;
+          const dateForm = form;
+          const previousLimitNote = dateForm.parentElement?.querySelector('.apartment-inspection-limit-note');
+          if (inspectionItems.length >= maxInspections) {
+            dateForm.style.setProperty('display', 'none', 'important');
+            if (!previousLimitNote) {
+              const limitNote = document.createElement('span');
+              limitNote.className = 'text-muted small apartment-inspection-limit-note';
+              limitNote.textContent = `Добавлено ${maxInspections} из ${maxInspections} осмотров`;
+              dateForm.after(limitNote);
+            }
+          }
+          const dateInput = dateForm.querySelector('input[name="inspection_date"]');
+          if (dateInput) dateInput.value = '';
+        } else if (inspectionDisplay && Object.prototype.hasOwnProperty.call(data, 'inspection_date_label')) {
           const status = escapeHtml(data.inspection_status || '');
           const statusClass = escapeHtml(data.inspection_status_class || 'status-pill-muted');
           const labels = Array.isArray(data.inspection_date_labels) && data.inspection_date_labels.length

@@ -52,7 +52,7 @@ def _desc_nulls_last(column):
 
 
 APARTMENT_HEADERS = {
-    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "№ кл", "№ клад", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
     "construction_number": ["строительный", "стр. №", "строительный номер"],
     "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
@@ -85,7 +85,7 @@ IGNORED_POINT_HEADER_PARTS = [
 
 # Cyrillic aliases for matching real Excel headers.
 APARTMENT_HEADERS_RU = {
-    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
+    "apartment_number": ["квартира", "кв", "кв/№", "кв №", "№ пом", "№ кл", "№ клад", "факт/№", "дду", "помещение", "номер квартиры", "№ ком", "ком.", "коммерц", "паркинг", "парковка", "машиноместо", "м/м"],
     "construction_number": ["строительный", "стр. №", "строительный номер", "стр №", "стр.№"],
     "owner_name": ["собственник", "владелец", "фио", "дольщик"],
     "phone": ["телефон", "тел", "контакт"],
@@ -2332,11 +2332,19 @@ def build_task_query(params, category_id: int | None = None, project_id: int | N
         (Apartment.app_deadline_date <= expiring_until, 1),
         else_=2,
     )
+    premise_type_rank = case(
+        (Apartment.premise_type.is_(None), 0),
+        (Apartment.premise_type == "apartment", 0),
+        (Apartment.premise_type == "commercial", 1),
+        (Apartment.premise_type == "storeroom", 2),
+        (Apartment.premise_type == "parking", 3),
+        else_=4,
+    )
 
     def ordered(*parts):
         if premise_order_rank is None:
-            return parts
-        return (done_last, premise_order_rank.asc(), *parts[1:]) if parts and parts[0] is done_last else (premise_order_rank.asc(), *parts)
+            return (premise_type_rank.asc(), *parts)
+        return (premise_type_rank.asc(), premise_order_rank.asc(), *parts[1:]) if parts and parts[0] is done_last else (premise_type_rank.asc(), premise_order_rank.asc(), *parts)
 
     if sort == "apartment":
         query = query.order_by(*ordered(done_last, cast(Apartment.apartment_number, Integer).asc(), Apartment.apartment_number.asc(), WorkPoint.point_number.asc()))
@@ -2409,8 +2417,10 @@ def _premise_rows_from_query(query):
         Apartment.phone,
         Apartment.finishing_type,
         Apartment.is_app_mode,
+        Apartment.inspection_date,
         Apartment.first_inspection_present,
         Apartment.first_inspection_date,
+        Apartment.reinspection_date,
         Apartment.inspection_note,
         Apartment.app_deadline_status,
     ).all()
@@ -2429,6 +2439,11 @@ def _row_to_premise(row):
     apartment.owner_name = getattr(row, "owner_name", None)
     apartment.is_unsold = bool(getattr(row, "is_unsold", False))
     apartment.finishing_type = getattr(row, "finishing_type", None)
+    apartment.is_app_mode = bool(getattr(row, "is_app_mode", False))
+    apartment.inspection_date = getattr(row, "inspection_date", None)
+    apartment.first_inspection_date = getattr(row, "first_inspection_date", None)
+    apartment.reinspection_date = getattr(row, "reinspection_date", None)
+    apartment.first_inspection_present = bool(getattr(row, "first_inspection_present", False))
     return apartment
 
 
@@ -2468,10 +2483,17 @@ def _row_premise_type(row) -> str:
 
 
 def _has_first_inspection(rows: list) -> bool:
-    # The transfer statistics import is the source of truth: red/yellow fill in
-    # "Дата осмотра" stores False, every other fill stores True. Duplicate source
-    # rows represent one premise, so one positive row is enough for the group.
-    return any(bool(getattr(row, "first_inspection_present", False)) for row in rows)
+    # Read persisted CRM fields only. Imports populate these fields, but the
+    # dashboard does not read source workbooks; current acceptance and inspection
+    # edits in CRM are reflected on the next stats query. Acceptance implies a
+    # completed inspection, and duplicate source rows represent one premise.
+    date_fields = ("inspection_date", "first_inspection_date", "reinspection_date")
+    return any(
+        bool(getattr(row, "first_inspection_present", False))
+        or bool(getattr(row, "is_app_mode", False))
+        or any(getattr(row, field, None) is not None for field in date_fields)
+        for row in rows
+    )
 
 
 def _finishing_bucket(value: str | None) -> str:
@@ -2557,12 +2579,32 @@ def dashboard_stats(
         for rows in grouped_rows.values()
         if rows and _row_premise_type(rows[0]) == "parking" and _group_is_unsold(rows)
     )
+    not_accepted_storeroom_count = sum(
+        1
+        for rows in grouped_rows.values()
+        if rows
+        and _row_premise_type(rows[0]) == "storeroom"
+        and not _group_is_accepted(rows)
+        and not _group_is_unsold(rows)
+    )
     unsold = unsold_apartment_count + unsold_commercial_count + unsold_storeroom_count + unsold_parking_count
     not_accepted = max(total_apartments - accepted - unsold, 0)
 
     inspection_rows = [rows for rows in grouped_rows.values() if not _group_is_unsold(rows)]
     inspected = sum(1 for rows in inspection_rows if _has_first_inspection(rows))
     not_inspected = max(len(inspection_rows) - inspected, 0)
+    inspection_by_type = {}
+    for premise_type in ("apartment", "storeroom", "parking", "commercial"):
+        type_rows = [
+            rows
+            for rows in inspection_rows
+            if rows and _row_premise_type(rows[0]) == premise_type
+        ]
+        type_inspected = sum(1 for rows in type_rows if _has_first_inspection(rows))
+        inspection_by_type[premise_type] = {
+            "inspected": type_inspected,
+            "not_inspected": max(len(type_rows) - type_inspected, 0),
+        }
     white = 0
     clean = 0
     unknown_finishing = 0
@@ -2606,9 +2648,11 @@ def dashboard_stats(
         "unsold_commercial_count": unsold_commercial_count,
         "unsold_storeroom_count": unsold_storeroom_count,
         "unsold_parking_count": unsold_parking_count,
+        "not_accepted_storeroom_count": not_accepted_storeroom_count,
         "not_accepted": not_accepted,
         "inspected": inspected,
         "not_inspected": not_inspected,
+        "inspection_by_type": inspection_by_type,
         "clean_apartments": clean,
         "white_apartments": white,
         "unknown_finishing_apartments": unknown_finishing,

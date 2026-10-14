@@ -150,6 +150,125 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
         self.assertIn("<b>5</b>", main_card.group(0))
         self.assertIn("<b>2</b>", main_card.group(0))
 
+    def test_dashboard_accepted_heading_matches_inspections_and_completed_storeroom_feature_is_removed(self):
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertEqual(
+            html.count('class="dashboard-info-title dashboard-soft-section-title"'),
+            3,
+        )
+        self.assertRegex(
+            html,
+            r'class="dashboard-info-title dashboard-soft-section-title"><i class="bi bi-eye"></i>\s*Осмотры</div>',
+        )
+        self.assertRegex(
+            html,
+            r'class="dashboard-info-title dashboard-soft-section-title">\s*<i class="bi bi-check2-circle"></i>\s*Принято',
+        )
+        accepted_card = re.search(
+            r'<article class="dashboard-info-card">\s*<div class="dashboard-info-title dashboard-soft-section-title">\s*<i class="bi bi-check2-circle"></i>\s*Принято.*?</article>',
+            html,
+            re.DOTALL,
+        )
+        inspections_card = re.search(
+            r'<article class="dashboard-info-card">\s*<div class="dashboard-info-title dashboard-soft-section-title"><i class="bi bi-eye"></i>\s*Осмотры</div>.*?</article>',
+            html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(accepted_card)
+        self.assertIsNotNone(inspections_card)
+        self.assertNotIn("Принято", inspections_card.group(0))
+        self.assertEqual(accepted_card.group(0).count("dashboard-info-card"), 1)
+        self.assertNotIn("Добавление объектов с кладовками", html)
+        self.assertNotIn("Что скоро станет доступно?", html)
+        self.assertNotIn("dashboardRoadmapModal", html)
+        self.assertNotIn("dashboard-roadmap-mini-card", html)
+
+    def test_dashboard_shows_unaccepted_storerooms_separately_from_unsold_ones(self):
+        self.project.has_storerooms = True
+        accepted = Apartment(
+            project=self.project,
+            apartment_number="КЛ1",
+            premise_type="storeroom",
+            is_app_mode=True,
+            app_deadline_status="normal",
+        )
+        waiting = Apartment(project=self.project, apartment_number="КЛ2", premise_type="storeroom")
+        unsold = Apartment(project=self.project, apartment_number="КЛ3", premise_type="storeroom", is_unsold=True)
+        db.session.add_all([accepted, waiting, unsold])
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+        response = self.client.get("/")
+
+        self.assertEqual(stats["not_accepted_storeroom_count"], 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Кладовок не принято</span><b>1</b>", response.get_data(as_text=True))
+
+    def test_dashboard_breaks_inspection_counts_down_by_premise_type(self):
+        self.project.has_storerooms = True
+        self.project.has_parking = True
+        self.project.has_commercial = True
+        visited_apartment = Apartment(
+            project=self.project,
+            apartment_number="2",
+            first_inspection_present=True,
+        )
+        visited_storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ1",
+            premise_type="storeroom",
+            first_inspection_present=True,
+        )
+        unvisited_parking = Apartment(
+            project=self.project,
+            apartment_number="М1",
+            premise_type="parking",
+            first_inspection_present=False,
+        )
+        unvisited_commercial = Apartment(
+            project=self.project,
+            apartment_number="К1",
+            premise_type="commercial",
+            first_inspection_present=False,
+        )
+        unsold_visited_commercial = Apartment(
+            project=self.project,
+            apartment_number="К2",
+            premise_type="commercial",
+            is_unsold=True,
+            first_inspection_present=True,
+        )
+        db.session.add_all([
+            visited_apartment,
+            visited_storeroom,
+            unvisited_parking,
+            unvisited_commercial,
+            unsold_visited_commercial,
+        ])
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+        self.assertEqual(stats["inspection_by_type"]["apartment"], {"inspected": 1, "not_inspected": 1})
+        self.assertEqual(stats["inspection_by_type"]["storeroom"], {"inspected": 1, "not_inspected": 0})
+        self.assertEqual(stats["inspection_by_type"]["parking"], {"inspected": 0, "not_inspected": 1})
+        self.assertEqual(stats["inspection_by_type"]["commercial"], {"inspected": 0, "not_inspected": 1})
+
+        response = self.client.get("/")
+        html = response.get_data(as_text=True)
+        inspections_card = re.search(
+            r'<article class="dashboard-info-card">\s*<div class="dashboard-info-title dashboard-soft-section-title"><i class="bi bi-eye"></i>\s*Осмотры</div>.*?</article>',
+            html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(inspections_card)
+        self.assertIn("Квартир были на осмотре", inspections_card.group(0))
+        self.assertIn("Кладовок не были на осмотре", inspections_card.group(0))
+        self.assertIn("Парковок были на осмотре", inspections_card.group(0))
+        self.assertIn("Коммерций не были на осмотре", inspections_card.group(0))
+
     def test_apartment_detail_mode_change_updates_dashboard_transfer_stats(self):
         before = dashboard_stats(self.project.id)
         self.assertEqual(before["accepted"], 0)
@@ -225,6 +344,57 @@ class DashboardCompletedStatusesTests(unittest.TestCase):
         self.assertEqual(stats["unsold"], 1)
         self.assertEqual(stats["not_accepted"], 1)
         self.assertEqual(stats["not_inspected"], 1)
+
+    def test_accepted_and_remarks_inspection_dates_count_as_inspected_by_type(self):
+        self.project.has_storerooms = True
+        accepted_storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ1",
+            premise_type="storeroom",
+            is_app_mode=True,
+        )
+        dated_storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ2",
+            premise_type="storeroom",
+            inspection_date=date(2026, 9, 15),
+        )
+        waiting_storeroom = Apartment(
+            project=self.project,
+            apartment_number="КЛ3",
+            premise_type="storeroom",
+        )
+        db.session.add_all([accepted_storeroom, dated_storeroom, waiting_storeroom])
+        db.session.commit()
+
+        stats = dashboard_stats(self.project.id)
+
+        self.assertEqual(stats["inspection_by_type"]["storeroom"], {"inspected": 2, "not_inspected": 1})
+
+    def test_dashboard_stats_refresh_from_latest_persisted_crm_fields(self):
+        initial = dashboard_stats(self.project.id)
+        self.assertEqual(initial["accepted"], 0)
+        self.assertEqual(initial["inspection_by_type"]["apartment"], {"inspected": 0, "not_inspected": 1})
+
+        self.apartment.is_app_mode = True
+        self.apartment.first_inspection_present = True
+        db.session.commit()
+
+        updated = dashboard_stats(self.project.id)
+        self.assertEqual(updated["accepted"], 1)
+        self.assertEqual(updated["accepted_with_remarks_apartment"], 1)
+        self.assertEqual(updated["inspection_by_type"]["apartment"], {"inspected": 1, "not_inspected": 0})
+
+        self.apartment.is_app_mode = False
+        self.apartment.first_inspection_present = False
+        self.apartment.inspection_date = None
+        self.apartment.first_inspection_date = None
+        db.session.commit()
+
+        current = dashboard_stats(self.project.id)
+        self.assertEqual(current["accepted"], 0)
+        self.assertEqual(current["accepted_with_remarks_apartment"], 0)
+        self.assertEqual(current["inspection_by_type"]["apartment"], {"inspected": 0, "not_inspected": 1})
 
     def test_unsold_apartment_inspection_status_is_unsold_label(self):
         unsold = Apartment(

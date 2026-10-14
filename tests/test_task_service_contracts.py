@@ -268,7 +268,7 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         storeroom = Apartment.query.filter_by(project_id=self.project.id, premise_type="storeroom").one()
         self.assertEqual(storeroom.apartment_number, "КЛ1")
         self.assertEqual(storeroom.construction_number, "КЛ1")
-        self.assertEqual(storeroom.label(), "КЛ1")
+        self.assertEqual(storeroom.label(), "кл 1")
         self.assertEqual(storeroom.detail_label(), "Кладовка 1")
         self.assertEqual(storeroom.tasks[0].description, "Замечание по кладовке")
 
@@ -527,14 +527,38 @@ class TaskServiceDatabaseContractsTests(unittest.TestCase):
         self.assertEqual(task.status, STATUS_NOT_STARTED)
         self.assertFalse(task.is_done)
 
-    def test_build_task_query_filters_multiple_premises_and_keeps_user_order(self):
+    def test_build_task_query_filters_multiple_premises_and_uses_project_premise_order(self):
         tasks = build_task_query({"q": "к15/к2, кв 12"}, project_id=self.project.id).all()
 
         self.assertEqual([task.source_uid for task in tasks], [
-            "query-commercial-open",
             "query-apartment-open",
             "query-apartment-done",
+            "query-commercial-open",
         ])
+
+    def test_build_task_query_places_each_premise_type_in_the_shared_order(self):
+        storeroom = Apartment(project=self.project, apartment_number="КЛ1", premise_type="storeroom")
+        parking = Apartment(project=self.project, apartment_number="П1", premise_type="parking")
+        db.session.add_all([storeroom, parking])
+        db.session.flush()
+        for uid, apartment in (("query-storeroom", storeroom), ("query-parking", parking)):
+            db.session.add(Task(
+                source_uid=uid,
+                project=self.project,
+                apartment=apartment,
+                work_point=self.work_point,
+                description=uid,
+                status=STATUS_NOT_STARTED,
+                is_done=False,
+            ))
+        db.session.commit()
+
+        tasks = build_task_query({"sort": "priority"}, project_id=self.project.id).all()
+
+        self.assertEqual(
+            list(dict.fromkeys((task.apartment.premise_type or "apartment") for task in tasks)),
+            ["apartment", "commercial", "storeroom", "parking"],
+        )
 
     def test_build_task_query_text_search_filters_individual_remark_rows(self):
         matching = Task(

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree
 
 from flask import current_app
 from openpyxl import load_workbook
@@ -93,6 +95,14 @@ def _cell_rgb(cell: Any) -> tuple[int, int, int] | None:
         indexed = getattr(color, "indexed", None)
         indexed_map = {52: "F4B183", 53: "FCE4D6", 44: "FFC000", 45: "FFFF00"}
         rgb = indexed_map.get(indexed)
+    elif getattr(color, "type", None) == "theme":
+        workbook = getattr(getattr(cell, "parent", None), "parent", None)
+        theme_xml = getattr(workbook, "loaded_theme", None)
+        theme_index = getattr(color, "theme", None)
+        if theme_xml and isinstance(theme_index, int):
+            resolved = _theme_color_rgb(theme_xml, theme_index)
+            if resolved:
+                return _apply_tint(resolved, getattr(color, "tint", 0.0))
     if not rgb or not isinstance(rgb, str):
         return None
     rgb = rgb[-6:]
@@ -102,12 +112,57 @@ def _cell_rgb(cell: Any) -> tuple[int, int, int] | None:
         return None
 
 
+@lru_cache(maxsize=32)
+def _theme_color_rgb(theme_xml: bytes | str, theme_index: int) -> tuple[int, int, int] | None:
+    theme_names = (
+        "lt1", "dk1", "lt2", "dk2", "accent1", "accent2",
+        "accent3", "accent4", "accent5", "accent6", "hlink", "folHlink",
+    )
+    if theme_index < 0 or theme_index >= len(theme_names):
+        return None
+    try:
+        root = ElementTree.fromstring(theme_xml)
+    except (ElementTree.ParseError, TypeError, ValueError):
+        return None
+    namespace = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+    color_node = root.find(f".//{namespace}clrScheme/{namespace}{theme_names[theme_index]}")
+    if color_node is None or not list(color_node):
+        return None
+    rgb = list(color_node)[0].attrib.get("val") or list(color_node)[0].attrib.get("lastClr")
+    if not rgb or len(rgb) < 6:
+        return None
+    rgb = rgb[-6:]
+    try:
+        return int(rgb[0:2], 16), int(rgb[2:4], 16), int(rgb[4:6], 16)
+    except ValueError:
+        return None
+
+
+def _apply_tint(rgb: tuple[int, int, int], tint: Any) -> tuple[int, int, int]:
+    try:
+        tint_value = max(-1.0, min(1.0, float(tint or 0.0)))
+    except (TypeError, ValueError):
+        tint_value = 0.0
+    if tint_value == 0.0:
+        return rgb
+    from colorsys import hls_to_rgb, rgb_to_hls
+
+    red, green, blue = (component / 255 for component in rgb)
+    hue, lightness, saturation = rgb_to_hls(red, green, blue)
+    if tint_value < 0:
+        lightness *= 1 + tint_value
+    else:
+        lightness += (1 - lightness) * tint_value
+    tinted = hls_to_rgb(hue, lightness, saturation)
+    return tuple(round(component * 255) for component in tinted)
+
+
 def _is_orange_unsold_fill(cell: Any) -> bool:
     rgb = _cell_rgb(cell)
     if not rgb:
         return False
     r, g, b = rgb
-    # Orange/yellow fills used in Excel/Google Sheets for unsold premises.
+    # Orange/yellow fills used in spreadsheets for unsold premises.
     return r >= 210 and 95 <= g <= 215 and b <= 120
 
 

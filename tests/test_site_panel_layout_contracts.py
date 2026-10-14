@@ -207,6 +207,25 @@ class SitePanelLayoutContractsTests(unittest.TestCase):
         actions_start = template.index('class="col-12 col-lg-auto filter-actions apartments-filter-actions"', finishing_end)
         self.assertGreater(actions_start, finishing_end)
 
+    def test_mobile_apartments_finishing_checkboxes_stay_aligned_with_labels(self):
+        marker = "/* Keep finishing filter labels and checkboxes aligned on the mobile Apartments page. */"
+        self.assertIn(marker, self.style_css)
+        block_start = self.style_css.index(marker)
+        block = self.style_css[block_start:block_start + 3200]
+
+        self.assertIn("body.app-body:has(.apartments-page) .apartments-filter-finishing-col .remarks-filter-checks", block)
+        self.assertIn("grid-template-columns: repeat(2, minmax(0, 1fr)) !important", block)
+        self.assertIn(".remarks-filter-check:last-child", block)
+        self.assertIn("grid-column: 1 / -1 !important", block)
+        self.assertIn("inset: 50% auto auto .82rem !important", block)
+        self.assertIn("float: none !important", block)
+        self.assertIn("transform: translateY(-50%) !important", block)
+
+        template = (ROOT / "app" / "templates" / "apartments.html").read_text(encoding="utf-8")
+        for label in ("Белая", "Чистовые", "Без отделки"):
+            with self.subTest(label=label):
+                self.assertIn(f"<span class=\"form-check-label\">{label}</span>", template)
+
     def test_desktop_sidebar_has_home_and_all_web_tabs_with_fixed_shell_geometry(self):
         sidebar_start = self.base.index("<nav class=\"sidebar-nav\">")
         sidebar_end = self.base.index("</nav>", sidebar_start)
