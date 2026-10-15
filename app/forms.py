@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from wtforms import BooleanField, PasswordField, RadioField, SelectField, StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, ValidationError
 from app.models import TASK_STATUSES, PRIORITIES, USER_ROLE_CHOICES
 
 
@@ -28,6 +28,18 @@ class UploadExcelForm(FlaskForm):
 
 
 class ProjectForm(FlaskForm):
+    signature = FileField("Подпись", validators=[FileAllowed(["png", "jpg", "jpeg"], "Загрузите PNG или JPEG.")])
+    remove_signature = BooleanField("Удалить загруженную подпись")
+
+    def validate_signature(self, field):
+        if not field.data:
+            return
+        from app.services.project_signature import normalize_signature
+        try:
+            self.signature_image_data = normalize_signature(field.data)
+        except ValueError as exc:
+            raise ValidationError(str(exc)) from exc
+
     name = StringField("Название объекта", validators=[DataRequired(), Length(max=180)])
     address = StringField("Адрес", validators=[Optional(), Length(max=255)])
     technical_customer = StringField("Тех.заказчик", validators=[Optional(), Length(max=255)])

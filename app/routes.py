@@ -2136,6 +2136,7 @@ def object_new():
             has_storerooms=bool(form.has_storerooms.data),
             has_parking=bool(form.has_parking.data),
             created_by_id=current_user.id,
+            signature_image=getattr(form, "signature_image_data", None),
         )
         db.session.add(project)
         db.session.commit()
@@ -2155,7 +2156,11 @@ def object_edit(project_id: int):
     if form.validate_on_submit():
         if not (form.has_apartments.data or form.has_commercial.data or form.has_storerooms.data or form.has_parking.data):
             flash("Выберите хотя бы один тип помещений: квартиры, коммерции, кладовки или парковки.", "warning")
-            return render_template("object_form.html", form=form, form_title="Редактировать объект", submit_label="Сохранить")
+            return render_template("object_form.html", form=form, project=project, form_title="Редактировать объект", submit_label="Сохранить")
+        if getattr(form, "signature_image_data", None):
+            project.signature_image = form.signature_image_data
+        elif form.remove_signature.data:
+            project.signature_image = None
         project.name = form.name.data.strip()
         project.address = form.address.data.strip() if form.address.data else None
         project.technical_customer = form.technical_customer.data.strip() if form.technical_customer.data else None
@@ -2173,7 +2178,7 @@ def object_edit(project_id: int):
         db.session.commit()
         flash("Объект обновлён", "success")
         return redirect(url_for("main.objects"))
-    return render_template("object_form.html", form=form, form_title="Редактировать объект", submit_label="Сохранить")
+    return render_template("object_form.html", form=form, project=project, form_title="Редактировать объект", submit_label="Сохранить")
 
 
 @bp.route("/objects/<int:project_id>/delete", methods=["POST"])

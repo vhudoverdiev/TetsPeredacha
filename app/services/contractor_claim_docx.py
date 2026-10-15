@@ -5,6 +5,9 @@ from datetime import date, datetime
 from pathlib import Path
 from xml.sax.saxutils import escape
 import re
+import base64
+from io import BytesIO
+from PIL import Image
 import zipfile
 
 from flask import current_app
@@ -85,9 +88,11 @@ def _write_claim_docx(path: Path, tasks: list[Task], *, project: Project, contra
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("[Content_Types].xml", _content_types_xml())
         archive.writestr("_rels/.rels", _rels_xml())
-        archive.writestr("word/_rels/document.xml.rels", _document_rels_xml())
+        archive.writestr("word/_rels/document.xml.rels", _document_rels_xml(bool(project.signature_image)))
         archive.writestr("word/document.xml", document_xml)
-        archive.write(STAMP_IMAGE_PATH, "word/media/image1.png")
+        if project.signature_image:
+            archive.writestr("word/media/image1.png", base64.b64decode(project.signature_image))
+
 
 
 def _letter_paragraphs(project: Project, contractor: Contractor | None, author: User, current_date: date) -> list[str]:
@@ -304,7 +309,7 @@ def _signature_block(project: Project) -> str:
     widths = [5900, 1600, 1840]
     cells = [
         _signature_cell(_paragraph(director_title, bold=True, size=20, in_cell=True, line=200), widths[0], v_align="center"),
-        _signature_cell(_stamp_inline_paragraph(), widths[1], v_align="center"),
+        _signature_cell((_stamp_inline_paragraph(project.signature_image) if project.signature_image else _paragraph(" ", in_cell=True)), widths[1], v_align="center"),
         _signature_cell(_paragraph(director_name or " ", bold=True, align="right", size=20, in_cell=True, line=200), widths[2], v_align="center"),
     ]
     return (
@@ -496,13 +501,18 @@ def _border_line() -> str:
     )
 
 
-def _stamp_inline_paragraph() -> str:
+def _stamp_inline_paragraph(signature_image: str | None = None) -> str:
+    cx, cy = 950000, 701000
+    if signature_image:
+        with Image.open(BytesIO(base64.b64decode(signature_image))) as image:
+            scale = min(cx / image.width, cy / image.height)
+            cx, cy = round(image.width * scale), round(image.height * scale)
     return (
         '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0" w:line="220" w:lineRule="auto"/></w:pPr>'
         '<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" '
         'w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>'
         '<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0">'
-        '<wp:extent cx="950000" cy="701000"/>'
+        f'<wp:extent cx="{cx}" cy="{cy}"/>'
         '<wp:effectExtent l="0" t="0" r="0" b="0"/>'
         '<wp:docPr id="1" name="Picture 1"/>'
         '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
@@ -513,7 +523,7 @@ def _stamp_inline_paragraph() -> str:
         f'<a:blip r:embed="{STAMP_REL_ID}"><a:extLst><a:ext uri="{{28A0092B-C50C-407E-A947-70E740481C1C}}">'
         '<a14:useLocalDpi val="0"/></a:ext></a:extLst></a:blip>'
         '<a:srcRect/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
-        '<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="950000" cy="701000"/></a:xfrm>'
+        f'<pic:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm>'
         '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></pic:spPr>'
         '</pic:pic></a:graphicData></a:graphic>'
         '</wp:inline></w:drawing></w:r></w:p>'
@@ -668,8 +678,9 @@ def _rels_xml() -> str:
 </Relationships>"""
 
 
-def _document_rels_xml() -> str:
+def _document_rels_xml(has_signature: bool = False) -> str:
+    relationship = f'<Relationship Id="{STAMP_REL_ID}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/>' if has_signature else ""
     return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="{STAMP_REL_ID}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/>
+  {relationship}
 </Relationships>"""

@@ -173,6 +173,9 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("kostyleva@group-akvilon.ru", text)
 
     def test_claim_docx_matches_reference_page_and_table_layout(self):
+        import base64
+        from app.services.contractor_claim_docx import STAMP_IMAGE_PATH
+        self.project.signature_image = base64.b64encode(STAMP_IMAGE_PATH.read_bytes()).decode("ascii")
         path = build_contractor_claim_docx(
             [self.open_task, self.second_open_task, self.done_task, self.concession_task],
             project=self.project,
@@ -190,8 +193,8 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertEqual(len(page_breaks), 2)
         self.assertIn("<wp:inline", document_xml)
         self.assertIn('r:embed="rIdStamp"', document_xml)
-        self.assertIn('cx="950000"', document_xml)
-        self.assertIn('cy="701000"', document_xml)
+        self.assertRegex(document_xml, r'cx="[1-9][0-9]+"')
+        self.assertRegex(document_xml, r'cy="[1-9][0-9]+"')
         self.assertIn('Id="rIdStamp"', document_rels)
         self.assertIn('Target="media/image1.png"', document_rels)
         self.assertIn('ContentType="image/png"', content_types)

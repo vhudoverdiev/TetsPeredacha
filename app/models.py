@@ -208,6 +208,7 @@ class Project(TimestampMixin, db.Model):
     inn_kpp = db.Column(db.String(80), nullable=True)
     ogrn = db.Column(db.String(80), nullable=True)
     legal_address = db.Column(db.String(255), nullable=True)
+    signature_image = db.Column(db.Text().with_variant(mysql.LONGTEXT(), "mysql"), nullable=True)
     developer_director = db.Column(db.String(255), nullable=True)
     developer_representative = db.Column(db.String(255), nullable=True)
     developer_representative_phone = db.Column(db.String(80), nullable=True)

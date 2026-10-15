@@ -245,6 +245,10 @@ def create_app(config_class=Config):
         uri = (app.config.get("SQLALCHEMY_DATABASE_URI") or "").lower()
         if _is_sqlite_database_uri(uri):
             db.create_all()
+            project_columns = {column["name"] for column in inspect(db.engine).get_columns("projects")}
+            if "signature_image" not in project_columns:
+                db.session.execute(text("ALTER TABLE projects ADD COLUMN signature_image TEXT"))
+                db.session.commit()
         elif _is_mysql_database_uri(uri):
             db.create_all()
             _ensure_mysql_utf8mb4()
@@ -253,6 +257,8 @@ def create_app(config_class=Config):
             inspector = inspect(db.engine)
             if "projects" in inspector.get_table_names():
                 project_columns = {column["name"] for column in inspector.get_columns("projects")}
+                if "signature_image" not in project_columns:
+                    db.session.execute(text("ALTER TABLE projects ADD COLUMN signature_image LONGTEXT"))
                 if "technical_customer" not in project_columns:
                     db.session.execute(text("ALTER TABLE projects ADD COLUMN technical_customer VARCHAR(255)"))
                 if "developer_name" not in project_columns:
