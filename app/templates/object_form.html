@@ -56,7 +56,7 @@
       <div class="mb-3">
         {{ form.signature.label(class="form-label") }}
         {{ form.signature(class="form-control", accept="image/png,image/jpeg", aria_describedby="signature-help") }}
-        <div id="signature-help" class="form-text">PNG или JPEG до 5 МБ. Подпись гендиректора для претензий этого объекта. Новый файл заменит текущую подпись.</div>
+        <div id="signature-help" class="form-text">PNG или JPEG до 5 МБ.</div>
         {% for error in form.signature.errors %}<div class="text-danger" role="alert">{{ error }}</div>{% endfor %}
         {% if project is defined and project.signature_image %}
         <img src="data:image/png;base64,{{ project.signature_image }}" alt="Текущая подпись объекта" class="img-fluid d-block my-2" style="max-width: 240px; max-height: 100px;">

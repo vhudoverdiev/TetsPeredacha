@@ -879,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.crm-search-btn').forEach(button => {
     const lockButtonSize = () => {
-      const rect = button.getBoundingClientRect();
+      const rect = { width: button.offsetWidth, height: button.offsetHeight };
       if (!rect.width || !rect.height) return;
       button.style.width = `${Math.ceil(rect.width)}px`;
       button.style.minWidth = `${Math.ceil(rect.width)}px`;

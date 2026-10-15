@@ -172,6 +172,27 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertIn("8(8184) 52-00-00 (доб.354)", text)
         self.assertIn("kostyleva@group-akvilon.ru", text)
 
+    def test_letter_shift_preserves_width_and_table_cells(self):
+        from app.services.contractor_claim_docx import _shift_letter_block, _paragraph, _signature_block
+        paragraph = _shift_letter_block(_paragraph("Text", left=284, right=-709))
+        self.assertIn('w:left="114"', paragraph)
+        self.assertIn('w:right="-539"', paragraph)
+        table = _signature_block(self.project)
+        shifted = _shift_letter_block(table)
+        self.assertIn('<w:tblInd w:w="-170" w:type="dxa"/>', shifted)
+        self.assertEqual(table.split("</w:tblPr>", 1)[1], shifted.split("</w:tblPr>", 1)[1])
+
+    def test_empty_sections_do_not_create_pages(self):
+        for tasks, breaks in (([], 0), ([self.open_task], 1), ([self.done_task], 1)):
+            path = build_contractor_claim_docx(
+                tasks, project=self.project, contractor=self.contractor, author=self.author,
+            )
+            root = _document_root(path)
+            self.assertEqual(len(root.findall(f".//{W}br[@{W}type='page']")), breaks)
+            body = root.find(f"{W}body")
+            if tasks:
+                self.assertEqual(list(body)[-2].tag, f"{W}tbl")
+
     def test_claim_docx_matches_reference_page_and_table_layout(self):
         import base64
         from app.services.contractor_claim_docx import STAMP_IMAGE_PATH
@@ -215,7 +236,7 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertRegex(document_xml, r'<w:sz w:val="28"/>.*?<w:t>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ</w:t>')
         self.assertRegex(document_xml, r'<w:sz w:val="44"/>.*?<w:t>Специализированный застройщик</w:t>')
         self.assertRegex(document_xml, r'<w:sz w:val="20"/>.*?<w:t>ИНН/КПП 2901297953/290101001, ОГРН 1192901006924</w:t>')
-        self.assertIn('<w:ind w:left="284" w:right="-709" w:firstLine="424"/>', document_xml)
+        self.assertIn('<w:ind w:left="114" w:right="-539" w:firstLine="424"/>', document_xml)
         self.assertIn('<w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="auto"/>', document_xml)
         self.assertIn("<w:t>164520, Архангельская обл., г. Северодвинск</w:t>", document_xml)
         self.assertIn("<w:t>ул. Индустриальная, д.27, кв.7</w:t>", document_xml)
@@ -229,9 +250,9 @@ class ContractorClaimDocxTests(unittest.TestCase):
         self.assertRegex(
             document_xml,
             r'<w:t>ул\. Индустриальная, д\.27, кв\.7</w:t></w:r></w:p>'
-            r'<w:p><w:pPr><w:ind w:left="284" w:right="-709"/>.*?</w:p>'
+            r'<w:p><w:pPr><w:ind w:left="114" w:right="-539"/>.*?</w:p>'
             r'<w:p><w:pPr><w:jc w:val="center"/>'
-            r'<w:ind w:left="284" w:right="-709"/>'
+            r'<w:ind w:left="114" w:right="-539"/>'
             r'<w:spacing w:before="0" w:after="120"',
         )
 

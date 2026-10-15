@@ -38,6 +38,7 @@ BODY_RIGHT = -709
 BODY_FIRST_LINE = 424
 BODY_LINE = 360
 LINK_BLUE = "0000FF"
+LETTER_SHIFT_TWIPS = -170  # 3 mm to the left, without changing text width.
 
 
 def contractor_claim_filename(project: Project, contractor: Contractor | None) -> str:
@@ -64,11 +65,12 @@ def build_contractor_claim_docx(
 def _write_claim_docx(path: Path, tasks: list[Task], *, project: Project, contractor: Contractor | None, author: User) -> None:
     current_date = date.today()
     body_parts: list[str] = []
-    body_parts.extend(_letter_paragraphs(project, contractor, author, current_date))
-    body_parts.append(_page_break())
-    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if not _is_claim_completed(task)]))
-    body_parts.append(_page_break())
-    body_parts.extend(_defect_statement_tables(project, [task for task in tasks if _is_claim_completed(task)], completed=True))
+    body_parts.extend(_shift_letter_block(block) for block in _letter_paragraphs(project, contractor, author, current_date))
+    for completed in (False, True):
+        section_tasks = [task for task in tasks if _is_claim_completed(task) == completed]
+        if section_tasks:
+            body_parts.append(_page_break())
+            body_parts.extend(_defect_statement_tables(project, section_tasks, completed=completed))
 
     document_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -93,6 +95,28 @@ def _write_claim_docx(path: Path, tasks: list[Task], *, project: Project, contra
         if project.signature_image:
             archive.writestr("word/media/image1.png", base64.b64decode(project.signature_image))
 
+
+
+def _shift_letter_block(block: str) -> str:
+    """Translate letter paragraphs and the signature table, preserving line wrapping."""
+    def shift(match):
+        element = match.group(0)
+        if element.startswith("<w:tbl>"):
+            return element.replace("<w:tblPr>", f'<w:tblPr><w:tblInd w:w="{LETTER_SHIFT_TWIPS}" w:type="dxa"/>', 1)
+        def indent(props_match):
+            props = props_match.group(0)
+            old = re.search(r"<w:ind\b[^>]*/>", props)
+            tag = old.group(0) if old else "<w:ind/>"
+            for name, delta in (("left", LETTER_SHIFT_TWIPS), ("right", -LETTER_SHIFT_TWIPS)):
+                attribute = re.search(rf'w:{name}="(-?\d+)"', tag)
+                value = int(attribute.group(1)) if attribute else 0
+                if attribute:
+                    tag = tag[:attribute.start()] + f'w:{name}="{value + delta}"' + tag[attribute.end():]
+                else:
+                    tag = tag.replace("/>", f' w:{name}="{value + delta}"/>')
+            return props.replace(old.group(0), tag, 1) if old else props.replace("</w:pPr>", tag + "</w:pPr>", 1)
+        return re.sub(r"<w:pPr>.*?</w:pPr>", indent, element, count=1, flags=re.S)
+    return re.sub(r"<w:tbl>.*?</w:tbl>|<w:p>.*?</w:p>", shift, block, flags=re.S)
 
 
 def _letter_paragraphs(project: Project, contractor: Contractor | None, author: User, current_date: date) -> list[str]:
@@ -231,10 +255,11 @@ def _defect_statement_tables(project: Project, tasks: list[Task], *, completed: 
     if not grouped:
         return [_statement_table(project.name, [], completed=completed)]
     tables = []
-    for point, point_tasks in grouped:
+    for index, (point, point_tasks) in enumerate(grouped):
+        if index:
+            tables.append(_paragraph("", spacing_after=120))
         rows = _statement_rows(point_tasks)
         tables.append(_statement_table(project.name, rows, completed=completed))
-        tables.append(_paragraph("", spacing_after=120))
     return tables
 
 

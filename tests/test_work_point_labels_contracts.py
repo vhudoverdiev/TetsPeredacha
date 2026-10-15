@@ -10,7 +10,7 @@ class WorkPointLabelsContractsTests(unittest.TestCase):
     def test_contractor_points_cover_first_twenty_six_numbers(self):
         self.assertEqual(set(WORK_POINT_LABELS), {str(number) for number in range(1, 27)})
         self.assertEqual(CONTRACTOR_POINT_LABELS, WORK_POINT_LABELS)
-        self.assertEqual([item["number"] for item in _contractor_point_options()], [str(number) for number in range(1, 27)])
+        self.assertEqual([item["number"] for item in _contractor_point_options()], [str(number) for number in range(10, 27)])
 
     def test_table_point_names_match_source_sheet_headers(self):
         self.assertEqual(WORK_POINT_LABELS["16"], "Разнорабочие")

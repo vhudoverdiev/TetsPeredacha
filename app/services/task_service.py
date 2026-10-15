@@ -163,6 +163,7 @@ TYPED_PREMISE_QUERY_RE = re.compile(
     re.IGNORECASE,
 )
 PREMISE_SEARCH_MODES = {
+    "premise_range",
     "construction_number",
     "commercial_pair",
     "premise_number",
@@ -175,6 +176,8 @@ LEADING_MULTI_PREMISE_RE = re.compile(
     ^\s*
     (
         \d+-\d+-\d+
+        |
+        \d+\s*[-–—]\s*\d+(?![\d/-])
         |
         (?:кв|к|комм|коммерция|помещение|пом)?\s*\d+\s*/\s*(?:к|корпус)?\s*\d+
         |
@@ -196,6 +199,10 @@ def detect_search_mode(query: str | None) -> tuple[str, str]:
     text = str(query or "").strip()
     if not text:
         return "text", ""
+    range_match = re.fullmatch(r"(\d{1,9})\s*[-–—]\s*(\d{1,9})", text)
+    if range_match:
+        low, high = sorted(map(int, range_match.groups()))
+        return "premise_range", f"{low}|{high}"
     normalized = normalize_text(text).replace("ё", "е")
     if CONSTRUCTION_QUERY_RE.fullmatch(normalized):
         return "construction_number", normalized
@@ -282,6 +289,8 @@ def premise_matches_selector(apartment: Apartment | None, selector: tuple[str, s
 
 def premise_selector_value(selector: tuple[str, str]) -> str:
     mode, value = selector
+    if mode == "premise_range":
+        return str(value).replace("|", "-")
     if mode == "commercial_pair":
         number, _, building = str(value).partition("|")
         return f"{number}/{building}".strip("/")
@@ -290,6 +299,20 @@ def premise_selector_value(selector: tuple[str, str]) -> str:
 
 def premise_selector_clause(selector: tuple[str, str]):
     mode, value = selector
+    if mode == "premise_range":
+        low, high = map(int, value.split("|"))
+        number = func.trim(Apartment.apartment_number)
+        number = case(
+            (Apartment.premise_type == "storeroom", func.replace(func.replace(number, "КЛ", ""), "кл", "")),
+            (Apartment.premise_type == "parking", func.replace(func.replace(number, "П", ""), "п", "")),
+            else_=number,
+        )
+        number = func.trim(number)
+        remainder = number
+        for digit in "0123456789":
+            remainder = func.replace(remainder, digit, "")
+        return and_(number != "", remainder == "", cast(number, Integer).between(low, high))
+
     if mode == "commercial_pair":
         number, _, building = str(value).partition("|")
         return and_(
@@ -331,6 +354,14 @@ def premise_matches_search(apartment: Apartment | None, mode: str, value: str | 
     if not apartment or not value:
         return False
     value = str(value).strip()
+    if mode == "premise_range":
+        low, high = map(int, value.split("|"))
+        number = str(apartment.apartment_number or "").strip()
+        if apartment.premise_type == "storeroom":
+            number = re.sub(r"^кл", "", number, flags=re.I).strip()
+        elif apartment.premise_type == "parking":
+            number = re.sub(r"^п", "", number, flags=re.I).strip()
+        return bool(re.fullmatch(r"[0-9]+", number)) and low <= int(number) <= high
     if mode == "commercial_pair":
         number, _, building = value.partition("|")
         return (

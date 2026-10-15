@@ -9540,7 +9540,7 @@ def _avr_owner_options(owner_name: str | None) -> list[str]:
 
 
 def _contractor_point_options() -> list[dict[str, str]]:
-    return [{"number": number, "label": label} for number, label in CONTRACTOR_POINT_LABELS.items()]
+    return _remark_point_options(min_number=10)
 
 
 def _contractor_apartment_options(project_id: int) -> list[dict]:
